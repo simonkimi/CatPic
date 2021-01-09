@@ -1,6 +1,7 @@
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/routers/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,13 @@ class MyApp extends StatelessWidget {
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
       theme: theme.blueTheme,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('zh', 'CN'),
+      ],
       home: LoginPage(),
     );
   }
