@@ -1,6 +1,5 @@
 import 'package:catpic/themes.dart' as theme;
-import 'package:catpic/ui/routers/login_page.dart';
-import 'package:catpic/ui/routers/main_page/main_page.dart';
+import 'package:catpic/ui/pages/main_page/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
