@@ -9,7 +9,7 @@ class PreViewModel {
 
   final String targetUrl;
   final String previewImg;
-  final List<String> keyTags;
+  final List<PreviewTag> keyTags;
 
   final int previewHeight;
   final int previewWidth;
@@ -39,5 +39,17 @@ class PreViewModel {
   @override
   String toString() {
     return 'PreViewModel title: $title upload: $uploadTime';
+  }
+}
+
+class PreviewTag {
+  final String tag;
+  final int color;
+
+  PreviewTag({this.tag, this.color});
+
+  @override
+  String toString() {
+    return '{$tag $color}';
   }
 }

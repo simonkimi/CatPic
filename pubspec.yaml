@@ -17,6 +17,8 @@ dependencies:
   html: ^0.14.0+4
   flutter_mobx: ^1.1.0+2
   floor: ^0.14.0
+  flutter_slidable: ^0.5.7
+  flutter_settings_screens: ^0.2.1+1
 
   cupertino_icons: ^1.0.0
 
@@ -31,3 +33,4 @@ flutter:
 
   assets:
     - assets/svgs/
+    - assets/icons/

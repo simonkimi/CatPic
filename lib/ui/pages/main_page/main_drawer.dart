@@ -28,13 +28,29 @@ class _MainDrawerState extends State<MainDrawer> {
                 onTap: () {},
               ),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text("主页"),
+                leading: Icon(Icons.local_fire_department),
+                title: Text("热门"),
+                onTap: () {},
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text("收藏"),
                 onTap: () {},
               ),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text("主页"),
+                leading: Icon(Icons.history),
+                title: Text("历史"),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.download_rounded),
+                title: Text("下载"),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text("设置"),
                 onTap: () {},
               )
             ],

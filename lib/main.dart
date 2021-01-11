@@ -1,5 +1,6 @@
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/pages/main_page/main_page.dart';
+import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
-      theme: theme.blueTheme,
+      theme: theme.purpleTheme,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: [
         Locale('zh', 'CN'),
       ],
-      home: MainPage(),
+      home: WebsiteManager(),
     );
   }
 }
