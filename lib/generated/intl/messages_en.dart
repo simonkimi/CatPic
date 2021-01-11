@@ -21,6 +21,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
-
+    "add_website" : MessageLookupByLibrary.simpleMessage("Add Website"),
+    "advanced_settings" : MessageLookupByLibrary.simpleMessage("ADVANCED SETTINGS (optional)"),
+    "back" : MessageLookupByLibrary.simpleMessage("back"),
+    "basic_settings" : MessageLookupByLibrary.simpleMessage("BASIC SETTINGS"),
+    "domain_fronting" : MessageLookupByLibrary.simpleMessage("Domain Fronting"),
+    "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("Bypass SNI blocking"),
+    "host" : MessageLookupByLibrary.simpleMessage("Host"),
+    "not_set" : MessageLookupByLibrary.simpleMessage("Not set yet"),
+    "protocol" : MessageLookupByLibrary.simpleMessage("Protocol"),
+    "protocol_https" : MessageLookupByLibrary.simpleMessage("Using more secure HTTPS protocol"),
+    "site_type" : MessageLookupByLibrary.simpleMessage("Site type"),
+    "trusted_host" : MessageLookupByLibrary.simpleMessage("Trusted host"),
+    "trusted_host_auto" : MessageLookupByLibrary.simpleMessage("Get trusted host automatically"),
+    "trusted_host_desc" : MessageLookupByLibrary.simpleMessage("Workaround DNS poisoning in some nations"),
+    "website_manager" : MessageLookupByLibrary.simpleMessage("Website Manager"),
+    "website_nickname" : MessageLookupByLibrary.simpleMessage("Nickname"),
+    "website_settings" : MessageLookupByLibrary.simpleMessage("WEBSITE SETTINGS")
   };
 }

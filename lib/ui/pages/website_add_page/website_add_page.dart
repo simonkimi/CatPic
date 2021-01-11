@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
   int protocol;
   int websiteType;
   String trustHost;
-  bool useDomainFronting;
-
+  bool domainFronting;
 
   @override
   void initState() {
@@ -25,14 +25,14 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     protocol = WebsiteProtocol.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
     trustHost = "";
-    useDomainFronting = false;
+    domainFronting = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("添加网站"),
+        title: Text(S.of(context).add_website),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {},
@@ -42,32 +42,44 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
       body: SafeArea(
         child: ListView(
           children: [
-            SummaryTile("基础设置"),
+            SummaryTile(S.of(context).basic_settings),
             TextInputTile(
-              title: Text("网站名称"),
-              subtitle: Text(websiteName.isEmpty ? "example.org" : websiteName),
+              title: Text(S.of(context).website_nickname),
+              subtitle: Text(
+                  websiteName.isEmpty ? S.of(context).not_set : websiteName),
               leading: SizedBox(),
               onChanged: (value) {
-                debugPrint(value);
+                setState(() {
+                  websiteName = value;
+                });
               },
             ),
             Divider(),
-            SummaryTile("网站设置"),
+            SummaryTile(S.of(context).website_settings),
             TextInputTile(
-              title: Text("主机"),
-              subtitle: Text("example.org"),
+              title: Text(S.of(context).host),
+              subtitle: Text(
+                  websiteHost.isEmpty ? S.of(context).not_set : websiteHost),
               leading: Icon(Icons.home),
               hintText: "example.org",
               onChanged: (value) {
-                debugPrint(value);
+                setState(() {
+                  websiteHost = value;
+                });
               },
             ),
             SwitchListTile(
-              title: Text("协议"),
-              subtitle: Text("使用更安全的HTTPS"),
+              title: Text(S.of(context).protocol),
+              subtitle: Text(S.of(context).protocol_https),
               secondary: Icon(Icons.http),
-              value: true,
-              onChanged: (value) {},
+              value: protocol == WebsiteProtocol.HTTPS.index,
+              onChanged: (value) {
+                setState(() {
+                  protocol = value
+                      ? WebsiteProtocol.HTTPS.index
+                      : WebsiteProtocol.HTTP.index;
+                });
+              },
             ),
             PopupMenuButton(
               itemBuilder: (context) => [
@@ -81,32 +93,45 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
                     child: Text("Danbooru"), value: WebsiteType.DANBOORU.index),
               ],
               child: ListTile(
-                title: Text("网站类型"),
-                subtitle: Text("Ehentai"),
+                title: Text(S.of(context).site_type),
+                subtitle: Text(websiteTypeName[websiteType]),
                 leading: Icon(Icons.search),
               ),
+              onSelected: (value) {
+                setState(() {
+                  websiteType = value;
+                });
+              },
             ),
             Divider(),
-            SummaryTile("高级设置(可选)"),
+            SummaryTile(S.of(context).advanced_settings),
             TextInputTile(
               leading: Icon(Icons.flag),
-              title: Text("安全Host"),
-              subtitle: Text("使用安全host来避免某些地区DNS污染"),
-              onChanged: (value) {},
+              title: Text(S.of(context).trusted_host),
+              subtitle: Text(trustHost.isEmpty
+                  ? S.of(context).trusted_host_desc
+                  : trustHost),
+              onChanged: (value) {
+                setState(() {
+                  trustHost = value;
+                });
+              },
             ),
             ListTile(
               leading: Icon(Icons.autorenew_sharp),
-              title: Text("自动获取可信Host"),
-              onTap: () {
-
-              },
+              title: Text(S.of(context).trusted_host_auto),
+              onTap: () {},
             ),
             SwitchListTile(
-              title: Text("域前置"),
-              subtitle: Text("用于突破部分地区SNI封锁"),
+              title: Text(S.of(context).domain_fronting),
+              subtitle: Text(S.of(context).domain_fronting_desc),
               secondary: Icon(Icons.airplanemode_active_rounded),
-              value: true,
-              onChanged: (value) {},
+              value: domainFronting,
+              onChanged: (value) {
+                setState(() {
+                  domainFronting = value;
+                });
+              },
             ),
           ],
         ),

@@ -1,3 +1,20 @@
 {
-  "@@locale": "zh_CN"
+  "@@locale": "zh_CN",
+  "back": "返回",
+  "not_set": "未指定",
+  "website_manager": "网站管理",
+  "add_website": "添加网站",
+  "basic_settings": "基础设置",
+  "website_nickname": "网站昵称",
+  "website_settings": "网站设置",
+  "host": "主机",
+  "protocol": "协议",
+  "protocol_https": "使用更安全的HTTPS协议",
+  "site_type": "站点类型",
+  "advanced_settings": "高级设置(可选)",
+  "trusted_host": "信任主机地址",
+  "trusted_host_desc": "解决某些地区的 DNS 污染问题",
+  "trusted_host_auto": "自动获取信任主机地址",
+  "domain_fronting": "域前置",
+  "domain_fronting_desc": "绕过 SNI 封锁"
 }

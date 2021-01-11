@@ -18,7 +18,7 @@ dependencies:
   flutter_mobx: ^1.1.0+2
   floor: ^0.14.0
   flutter_slidable: ^0.5.7
-  intl: ^0.15.7
+  intl: ^0.16.1
 
   cupertino_icons: ^1.0.0
 
@@ -27,7 +27,6 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^1.7.3
   mobx_codegen: ^1.1.2
-  intl_translation: ^0.17.2
 
 flutter:
   uses-material-design: true

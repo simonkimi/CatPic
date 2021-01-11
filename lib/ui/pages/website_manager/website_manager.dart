@@ -1,3 +1,4 @@
+import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +28,9 @@ class _WebsiteManagerState extends State<WebsiteManager> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {},
-          tooltip: "返回",
+          tooltip: S.of(context).back,
         ),
-        title: Text("网站管理"),
+        title: Text(S.of(context).website_manager),
         actions: [
 
         ],

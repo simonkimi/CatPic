@@ -1,3 +1,20 @@
 {
-  "@@locale": "en"
+  "@@locale": "en",
+  "back": "back",
+  "not_set": "Not set yet",
+  "website_manager": "Website Manager",
+  "add_website": "Add Website",
+  "basic_settings": "BASIC SETTINGS",
+  "website_nickname": "Nickname",
+  "website_settings": "WEBSITE SETTINGS",
+  "host": "Host",
+  "protocol": "Protocol",
+  "protocol_https": "Using more secure HTTPS protocol",
+  "site_type": "Site type",
+  "advanced_settings": "ADVANCED SETTINGS (optional)",
+  "trusted_host": "Trusted host",
+  "trusted_host_auto": "Get trusted host automatically",
+  "trusted_host_desc": "Workaround DNS poisoning in some nations",
+  "domain_fronting": "Domain Fronting",
+  "domain_fronting_desc": "Bypass SNI blocking"
 }

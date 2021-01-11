@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         S.delegate
       ],
       supportedLocales: [
+        Locale('en'),
         Locale('zh', 'CN'),
       ],
       home: WebsiteAddPage(),

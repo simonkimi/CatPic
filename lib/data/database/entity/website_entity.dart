@@ -39,3 +39,11 @@ class WebsiteEntity {
 enum WebsiteProtocol { HTTP, HTTPS }
 
 enum WebsiteType { EHENTAI, GELBOORU, MOEBOORU, DANBOORU }
+
+Map<int, String> websiteTypeName = {
+  WebsiteType.EHENTAI.index: "EHentai",
+  WebsiteType.GELBOORU.index: "Gelbooru",
+  WebsiteType.MOEBOORU.index: "Moebooru",
+  WebsiteType.DANBOORU.index: "Danbooru",
+
+};

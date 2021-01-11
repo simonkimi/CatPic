@@ -21,6 +21,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
-
+    "add_website" : MessageLookupByLibrary.simpleMessage("添加网站"),
+    "advanced_settings" : MessageLookupByLibrary.simpleMessage("高级设置(可选)"),
+    "back" : MessageLookupByLibrary.simpleMessage("返回"),
+    "basic_settings" : MessageLookupByLibrary.simpleMessage("基础设置"),
+    "domain_fronting" : MessageLookupByLibrary.simpleMessage("域前置"),
+    "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("绕过 SNI 封锁"),
+    "host" : MessageLookupByLibrary.simpleMessage("主机"),
+    "not_set" : MessageLookupByLibrary.simpleMessage("未指定"),
+    "protocol" : MessageLookupByLibrary.simpleMessage("协议"),
+    "protocol_https" : MessageLookupByLibrary.simpleMessage("使用更安全的HTTPS协议"),
+    "site_type" : MessageLookupByLibrary.simpleMessage("站点类型"),
+    "trusted_host" : MessageLookupByLibrary.simpleMessage("信任主机地址"),
+    "trusted_host_auto" : MessageLookupByLibrary.simpleMessage("自动获取信任主机地址"),
+    "trusted_host_desc" : MessageLookupByLibrary.simpleMessage("解决某些地区的 DNS 污染问题"),
+    "website_manager" : MessageLookupByLibrary.simpleMessage("网站管理"),
+    "website_nickname" : MessageLookupByLibrary.simpleMessage("网站昵称"),
+    "website_settings" : MessageLookupByLibrary.simpleMessage("网站设置")
   };
 }
