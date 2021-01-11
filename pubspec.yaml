@@ -35,3 +35,7 @@ flutter:
   assets:
     - assets/svgs/
     - assets/icons/
+
+
+flutter_intl:
+  enabled: true
