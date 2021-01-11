@@ -6,7 +6,7 @@ import 'package:floor/floor.dart';
 /// [host] 网站host
 /// [protocol] 协议, 来源于[WebsiteProtocol]
 /// [type] 网站类型, 来源于[WebsiteType]
-/// [trustDns] 是否使用安全dns
+/// [trustHost] 可信host
 /// [useDomainFronting] 是否使用域前置
 @entity
 class WebsiteEntity {
@@ -18,7 +18,7 @@ class WebsiteEntity {
   final int protocol;
   final int type;
 
-  final String trustDns;
+  final String trustHost;
   final bool useDomainFronting;
 
   final String cookies;
@@ -30,7 +30,7 @@ class WebsiteEntity {
     this.host,
     this.protocol,
     this.type,
-    this.trustDns,
+    this.trustHost,
     this.useDomainFronting,
     this.cookies
   });

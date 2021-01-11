@@ -22,10 +22,10 @@ class DioBuilder {
 
     if (websiteEntity.useDomainFronting && Localizations.localeOf(context).countryCode == "CN") {
       dio.options.baseUrl = websiteEntity.host;
-      dio.options.headers['Host'] = 'https://${websiteEntity.trustDns}/';
-    } if (websiteEntity.trustDns.isNotEmpty) {
+      dio.options.headers['Host'] = 'https://${websiteEntity.trustHost}/';
+    } if (websiteEntity.trustHost.isNotEmpty) {
       var protocol = websiteEntity.protocol == WebsiteProtocol.HTTP.index ? 'http': 'https';
-      dio.options.baseUrl = '$protocol://${websiteEntity.trustDns}/';
+      dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
     } else {
       var protocol = websiteEntity.protocol == WebsiteProtocol.HTTP.index ? 'http': 'https';
       dio.options.baseUrl = '$protocol://${websiteEntity.host}/';

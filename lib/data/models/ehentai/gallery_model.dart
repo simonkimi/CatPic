@@ -42,7 +42,7 @@ class PreviewImage {
 
   @override
   String toString() {
-    return '${image} ${height} ${positioning} ${target}';
+    return '$image $height $positioning $target';
   }
 }
 
