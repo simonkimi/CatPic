@@ -17,17 +17,8 @@ class WebsiteAddPage extends StatefulWidget {
   _WebsiteAddPageState createState() => _WebsiteAddPageState();
 }
 
-class _WebsiteAddPageState extends State<WebsiteAddPage> {
-  String websiteName;
-  String websiteHost;
-  int protocol;
-  int websiteType;
-  String trustHost;
-  bool domainFronting;
-
-  bool extendLayout;
-  bool displayOriginal;
-
+class _WebsiteAddPageState extends State<WebsiteAddPage>
+    with _WebsiteAddPageMixin {
   @override
   void initState() {
     super.initState();
@@ -44,79 +35,62 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).add_website),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            EventBusUtil().bus.fire(EventSiteChange());
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {
-                var cancelFunc = BotToast.showLoading();
-                saveWebsite(context).then((_) {
-                  cancelFunc();
-                  EventBusUtil().bus.fire(EventSiteChange());
-                  Navigator.pop(context);
-                });
-              })
+      appBar: buildAppBar(context),
+      body: buildBody(),
+    );
+  }
+
+  SafeArea buildBody() {
+    return SafeArea(
+      child: ListView(
+        children: [
+          ...buildBasicSetting(),
+          Divider(),
+          ...buildWebsiteSetting(),
+          Divider(),
+          ...buildDisplaySetting(),
+          Divider(),
+          ...buildAdvanceSetting(),
         ],
       ),
-      body: SafeArea(
-        child: ListView(
-          children: [
-            ...buildBasicSetting(),
-            Divider(),
-            ...buildWebsiteSetting(),
-            Divider(),
-            ...buildDisplaySetting(),
-            Divider(),
-            ...buildAdvanceSetting(),
-          ],
-        ),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(S.of(context).add_website),
+      // 左上角的返回按钮
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          EventBusUtil().bus.fire(EventSiteChange());
+          Navigator.pop(context);
+        },
       ),
+      actions: [
+        // 右上角的确认按钮
+        IconButton(
+          icon: Icon(Icons.check),
+          onPressed: () {
+            var cancelFunc = BotToast.showLoading();
+            // 保存网站后返回并且刷新页面
+            saveWebsite().then((_) {
+              cancelFunc();
+              EventBusUtil().bus.fire(EventSiteChange());
+              Navigator.pop(context);
+            });
+          },
+        )
+      ],
     );
   }
 
-  Future<void> saveWebsite(BuildContext context) async {
-    var websiteDao = DatabaseHelper().websiteDao;
-    var entity = WebsiteEntity(
-      cookies: '',
-      displayOriginal: displayOriginal,
-      extendLayout: extendLayout,
-      host: websiteHost,
-      name: websiteName,
-      protocol: protocol,
-      trustHost: trustHost,
-      type: websiteType,
-      useDomainFronting: domainFronting,
-      favicon: Uint8List.fromList([]),
-    );
-    var id = await websiteDao.addSite(entity);
-
-    getFavicon(
-      context: context,
-      host: websiteHost,
-      protocol: protocol,
-      trustHost: trustHost,
-      sni: domainFronting,
-    ).then((favicon) {
-      websiteDao.getById(id).then((e) {
-        e.favicon = favicon;
-        print("下载Favicon完成, 长度: ${e.favicon.length}");
-        websiteDao.updateSite(e);
-      });
-    });
-  }
-
+  /// 构建基础设置
   List<Widget> buildBasicSetting() {
     return [
       SummaryTile(S.of(context).basic_settings),
       TextInputTile(
+        defaultValue: websiteName,
         title: Text(S.of(context).website_nickname),
         subtitle:
             Text(websiteName.isEmpty ? S.of(context).not_set : websiteName),
@@ -130,6 +104,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     ];
   }
 
+  /// 构建网络设置
   List<Widget> buildWebsiteSetting() {
     return [
       SummaryTile(S.of(context).website_settings),
@@ -139,6 +114,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
             Text(websiteHost.isEmpty ? S.of(context).not_set : websiteHost),
         leading: Icon(Icons.home),
         hintText: 'example.org',
+        defaultValue: websiteHost,
         onChanged: (value) {
           var v = value;
           if (v.startsWith('https://')) {
@@ -193,6 +169,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     ];
   }
 
+  /// 构建显示设置
   List<Widget> buildDisplaySetting() {
     return [
       SummaryTile(S.of(context).display_setting),
@@ -222,12 +199,14 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     ];
   }
 
+// 构建高级设置
   List<Widget> buildAdvanceSetting() {
     return [
       SummaryTile(S.of(context).advanced_settings),
       TextInputTile(
         leading: Icon(Icons.flag),
         title: Text(S.of(context).trusted_host),
+        defaultValue: trustHost,
         subtitle: Text(
             trustHost.isEmpty ? S.of(context).trusted_host_desc : trustHost),
         onChanged: (value) {
@@ -267,5 +246,50 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
         },
       ),
     ];
+  }
+}
+
+mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
+  String websiteName;
+  String websiteHost;
+  int protocol;
+  int websiteType;
+  String trustHost;
+  bool domainFronting;
+
+  bool extendLayout;
+  bool displayOriginal;
+
+  /// 保存网站
+  Future<void> saveWebsite() async {
+    var websiteDao = DatabaseHelper().websiteDao;
+    var entity = WebsiteEntity(
+      cookies: '',
+      displayOriginal: displayOriginal,
+      extendLayout: extendLayout,
+      host: websiteHost,
+      name: websiteName,
+      protocol: protocol,
+      trustHost: trustHost,
+      type: websiteType,
+      useDomainFronting: domainFronting,
+      favicon: Uint8List.fromList([]),
+    );
+    var id = await websiteDao.addSite(entity);
+
+    getFavicon(
+      host: websiteHost,
+      protocol: protocol,
+      trustHost: trustHost,
+      sni: domainFronting,
+    ).then((favicon) {
+      websiteDao.getById(id).then((e) {
+        e.favicon = favicon;
+        print("下载Favicon完成, 长度: ${e.favicon.length}");
+        websiteDao.updateSite(e).then((value) {
+          EventBusUtil().bus.fire(EventSiteChange());
+        });
+      });
+    });
   }
 }

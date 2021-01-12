@@ -28,7 +28,6 @@ Future<String> getTrustHost(String url) async {
 }
 
 Future<Uint8List> getFavicon({
-  @required BuildContext context,
   @required int protocol,
   @required String host,
   @required String trustHost,
@@ -36,7 +35,6 @@ Future<Uint8List> getFavicon({
 }) async {
   try {
     var dio = DioBuilder.get(
-      context: context,
       protocol: protocol,
       host: host,
       trustHost: trustHost,

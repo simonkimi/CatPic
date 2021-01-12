@@ -38,21 +38,20 @@ class DioBuilder {
   }
 
   static Dio get({
-    @required BuildContext context,
     @required int protocol,
     @required String host,
     @required String trustHost,
     @required bool sni,
   }) {
     var dio = buildBaseDio();
-    var p = protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
-    if (sni && Localizations.localeOf(context).countryCode == 'CN') {
-      dio.options.baseUrl = '$p://$trustHost/';
+    var protocolStr = protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
+    if (sni) {
+      dio.options.baseUrl = '$protocolStr://$trustHost/';
       dio.options.headers['Host'] = '$host';
     } else if (trustHost.isNotEmpty) {
-      dio.options.baseUrl = '$p://$trustHost/';
+      dio.options.baseUrl = '$protocolStr://$trustHost/';
     } else {
-      dio.options.baseUrl = '$p://$host/';
+      dio.options.baseUrl = '$protocolStr://$host/';
     }
     return dio;
   }
