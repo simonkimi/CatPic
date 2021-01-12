@@ -14,9 +14,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    final botToastBuilder = BotToastInit();
-
     return MaterialApp(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
