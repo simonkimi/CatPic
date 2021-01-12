@@ -26,6 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back" : MessageLookupByLibrary.simpleMessage("返回"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("基础设置"),
     "compact_layout" : MessageLookupByLibrary.simpleMessage("仅显示封面图片与分辨率"),
+    "display_original" : MessageLookupByLibrary.simpleMessage("详情面展示大图"),
     "display_setting" : MessageLookupByLibrary.simpleMessage("显示设置"),
     "domain_fronting" : MessageLookupByLibrary.simpleMessage("域前置"),
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("绕过 SNI 封锁"),

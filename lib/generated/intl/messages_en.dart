@@ -26,6 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back" : MessageLookupByLibrary.simpleMessage("back"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("BASIC SETTINGS"),
     "compact_layout" : MessageLookupByLibrary.simpleMessage("Cover image and resolution only"),
+    "display_original" : MessageLookupByLibrary.simpleMessage("The details page shows a large picture"),
     "display_setting" : MessageLookupByLibrary.simpleMessage("DISPLAY SETTINGS"),
     "domain_fronting" : MessageLookupByLibrary.simpleMessage("Domain Fronting"),
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("Bypass SNI blocking"),

@@ -254,6 +254,16 @@ class S {
       args: [],
     );
   }
+
+  /// `The details page shows a large picture`
+  String get display_original {
+    return Intl.message(
+      'The details page shows a large picture',
+      name: 'display_original',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

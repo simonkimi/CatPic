@@ -20,6 +20,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
   bool domainFronting;
 
   bool extendLayout;
+  bool displayOriginal;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     trustHost = "";
     domainFronting = false;
     extendLayout = false;
+    displayOriginal = false;
   }
 
   @override
@@ -95,8 +97,18 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
         leading: Icon(Icons.home),
         hintText: "example.org",
         onChanged: (value) {
+          var v = value;
+          if (v.startsWith('https://')) {
+            v = v.substring('https://'.length, v.length);
+          }
+          if (v.startsWith('http://')) {
+            v = v.substring('http://'.length, v.length);
+          }
+          if (v.endsWith('/')) {
+            v = v.substring(0, v.length - 1);
+          }
           setState(() {
-            websiteHost = value;
+            websiteHost = v;
           });
         },
       ),
@@ -147,10 +159,20 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
         subtitle: Text(extendLayout
             ? S.of(context).extend_layout
             : S.of(context).compact_layout),
-        secondary: Icon(Icons.filter),
+        secondary: Icon(Icons.art_track),
         onChanged: (value) {
           setState(() {
             extendLayout = value;
+          });
+        },
+      ),
+      SwitchListTile(
+        title: Text(S.of(context).display_original),
+        value: displayOriginal,
+        secondary: Icon(Icons.filter),
+        onChanged: (value) {
+          setState(() {
+            displayOriginal = value;
           });
         },
       )

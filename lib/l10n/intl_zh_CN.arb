@@ -21,5 +21,6 @@
   "display_setting": "显示设置",
   "use_extend_layout": "使用扩展布局",
   "extend_layout": "将会显示tags, 评分, 上传时间等",
-  "compact_layout": "仅显示封面图片与分辨率"
+  "compact_layout": "仅显示封面图片与分辨率",
+  "display_original": "详情面展示大图"
 }

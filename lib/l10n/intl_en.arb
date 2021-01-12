@@ -21,5 +21,6 @@
   "display_setting": "DISPLAY SETTINGS",
   "use_extend_layout": "Use extended layout",
   "extend_layout": "Tags, ratings, uploader, etc.",
-  "compact_layout": "Cover image and resolution only"
+  "compact_layout": "Cover image and resolution only",
+  "display_original": "The details page shows a large picture"
 }
