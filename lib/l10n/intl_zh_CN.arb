@@ -13,8 +13,13 @@
   "site_type": "站点类型",
   "advanced_settings": "高级设置(可选)",
   "trusted_host": "信任主机地址",
-  "trusted_host_desc": "解决某些地区的 DNS 污染问题",
   "trusted_host_auto": "自动获取信任主机地址",
+  "trusted_host_auto_failed": "获取主机地址失败",
+  "trusted_host_desc": "解决某些地区的 DNS 污染问题",
   "domain_fronting": "域前置",
-  "domain_fronting_desc": "绕过 SNI 封锁"
+  "domain_fronting_desc": "绕过 SNI 封锁",
+  "display_setting": "显示设置",
+  "use_extend_layout": "使用扩展布局",
+  "extend_layout": "将会显示tags, 评分, 上传时间等",
+  "compact_layout": "仅显示封面图片与分辨率"
 }

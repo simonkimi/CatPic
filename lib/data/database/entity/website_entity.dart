@@ -8,9 +8,10 @@ import 'package:floor/floor.dart';
 /// [type] 网站类型, 来源于[WebsiteType]
 /// [trustHost] 可信host
 /// [useDomainFronting] 是否使用域前置
-@entity
+
+@Entity(tableName: "WebsiteEntity")
 class WebsiteEntity {
-  @primaryKey
+  @PrimaryKey(autoGenerate: true)
   final int id;
 
   final String name;

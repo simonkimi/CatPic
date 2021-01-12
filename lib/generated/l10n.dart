@@ -175,6 +175,16 @@ class S {
     );
   }
 
+  /// `Get trusted host failed`
+  String get trusted_host_auto_failed {
+    return Intl.message(
+      'Get trusted host failed',
+      name: 'trusted_host_auto_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Workaround DNS poisoning in some nations`
   String get trusted_host_desc {
     return Intl.message(
@@ -200,6 +210,46 @@ class S {
     return Intl.message(
       'Bypass SNI blocking',
       name: 'domain_fronting_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DISPLAY SETTINGS`
+  String get display_setting {
+    return Intl.message(
+      'DISPLAY SETTINGS',
+      name: 'display_setting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use extended layout`
+  String get use_extend_layout {
+    return Intl.message(
+      'Use extended layout',
+      name: 'use_extend_layout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tags, ratings, uploader, etc.`
+  String get extend_layout {
+    return Intl.message(
+      'Tags, ratings, uploader, etc.',
+      name: 'extend_layout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cover image and resolution only`
+  String get compact_layout {
+    return Intl.message(
+      'Cover image and resolution only',
+      name: 'compact_layout',
       desc: '',
       args: [],
     );

@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,9 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    final botToastBuilder = BotToastInit();
+
     return MaterialApp(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
@@ -22,6 +26,8 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         S.delegate
       ],
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
       supportedLocales: [
         Locale('en'),
         Locale('zh', 'CN'),

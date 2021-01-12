@@ -14,7 +14,12 @@
   "advanced_settings": "ADVANCED SETTINGS (optional)",
   "trusted_host": "Trusted host",
   "trusted_host_auto": "Get trusted host automatically",
+  "trusted_host_auto_failed": "Get trusted host failed",
   "trusted_host_desc": "Workaround DNS poisoning in some nations",
   "domain_fronting": "Domain Fronting",
-  "domain_fronting_desc": "Bypass SNI blocking"
+  "domain_fronting_desc": "Bypass SNI blocking",
+  "display_setting": "DISPLAY SETTINGS",
+  "use_extend_layout": "Use extended layout",
+  "extend_layout": "Tags, ratings, uploader, etc.",
+  "compact_layout": "Cover image and resolution only"
 }
