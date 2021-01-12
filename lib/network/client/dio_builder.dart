@@ -26,12 +26,10 @@ class DioBuilder {
     var dio = buildBaseDio();
     var protocol =
         websiteEntity.protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
-    if (websiteEntity.useDomainFronting &&
-        Localizations.localeOf(context).countryCode == 'CN') {
-      dio.options.baseUrl = '$protocol://${websiteEntity.host}/';
-      dio.options.headers['Host'] = 'https://${websiteEntity.trustHost}/';
-    }
-    if (websiteEntity.trustHost.isNotEmpty) {
+    if (websiteEntity.useDomainFronting) {
+      dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
+      dio.options.headers['Host'] = '${websiteEntity.host}';
+    } else if (websiteEntity.trustHost.isNotEmpty) {
       dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
     } else {
       dio.options.baseUrl = '$protocol://${websiteEntity.host}/';
@@ -49,10 +47,9 @@ class DioBuilder {
     var dio = buildBaseDio();
     var p = protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
     if (sni && Localizations.localeOf(context).countryCode == 'CN') {
-      dio.options.baseUrl = '$p://$host/';
-      dio.options.headers['Host'] = '$trustHost';
-    }
-    if (trustHost.isNotEmpty) {
+      dio.options.baseUrl = '$p://$trustHost/';
+      dio.options.headers['Host'] = '$host';
+    } else if (trustHost.isNotEmpty) {
       dio.options.baseUrl = '$p://$trustHost/';
     } else {
       dio.options.baseUrl = '$p://$host/';

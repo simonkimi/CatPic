@@ -107,6 +107,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     ).then((favicon) {
       websiteDao.getById(id).then((e) {
         e.favicon = favicon;
+        print("下载Favicon完成, 长度: ${e.favicon.length}");
         websiteDao.updateSite(e);
       });
     });

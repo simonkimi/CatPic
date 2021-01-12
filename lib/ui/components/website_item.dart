@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class WebsiteItem extends StatelessWidget {
   final Widget title;
   final Widget subtitle;
-  final Widget leadingImage;
+  final ImageProvider leadingImage;
   final Function onSettingPress;
   final Function onDeletePress;
 
@@ -26,7 +26,7 @@ class WebsiteItem extends StatelessWidget {
           title: title,
           subtitle: subtitle,
           leading: CircleAvatar(
-            child: leadingImage,
+            backgroundImage: leadingImage,
             backgroundColor: Colors.white,
           ),
         ),

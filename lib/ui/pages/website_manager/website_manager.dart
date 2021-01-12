@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
@@ -71,9 +69,9 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
           var protocol =
               e.protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
           var subTitle = '$protocol://${e.host}/';
-          Image favIcon;
+          ImageProvider favIcon;
           if (e.favicon.isNotEmpty) {
-            favIcon = Image.memory(e.favicon, fit: BoxFit.contain);
+            favIcon = MemoryImage(e.favicon);
           }
           return WebsiteItem(
             title: Text(title),

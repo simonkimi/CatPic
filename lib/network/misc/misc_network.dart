@@ -8,9 +8,13 @@ import 'package:flutter/cupertino.dart';
 Future<String> getTrustHost(String url) async {
   try {
     var query = 'https://cloudflare-dns.com/dns-query?name=$url&type=A';
-    var req = await Dio().get(query,
+    var dio = Dio()..options.connectTimeout = 10 * 1000;
+
+    var req = await dio.get<String>(query,
         options: Options(headers: {'Accept': 'application/dns-json'}));
+
     var dataJson = json.decode(req.data);
+
     for (var host in dataJson['Answer']) {
       var reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
       if (reg.hasMatch(host['data'])) {
@@ -42,6 +46,7 @@ Future<Uint8List> getFavicon({
         options: Options(responseType: ResponseType.bytes));
     return Uint8List.fromList(req.data);
   } catch (e) {
+    print("下载Favicon失败: $e");
     return Uint8List.fromList([]);
   }
 }
