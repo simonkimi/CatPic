@@ -3,15 +3,18 @@ import 'package:floor/floor.dart';
 
 @dao
 abstract class WebsiteDao {
-  @Query("SELECT * FROM WebsiteEntity")
+  @Query('SELECT * FROM WebsiteEntity')
   Future<List<WebsiteEntity>> getAll();
 
-  @Query("SELECT * FROM WebsiteEntity where id = :id")
+  @Query('SELECT * FROM WebsiteEntity where id = :id')
   Future<WebsiteEntity> getById(int id);
 
   @insert
-  Future<List<int>> add(List<WebsiteEntity> entities);
+  Future<int> addSite(WebsiteEntity entity);
 
   @delete
-  Future<void> remove(List<WebsiteEntity> entities);
+  Future<void> removeSite(List<WebsiteEntity> entities);
+
+  @update
+  Future<void> updateSite(WebsiteEntity entity);
 }

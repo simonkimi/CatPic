@@ -16,41 +16,41 @@ class _MainDrawerState extends State<MainDrawer> {
             padding: EdgeInsets.zero,
             children: [
               UserAccountsDrawerHeader(
-                accountName: Text("E-Hentai"),
-                accountEmail: Text("www.e-hentai.org"),
+                accountName: Text('E-Hentai'),
+                accountEmail: Text('www.e-hentai.org'),
                 currentAccountPicture: Icon(Icons.android),
                 onDetailsPressed: () {},
                 otherAccountsPictures: [],
               ),
               ListTile(
                 leading: Icon(Icons.home),
-                title: Text("主页"),
+                title: Text('主页'),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.local_fire_department),
-                title: Text("热门"),
+                title: Text('热门'),
                 onTap: () {},
               ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.favorite),
-                title: Text("收藏"),
+                title: Text('收藏'),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.history),
-                title: Text("历史"),
+                title: Text('历史'),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.download_rounded),
-                title: Text("下载"),
+                title: Text('下载'),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.settings),
-                title: Text("设置"),
+                title: Text('设置'),
                 onTap: () {},
               )
             ],

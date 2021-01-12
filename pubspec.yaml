@@ -20,6 +20,7 @@ dependencies:
   flutter_slidable: ^0.5.7
   intl: ^0.16.1
   bot_toast: ^3.0.5
+  event_bus: ^1.1.1
 
 
 dev_dependencies:

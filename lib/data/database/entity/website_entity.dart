@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:floor/floor.dart';
+import 'package:flutter/cupertino.dart';
 
 /// 网站的类型
 /// [id] 主键
@@ -9,7 +12,7 @@ import 'package:floor/floor.dart';
 /// [trustHost] 可信host
 /// [useDomainFronting] 是否使用域前置
 
-@Entity(tableName: "WebsiteEntity")
+@Entity(tableName: 'WebsiteEntity')
 class WebsiteEntity {
   @PrimaryKey(autoGenerate: true)
   final int id;
@@ -24,16 +27,23 @@ class WebsiteEntity {
 
   final String cookies;
 
+  final bool extendLayout;
+  final bool displayOriginal;
+
+  Uint8List favicon;
 
   WebsiteEntity({
     this.id,
-    this.name,
-    this.host,
-    this.protocol,
-    this.type,
-    this.trustHost,
-    this.useDomainFronting,
-    this.cookies
+    @required this.name,
+    @required this.host,
+    @required this.protocol,
+    @required this.type,
+    @required this.trustHost,
+    @required this.useDomainFronting,
+    @required this.extendLayout,
+    @required this.displayOriginal,
+    @required this.favicon,
+    this.cookies,
   });
 }
 
@@ -42,9 +52,8 @@ enum WebsiteProtocol { HTTP, HTTPS }
 enum WebsiteType { EHENTAI, GELBOORU, MOEBOORU, DANBOORU }
 
 Map<int, String> websiteTypeName = {
-  WebsiteType.EHENTAI.index: "EHentai",
-  WebsiteType.GELBOORU.index: "Gelbooru",
-  WebsiteType.MOEBOORU.index: "Moebooru",
-  WebsiteType.DANBOORU.index: "Danbooru",
-
+  WebsiteType.EHENTAI.index: 'EHentai',
+  WebsiteType.GELBOORU.index: 'Gelbooru',
+  WebsiteType.MOEBOORU.index: 'Moebooru',
+  WebsiteType.DANBOORU.index: 'Danbooru',
 };

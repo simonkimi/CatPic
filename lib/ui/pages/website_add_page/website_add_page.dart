@@ -1,12 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/network/misc/pure_dns.dart';
+import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
+import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 class WebsiteAddPage extends StatefulWidget {
+  static String routeName = 'WebsiteAddPage';
+
   @override
   _WebsiteAddPageState createState() => _WebsiteAddPageState();
 }
@@ -25,11 +31,11 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
   @override
   void initState() {
     super.initState();
-    websiteName = "";
-    websiteHost = "";
+    websiteName = '';
+    websiteHost = '';
     protocol = WebsiteProtocol.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
-    trustHost = "";
+    trustHost = '';
     domainFronting = false;
     extendLayout = false;
     displayOriginal = false;
@@ -42,13 +48,21 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
         title: Text(S.of(context).add_website),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {},
+          onPressed: () {
+            EventBusUtil().bus.fire(EventSiteChange());
+            Navigator.pop(context);
+          },
         ),
         actions: [
           IconButton(
               icon: Icon(Icons.check),
               onPressed: () {
-                saveWebsite();
+                var cancelFunc = BotToast.showLoading();
+                saveWebsite(context).then((_) {
+                  cancelFunc();
+                  EventBusUtil().bus.fire(EventSiteChange());
+                  Navigator.pop(context);
+                });
               })
         ],
       ),
@@ -68,7 +82,35 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
     );
   }
 
-  Future<void> saveWebsite() async {}
+  Future<void> saveWebsite(BuildContext context) async {
+    var websiteDao = DatabaseHelper().websiteDao;
+    var entity = WebsiteEntity(
+      cookies: '',
+      displayOriginal: displayOriginal,
+      extendLayout: extendLayout,
+      host: websiteHost,
+      name: websiteName,
+      protocol: protocol,
+      trustHost: trustHost,
+      type: websiteType,
+      useDomainFronting: domainFronting,
+      favicon: Uint8List.fromList([]),
+    );
+    var id = await websiteDao.addSite(entity);
+
+    getFavicon(
+      context: context,
+      host: websiteHost,
+      protocol: protocol,
+      trustHost: trustHost,
+      sni: domainFronting,
+    ).then((favicon) {
+      websiteDao.getById(id).then((e) {
+        e.favicon = favicon;
+        websiteDao.updateSite(e);
+      });
+    });
+  }
 
   List<Widget> buildBasicSetting() {
     return [
@@ -95,7 +137,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
         subtitle:
             Text(websiteHost.isEmpty ? S.of(context).not_set : websiteHost),
         leading: Icon(Icons.home),
-        hintText: "example.org",
+        hintText: 'example.org',
         onChanged: (value) {
           var v = value;
           if (v.startsWith('https://')) {
@@ -128,13 +170,13 @@ class _WebsiteAddPageState extends State<WebsiteAddPage> {
       PopupMenuButton(
         itemBuilder: (context) => [
           PopupMenuItem(
-              child: Text("EHentai"), value: WebsiteType.EHENTAI.index),
+              child: Text('EHentai'), value: WebsiteType.EHENTAI.index),
           PopupMenuItem(
-              child: Text("Gelbooru"), value: WebsiteType.GELBOORU.index),
+              child: Text('Gelbooru'), value: WebsiteType.GELBOORU.index),
           PopupMenuItem(
-              child: Text("Moebooru"), value: WebsiteType.MOEBOORU.index),
+              child: Text('Moebooru'), value: WebsiteType.MOEBOORU.index),
           PopupMenuItem(
-              child: Text("Danbooru"), value: WebsiteType.DANBOORU.index),
+              child: Text('Danbooru'), value: WebsiteType.DANBOORU.index),
         ],
         child: ListTile(
           title: Text(S.of(context).site_type),

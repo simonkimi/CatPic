@@ -13,7 +13,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("E-Hentai"),
+        title: Text('E-Hentai'),
         backgroundColor: Theme.of(context).appBarTheme.color,
         leading: Builder(
           builder: (context) => IconButton(
@@ -21,14 +21,14 @@ class _MainPageState extends State<MainPage> {
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
-            tooltip: "菜单",
+            tooltip: '菜单',
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {},
-            tooltip: "搜索",
+            tooltip: '搜索',
           )
         ],
       ),
