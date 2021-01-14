@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("Bypass SNI blocking"),
     "extend_layout" : MessageLookupByLibrary.simpleMessage("Tags, ratings, uploader, etc."),
     "host" : MessageLookupByLibrary.simpleMessage("Host"),
+    "no_website" : MessageLookupByLibrary.simpleMessage("There is no website, go and add one!"),
     "not_set" : MessageLookupByLibrary.simpleMessage("Not set yet"),
     "protocol" : MessageLookupByLibrary.simpleMessage("Protocol"),
     "protocol_https" : MessageLookupByLibrary.simpleMessage("Using more secure HTTPS protocol"),

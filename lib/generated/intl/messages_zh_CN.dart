@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("绕过 SNI 封锁"),
     "extend_layout" : MessageLookupByLibrary.simpleMessage("将会显示tags, 评分, 上传时间等"),
     "host" : MessageLookupByLibrary.simpleMessage("主机"),
+    "no_website" : MessageLookupByLibrary.simpleMessage("还没有网站, 快去添加一个!"),
     "not_set" : MessageLookupByLibrary.simpleMessage("未指定"),
     "protocol" : MessageLookupByLibrary.simpleMessage("协议"),
     "protocol_https" : MessageLookupByLibrary.simpleMessage("使用更安全的HTTPS协议"),

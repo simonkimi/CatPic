@@ -1,5 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/database/sp_helper.dart';
 import 'package:catpic/themes.dart' as theme;
+import 'package:catpic/ui/pages/main_page/main_page.dart';
+import 'package:catpic/ui/pages/main_page/store/main_store.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +13,9 @@ import 'generated/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper().initDataBase();
+  await DatabaseHelper().init();
+  await SPHelper().init();
+  await mainStore.init();
   runApp(MyApp());
 }
 
@@ -32,10 +37,11 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: WebsiteManagerPage(),
+      home: MainPage(),
       routes: {
         WebsiteManagerPage.routeName: (context) => WebsiteManagerPage(),
         WebsiteAddPage.routeName: (context) => WebsiteAddPage(),
+        MainPage.routeName: (context) => MainPage()
       },
     );
   }

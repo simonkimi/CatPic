@@ -4,6 +4,7 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/utils/event_util.dart';
+import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
 class WebsiteManagerPage extends StatefulWidget {
@@ -66,8 +67,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   List<Widget> buildWebsiteList() {
     return websiteList?.map((e) {
           var title = e.name;
-          var protocol =
-              e.protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
+          var protocol = getProtocolString(e.protocol);
           var subTitle = '$protocol://${e.host}/';
           ImageProvider favIcon;
           if (e.favicon.isNotEmpty) {

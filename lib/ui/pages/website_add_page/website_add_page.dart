@@ -72,10 +72,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         IconButton(
           icon: Icon(Icons.check),
           onPressed: () {
-            var cancelFunc = BotToast.showLoading();
             // 保存网站后返回并且刷新页面
             saveWebsite().then((_) {
-              cancelFunc();
               EventBusUtil().bus.fire(EventSiteChange());
               Navigator.pop(context);
             });

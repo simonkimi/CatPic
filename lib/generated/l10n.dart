@@ -264,6 +264,16 @@ class S {
       args: [],
     );
   }
+
+  /// `There is no website, go and add one!`
+  String get no_website {
+    return Intl.message(
+      'There is no website, go and add one!',
+      name: 'no_website',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

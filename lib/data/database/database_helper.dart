@@ -8,11 +8,9 @@ class DatabaseHelper {
 
   AppDatabase _database;
 
-  DatabaseHelper._internal() {
-    initDataBase();
-  }
+  DatabaseHelper._internal();
 
-  initDataBase() async {
+  Future<void> init() async {
     _database =
         await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   }

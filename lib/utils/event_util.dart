@@ -12,11 +12,6 @@ class EventBusUtil {
   EventBus _eventBus = EventBus();
 
   EventBus get bus => _eventBus;
-
 }
 
-
-
-class EventSiteChange {
-
-}
+class EventSiteChange {}
