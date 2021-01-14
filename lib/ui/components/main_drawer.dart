@@ -107,9 +107,7 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   UserAccountsDrawerHeader buildUserAccountsDrawerHeader() {
-    var subTitle = S
-        .of(context)
-        .no_website;
+    var subTitle = S.of(context).no_website;
     ImageProvider favicon;
     if (mainStore.websiteEntity != null) {
       var protocol = getProtocolString(mainStore.websiteEntity.protocol);
@@ -134,16 +132,16 @@ class _MainDrawerState extends State<MainDrawer> {
       otherAccountsPictures: mainStore.websiteList
           .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
           .map((element) {
-        return GestureDetector(
-          child: CircleAvatar(
-            backgroundImage:
-            element.favicon.isNotEmpty ? MemoryImage(element.favicon) : null,
-            backgroundColor: Colors.white,
-          ),
-          onTap: () {
-            mainStore.setWebsite(element);
-          },
-        );
+        return InkWell(
+            onTap: () {
+              mainStore.setWebsite(element);
+            },
+            child: CircleAvatar(
+              backgroundImage: element.favicon.isNotEmpty
+                  ? MemoryImage(element.favicon)
+                  : null,
+              backgroundColor: Colors.white,
+            ));
       }).toList(),
     );
   }

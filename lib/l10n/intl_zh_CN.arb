@@ -1,5 +1,6 @@
 {
   "@@locale": "zh_CN",
+  "add": "添加",
   "back": "返回",
   "not_set": "未指定",
   "website_manager": "网站管理",
@@ -13,7 +14,7 @@
   "site_type": "站点类型",
   "advanced_settings": "高级设置(可选)",
   "trusted_host": "信任主机地址",
-  "trusted_host_auto": "自动获取信任主机地址",
+  "trusted_host_auto": "自动Dns",
   "trusted_host_auto_failed": "获取主机地址失败",
   "trusted_host_desc": "解决某些地区的 DNS 污染问题",
   "domain_fronting": "域前置",
@@ -23,5 +24,10 @@
   "extend_layout": "将会显示tags, 评分, 上传时间等",
   "compact_layout": "仅显示封面图片与分辨率",
   "display_original": "详情面展示大图",
-  "no_website": "还没有网站, 快去添加一个!"
+  "no_website": "还没有网站, 快去添加一个!",
+  "confirm": "确认",
+  "host_manager": "主机管理",
+  "host_empty": "主机不能为空",
+  "host_or_ip_empty": "主机和IP不能为空",
+  "illegal_ip": "非法IP"
 }

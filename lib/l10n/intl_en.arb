@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
-  "back": "back",
+  "back": "Back",
+  "add": "Add",
   "not_set": "Not set yet",
   "website_manager": "Website Manager",
   "add_website": "Add Website",
@@ -13,7 +14,7 @@
   "site_type": "Site type",
   "advanced_settings": "ADVANCED SETTINGS (optional)",
   "trusted_host": "Trusted host",
-  "trusted_host_auto": "Get trusted host automatically",
+  "trusted_host_auto": "Auto Dns",
   "trusted_host_auto_failed": "Get trusted host failed",
   "trusted_host_desc": "Workaround DNS poisoning in some nations",
   "domain_fronting": "Domain Fronting",
@@ -23,5 +24,11 @@
   "extend_layout": "Tags, ratings, uploader, etc.",
   "compact_layout": "Cover image and resolution only",
   "display_original": "The details page shows a large picture",
-  "no_website": "There is no website, go and add one!"
+  "no_website": "There is no website, go and add one!",
+  "confirm": "Confirm",
+  "host_manager": "Host Manager",
+  "host_empty": "Host cannot be empty",
+  "host_or_ip_empty": "Host and IP cannot be empty",
+  "illegal_ip": "Illegal IP"
+
 }

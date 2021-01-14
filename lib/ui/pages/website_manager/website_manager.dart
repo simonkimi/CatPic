@@ -48,7 +48,9 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
           tooltip: S.of(context).back,
         ),
         title: Text(S.of(context).website_manager),

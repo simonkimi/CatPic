@@ -1,3 +1,5 @@
+import 'package:catpic/data/database/dao/host_dao.dart';
+
 import 'dao/website_dao.dart';
 import 'database.dart';
 
@@ -16,4 +18,5 @@ class DatabaseHelper {
   }
 
   WebsiteDao get websiteDao => _database.websiteDao;
+  HostDao get hostDao => _database.hostDao;
 }

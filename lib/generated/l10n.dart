@@ -35,11 +35,21 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `back`
+  /// `Back`
   String get back {
     return Intl.message(
-      'back',
+      'Back',
       name: 'back',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message(
+      'Add',
+      name: 'add',
       desc: '',
       args: [],
     );
@@ -165,10 +175,10 @@ class S {
     );
   }
 
-  /// `Get trusted host automatically`
+  /// `Auto Dns`
   String get trusted_host_auto {
     return Intl.message(
-      'Get trusted host automatically',
+      'Auto Dns',
       name: 'trusted_host_auto',
       desc: '',
       args: [],
@@ -270,6 +280,56 @@ class S {
     return Intl.message(
       'There is no website, go and add one!',
       name: 'no_website',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Host Manager`
+  String get host_manager {
+    return Intl.message(
+      'Host Manager',
+      name: 'host_manager',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Host cannot be empty`
+  String get host_empty {
+    return Intl.message(
+      'Host cannot be empty',
+      name: 'host_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Host and IP cannot be empty`
+  String get host_or_ip_empty {
+    return Intl.message(
+      'Host and IP cannot be empty',
+      name: 'host_or_ip_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Illegal IP`
+  String get illegal_ip {
+    return Intl.message(
+      'Illegal IP',
+      name: 'illegal_ip',
       desc: '',
       args: [],
     );

@@ -8,6 +8,7 @@ import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
 import 'package:catpic/utils/event_util.dart';
+import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
 class WebsiteAddPage extends StatefulWidget {
@@ -66,6 +67,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           EventBusUtil().bus.fire(EventSiteChange());
           Navigator.pop(context);
         },
+        tooltip: S.of(context).back,
       ),
       actions: [
         // 右上角的确认按钮
@@ -78,6 +80,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
               Navigator.pop(context);
             });
           },
+          tooltip: S.of(context).confirm,
         )
       ],
     );
@@ -114,18 +117,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         hintText: 'example.org',
         defaultValue: websiteHost,
         onChanged: (value) {
-          var v = value;
-          if (v.startsWith('https://')) {
-            v = v.substring('https://'.length, v.length);
-          }
-          if (v.startsWith('http://')) {
-            v = v.substring('http://'.length, v.length);
-          }
-          if (v.endsWith('/')) {
-            v = v.substring(0, v.length - 1);
-          }
           setState(() {
-            websiteHost = v;
+            websiteHost = getHost(value);
           });
         },
       ),
