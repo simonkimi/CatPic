@@ -165,21 +165,11 @@ class S {
     );
   }
 
-  /// `Trusted host`
-  String get trusted_host {
+  /// `Use custom host list`
+  String get use_host_list {
     return Intl.message(
-      'Trusted host',
-      name: 'trusted_host',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Auto Dns`
-  String get trusted_host_auto {
-    return Intl.message(
-      'Auto Dns',
-      name: 'trusted_host_auto',
+      'Use custom host list',
+      name: 'use_host_list',
       desc: '',
       args: [],
     );
@@ -196,10 +186,10 @@ class S {
   }
 
   /// `Workaround DNS poisoning in some nations`
-  String get trusted_host_desc {
+  String get use_host_list_desc {
     return Intl.message(
       'Workaround DNS poisoning in some nations',
-      name: 'trusted_host_desc',
+      name: 'use_host_list_desc',
       desc: '',
       args: [],
     );

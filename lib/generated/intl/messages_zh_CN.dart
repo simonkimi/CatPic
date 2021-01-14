@@ -43,11 +43,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "protocol" : MessageLookupByLibrary.simpleMessage("协议"),
     "protocol_https" : MessageLookupByLibrary.simpleMessage("使用更安全的HTTPS协议"),
     "site_type" : MessageLookupByLibrary.simpleMessage("站点类型"),
-    "trusted_host" : MessageLookupByLibrary.simpleMessage("信任主机地址"),
-    "trusted_host_auto" : MessageLookupByLibrary.simpleMessage("自动Dns"),
     "trusted_host_auto_failed" : MessageLookupByLibrary.simpleMessage("获取主机地址失败"),
-    "trusted_host_desc" : MessageLookupByLibrary.simpleMessage("解决某些地区的 DNS 污染问题"),
     "use_extend_layout" : MessageLookupByLibrary.simpleMessage("使用扩展布局"),
+    "use_host_list" : MessageLookupByLibrary.simpleMessage("使用自定义主机列表"),
+    "use_host_list_desc" : MessageLookupByLibrary.simpleMessage("解决某些地区的 DNS 污染问题"),
     "website_manager" : MessageLookupByLibrary.simpleMessage("网站管理"),
     "website_nickname" : MessageLookupByLibrary.simpleMessage("网站昵称"),
     "website_settings" : MessageLookupByLibrary.simpleMessage("网站设置")

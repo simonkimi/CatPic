@@ -22,7 +22,7 @@ class WebsiteEntity {
   final int protocol;
   final int type;
 
-  final String trustHost;
+  final bool useHostList;
   final bool useDomainFronting;
 
   final String cookies;
@@ -38,7 +38,7 @@ class WebsiteEntity {
     @required this.host,
     @required this.protocol,
     @required this.type,
-    @required this.trustHost,
+    @required this.useHostList,
     @required this.useDomainFronting,
     @required this.extendLayout,
     @required this.displayOriginal,

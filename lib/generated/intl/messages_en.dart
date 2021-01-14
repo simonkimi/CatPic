@@ -43,11 +43,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "protocol" : MessageLookupByLibrary.simpleMessage("Protocol"),
     "protocol_https" : MessageLookupByLibrary.simpleMessage("Using more secure HTTPS protocol"),
     "site_type" : MessageLookupByLibrary.simpleMessage("Site type"),
-    "trusted_host" : MessageLookupByLibrary.simpleMessage("Trusted host"),
-    "trusted_host_auto" : MessageLookupByLibrary.simpleMessage("Auto Dns"),
     "trusted_host_auto_failed" : MessageLookupByLibrary.simpleMessage("Get trusted host failed"),
-    "trusted_host_desc" : MessageLookupByLibrary.simpleMessage("Workaround DNS poisoning in some nations"),
     "use_extend_layout" : MessageLookupByLibrary.simpleMessage("Use extended layout"),
+    "use_host_list" : MessageLookupByLibrary.simpleMessage("Use custom host list"),
+    "use_host_list_desc" : MessageLookupByLibrary.simpleMessage("Workaround DNS poisoning in some nations"),
     "website_manager" : MessageLookupByLibrary.simpleMessage("Website Manager"),
     "website_nickname" : MessageLookupByLibrary.simpleMessage("Nickname"),
     "website_settings" : MessageLookupByLibrary.simpleMessage("WEBSITE SETTINGS")

@@ -24,16 +24,17 @@ class DioBuilder {
 
   static Dio build(BuildContext context, WebsiteEntity websiteEntity) {
     var dio = buildBaseDio();
-    var protocol =
-        websiteEntity.protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
-    if (websiteEntity.useDomainFronting) {
-      dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
-      dio.options.headers['Host'] = '${websiteEntity.host}';
-    } else if (websiteEntity.trustHost.isNotEmpty) {
-      dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
-    } else {
-      dio.options.baseUrl = '$protocol://${websiteEntity.host}/';
-    }
+    // TODO 修改为拦截器方式
+    // var protocol =
+    //     websiteEntity.protocol == WebsiteProtocol.HTTP.index ? 'http' : 'https';
+    // if (websiteEntity.useDomainFronting) {
+    //   dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
+    //   dio.options.headers['Host'] = '${websiteEntity.host}';
+    // } else if (websiteEntity.trustHost.isNotEmpty) {
+    //   dio.options.baseUrl = '$protocol://${websiteEntity.trustHost}/';
+    // } else {
+    //   dio.options.baseUrl = '$protocol://${websiteEntity.host}/';
+    // }
     return dio;
   }
 

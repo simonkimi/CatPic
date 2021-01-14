@@ -150,7 +150,6 @@ class _HostManagerPageState extends State<HostManagerPage> {
         });
   }
 
-
   bool saveHost({String host, String ip, bool useSni}) {
     if (host.isEmpty || ip.isEmpty) {
       BotToast.showText(text: S.of(context).host_empty);

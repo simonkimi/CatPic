@@ -27,7 +27,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     websiteHost = '';
     protocol = WebsiteProtocol.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
-    trustHost = '';
+    useHostList = false;
     domainFronting = false;
     extendLayout = false;
     displayOriginal = false;
@@ -194,37 +194,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   List<Widget> buildAdvanceSetting() {
     return [
       SummaryTile(S.of(context).advanced_settings),
-      TextInputTile(
-        leading: Icon(Icons.flag),
-        title: Text(S.of(context).trusted_host),
-        defaultValue: trustHost,
-        subtitle: Text(
-            trustHost.isEmpty ? S.of(context).trusted_host_desc : trustHost),
-        onChanged: (value) {
-          setState(() {
-            trustHost = value;
-          });
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.autorenew_sharp),
-        title: Text(S.of(context).trusted_host_auto),
-        onTap: () {
-          if (websiteHost.isNotEmpty) {
-            var cancelFunc = BotToast.showLoading();
-            getTrustHost(websiteHost).then((value) {
-              cancelFunc();
-              if (value.isNotEmpty) {
-                setState(() {
-                  trustHost = value;
-                });
-              } else {
-                BotToast.showText(text: S.of(context).trusted_host_auto_failed);
-              }
-            });
-          }
-        },
-      ),
+      // TODO 添加Host设置
       SwitchListTile(
         title: Text(S.of(context).domain_fronting),
         subtitle: Text(S.of(context).domain_fronting_desc),
@@ -245,8 +215,8 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   String websiteHost;
   int protocol;
   int websiteType;
-  String trustHost;
   bool domainFronting;
+  bool useHostList;
 
   bool extendLayout;
   bool displayOriginal;
@@ -261,7 +231,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       host: websiteHost,
       name: websiteName,
       protocol: protocol,
-      trustHost: trustHost,
+      useHostList: useHostList,
       type: websiteType,
       useDomainFronting: domainFronting,
       favicon: Uint8List.fromList([]),
@@ -271,8 +241,6 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     getFavicon(
       host: websiteHost,
       protocol: protocol,
-      trustHost: trustHost,
-      sni: domainFronting,
     ).then((favicon) {
       websiteDao.getById(id).then((e) {
         e.favicon = favicon;
