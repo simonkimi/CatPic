@@ -1,6 +1,5 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/network/client/base_client.dart';
-import 'package:flutter/material.dart';
 
 class EhClient extends BaseClient {
   EhClient(WebsiteEntity websiteEntity) : super(websiteEntity);
