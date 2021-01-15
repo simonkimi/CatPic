@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 /// [id] 主键
 /// [name] 网站昵称
 /// [host] 网站host
-/// [protocol] 协议, 来源于[WebsiteProtocol]
+/// [scheme] 协议, 来源于[WebsiteScheme]
 /// [type] 网站类型, 来源于[WebsiteType]
 /// [trustHost] 可信host
 /// [useDomainFronting] 是否使用域前置
@@ -19,12 +19,10 @@ class WebsiteEntity {
 
   final String name;
   final String host;
-  final int protocol;
+  final int scheme;
   final int type;
 
   final bool useHostList;
-  final bool useDomainFronting;
-
   final String cookies;
 
   final bool extendLayout;
@@ -36,10 +34,9 @@ class WebsiteEntity {
     this.id,
     @required this.name,
     @required this.host,
-    @required this.protocol,
+    @required this.scheme,
     @required this.type,
     @required this.useHostList,
-    @required this.useDomainFronting,
     @required this.extendLayout,
     @required this.displayOriginal,
     @required this.favicon,
@@ -47,7 +44,7 @@ class WebsiteEntity {
   });
 }
 
-enum WebsiteProtocol { HTTP, HTTPS }
+enum WebsiteScheme { HTTP, HTTPS }
 
 enum WebsiteType { EHENTAI, GELBOORU, MOEBOORU, DANBOORU }
 

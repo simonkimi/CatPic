@@ -9,8 +9,8 @@
   "website_nickname": "网站昵称",
   "website_settings": "网站设置",
   "host": "主机",
-  "protocol": "协议",
-  "protocol_https": "使用更安全的HTTPS协议",
+  "scheme": "协议",
+  "scheme_https": "使用更安全的HTTPS协议",
   "site_type": "站点类型",
   "advanced_settings": "高级设置(可选)",
   "use_host_list": "使用自定义主机列表",
@@ -28,5 +28,6 @@
   "host_manager": "主机管理",
   "host_empty": "主机不能为空",
   "host_or_ip_empty": "主机和IP不能为空",
-  "illegal_ip": "非法IP"
+  "illegal_ip": "非法IP",
+  "turn_on_host" : "必须先开启自定义主机!"
 }

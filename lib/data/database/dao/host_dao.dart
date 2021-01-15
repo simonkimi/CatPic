@@ -15,4 +15,7 @@ abstract class HostDao {
 
   @update
   Future<void> updateHost(HostEntity entity);
+
+  @Query('SELECT * FROM HostEntity where host = :host')
+  Future<HostEntity> getByHost(String host);
 }

@@ -125,21 +125,21 @@ class S {
     );
   }
 
-  /// `Protocol`
-  String get protocol {
+  /// `Scheme`
+  String get scheme {
     return Intl.message(
-      'Protocol',
-      name: 'protocol',
+      'Scheme',
+      name: 'scheme',
       desc: '',
       args: [],
     );
   }
 
-  /// `Using more secure HTTPS protocol`
-  String get protocol_https {
+  /// `Using more secure HTTPS scheme`
+  String get scheme_https {
     return Intl.message(
-      'Using more secure HTTPS protocol',
-      name: 'protocol_https',
+      'Using more secure HTTPS scheme',
+      name: 'scheme_https',
       desc: '',
       args: [],
     );
@@ -320,6 +320,16 @@ class S {
     return Intl.message(
       'Illegal IP',
       name: 'illegal_ip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom host must be turned on first`
+  String get turn_on_host {
+    return Intl.message(
+      'Custom host must be turned on first',
+      name: 'turn_on_host',
       desc: '',
       args: [],
     );

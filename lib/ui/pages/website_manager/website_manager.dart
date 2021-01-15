@@ -2,6 +2,7 @@ import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
+import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -25,7 +26,6 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
     eventBus.on<EventSiteChange>().listen((event) {
       updateWebsiteList();
     });
-
   }
 
   void updateWebsiteList() {
@@ -54,7 +54,15 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
           tooltip: S.of(context).back,
         ),
         title: Text(S.of(context).website_manager),
-        actions: [],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () {
+              Navigator.pushNamed(context, HostManagerPage.routeName);
+            },
+            tooltip: S.of(context).host_manager,
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -69,8 +77,8 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   List<Widget> buildWebsiteList() {
     return websiteList?.map((e) {
           var title = e.name;
-          var protocol = getProtocolString(e.protocol);
-          var subTitle = '$protocol://${e.host}/';
+          var scheme = getSchemeString(e.scheme);
+          var subTitle = '$scheme://${e.host}/';
           ImageProvider favIcon;
           if (e.favicon.isNotEmpty) {
             favIcon = MemoryImage(e.favicon);
@@ -85,9 +93,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
                 updateWebsiteList();
               });
             },
-            onSettingPress: () {
-
-            },
+            onSettingPress: () {},
           );
         })?.toList() ??
         [];

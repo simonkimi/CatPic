@@ -7,8 +7,8 @@ import 'dio_builder.dart';
 abstract class BaseClient {
   Dio dio;
 
-  BaseClient(BuildContext context, WebsiteEntity websiteEntity) {
-    dio = DioBuilder.build(context, websiteEntity);
+  BaseClient(WebsiteEntity websiteEntity) {
+    dio = DioBuilder.build(websiteEntity);
   }
 
 }

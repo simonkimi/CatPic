@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/network/client/dio_builder.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+
 
 Future<String> getTrustHost(String url) async {
   try {
@@ -27,19 +28,9 @@ Future<String> getTrustHost(String url) async {
   }
 }
 
-Future<Uint8List> getFavicon({
-  @required int protocol,
-  @required String host,
-  @required String trustHost,
-  @required bool sni,
-}) async {
+Future<Uint8List> getFavicon(WebsiteEntity entity) async {
   try {
-    var dio = DioBuilder.get(
-      protocol: protocol,
-      host: host,
-      trustHost: trustHost,
-      sni: sni,
-    )..options.connectTimeout = 30 * 1000;
+    var dio = DioBuilder.build(entity);
     var req = await dio.get<List<int>>('favicon.ico',
         options: Options(responseType: ResponseType.bytes));
     return Uint8List.fromList(req.data);

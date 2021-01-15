@@ -9,8 +9,8 @@
   "website_nickname": "Nickname",
   "website_settings": "WEBSITE SETTINGS",
   "host": "Host",
-  "protocol": "Protocol",
-  "protocol_https": "Using more secure HTTPS protocol",
+  "scheme": "Scheme",
+  "scheme_https": "Using more secure HTTPS scheme",
   "site_type": "Site type",
   "advanced_settings": "ADVANCED SETTINGS (optional)",
   "use_host_list": "Use custom host list",
@@ -28,6 +28,6 @@
   "host_manager": "Host Manager",
   "host_empty": "Host cannot be empty",
   "host_or_ip_empty": "Host and IP cannot be empty",
-  "illegal_ip": "Illegal IP"
-
+  "illegal_ip": "Illegal IP",
+  "turn_on_host" : "Custom host must be turned on first"
 }

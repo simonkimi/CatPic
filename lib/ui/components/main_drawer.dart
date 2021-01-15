@@ -34,7 +34,7 @@ class _MainDrawerState extends State<MainDrawer> {
     return Column(
       key: Key("WebsiteList"),
       children: mainStore.websiteList.map((element) {
-        var protocol = getProtocolString(element.protocol);
+        var scheme = getSchemeString(element.scheme);
         ImageProvider favicon;
         if (element.favicon.isNotEmpty) {
           favicon = MemoryImage(element.favicon);
@@ -42,7 +42,7 @@ class _MainDrawerState extends State<MainDrawer> {
         return ListTile(
           key: Key('site${element.name}'),
           title: Text(element.name),
-          subtitle: Text('$protocol://${element.host}/'),
+          subtitle: Text('$scheme://${element.host}/'),
           selected: mainStore.websiteEntity?.id == element.id ?? false,
           leading: CircleAvatar(
             backgroundColor: Colors.white,
@@ -110,8 +110,8 @@ class _MainDrawerState extends State<MainDrawer> {
     var subTitle = S.of(context).no_website;
     ImageProvider favicon;
     if (mainStore.websiteEntity != null) {
-      var protocol = getProtocolString(mainStore.websiteEntity.protocol);
-      subTitle = '$protocol://${mainStore.websiteEntity.host}/';
+      var scheme = getSchemeString(mainStore.websiteEntity.scheme);
+      subTitle = '$scheme://${mainStore.websiteEntity.host}/';
       if (mainStore.websiteEntity.favicon.isNotEmpty) {
         favicon = MemoryImage(mainStore.websiteEntity.favicon);
       }

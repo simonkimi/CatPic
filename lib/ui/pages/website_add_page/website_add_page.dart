@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database_helper.dart';
+import 'package:catpic/data/database/entity/host_entity.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
@@ -25,12 +26,13 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     super.initState();
     websiteName = '';
     websiteHost = '';
-    protocol = WebsiteProtocol.HTTPS.index;
+    scheme = WebsiteScheme.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
     useHostList = false;
     domainFronting = false;
     extendLayout = false;
     displayOriginal = false;
+    trustHost = "";
   }
 
   @override
@@ -75,9 +77,11 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           icon: Icon(Icons.check),
           onPressed: () {
             // 保存网站后返回并且刷新页面
-            saveWebsite().then((_) {
-              EventBusUtil().bus.fire(EventSiteChange());
-              Navigator.pop(context);
+            saveWebsite().then((result) {
+              if (result) {
+                EventBusUtil().bus.fire(EventSiteChange());
+                Navigator.pop(context);
+              }
             });
           },
           tooltip: S.of(context).confirm,
@@ -123,15 +127,15 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         },
       ),
       SwitchListTile(
-        title: Text(S.of(context).protocol),
-        subtitle: Text(S.of(context).protocol_https),
+        title: Text(S.of(context).scheme),
+        subtitle: Text(S.of(context).scheme_https),
         secondary: Icon(Icons.http),
-        value: protocol == WebsiteProtocol.HTTPS.index,
+        value: scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
           setState(() {
-            protocol = value
-                ? WebsiteProtocol.HTTPS.index
-                : WebsiteProtocol.HTTP.index;
+            scheme = value
+                ? WebsiteScheme.HTTPS.index
+                : WebsiteScheme.HTTP.index;
           });
         },
       ),
@@ -190,11 +194,20 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     ];
   }
 
-// 构建高级设置
+  /// 构建高级设置
   List<Widget> buildAdvanceSetting() {
     return [
       SummaryTile(S.of(context).advanced_settings),
-      // TODO 添加Host设置
+      SwitchListTile(
+        title: Text(S.of(context).use_host_list),
+        subtitle:
+            Text(useHostList ? trustHost : S.of(context).use_host_list_desc),
+        value: useHostList,
+        secondary: Icon(Icons.list_alt),
+        onChanged: (value) {
+          setHostList(value);
+        },
+      ),
       SwitchListTile(
         title: Text(S.of(context).domain_fronting),
         subtitle: Text(S.of(context).domain_fronting_desc),
@@ -202,7 +215,13 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         value: domainFronting,
         onChanged: (value) {
           setState(() {
-            domainFronting = value;
+            if (!value) {
+              domainFronting = value;
+            } else if (value && useHostList) {
+              domainFronting = value;
+            } else {
+              BotToast.showText(text: S.of(context).turn_on_host);
+            }
           });
         },
       ),
@@ -213,16 +232,55 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
 mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   String websiteName;
   String websiteHost;
-  int protocol;
+  int scheme;
   int websiteType;
   bool domainFronting;
   bool useHostList;
 
+  String trustHost;
+
   bool extendLayout;
   bool displayOriginal;
 
+  /// 当要开启自定义host的时候进行请求真实ip
+  void setHostList(bool targetValue) {
+    if (targetValue) {
+      var host = getHost(websiteHost);
+      if (host.isNotEmpty) {
+        var cancelFunc = BotToast.showLoading();
+        getTrustHost(host).then((host) {
+          cancelFunc();
+          if (host.isNotEmpty) {
+            setState(() {
+              useHostList = true;
+              trustHost = host;
+            });
+          } else {
+            BotToast.showText(text: S.of(context).trusted_host_auto_failed);
+          }
+        });
+      } else {
+        BotToast.showText(text: S.of(context).host_empty);
+      }
+    } else {
+      setState(() {
+        useHostList = false;
+        domainFronting = false;
+      });
+    }
+  }
+
   /// 保存网站
-  Future<void> saveWebsite() async {
+  Future<bool> saveWebsite() async {
+    if (websiteHost.isEmpty) {
+      BotToast.showText(text: S.of(context).host_empty);
+      return false;
+    }
+    if (websiteName.isEmpty) {
+      websiteName = websiteHost;
+    }
+    
+    // 保存网站
     var websiteDao = DatabaseHelper().websiteDao;
     var entity = WebsiteEntity(
       cookies: '',
@@ -230,18 +288,31 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       extendLayout: extendLayout,
       host: websiteHost,
       name: websiteName,
-      protocol: protocol,
+      scheme: scheme,
       useHostList: useHostList,
       type: websiteType,
-      useDomainFronting: domainFronting,
       favicon: Uint8List.fromList([]),
     );
     var id = await websiteDao.addSite(entity);
+    
+    // 保存自定义host
+    if (useHostList) {
+      var hostDao = DatabaseHelper().hostDao;
+      var existHost = await hostDao.getByHost(websiteHost);
+      if (existHost != null) {
+        await hostDao.removeHost([existHost]);
+      }
 
-    getFavicon(
-      host: websiteHost,
-      protocol: protocol,
-    ).then((favicon) {
+      var hostEntity = HostEntity(
+        host: websiteHost,
+        ip: trustHost,
+        sni: domainFronting
+      );
+      hostDao.addHost(hostEntity);
+    }
+
+    // 获取封面图片
+    getFavicon(entity).then((favicon) {
       websiteDao.getById(id).then((e) {
         e.favicon = favicon;
         print("下载Favicon完成, 长度: ${e.favicon.length}");
@@ -250,5 +321,6 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
         });
       });
     });
+    return true;
   }
 }

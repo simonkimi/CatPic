@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 class HostEntity {
   @PrimaryKey(autoGenerate: true)
   final int id;
+
   final String host;
   final String ip;
   final bool sni;

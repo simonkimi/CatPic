@@ -38,11 +38,11 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: HostManagerPage(),
+      home: MainPage(),
       routes: {
+        MainPage.routeName: (context) => MainPage(),
         WebsiteManagerPage.routeName: (context) => WebsiteManagerPage(),
         WebsiteAddPage.routeName: (context) => WebsiteAddPage(),
-        MainPage.routeName: (context) => MainPage(),
         HostManagerPage.routeName: (context) => HostManagerPage()
       },
     );

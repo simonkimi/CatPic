@@ -27,7 +27,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
 
   ListView buildBody() {
     return ListView(
-      children: hostEntities.map((e) {
+      children: hostEntities?.map((e) {
         return Dismissible(
           key: ValueKey(e.id),
           child: ListTile(
@@ -40,7 +40,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
             });
           },
         );
-      }).toList(),
+      })?.toList() ?? [],
     );
   }
 
@@ -134,12 +134,15 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 ),
                 FlatButton(
                   onPressed: () {
-                    if (saveHost(
-                        host: getHost(hostController.text),
-                        ip: ipController.text,
-                        useSni: sni)) {
-                      Navigator.of(context).pop();
-                    }
+                    saveHost(
+                            host: getHost(hostController.text),
+                            ip: ipController.text,
+                            useSni: sni)
+                        .then((value) {
+                      if (value) {
+                        Navigator.of(context).pop();
+                      }
+                    });
                   },
                   child: Text(S.of(context).confirm),
                   color: Theme.of(context).primaryColor,
@@ -150,7 +153,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
         });
   }
 
-  bool saveHost({String host, String ip, bool useSni}) {
+  Future<bool> saveHost({String host, String ip, bool useSni}) async {
     if (host.isEmpty || ip.isEmpty) {
       BotToast.showText(text: S.of(context).host_empty);
       return false;
@@ -160,9 +163,11 @@ class _HostManagerPageState extends State<HostManagerPage> {
       BotToast.showText(text: S.of(context).illegal_ip);
       return false;
     }
+    var dao = DatabaseHelper().hostDao;
+    await dao.removeHost([await dao.getByHost(host)]);
     var hostEntity = HostEntity(host: host, ip: ip, sni: useSni);
-    DatabaseHelper().hostDao.addHost(hostEntity);
-    init();
+    await dao.addHost(hostEntity);
+    await init();
     return true;
   }
 

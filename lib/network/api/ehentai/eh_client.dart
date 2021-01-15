@@ -3,9 +3,7 @@ import 'package:catpic/network/client/base_client.dart';
 import 'package:flutter/material.dart';
 
 class EhClient extends BaseClient {
-
-  EhClient(BuildContext context, WebsiteEntity websiteEntity) : super(context, websiteEntity);
-
+  EhClient(WebsiteEntity websiteEntity) : super(websiteEntity);
 
   /// 主页
   /// [filter] 过滤器, 由[buildSimpleFilter]和[buildAdvanceFilter]构建
