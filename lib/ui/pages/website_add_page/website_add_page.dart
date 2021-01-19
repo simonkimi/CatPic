@@ -243,22 +243,32 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   bool displayOriginal;
 
   /// 当要开启自定义host的时候进行请求真实ip
-  void setHostList(bool targetValue) {
+  void setHostList(bool targetValue) async {
     if (targetValue) {
       var host = getHost(websiteHost);
       if (host.isNotEmpty) {
-        var cancelFunc = BotToast.showLoading();
-        getTrustHost(host).then((host) {
-          cancelFunc();
-          if (host.isNotEmpty) {
-            setState(() {
-              useHostList = true;
-              trustHost = host;
-            });
-          } else {
-            BotToast.showText(text: S.of(context).trusted_host_auto_failed);
-          }
-        });
+        // 判断是否已经存在
+        var hostDao = DatabaseHelper().hostDao;
+        var hostExist = await hostDao.getByHost(host);
+        if (hostExist != null) {
+          setState(() {
+            useHostList = true;
+            trustHost = hostExist.ip;
+          });
+        } else {
+          var cancelFunc = BotToast.showLoading();
+          getTrustHost(host).then((host) {
+            cancelFunc();
+            if (host.isNotEmpty) {
+              setState(() {
+                useHostList = true;
+                trustHost = host;
+              });
+            } else {
+              BotToast.showText(text: S.of(context).trusted_host_auto_failed);
+            }
+          });
+        }
       } else {
         BotToast.showText(text: S.of(context).host_empty);
       }

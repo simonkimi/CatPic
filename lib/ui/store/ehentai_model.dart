@@ -30,10 +30,4 @@ abstract class EHentaiModelBase with Store implements WebsiteStore {
   List<SimpleCardModel> get simpleCardList => throw UnimplementedError();
 }
 
-class EHentaiClient {
-  final WebsiteEntity entity;
 
-  EHentaiClient(this.entity);
-
-
-}
