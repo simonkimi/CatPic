@@ -28,6 +28,8 @@ abstract class EHentaiModelBase with Store implements WebsiteStore {
 
   @computed
   List<SimpleCardModel> get simpleCardList => throw UnimplementedError();
+
+
 }
 
 

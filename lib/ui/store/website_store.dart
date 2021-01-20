@@ -7,4 +7,5 @@ abstract class WebsiteStore {
   List<SimpleCardModel> get simpleCardList;
   void loadNextPage();
   void loadSpecifyPage(int page);
+  void loadDetailPage(int id);
 }
