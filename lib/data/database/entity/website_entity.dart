@@ -9,9 +9,10 @@ import 'package:flutter/cupertino.dart';
 /// [host] 网站host
 /// [scheme] 协议, 来源于[WebsiteScheme]
 /// [type] 网站类型, 来源于[WebsiteType]
-/// [trustHost] 可信host
-/// [useDomainFronting] 是否使用域前置
-
+/// [useHostList] 是否使用host列表
+/// [cookies] cookies
+/// [extendLayout] 是否使用详细布局
+/// [displayOriginal] 详情页面显示大图
 @Entity(tableName: 'WebsiteEntity')
 class WebsiteEntity {
   @PrimaryKey(autoGenerate: true)

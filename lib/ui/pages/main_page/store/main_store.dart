@@ -48,12 +48,6 @@ abstract class MainStoreBase with Store {
     }
   }
 
-  @action
-  /// 更换一个网站
-  Future<void> setWebsite(WebsiteEntity entity) async {
-    websiteEntity = entity;
-    SPHelper().pref.setInt("last_website", websiteEntity.id);
-  }
 }
 
 var mainStore = MainStore();

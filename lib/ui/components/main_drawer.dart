@@ -49,7 +49,7 @@ class _MainDrawerState extends State<MainDrawer> {
             backgroundImage: favicon,
           ),
           onTap: () {
-            mainStore.setWebsite(element);
+            // mainStore.setWebsite(element);
           },
         );
       }).toList()
@@ -134,7 +134,7 @@ class _MainDrawerState extends State<MainDrawer> {
           .map((element) {
         return InkWell(
             onTap: () {
-              mainStore.setWebsite(element);
+              // mainStore.setWebsite(element);
             },
             child: CircleAvatar(
               backgroundImage: element.favicon.isNotEmpty
