@@ -22,6 +22,7 @@ dependencies:
   bot_toast: ^3.0.5
   event_bus: ^1.1.1
   shared_preferences: ^0.5.12+4
+  waterfall_flow: ^2.0.5
 
 
 dev_dependencies:
@@ -35,7 +36,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/svgs/
     - assets/icons/
 
 
