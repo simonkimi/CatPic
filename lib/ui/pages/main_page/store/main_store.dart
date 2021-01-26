@@ -20,7 +20,8 @@ abstract class MainStoreBase with Store {
     websiteList.clear();
     websiteList.addAll(await websiteDao.getAll());
     var lastWebsite = SPHelper().pref.getInt("last_website") ?? -1;
-    websiteEntity = websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
+    websiteEntity =
+        websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
     if (websiteEntity == null && websiteList.length != 0) {
       websiteEntity = websiteList[0];
       SPHelper().pref.setInt("last_website", websiteEntity.id);
@@ -47,7 +48,6 @@ abstract class MainStoreBase with Store {
       SPHelper().pref.setInt("last_website", websiteEntity.id);
     }
   }
-
 }
 
 var mainStore = MainStore();
