@@ -1,13 +1,21 @@
 import 'package:catpic/data/database/database_helper.dart';
+import 'package:catpic/data/database/entity/host_entity.dart';
 import 'package:dio/dio.dart';
 
 class CustomHostInterceptor extends Interceptor {
+  List<HostEntity> hostList = [];
+
   @override
   Future onRequest(RequestOptions options) async {
     var uri = options.uri;
-    var hostDao = DatabaseHelper().hostDao;
-    var hostTarget = (await hostDao.getAll())
-        .firstWhere((e) => e.host == uri.host, orElse: () => null);
+
+    if (hostList.isEmpty) {
+      var hostDao = DatabaseHelper().hostDao;
+      hostList = await hostDao.getAll();
+    }
+
+    var hostTarget =
+        hostList.firstWhere((e) => e.host == uri.host, orElse: () => null);
     if (hostTarget != null) {
       var newUri = Uri(
               host: hostTarget.ip,

@@ -27,33 +27,25 @@ class EhFilter {
   /// 构建搜索过滤器
   /// [searchText] 关键词
   /// [excludeTag] 排除Tag, 由[tagFilter]构建
-  static Map<String, dynamic> buildSimpleFilter(
-      {String searchText, int excludeTag}) {
-    return {
-      'f_search': searchText ?? '',
-      'f_cats': excludeTag ?? '',
-    };
-  }
-
-  /// 构建高级搜索过滤器
-  /// [searchText] 关键词
-  /// [excludeTag] 排除Tag, 由[tagFilter]构建
   /// [startPage] 开始页面
   /// [endPage] 结束页面
   /// [minRating] 最低星级
-  static Map<String, dynamic> buildAdvanceFilter(
-      {String searchText,
-      int excludeTag,
-      int startPage,
-      int endPage,
-      int minRating}) {
+  static Map<String, dynamic> buildAdvanceFilter({
+    String searchText,
+    int excludeTag,
+    int startPage,
+    int endPage,
+    int minRating,
+    int page,
+  }) {
     return {
       'advsearch': 1,
       'f_search': searchText ?? '',
       'f_cats': excludeTag ?? '',
       'f_spf': startPage ?? '',
       'f_spt': endPage ?? '',
-      'f_srdd': minRating
+      'f_srdd': minRating ?? '',
+      'page': page ?? 0
     };
   }
 }

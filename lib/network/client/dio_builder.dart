@@ -15,15 +15,14 @@ class DioBuilder {
         'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
       };
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (client) {
-      client.badCertificateCallback = (cert, host, port) => true;
-    };
-
     var scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';
     if (websiteEntity.useHostList) {
       dio.interceptors.add(CustomHostInterceptor());
+      (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
+        client.badCertificateCallback = (cert, host, port) => true;
+      };
     }
     return dio;
   }
