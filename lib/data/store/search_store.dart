@@ -1,10 +1,10 @@
 import 'package:catpic/ui/pages/main_page/models/large_card_model.dart';
 import 'package:catpic/ui/pages/main_page/models/simple_card_model.dart';
 
-abstract class SearchPageModel {
+abstract class SearchPageStore {
   final String searchText;
 
-  SearchPageModel(this.searchText);
+  SearchPageStore(this.searchText);
 
   List<LargeCardModel> get largeCardList;
 

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 class LargeCardModel {
   final String title;
   final String subTitle;
-  final int stars;
+  final double stars;
   final int pages;
   final String tag;
   final String subscript;

@@ -1,18 +1,18 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
-import 'package:catpic/data/parser/preview_parser.dart';
+import 'package:catpic/data/parser/ehentai/preview_parser.dart';
+import 'package:catpic/network/api/ehentai/eh_client.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
-import 'package:catpic/network/client/eh_client.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/ui/pages/main_page/models/large_card_model.dart';
 import 'package:catpic/ui/pages/main_page/models/simple_card_model.dart';
-import 'package:catpic/data/models/search_model.dart';
+import 'package:catpic/data/store/search_store.dart';
 
 part 'ehentai_preview_store.g.dart';
 
 class EHentaiPreviewStore = EHentaiPreviewStoreBase with _$EHentaiPreviewStore;
 
-abstract class EHentaiPreviewStoreBase extends SearchPageModel with Store {
+abstract class EHentaiPreviewStoreBase extends SearchPageStore with Store {
   final WebsiteEntity entity;
 
   EhClient client;
@@ -42,13 +42,21 @@ abstract class EHentaiPreviewStoreBase extends SearchPageModel with Store {
   @computed
   List<SimpleCardModel> get simpleCardList => previewList.map((e) {
         return SimpleCardModel(
-            title: e.title, subTitle: "${e.previewWidth} * ${e.previewHeight}");
+          title: e.title,
+          subTitle: "${e.previewWidth} * ${e.previewHeight}",
+        );
       }).toList();
 
   @computed
   List<LargeCardModel> get largeCardList => previewList.map((e) {
-    return LargeCardModel(
-
-    );
-  }).toList();
+        return LargeCardModel(
+          title: e.title,
+          subTitle: e.uploader,
+          stars: e.stars,
+          pages: e.pages,
+          tags: e.keyTags,
+          subscript: e.uploadTime,
+          tag: e.tag,
+        );
+      }).toList();
 }

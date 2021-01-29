@@ -1,8 +1,10 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/custom_host_interceptor.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+
 
 class DioBuilder {
   static Dio build(WebsiteEntity websiteEntity) {
@@ -25,5 +27,15 @@ class DioBuilder {
       };
     }
     return dio;
+  }
+}
+
+
+
+abstract class BaseClient {
+  Dio dio;
+
+  BaseClient(WebsiteEntity websiteEntity) {
+    dio = DioBuilder.build(websiteEntity);
   }
 }
