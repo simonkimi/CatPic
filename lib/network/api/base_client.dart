@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/custom_host_interceptor.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:dio/adapter.dart';
-import 'package:dio/dio.dart';
+
 
 
 class DioBuilder {

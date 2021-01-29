@@ -441,6 +441,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.2"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.1.0"
   platform:
     dependency: transitive
     description:
@@ -698,6 +705,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.5.1"
+  xml2json:
+    dependency: "direct main"
+    description:
+      name: xml2json
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.4.0"
   yaml:
     dependency: transitive
     description:
