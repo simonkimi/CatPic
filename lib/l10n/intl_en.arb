@@ -1,5 +1,15 @@
 {
   "@@locale": "en",
+
+  "home": "Home",
+  "posts": "Posts",
+  "pools": "Pools",
+  "download": "Downloads",
+  "setting": "Settings",
+  "history": "History",
+  "hot": "Hot",
+  "favourite": "Favourite",
+
   "back": "Back",
   "add": "Add",
   "not_set": "Not set yet",
@@ -18,11 +28,6 @@
   "use_host_list_desc": "Workaround DNS poisoning in some nations",
   "domain_fronting": "Domain Fronting",
   "domain_fronting_desc": "Bypass SNI blocking",
-  "display_setting": "DISPLAY SETTINGS",
-  "use_extend_layout": "Use extended layout",
-  "extend_layout": "Tags, ratings, uploader, etc.",
-  "compact_layout": "Cover image and resolution only",
-  "display_original": "The details page shows a large picture",
   "no_website": "There is no website, go and add one!",
   "confirm": "Confirm",
   "host_manager": "Host Manager",

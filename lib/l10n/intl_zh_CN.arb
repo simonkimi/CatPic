@@ -1,5 +1,15 @@
 {
   "@@locale": "zh_CN",
+
+  "home": "主页",
+  "posts": "投稿",
+  "pools": "图集",
+  "download": "下载",
+  "setting": "设置",
+  "history": "历史",
+  "hot": "热门",
+  "favourite": "收藏",
+
   "add": "添加",
   "back": "返回",
   "not_set": "未指定",
@@ -18,11 +28,6 @@
   "use_host_list_desc": "解决某些地区的 DNS 污染问题",
   "domain_fronting": "域前置",
   "domain_fronting_desc": "绕过 SNI 封锁",
-  "display_setting": "显示设置",
-  "use_extend_layout": "使用扩展布局",
-  "extend_layout": "将会显示tags, 评分, 上传时间等",
-  "compact_layout": "仅显示封面图片与分辨率",
-  "display_original": "详情面展示大图",
   "no_website": "还没有网站, 快去添加一个!",
   "confirm": "确认",
   "host_manager": "主机管理",

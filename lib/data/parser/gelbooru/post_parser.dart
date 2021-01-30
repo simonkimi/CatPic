@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:catpic/data/models/base/booru_post.dart';
+import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:xml2json/xml2json.dart';
 
-class GelbooruParse {
-  static List<BooruPost> parsePostList(String postXml) {
+class GelbooruPostParser {
+  static List<BooruPost> parse(String postXml) {
     var xml2json = Xml2Json();
     xml2json.parse(postXml);
     Map<String, dynamic> json = jsonDecode(xml2json.toGData());
@@ -38,13 +37,10 @@ class GelbooruParse {
     switch (name) {
       case 's':
         return PostRating.SAFE;
-        break;
       case 'e':
         return PostRating.EXPLICIT;
-        break;
       case 'q':
         return PostRating.QUESTIONABLE;
-        break;
     }
     return PostRating.QUESTIONABLE;
   }

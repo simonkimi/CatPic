@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:catpic/data/database/entity/website_entity.dart';
-import 'file:///H:/Android/Porject/CatPic/lib/network/api/base_client.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
 

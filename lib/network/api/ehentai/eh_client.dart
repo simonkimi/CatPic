@@ -1,5 +1,7 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
-import 'file:///H:/Android/Porject/CatPic/lib/network/api/base_client.dart';
+
+import '../base_client.dart';
+
 
 class EhClient extends BaseClient {
   EhClient(WebsiteEntity websiteEntity) : super(websiteEntity);

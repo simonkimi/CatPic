@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:catpic/data/models/base/booru_post.dart';
+import 'package:catpic/data/models/booru/booru_post.dart';
 
 class DanbooruParse {
   static List<BooruPost> parsePostList(String postJson) {

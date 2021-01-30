@@ -35,6 +35,86 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Home`
+  String get home {
+    return Intl.message(
+      'Home',
+      name: 'home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Posts`
+  String get posts {
+    return Intl.message(
+      'Posts',
+      name: 'posts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pools`
+  String get pools {
+    return Intl.message(
+      'Pools',
+      name: 'pools',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloads`
+  String get download {
+    return Intl.message(
+      'Downloads',
+      name: 'download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get setting {
+    return Intl.message(
+      'Settings',
+      name: 'setting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message(
+      'History',
+      name: 'history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hot`
+  String get hot {
+    return Intl.message(
+      'Hot',
+      name: 'hot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Favourite`
+  String get favourite {
+    return Intl.message(
+      'Favourite',
+      name: 'favourite',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Back`
   String get back {
     return Intl.message(
@@ -210,56 +290,6 @@ class S {
     return Intl.message(
       'Bypass SNI blocking',
       name: 'domain_fronting_desc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `DISPLAY SETTINGS`
-  String get display_setting {
-    return Intl.message(
-      'DISPLAY SETTINGS',
-      name: 'display_setting',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Use extended layout`
-  String get use_extend_layout {
-    return Intl.message(
-      'Use extended layout',
-      name: 'use_extend_layout',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Tags, ratings, uploader, etc.`
-  String get extend_layout {
-    return Intl.message(
-      'Tags, ratings, uploader, etc.',
-      name: 'extend_layout',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Cover image and resolution only`
-  String get compact_layout {
-    return Intl.message(
-      'Cover image and resolution only',
-      name: 'compact_layout',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `The details page shows a large picture`
-  String get display_original {
-    return Intl.message(
-      'The details page shows a large picture',
-      name: 'display_original',
       desc: '',
       args: [],
     );

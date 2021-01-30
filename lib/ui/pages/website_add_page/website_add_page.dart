@@ -30,8 +30,6 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     websiteType = WebsiteType.GELBOORU.index;
     useHostList = false;
     domainFronting = false;
-    extendLayout = false;
-    displayOriginal = false;
     trustHost = "";
   }
 
@@ -50,8 +48,6 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           ...buildBasicSetting(),
           Divider(),
           ...buildWebsiteSetting(),
-          Divider(),
-          ...buildDisplaySetting(),
           Divider(),
           ...buildAdvanceSetting(),
         ],
@@ -164,36 +160,6 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     ];
   }
 
-  /// 构建显示设置
-  List<Widget> buildDisplaySetting() {
-    return [
-      SummaryTile(S.of(context).display_setting),
-      SwitchListTile(
-        value: extendLayout,
-        title: Text(S.of(context).use_extend_layout),
-        subtitle: Text(extendLayout
-            ? S.of(context).extend_layout
-            : S.of(context).compact_layout),
-        secondary: Icon(Icons.art_track),
-        onChanged: (value) {
-          setState(() {
-            extendLayout = value;
-          });
-        },
-      ),
-      SwitchListTile(
-        title: Text(S.of(context).display_original),
-        value: displayOriginal,
-        secondary: Icon(Icons.filter),
-        onChanged: (value) {
-          setState(() {
-            displayOriginal = value;
-          });
-        },
-      )
-    ];
-  }
-
   /// 构建高级设置
   List<Widget> buildAdvanceSetting() {
     return [
@@ -238,9 +204,6 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   bool useHostList;
 
   String trustHost;
-
-  bool extendLayout;
-  bool displayOriginal;
 
   /// 当要开启自定义host的时候进行请求真实ip
   void setHostList(bool targetValue) async {
@@ -294,8 +257,6 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     var websiteDao = DatabaseHelper().websiteDao;
     var entity = WebsiteEntity(
       cookies: '',
-      displayOriginal: displayOriginal,
-      extendLayout: extendLayout,
       host: websiteHost,
       name: websiteName,
       scheme: scheme,

@@ -18,11 +18,11 @@ class _MainDrawerState extends State<MainDrawer> {
     return Drawer(
       child: Observer(
         builder: (context) {
-          return ListView(
-            padding: EdgeInsets.zero,
+          return Column(
+            // padding: EdgeInsets.zero,
             children: [
               buildUserAccountsDrawerHeader(),
-              showWebsiteList ? buildWebsiteList() : buildMainMenu(),
+              buildBody(),
             ],
           );
         },
@@ -30,80 +30,99 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  Widget buildWebsiteList() {
-    return Column(
-      key: Key("WebsiteList"),
-      children: mainStore.websiteList.map((element) {
-        var scheme = getSchemeString(element.scheme);
-        ImageProvider favicon;
-        if (element.favicon.isNotEmpty) {
-          favicon = MemoryImage(element.favicon);
-        }
-        return ListTile(
-          key: Key('site${element.name}'),
-          title: Text(element.name),
-          subtitle: Text('$scheme://${element.host}/'),
-          selected: mainStore.websiteEntity?.id == element.id ?? false,
-          leading: CircleAvatar(
-            backgroundColor: Colors.white,
-            backgroundImage: favicon,
-          ),
-          onTap: () {
-            // mainStore.setWebsite(element);
-          },
-        );
-      }).toList()
-        ..addAll([
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('网站设置'),
-            onTap: () {
-              Navigator.pushNamed(context, WebsiteManagerPage.routeName);
-            },
-          )
-        ]),
+  Expanded buildBody() {
+    return Expanded(
+      child: AnimatedSwitcher(
+        duration: Duration(milliseconds: 200),
+        child: Column(
+          key: Key(showWebsiteList ? 'WebsiteList' : 'MainMenu'),
+          children: showWebsiteList ? buildWebsiteList() : buildMainMenu(),
+        ),
+      ),
     );
   }
 
-  Widget buildMainMenu() {
-    return Column(
-      key: Key("MainMenu"),
-      children: [
-        ListTile(
-          leading: Icon(Icons.home),
-          title: Text('主页'),
-          onTap: () {},
+
+  List<Widget> buildWebsiteList() {
+    return [
+      Expanded(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: mainStore.websiteList.map((element) {
+            var scheme = getSchemeString(element.scheme);
+            ImageProvider favicon;
+            if (element.favicon.isNotEmpty) {
+              favicon = MemoryImage(element.favicon);
+            }
+            return ListTile(
+              key: Key('site${element.name}'),
+              title: Text(element.name),
+              subtitle: Text('$scheme://${element.host}/'),
+              selected: mainStore.websiteEntity?.id == element.id ?? false,
+              leading: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: favicon,
+              ),
+              onTap: () {
+                // mainStore.setWebsite(element);
+              },
+            );
+          }).toList(),
         ),
-        ListTile(
-          leading: Icon(Icons.local_fire_department),
-          title: Text('热门'),
-          onTap: () {},
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text(S.of(context).website_manager),
+        onTap: () {
+          Navigator.pushNamed(context, WebsiteManagerPage.routeName);
+        },
+      )
+    ];
+  }
+
+  List<Widget> buildMainMenu() {
+    return [
+      Expanded(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text(S.of(context).home),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.local_fire_department),
+              title: Text(S.of(context).hot),
+              onTap: () {},
+            ),
+            // Expanded(child: null),
+            ListTile(
+              leading: Icon(Icons.favorite),
+              title: Text(S.of(context).favourite),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.history),
+              title: Text(S.of(context).history),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.download_rounded),
+              title: Text(S.of(context).download),
+              onTap: () {},
+            ),
+          ],
         ),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.favorite),
-          title: Text('收藏'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(Icons.history),
-          title: Text('历史'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(Icons.download_rounded),
-          title: Text('下载'),
-          onTap: () {},
-        ),
-        ListTile(
-          leading: Icon(Icons.settings),
-          title: Text('设置'),
-          onTap: () {
-            Navigator.pushNamed(context, WebsiteManagerPage.routeName);
-          },
-        )
-      ],
-    );
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text(S.of(context).setting),
+        onTap: () {},
+      )
+    ];
   }
 
   UserAccountsDrawerHeader buildUserAccountsDrawerHeader() {
@@ -116,7 +135,6 @@ class _MainDrawerState extends State<MainDrawer> {
         favicon = MemoryImage(mainStore.websiteEntity.favicon);
       }
     }
-
     return UserAccountsDrawerHeader(
       accountName: Text(mainStore.websiteEntity?.name ?? "CatPic"),
       accountEmail: Text(subTitle),

@@ -43,4 +43,46 @@ class MoebooruClient extends BaseClient {
     );
     return (await dio.getUri(uri)).data;
   }
+
+  /// 获取图集列表, 加载20个
+  /// [query] The title.
+  /// [page] The page.
+  Future<String> poolList({String query, int page}) async {
+    var uri = Uri(
+        path: 'pool.json',
+        queryParameters: {
+          'query': query,
+          'page': page.toString()
+        }
+    );
+    return (await dio.getUri(uri)).data;
+  }
+
+  /// 获取图集详细内容
+  /// [id] The pool id number.
+  /// [page] The page.
+  Future<String> postShow(int id, int page) async {
+    var uri = Uri(
+        path: 'pool/show.json',
+        queryParameters: {
+          'id': id.toString(),
+          'page': page.toString()
+        }
+    );
+    return (await dio.getUri(uri)).data;
+  }
+
+  /// 画师列表
+  /// [name] The name (or a fragment of the name) of the artist.
+  /// [id] The page number.
+  Future<String> artistList({String name, int page}) async {
+    var uri = Uri(
+        path: 'artist.json',
+        queryParameters: {
+          'name': name,
+          'page': page.toString()
+        }
+    );
+    return (await dio.getUri(uri)).data;
+  }
 }

@@ -26,9 +26,6 @@ class WebsiteEntity {
   final bool useHostList;
   final String cookies;
 
-  final bool extendLayout;
-  final bool displayOriginal;
-
   Uint8List favicon;
 
   WebsiteEntity({
@@ -38,8 +35,6 @@ class WebsiteEntity {
     @required this.scheme,
     @required this.type,
     @required this.useHostList,
-    @required this.extendLayout,
-    @required this.displayOriginal,
     @required this.favicon,
     this.cookies,
   });

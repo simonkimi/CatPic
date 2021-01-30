@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:catpic/data/models/base/booru_post.dart';
+import 'package:catpic/data/models/booru/booru_post.dart';
 
-class MoebooruParse {
-  static List<BooruPost> parsePostList(String postJson) {
+class MoebooruPostParse {
+  static List<BooruPost> parse(String postJson) {
     List<dynamic> posts = jsonDecode(postJson);
     return posts.map((e) {
       return BooruPost(
