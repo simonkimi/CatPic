@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
+
 class SimpleCardModel {
   final String title;
   final String subTitle;
 
-  SimpleCardModel({this.title, this.subTitle});
+  SimpleCardModel({@required this.title,@required  this.subTitle});
 }

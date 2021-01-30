@@ -90,7 +90,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
             onDeletePress: () {
               var websiteDao = DatabaseHelper().websiteDao;
               websiteDao.removeSite([e]).then((value) {
-                updateWebsiteList();
+                EventBusUtil().bus.fire(EventSiteChange());
               });
             },
             onSettingPress: () {},

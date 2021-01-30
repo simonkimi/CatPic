@@ -24,6 +24,7 @@ dependencies:
   shared_preferences: ^0.5.12+4
   waterfall_flow: ^2.0.5
   xml2json: ^4.4.0
+  material_floating_search_bar: ^0.2.6
 
 
 dev_dependencies:
