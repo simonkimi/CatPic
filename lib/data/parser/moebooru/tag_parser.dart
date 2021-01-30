@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:catpic/data/models/booru/booru_tag.dart';
-import 'package:xml2json/xml2json.dart';
 
 class MoebooruTagParse {
   static List<BooruTag> parse(String tagJson) {
