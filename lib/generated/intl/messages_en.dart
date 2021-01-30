@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back" : MessageLookupByLibrary.simpleMessage("Back"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("BASIC SETTINGS"),
     "confirm" : MessageLookupByLibrary.simpleMessage("Confirm"),
+    "delete" : MessageLookupByLibrary.simpleMessage("Delete"),
     "domain_fronting" : MessageLookupByLibrary.simpleMessage("Domain Fronting"),
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("Bypass SNI blocking"),
     "download" : MessageLookupByLibrary.simpleMessage("Downloads"),

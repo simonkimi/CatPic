@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back" : MessageLookupByLibrary.simpleMessage("返回"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("基础设置"),
     "confirm" : MessageLookupByLibrary.simpleMessage("确认"),
+    "delete" : MessageLookupByLibrary.simpleMessage("删除"),
     "domain_fronting" : MessageLookupByLibrary.simpleMessage("域前置"),
     "domain_fronting_desc" : MessageLookupByLibrary.simpleMessage("绕过 SNI 封锁"),
     "download" : MessageLookupByLibrary.simpleMessage("下载"),
