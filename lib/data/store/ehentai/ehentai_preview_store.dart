@@ -6,13 +6,13 @@ import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/ui/pages/main_page/models/large_card_model.dart';
 import 'package:catpic/ui/pages/main_page/models/simple_card_model.dart';
-import 'package:catpic/data/store/search_store.dart';
+import 'package:catpic/data/interface/post_view.dart';
 
 part 'ehentai_preview_store.g.dart';
 
 class EHentaiPreviewStore = EHentaiPreviewStoreBase with _$EHentaiPreviewStore;
 
-abstract class EHentaiPreviewStoreBase extends SearchPageStore with Store {
+abstract class EHentaiPreviewStoreBase extends PostViewInterface with Store {
   final WebsiteEntity entity;
 
   EhClient client;

@@ -1,6 +1,6 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/interface/post_view.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/data/store/search_store.dart';
 import 'package:catpic/ui/pages/main_page/models/simple_card_model.dart';
 import 'package:mobx/mobx.dart';
 
@@ -8,7 +8,7 @@ part 'post_search_store.g.dart';
 
 class PostSearchStore = PostSearchStoreBase with _$PostSearchStore;
 
-abstract class PostSearchStoreBase with Store implements SearchPageStore {
+abstract class PostSearchStoreBase with Store implements PostViewInterface {
   final String _searchText;
   final BooruAdapter _booruAdapter;
 
