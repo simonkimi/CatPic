@@ -5,6 +5,7 @@ import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/main_page/main_page.dart';
 import 'package:catpic/ui/pages/main_page/store/main_store.dart';
+import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +40,13 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: MainPage(),
+      home: SearchPage(),
       routes: {
         MainPage.routeName: (context) => MainPage(),
         LoginPage.routeName: (context) => LoginPage(),
         WebsiteManagerPage.routeName: (context) => WebsiteManagerPage(),
         WebsiteAddPage.routeName: (context) => WebsiteAddPage(),
-        HostManagerPage.routeName: (context) => HostManagerPage()
+        HostManagerPage.routeName: (context) => HostManagerPage(),
       },
     );
   }

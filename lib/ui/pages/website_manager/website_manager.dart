@@ -54,15 +54,6 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
           tooltip: S.of(context).back,
         ),
         title: Text(S.of(context).website_manager),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: () {
-              Navigator.pushNamed(context, HostManagerPage.routeName);
-            },
-            tooltip: S.of(context).host_manager,
-          )
-        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
