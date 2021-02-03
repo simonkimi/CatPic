@@ -9,7 +9,7 @@ class MainStore = MainStoreBase with _$MainStore;
 
 abstract class MainStoreBase with Store {
   @observable
-  ObservableList<WebsiteEntity> websiteList = ObservableList();
+  List<WebsiteEntity> websiteList = [];
 
   @observable
   WebsiteEntity websiteEntity;
@@ -17,8 +17,7 @@ abstract class MainStoreBase with Store {
   @action
   Future<void> init() async {
     var websiteDao = DatabaseHelper().websiteDao;
-    websiteList.clear();
-    websiteList.addAll(await websiteDao.getAll());
+    websiteList = await websiteDao.getAll();
     var lastWebsite = SPHelper().pref.getInt("last_website") ?? -1;
     websiteEntity =
         websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
@@ -31,8 +30,7 @@ abstract class MainStoreBase with Store {
   @action
   Future<void> updateList() async {
     var websiteDao = DatabaseHelper().websiteDao;
-    websiteList.clear();
-    websiteList.addAll(await websiteDao.getAll());
+    websiteList = await websiteDao.getAll();
     // 判断当前网站是否被删
     if (websiteEntity != null) {
       if (websiteList.where((e) => e.id == websiteEntity.id ?? false).isEmpty) {
@@ -47,6 +45,12 @@ abstract class MainStoreBase with Store {
     if (websiteEntity != null) {
       SPHelper().pref.setInt("last_website", websiteEntity.id);
     }
+  }
+
+  Future<void> setWebsite(WebsiteEntity entity) async {
+    websiteEntity = entity;
+    SPHelper().pref.setInt("last_website", websiteEntity.id);
+
   }
 }
 

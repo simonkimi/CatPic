@@ -10,6 +10,7 @@ import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'data/database/database_helper.dart';
 import 'generated/l10n.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        RefreshLocalizations.delegate,
         S.delegate
       ],
       builder: BotToastInit(),

@@ -75,6 +75,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
             favIcon = MemoryImage(e.favicon);
           }
           return WebsiteItem(
+            key: Key('website-$title'),
             title: Text(title),
             subtitle: Text(subTitle),
             leadingImage: favIcon,

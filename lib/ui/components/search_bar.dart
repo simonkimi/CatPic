@@ -23,8 +23,8 @@ class SearchBar extends StatefulWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  var searchText = '';
-  var searchTmp = '';
+  var _searchText = '';
+  var _searchTmp = '';
   FloatingSearchBarController controller;
   String defaultHint;
 
@@ -42,8 +42,9 @@ class _SearchBarState extends State<SearchBar> {
         MediaQuery
             .of(context)
             .orientation == Orientation.portrait;
-    return FloatingSearchBar(
-      hint: searchText.isEmpty ? defaultHint : searchText,
+
+    var searchBar = FloatingSearchBar(
+      hint: _searchText.isEmpty ? defaultHint : _searchText,
       controller: controller,
       scrollPadding: EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: Duration(milliseconds: 300),
@@ -56,7 +57,7 @@ class _SearchBarState extends State<SearchBar> {
       onQueryChanged: (query) {
         if (controller.isOpen) {
           setState(() {
-            searchTmp = query;
+            _searchTmp = query;
           });
         }
       },
@@ -66,17 +67,19 @@ class _SearchBarState extends State<SearchBar> {
           widget.onSubmitted(query);
         }
         setState(() {
-          searchText = query;
+          _searchText = query;
         });
       },
       onFocusChanged: (isFocused) {
         if (isFocused) {
-          controller.query = searchTmp;
+          controller.query = _searchTmp;
         }
       },
       transition: CircularFloatingSearchBarTransition(),
       actions: widget.actions,
       builder: widget.candidateBuilder,
     );
+    print('height: ${searchBar.height}');
+    return searchBar;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/pages/main_page/store/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
+import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -125,7 +126,7 @@ class _MainDrawerState extends State<MainDrawer> {
     ];
   }
 
-  UserAccountsDrawerHeader buildUserAccountsDrawerHeader() {
+  Widget buildUserAccountsDrawerHeader() {
     var subTitle = S.of(context).no_website;
     ImageProvider favicon;
     if (mainStore.websiteEntity != null) {
@@ -162,5 +163,13 @@ class _MainDrawerState extends State<MainDrawer> {
             ));
       }).toList(),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      mainStore.updateList();
+    });
   }
 }

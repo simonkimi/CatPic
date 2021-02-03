@@ -18,12 +18,4 @@ class _MainPageState extends State<MainPage> {
       drawer: MainDrawer(),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-    EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      mainStore.updateList();
-    });
-  }
 }
