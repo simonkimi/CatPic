@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
@@ -7,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'dart:ui';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -17,19 +16,13 @@ class _SearchPageState extends State<SearchPage> {
   var _searchBarController = FloatingSearchBarController();
   var _refreshController = RefreshController(initialRefresh: false);
 
+  var itemCount = 15;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(),
-      body: SafeArea(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            buildWaterFlow(),
-            buildSearchBar(),
-          ],
-        ),
-      ),
+      body: buildSearchBar(),
     );
   }
 
@@ -48,6 +41,7 @@ class _SearchPageState extends State<SearchPage> {
           showIfClosed: false,
         ),
       ],
+      body: buildWaterFlow(),
       candidateBuilder: (context, transition) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(8),
@@ -67,32 +61,39 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget buildWaterFlow() {
-    return SmartRefresher(
-      enablePullUp: true,
-      enablePullDown: true,
-      controller: _refreshController,
-      header: MaterialClassicHeader(
-        distance: 70,
-      ),
-      onRefresh: () async {
-        await Future.delayed(Duration(seconds: 3));
-        _refreshController.refreshCompleted();
-      },
-      onLoading: () async {
-        await Future.delayed(Duration(seconds: 3));
-        _refreshController.loadComplete();
-      },
-      child: WaterfallFlow.builder(
-        padding: EdgeInsets.only(top: 60),
-        gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
-        itemCount: Colors.accents.length,
-        itemBuilder: (ctx, index) {
-          return PostPreviewCard(
-            title: '# $index',
-            subTitle: 'Test',
-          );
+    var height = MediaQueryData.fromWindow(window).padding.top;
+    return FloatingSearchBarScrollNotifier(
+      child: SmartRefresher(
+        enablePullUp: true,
+        enablePullDown: true,
+        controller: _refreshController,
+        header: MaterialClassicHeader(
+          distance: 70,
+        ),
+        onRefresh: () async {
+          await Future.delayed(Duration(milliseconds: 1500));
+          _refreshController.refreshCompleted();
         },
+        onLoading: () async {
+          await Future.delayed(Duration(milliseconds: 1500));
+          setState(() {
+            itemCount += 15;
+          });
+          _refreshController.loadComplete();
+        },
+        child: WaterfallFlow.builder(
+          padding: EdgeInsets.only(top: 60 + height),
+          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
+          itemCount: itemCount,
+          itemBuilder: (ctx, index) {
+            return PostPreviewCard(
+              key: Key('item$index'),
+              title: '# $index',
+              subTitle: 'Test',
+            );
+          },
+        ),
       ),
     );
   }

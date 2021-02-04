@@ -5,6 +5,7 @@ class SearchBar extends StatefulWidget {
   final OnQueryChangedCallback onSubmitted;
   final FloatingSearchBarBuilder candidateBuilder;
   final List<Widget> actions;
+  final Widget body;
 
   final FloatingSearchBarController controller;
   final String defaultHint;
@@ -16,6 +17,7 @@ class SearchBar extends StatefulWidget {
     this.defaultHint,
     this.onSubmitted,
     @required this.candidateBuilder,
+    this.body,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,6 @@ class _SearchBarState extends State<SearchBar> {
   FloatingSearchBarController controller;
   String defaultHint;
 
-
   @override
   void initState() {
     super.initState();
@@ -39,9 +40,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     final isPortrait =
-        MediaQuery
-            .of(context)
-            .orientation == Orientation.portrait;
+        MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
       hint: _searchText.isEmpty ? defaultHint : _searchText,
@@ -54,6 +53,7 @@ class _SearchBarState extends State<SearchBar> {
       openAxisAlignment: 0.0,
       maxWidth: isPortrait ? 600 : 500,
       debounceDelay: Duration(milliseconds: 100),
+      body: widget.body,
       onQueryChanged: (query) {
         if (controller.isOpen) {
           setState(() {

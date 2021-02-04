@@ -59,7 +59,6 @@ abstract class MainStoreBase with Store {
   Future<void> setWebsite(WebsiteEntity entity) async {
     websiteEntity = entity;
     SPHelper().pref.setInt("last_website", websiteEntity.id);
-
   }
 
   @action
