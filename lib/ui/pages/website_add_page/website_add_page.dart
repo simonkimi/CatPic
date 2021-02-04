@@ -8,6 +8,7 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   @override
   void initState() {
     super.initState();
+    debugPrint("WebsiteAddPage initState");
     websiteName = '';
     websiteHost = '';
     scheme = WebsiteScheme.HTTPS.index;
@@ -31,6 +33,12 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     useHostList = false;
     domainFronting = false;
     trustHost = "";
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    debugPrint("WebsiteAddPage dispose");
   }
 
   @override
@@ -284,14 +292,10 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
 
     // 获取封面图片
     getFavicon(entity).then((favicon) {
-      websiteDao.getById(id).then((e) {
-        e.favicon = favicon;
-        print("下载Favicon完成, 长度: ${e.favicon.length}");
-        websiteDao.updateSite(e).then((value) {
-          EventBusUtil().bus.fire(EventSiteChange());
-        });
-      });
+      mainStore.setWebsiteFavicon(id, favicon);
     });
     return true;
   }
+
+
 }

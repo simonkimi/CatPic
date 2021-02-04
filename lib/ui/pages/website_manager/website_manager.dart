@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
-import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -17,13 +18,15 @@ class WebsiteManagerPage extends StatefulWidget {
 
 class _WebsiteManagerState extends State<WebsiteManagerPage> {
   var eventBus = EventBusUtil().bus;
+  StreamSubscription<EventSiteChange> _eventSiteChangeListener;
   List<WebsiteEntity> websiteList;
 
   @override
   void initState() {
     super.initState();
+    debugPrint("WebsiteManagerPage initState");
     updateWebsiteList();
-    eventBus.on<EventSiteChange>().listen((event) {
+    _eventSiteChangeListener = eventBus.on<EventSiteChange>().listen((event) {
       updateWebsiteList();
     });
   }
@@ -94,5 +97,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   @override
   void dispose() {
     super.dispose();
+    debugPrint("WebsiteManagerPage dispose");
+    _eventSiteChangeListener.cancel();
   }
 }

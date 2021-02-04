@@ -1,10 +1,10 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/sp_helper.dart';
 import 'package:catpic/themes.dart' as theme;
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/main_page/main_page.dart';
-import 'package:catpic/ui/pages/main_page/store/main_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';

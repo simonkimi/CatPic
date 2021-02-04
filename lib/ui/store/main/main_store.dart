@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/data/database/sp_helper.dart';
@@ -34,7 +36,13 @@ abstract class MainStoreBase with Store {
     // 判断当前网站是否被删
     if (websiteEntity != null) {
       if (websiteList.where((e) => e.id == websiteEntity.id ?? false).isEmpty) {
-        websiteEntity = websiteList[0];
+        if (websiteList.isNotEmpty) {
+          websiteEntity = websiteList[0];
+        } else {
+          websiteEntity = null;
+          SPHelper().pref.setInt("last_website", -1);
+          return;
+        }
       }
     }
     // 判断是有候选网站
@@ -47,10 +55,25 @@ abstract class MainStoreBase with Store {
     }
   }
 
+  @action
   Future<void> setWebsite(WebsiteEntity entity) async {
     websiteEntity = entity;
     SPHelper().pref.setInt("last_website", websiteEntity.id);
 
+  }
+
+  @action
+  Future<void> setWebsiteFavicon(int entityId, Uint8List favicon) async {
+    if (favicon.isNotEmpty) {
+      var websiteDao = DatabaseHelper().websiteDao;
+      var entity = await websiteDao.getById(entityId);
+      entity.favicon = favicon;
+      await websiteDao.updateSite(entity);
+      if (websiteEntity.id == entity.id) {
+        websiteEntity = entity;
+      }
+      await updateList();
+    }
   }
 }
 

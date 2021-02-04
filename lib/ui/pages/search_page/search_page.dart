@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:flutter/material.dart';
@@ -73,16 +74,23 @@ class _SearchPageState extends State<SearchPage> {
       header: MaterialClassicHeader(
         distance: 70,
       ),
-      onLoading: () {},
+      onRefresh: () async {
+        await Future.delayed(Duration(seconds: 3));
+        _refreshController.refreshCompleted();
+      },
+      onLoading: () async {
+        await Future.delayed(Duration(seconds: 3));
+        _refreshController.loadComplete();
+      },
       child: WaterfallFlow.builder(
         padding: EdgeInsets.only(top: 60),
         gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
         itemCount: Colors.accents.length,
         itemBuilder: (ctx, index) {
-          return Container(
-            color: Colors.accents[index],
-            height: 100 + Random().nextInt(200).toDouble(),
+          return PostPreviewCard(
+            title: '# $index',
+            subTitle: 'Test',
           );
         },
       ),

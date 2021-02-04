@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/ui/pages/main_page/store/main_store.dart';
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -13,6 +15,8 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   bool showWebsiteList = false;
+
+  StreamSubscription<EventSiteChange> _eventSiteChangeListener;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,6 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-
   List<Widget> buildWebsiteList() {
     return [
       Expanded(
@@ -65,7 +68,7 @@ class _MainDrawerState extends State<MainDrawer> {
                 backgroundImage: favicon,
               ),
               onTap: () {
-                // mainStore.setWebsite(element);
+                mainStore.setWebsite(element);
               },
             );
           }).toList(),
@@ -153,7 +156,7 @@ class _MainDrawerState extends State<MainDrawer> {
           .map((element) {
         return InkWell(
             onTap: () {
-              // mainStore.setWebsite(element);
+              mainStore.setWebsite(element);
             },
             child: CircleAvatar(
               backgroundImage: element.favicon.isNotEmpty
@@ -168,8 +171,17 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+    print("MainDrawer initState");
+    _eventSiteChangeListener = EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      print("event: EventSiteChange");
       mainStore.updateList();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("MainDrawer dispose");
+    _eventSiteChangeListener.cancel();
   }
 }

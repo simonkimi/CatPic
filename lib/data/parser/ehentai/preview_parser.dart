@@ -34,7 +34,6 @@ class PreviewParser {
 
       var keyTags = parseTag(element);
 
-      print(keyTags);
 
       return PreViewModel(
           gid: gidAndgtoken[0],

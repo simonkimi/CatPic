@@ -43,7 +43,7 @@ class _SearchBarState extends State<SearchBar> {
             .of(context)
             .orientation == Orientation.portrait;
 
-    var searchBar = FloatingSearchBar(
+    return FloatingSearchBar(
       hint: _searchText.isEmpty ? defaultHint : _searchText,
       controller: controller,
       scrollPadding: EdgeInsets.only(top: 16, bottom: 56),
@@ -79,7 +79,5 @@ class _SearchBarState extends State<SearchBar> {
       actions: widget.actions,
       builder: widget.candidateBuilder,
     );
-    print('height: ${searchBar.height}');
-    return searchBar;
   }
 }
