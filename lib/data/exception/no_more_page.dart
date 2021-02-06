@@ -1,0 +1,1 @@
+class NoMorePage implements Exception {}
