@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/host_entity.dart';
@@ -137,9 +136,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         value: scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
           setState(() {
-            scheme = value
-                ? WebsiteScheme.HTTPS.index
-                : WebsiteScheme.HTTP.index;
+            scheme =
+                value ? WebsiteScheme.HTTPS.index : WebsiteScheme.HTTP.index;
           });
         },
       ),
@@ -260,7 +258,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     if (websiteName.isEmpty) {
       websiteName = websiteHost;
     }
-    
+
     // 保存网站
     var websiteDao = DatabaseHelper().websiteDao;
     var entity = WebsiteEntity(
@@ -273,7 +271,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       favicon: Uint8List.fromList([]),
     );
     var id = await websiteDao.addSite(entity);
-    
+
     // 保存自定义host
     if (useHostList) {
       var hostDao = DatabaseHelper().hostDao;
@@ -282,11 +280,8 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
         await hostDao.removeHost([existHost]);
       }
 
-      var hostEntity = HostEntity(
-        host: websiteHost,
-        ip: trustHost,
-        sni: domainFronting
-      );
+      var hostEntity =
+          HostEntity(host: websiteHost, ip: trustHost, sni: domainFronting);
       hostDao.addHost(hostEntity);
     }
 
@@ -296,6 +291,4 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     });
     return true;
   }
-
-
 }

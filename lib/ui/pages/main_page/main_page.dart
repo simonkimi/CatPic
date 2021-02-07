@@ -19,25 +19,26 @@ class _MainPageState extends State<MainPage> {
           children: [
             CachedDioImage(
               imgUrl:
-                  'https://img2.gelbooru.com/images/f3/4b/f34b89bfc20170f52191caffbb184242.jpg',
-              cachedKey: "f34b89bfc20170f52191caffbb184242",
+                  'https://img2.gelbooru.com/images/86/72/8672f7ebcf7797eec98c6f76e9caacf7.png',
               imageBuilder: (context, imageProvider) {
                 return Image(image: imageProvider);
               },
               loadingBuilder: (context, total, received, progress) {
                 print('$total, $received, $progress');
                 return Container(
-                  width: 100,
-                  height: 100,
+                  width: 300,
+                  height: 200,
                   color: Colors.yellow,
+                  child: Text('$total, $received, $progress'),
                 );
               },
               errorBuilder: (context, err) {
                 print(err);
                 return Container(
-                  width: 100,
-                  height: 100,
+                  width: 300,
+                  height: 200,
                   color: Colors.red,
+                  child: Text(err.toString()),
                 );
               },
             )
