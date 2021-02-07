@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: SearchPage(),
+      home: MainPage(),
       routes: {
         MainPage.routeName: (context) => MainPage(),
         LoginPage.routeName: (context) => LoginPage(),

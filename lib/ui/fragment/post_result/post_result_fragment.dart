@@ -103,15 +103,12 @@ class _PostResultFragmentState extends State<PostResultFragment>
       key: Key('item${post.id}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
-
       body: CachedDioImage(
         imgUrl: post.previewURL,
         dio: widget.adapter.dio,
         cachedKey: post.md5,
-        imageBuilder: (_, imgProvider) => Container(
-          width: post.previewWidth.toDouble(),
-          height: post.previewHeight.toDouble(),
-          color: color,
+        imageBuilder: (_, imgData) => Image(
+          image: MemoryImage(imgData, scale: 0.1),
         ),
         errorBuilder: (_, err) => Container(
           width: post.previewWidth.toDouble(),
@@ -122,13 +119,18 @@ class _PostResultFragmentState extends State<PostResultFragment>
           ),
         ),
         loadingBuilder: (context, total, received, progress) {
-          return Container(
+          // return Container(
+          //   width: post.previewWidth.toDouble(),
+          //   height: post.previewHeight.toDouble(),
+          //   color: color,
+          //   child: Center(
+          //     child: Text('${(progress * 100).toInt()}%'),
+          //   ),
+          // );
+          return Image.asset(
+            'assets/img/empty.png',
             width: post.previewWidth.toDouble(),
             height: post.previewHeight.toDouble(),
-            color: color,
-            child: Center(
-              child: Text('${(progress * 100).toInt()}%'),
-            ),
           );
         },
       ),

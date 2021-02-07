@@ -1,5 +1,7 @@
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
+import 'package:catpic/utils/image/cached_dio_image_provider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
@@ -17,27 +19,23 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: Column(
           children: [
-            CachedDioImage(
-              imgUrl:
-                  'https://img2.gelbooru.com/images/f3/4b/f34b89bfc20170f52191caffbb184242.jpg',
-              cachedKey: "f34b89bfc20170f52191caffbb184242",
-              imageBuilder: (context, imageProvider) {
-                return Image(image: imageProvider);
-              },
-              loadingBuilder: (context, total, received, progress) {
-                print('$total, $received, $progress');
-                return Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.yellow,
-                );
-              },
-              errorBuilder: (context, err) {
-                print(err);
-                return Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.red,
+            Image(
+              image: CachedDioImageProvider(
+                url:
+                    "https://img2.gelbooru.com/images/55/b0/55b0e398ffcdfc87ab70a0ccc66c391f.jpg",
+                dio: Dio(),
+                cachedKey: '123123',
+              ),
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent loadingProgress) {
+                if (loadingProgress == null) return child;
+                int currentLength = loadingProgress.cumulativeBytesLoaded;
+                int totalLength = loadingProgress.expectedTotalBytes;
+                return CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes
+                      : null,
                 );
               },
             )

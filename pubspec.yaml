@@ -41,6 +41,7 @@ flutter:
 
   assets:
     - assets/icons/
+    - assets/img/
 
 
 flutter_intl:

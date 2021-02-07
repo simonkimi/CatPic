@@ -6,7 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 typedef ImageWidgetBuilder = Widget Function(
   BuildContext context,
-  ImageProvider imageProvider,
+  Uint8List imgData,
 );
 
 typedef LoadingWidgetBuilder = Widget Function(
@@ -76,7 +76,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
 
   Widget buildBody(BuildContext context) {
     if (loadingType == LoadingType.DONE) {
-      return widget.imageBuilder(context, MemoryImage(data));
+      return widget.imageBuilder(context, data);
     } else if (loadingType == LoadingType.LOADING) {
       return widget.loadingBuilder(context, totalSize, receivedSize, progress);
     } else {
@@ -87,7 +87,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
   Future<void> fetchData() async {
     try {
       var cached = await getCached();
-      if (cached != null) {
+      if (cached != null && false) {
         setState(() {
           data = cached;
           loadingType = LoadingType.DONE;
