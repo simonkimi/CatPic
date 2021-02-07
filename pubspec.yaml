@@ -28,6 +28,7 @@ dependencies:
   pull_to_refresh: ^1.6.3
   flutter_cache_manager: ^2.1.1
   get: ^3.24.0
+  flutter_svg: any
 
 
 dev_dependencies:
@@ -41,8 +42,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/
-    - assets/img/
+    - assets/svg/
 
 
 flutter_intl:

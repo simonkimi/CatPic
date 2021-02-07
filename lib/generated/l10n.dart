@@ -275,10 +275,10 @@ class S {
     );
   }
 
-  /// `Use custom host list`
+  /// `Use DoH`
   String get use_host_list {
     return Intl.message(
-      'Use custom host list',
+      'Use DoH',
       name: 'use_host_list',
       desc: '',
       args: [],
@@ -390,6 +390,16 @@ class S {
     return Intl.message(
       'Custom host must be turned on first',
       name: 'turn_on_host',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There is no website, click me to add one!`
+  String get to_add_website {
+    return Intl.message(
+      'There is no website, click me to add one!',
+      name: 'to_add_website',
       desc: '',
       args: [],
     );

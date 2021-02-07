@@ -26,7 +26,7 @@
   "scheme_https": "使用更安全的HTTPS协议",
   "site_type": "站点类型",
   "advanced_settings": "高级设置(可选)",
-  "use_host_list": "使用自定义主机列表",
+  "use_host_list": "使用DoH",
   "trusted_host_auto_failed": "获取主机地址失败",
   "use_host_list_desc": "解决某些地区的 DNS 污染问题",
   "domain_fronting": "域前置",
@@ -37,5 +37,6 @@
   "host_empty": "主机不能为空",
   "host_or_ip_empty": "主机和IP不能为空",
   "illegal_ip": "非法IP",
-  "turn_on_host" : "必须先开启自定义主机!"
+  "turn_on_host" : "必须先开启自定义主机!",
+  "to_add_website": "还没有网站, 点我添加一个!"
 }

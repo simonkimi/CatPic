@@ -26,7 +26,7 @@
   "scheme_https": "Using more secure HTTPS scheme",
   "site_type": "Site type",
   "advanced_settings": "ADVANCED SETTINGS (optional)",
-  "use_host_list": "Use custom host list",
+  "use_host_list": "Use DoH",
   "trusted_host_auto_failed": "Get trusted host failed",
   "use_host_list_desc": "Workaround DNS poisoning in some nations",
   "domain_fronting": "Domain Fronting",
@@ -37,5 +37,6 @@
   "host_empty": "Host cannot be empty",
   "host_or_ip_empty": "Host and IP cannot be empty",
   "illegal_ip": "Illegal IP",
-  "turn_on_host" : "Custom host must be turned on first"
+  "turn_on_host" : "Custom host must be turned on first",
+  "to_add_website": "There is no website, click me to add one!"
 }
