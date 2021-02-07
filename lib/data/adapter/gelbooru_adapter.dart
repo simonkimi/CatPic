@@ -4,6 +4,7 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/gelbooru/post_parser.dart';
 import 'package:catpic/data/parser/gelbooru/tag_parser.dart';
 import 'package:catpic/network/api/gelbooru/gelbooru_client.dart';
+import 'package:dio/src/dio.dart';
 
 import 'booru_adapter.dart';
 
@@ -33,4 +34,7 @@ class GelbooruAdapter implements BooruAdapter {
     var str = await client.tagsList(limit: limit, names: name);
     return GelbooruTagParse.parse(str);
   }
+
+  @override
+  Dio get dio => client.dio;
 }

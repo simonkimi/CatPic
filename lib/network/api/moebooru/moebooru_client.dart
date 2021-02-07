@@ -11,7 +11,7 @@ class MoebooruClient extends BaseClient {
   /// [tags] The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.
   Future<String> postsList({int limit, int page, String tags}) async {
     var uri = Uri(path: 'post.json', queryParameters: {
-      'limit': limit ?? 100,
+      'limit': (limit ?? 100).toString(),
       'page': page ?? '',
       'tags': tags ?? ''
     });
@@ -26,7 +26,7 @@ class MoebooruClient extends BaseClient {
   Future<String> tagsList({int limit, String name, int page}) async {
     var uri = Uri(path: 'tag.json', queryParameters: {
       'name': name ?? '',
-      'limit': limit ?? 100,
+      'limit': (limit ?? 100).toString(),
     });
 
     return (await dio.getUri(uri)).data;

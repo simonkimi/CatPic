@@ -25,18 +25,16 @@ class CachedDioImage extends StatefulWidget {
   final LoadingWidgetBuilder loadingBuilder;
   final ErrorBuilder errorBuilder;
   final String cachedKey;
-  final double width;
-  final double height;
   final String imgUrl;
   final Dio dio;
+  final Duration duration;
 
   const CachedDioImage({
     Key key,
     this.dio,
-    this.imgUrl,
-    this.width,
-    this.height,
     this.cachedKey,
+    this.duration,
+    @required this.imgUrl,
     @required this.imageBuilder,
     @required this.loadingBuilder,
     @required this.errorBuilder,
@@ -68,6 +66,24 @@ class _CachedDioImageState extends State<CachedDioImage> {
     fetchData();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: widget.duration ?? Duration(milliseconds: 500),
+      child: buildBody(context),
+    );
+  }
+
+  Widget buildBody(BuildContext context) {
+    if (loadingType == LoadingType.DONE) {
+      return widget.imageBuilder(context, MemoryImage(data));
+    } else if (loadingType == LoadingType.LOADING) {
+      return widget.loadingBuilder(context, totalSize, receivedSize, progress);
+    } else {
+      return widget.errorBuilder(context, err);
+    }
+  }
+
   Future<void> fetchData() async {
     try {
       var cached = await getCached();
@@ -80,23 +96,29 @@ class _CachedDioImageState extends State<CachedDioImage> {
         var rsp = await _dio.get<List<int>>(widget.imgUrl,
             options: Options(responseType: ResponseType.bytes),
             onReceiveProgress: (received, total) {
+          if (mounted) {
+            setState(() {
+              receivedSize = received;
+              totalSize = total;
+              progress = total != -1 ? receivedSize / totalSize : 0;
+            });
+          }
+        });
+        if (mounted) {
           setState(() {
-            receivedSize = received;
-            totalSize = total;
-            progress = total != -1 ? receivedSize / totalSize : 0;
+            data = Uint8List.fromList(rsp.data);
+            setCached(data);
+            loadingType = LoadingType.DONE;
           });
-        });
-        setState(() {
-          data = Uint8List.fromList(rsp.data);
-          setCached(data);
-          loadingType = LoadingType.DONE;
-        });
+        }
       }
     } catch (e) {
-      setState(() {
-        loadingType = LoadingType.ERROR;
-        err = e;
-      });
+      if (mounted) {
+        setState(() {
+          loadingType = LoadingType.ERROR;
+          err = e;
+        });
+      }
     }
   }
 
@@ -112,16 +134,5 @@ class _CachedDioImageState extends State<CachedDioImage> {
   Future<void> setCached(Uint8List imageBytes) async {
     var cachedManager = DefaultCacheManager();
     await cachedManager.putFile(cachedKey, imageBytes);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (loadingType == LoadingType.DONE) {
-      return widget.imageBuilder(context, MemoryImage(data));
-    } else if (loadingType == LoadingType.LOADING) {
-      return widget.loadingBuilder(context, totalSize, receivedSize, progress);
-    } else {
-      return widget.errorBuilder(context, err);
-    }
   }
 }

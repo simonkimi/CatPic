@@ -1,5 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/adapter/gelbooru_adapter.dart';
+import 'package:catpic/data/adapter/moebooru_adapter.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -38,6 +41,16 @@ class WebsiteEntity {
     @required this.favicon,
     this.cookies,
   });
+
+  BooruAdapter getAdapter() {
+    if (this.type == WebsiteType.GELBOORU.index) {
+      return GelbooruAdapter(this);
+    } else if (this.type == WebsiteType.MOEBOORU.index) {
+      return MoebooruAdapter(this);
+    }
+    // TODO Danbooru Adapter
+    throw Exception('TODO Danbooru Adapter');
+  }
 }
 
 enum WebsiteScheme { HTTP, HTTPS }

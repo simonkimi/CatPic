@@ -19,18 +19,18 @@ class GelbooruPostParser {
         imgURL: e['file_url'],
         previewURL: e['preview_url'],
         sampleURL: e['sample_url'],
-        width: e['width'],
-        height: e['height'],
-        sampleWidth: e['sample_width'],
-        sampleHeight: e['sample_height'],
-        previewWidth: e['preview_width'],
-        previewHeight: e['preview_height'],
+        width: int.parse(e['width']),
+        height: int.parse(e['height']),
+        sampleWidth: int.parse(e['sample_width']),
+        sampleHeight: int.parse(e['sample_height']),
+        previewWidth: int.parse(e['preview_width']),
+        previewHeight: int.parse(e['preview_height']),
         rating: _getRating(e['rating']),
         status: e['status'],
         tags: {'_': e['tags'].split(' ')},
         source: e['source'],
       );
-    });
+    }).toList();
   }
 
   static PostRating _getRating(String name) {

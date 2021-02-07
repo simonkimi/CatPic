@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/sp_helper.dart';
 import 'package:catpic/themes.dart' as theme;
+import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: MainPage(),
+      home: SearchPage(),
       routes: {
         MainPage.routeName: (context) => MainPage(),
         LoginPage.routeName: (context) => LoginPage(),

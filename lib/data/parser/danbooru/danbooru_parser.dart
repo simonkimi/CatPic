@@ -26,7 +26,7 @@ class DanbooruParse {
         tags: _parseTag(e),
         source: e['source']
       );
-    });
+    }).toList();
   }
 
   static  PostRating _getRating(String name) {

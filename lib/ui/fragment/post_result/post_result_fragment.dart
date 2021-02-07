@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -12,29 +16,53 @@ class PostResultFragment extends StatefulWidget {
   final String searchText;
   final BooruAdapter adapter;
 
-  PostResultFragment({Key key, this.searchText, this.adapter}) : super(key: key);
+  PostResultFragment({Key key, this.searchText, this.adapter})
+      : super(key: key);
 
   @override
   _PostResultFragmentState createState() => _PostResultFragmentState();
 }
 
-class _PostResultFragmentState extends State<PostResultFragment> {
+mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   var _searchBarController = FloatingSearchBarController();
   var _refreshController = RefreshController(initialRefresh: false);
 
-  PostResultStore store;
+  PostResultStore _store;
 
-  @override
-  Widget build(BuildContext context) {
-    store = PostResultStore(
-      searchText: widget.searchText,
-      adapter: widget.adapter
-    );
-
-    return buildSearchBar();
+  Future<void> _onRefresh() async {
+    try {
+      await _store.refresh();
+      _refreshController.loadComplete();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      _refreshController.loadFailed();
+      _refreshController.refreshFailed();
+    }
   }
 
-  Widget buildSearchBar() {
+  Future<void> _onLoadMore() async {
+    try {
+      await _store.loadNextPage();
+      _refreshController.loadComplete();
+    } catch (e) {
+      _refreshController.loadFailed();
+    }
+  }
+}
+
+class _PostResultFragmentState extends State<PostResultFragment>
+    with _PostResultFragmentMixin {
+  @override
+  Widget build(BuildContext context) {
+    _store =
+        PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
+    _store.loadNextPage();
+    return Observer(
+      builder: (_) => _buildSearchBar(),
+    );
+  }
+
+  Widget _buildSearchBar() {
     return SearchBar(
       controller: _searchBarController,
       actions: [
@@ -68,6 +96,45 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     );
   }
 
+  Widget _itemBuilder(BuildContext ctx, int index) {
+    var post = _store.postList[index];
+    var color = Colors.accents[Random().nextInt(Colors.accents.length)][100];
+    return PostPreviewCard(
+      key: Key('item${post.id}'),
+      title: '# ${post.id}',
+      subTitle: '${post.width} x ${post.height}',
+
+      body: CachedDioImage(
+        imgUrl: post.previewURL,
+        dio: widget.adapter.dio,
+        cachedKey: post.md5,
+        imageBuilder: (_, imgProvider) => Container(
+          width: post.previewWidth.toDouble(),
+          height: post.previewHeight.toDouble(),
+          color: color,
+        ),
+        errorBuilder: (_, err) => Container(
+          width: post.previewWidth.toDouble(),
+          height: post.previewHeight.toDouble(),
+          color: color,
+          child: Center(
+            child: Text(err.toString()),
+          ),
+        ),
+        loadingBuilder: (context, total, received, progress) {
+          return Container(
+            width: post.previewWidth.toDouble(),
+            height: post.previewHeight.toDouble(),
+            color: color,
+            child: Center(
+              child: Text('${(progress * 100).toInt()}%'),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget buildWaterFlow() {
     var height = MediaQueryData.fromWindow(window).padding.top;
     return FloatingSearchBarScrollNotifier(
@@ -76,31 +143,16 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         enablePullDown: true,
         controller: _refreshController,
         header: MaterialClassicHeader(
-          distance: 70,
+          distance: 90,
         ),
-        onRefresh: () async {
-          await Future.delayed(Duration(milliseconds: 1500));
-          _refreshController.refreshCompleted();
-        },
-        onLoading: () async {
-          await Future.delayed(Duration(milliseconds: 1500));
-          setState(() {
-          });
-          _refreshController.loadComplete();
-        },
+        onRefresh: _onRefresh,
+        onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + height),
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
-          itemCount: store.postList.length,
-          itemBuilder: (ctx, index) {
-            var post = store.postList[index];
-            return PostPreviewCard(
-              key: Key('item${post.id}'),
-              title: '# ${post.id}',
-              subTitle: '${post.width} x ${post.height}',
-            );
-          },
+          itemCount: _store.postList.length,
+          itemBuilder: _itemBuilder,
         ),
       ),
     );

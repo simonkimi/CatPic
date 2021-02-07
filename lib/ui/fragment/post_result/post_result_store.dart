@@ -19,16 +19,23 @@ abstract class PostResultStoreBase with Store implements PostViewInterface{
     @required this.adapter,
   });
 
-
   var postList = ObservableList<BooruPost>();
   var page = 0;
 
   @action
   Future<void> loadNextPage() async {
-    var list = await adapter.postList(tags: searchText, page: page, limit: 50);
+    var list = await adapter.postList(tags: searchText, page: page, limit: 10);
     if (list.isEmpty) {
         throw NoMorePage();
     }
     postList.addAll(list);
+    page += 1;
+    print('postList loadNextPage ${postList.length}');
+  }
+
+  Future<void> refresh() async {
+    postList.clear();
+    page = 0;
+    await loadNextPage();
   }
 }

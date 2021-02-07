@@ -4,6 +4,7 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
+import 'package:dio/src/dio.dart';
 
 import 'booru_adapter.dart';
 
@@ -32,4 +33,7 @@ class MoebooruAdapter implements BooruAdapter {
     var str = await client.tagsList(name: name, page: page, limit: limit);
     return MoebooruTagParse.parse(str);
   }
+
+  @override
+  Dio get dio => client.dio;
 }

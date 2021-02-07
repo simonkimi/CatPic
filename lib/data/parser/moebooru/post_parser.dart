@@ -23,7 +23,7 @@ class MoebooruPostParse {
         tags: {'_': e['tags'].split(' ')},
         source: e['source']
       );
-    });
+    }).toList();
   }
 
   static PostRating _getRating(String name) {

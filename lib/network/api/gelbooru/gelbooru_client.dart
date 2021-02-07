@@ -13,8 +13,8 @@ class GelbooruClient extends BaseClient {
     var baseUri = Uri.parse('index.php?page=dapi&s=post&q=index');
     var uri = baseUri.replace(queryParameters: {
       ...baseUri.queryParameters,
-      'limit': limit ?? 100,
-      'pid': pid ?? '',
+      'limit': (limit ?? 100).toString(),
+      'pid': pid?.toString() ?? '',
       'tags': tags ?? ''
     });
 
@@ -29,7 +29,7 @@ class GelbooruClient extends BaseClient {
     var uri = baseUri.replace(queryParameters: {
       ...baseUri.queryParameters,
       'names': names ?? '',
-      'limit': limit ?? 100
+      'limit': (limit ?? 100).toString()
     });
 
     return (await dio.getUri(uri)).data;
