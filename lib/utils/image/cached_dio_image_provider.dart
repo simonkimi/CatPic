@@ -62,7 +62,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     if (bytes.lengthInBytes == 0) {
       throw StateError('$url is empty and cannot be loaded as an image.');
     }
-    await setCached(bytes);
+    setCached(bytes);
     return await decode(bytes);
   }
 

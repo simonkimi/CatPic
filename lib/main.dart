@@ -10,6 +10,8 @@ import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'data/database/database_helper.dart';
@@ -26,7 +28,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
       theme: theme.blueTheme,
@@ -42,14 +44,15 @@ class MyApp extends StatelessWidget {
         Locale('en'),
         Locale('zh', 'CN'),
       ],
-      home: MainPage(),
-      routes: {
-        MainPage.routeName: (context) => MainPage(),
-        LoginPage.routeName: (context) => LoginPage(),
-        WebsiteManagerPage.routeName: (context) => WebsiteManagerPage(),
-        WebsiteAddPage.routeName: (context) => WebsiteAddPage(),
-        HostManagerPage.routeName: (context) => HostManagerPage(),
-      },
+      home: SearchPage(),
+      getPages: [
+        GetPage(name: MainPage.routeName, page: () => MainPage()),
+        GetPage(name: LoginPage.routeName, page: () => LoginPage()),
+        GetPage(name: WebsiteManagerPage.routeName, page: () => WebsiteManagerPage()),
+        GetPage(name: WebsiteAddPage.routeName, page: () => WebsiteAddPage()),
+        GetPage(name: HostManagerPage.routeName, page: () => HostManagerPage()),
+        GetPage(name: SearchPage.routeName, page: () => SearchPage()),
+      ],
     );
   }
 }

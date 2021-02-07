@@ -10,11 +10,7 @@ typedef ImageWidgetBuilder = Widget Function(
 );
 
 typedef LoadingWidgetBuilder = Widget Function(
-  BuildContext context,
-  int total,
-  int received,
-  double progress,
-);
+    BuildContext context, ImageChunkEvent chunkEvent);
 
 typedef ErrorBuilder = Widget Function(BuildContext context, Object err);
 
@@ -78,7 +74,10 @@ class _CachedDioImageState extends State<CachedDioImage> {
     if (loadingType == LoadingType.DONE) {
       return widget.imageBuilder(context, data);
     } else if (loadingType == LoadingType.LOADING) {
-      return widget.loadingBuilder(context, totalSize, receivedSize, progress);
+      return widget.loadingBuilder(context, ImageChunkEvent(
+        cumulativeBytesLoaded: receivedSize,
+        expectedTotalBytes: totalSize
+      ));
     } else {
       return widget.errorBuilder(context, err);
     }
@@ -87,7 +86,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
   Future<void> fetchData() async {
     try {
       var cached = await getCached();
-      if (cached != null && false) {
+      if (cached != null) {
         setState(() {
           data = cached;
           loadingType = LoadingType.DONE;

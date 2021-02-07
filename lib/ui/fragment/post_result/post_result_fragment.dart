@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
@@ -12,12 +10,19 @@ import 'package:waterfall_flow/waterfall_flow.dart';
 import 'dart:ui';
 import 'post_result_store.dart';
 
+typedef ValueCallBack = void Function(String);
+
 class PostResultFragment extends StatefulWidget {
   final String searchText;
   final BooruAdapter adapter;
+  final ValueCallBack onSearch;
 
-  PostResultFragment({Key key, this.searchText, this.adapter})
-      : super(key: key);
+  PostResultFragment({
+    Key key,
+    this.searchText = '',
+    @required this.adapter,
+    @required this.onSearch,
+  }) : super(key: key);
 
   @override
   _PostResultFragmentState createState() => _PostResultFragmentState();
@@ -65,6 +70,9 @@ class _PostResultFragmentState extends State<PostResultFragment>
   Widget _buildSearchBar() {
     return SearchBar(
       controller: _searchBarController,
+      onSubmitted: (value) {
+        widget.onSearch(value);
+      },
       actions: [
         FloatingSearchBarAction(
           showIfOpened: false,
@@ -98,40 +106,23 @@ class _PostResultFragmentState extends State<PostResultFragment>
 
   Widget _itemBuilder(BuildContext ctx, int index) {
     var post = _store.postList[index];
-    var color = Colors.accents[Random().nextInt(Colors.accents.length)][100];
     return PostPreviewCard(
       key: Key('item${post.id}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: CachedDioImage(
-        imgUrl: post.previewURL,
         dio: widget.adapter.dio,
-        cachedKey: post.md5,
-        imageBuilder: (_, imgData) => Image(
-          image: MemoryImage(imgData, scale: 0.1),
-        ),
-        errorBuilder: (_, err) => Container(
-          width: post.previewWidth.toDouble(),
-          height: post.previewHeight.toDouble(),
-          color: color,
-          child: Center(
-            child: Text(err.toString()),
-          ),
-        ),
-        loadingBuilder: (context, total, received, progress) {
-          // return Container(
-          //   width: post.previewWidth.toDouble(),
-          //   height: post.previewHeight.toDouble(),
-          //   color: color,
-          //   child: Center(
-          //     child: Text('${(progress * 100).toInt()}%'),
-          //   ),
-          // );
-          return Image.asset(
-            'assets/img/empty.png',
-            width: post.previewWidth.toDouble(),
-            height: post.previewHeight.toDouble(),
+        imgUrl: post.previewURL,
+        imageBuilder: (context, imgData) {
+          return Image(image: MemoryImage(imgData, scale: 0.1));
+        },
+        loadingBuilder: (_, progress) {
+          return AspectRatio(
+            aspectRatio: post.width / post.height,
           );
+        },
+        errorBuilder: (_, err) {
+          return null;
         },
       ),
     );
@@ -145,14 +136,14 @@ class _PostResultFragmentState extends State<PostResultFragment>
         enablePullDown: true,
         controller: _refreshController,
         header: MaterialClassicHeader(
-          distance: 90,
+          distance: height + 80,
         ),
         onRefresh: _onRefresh,
         onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + height),
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
+              crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),
           itemCount: _store.postList.length,
           itemBuilder: _itemBuilder,
         ),
