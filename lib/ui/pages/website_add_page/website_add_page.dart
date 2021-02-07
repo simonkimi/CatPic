@@ -31,7 +31,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     websiteType = WebsiteType.GELBOORU.index;
     useHostList = false;
     domainFronting = false;
-    trustHost = "";
+    doh = "";
   }
 
   @override
@@ -173,7 +173,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       SwitchListTile(
         title: Text(S.of(context).use_host_list),
         subtitle:
-            Text(useHostList ? trustHost : S.of(context).use_host_list_desc),
+            Text(useHostList ? doh : S.of(context).use_host_list_desc),
         value: useHostList,
         secondary: Icon(Icons.list_alt),
         onChanged: (value) {
@@ -209,7 +209,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   bool domainFronting;
   bool useHostList;
 
-  String trustHost;
+  String doh;
 
   /// 当要开启自定义host的时候进行请求真实ip
   void setHostList(bool targetValue) async {
@@ -222,16 +222,16 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
         if (hostExist != null) {
           setState(() {
             useHostList = true;
-            trustHost = hostExist.ip;
+            doh = hostExist.ip;
           });
         } else {
           var cancelFunc = BotToast.showLoading();
-          getTrustHost(host).then((host) {
+          queryDoh(host).then((host) {
             cancelFunc();
             if (host.isNotEmpty) {
               setState(() {
                 useHostList = true;
-                trustHost = host;
+                doh = host;
               });
             } else {
               BotToast.showText(text: S.of(context).trusted_host_auto_failed);
@@ -281,7 +281,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       }
 
       var hostEntity =
-          HostEntity(host: websiteHost, ip: trustHost, sni: domainFronting);
+          HostEntity(host: websiteHost, ip: doh, sni: domainFronting);
       hostDao.addHost(hostEntity);
     }
 

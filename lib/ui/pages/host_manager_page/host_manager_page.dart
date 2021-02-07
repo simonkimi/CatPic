@@ -119,7 +119,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                   onPressed: () {
                     var host = getHost(hostController.text);
                     var cancelFunc = BotToast.showLoading();
-                    getTrustHost(host).then((value) {
+                    queryDoh(host).then((value) {
                       cancelFunc();
                       if (value.isNotEmpty) {
                         localState(() {
