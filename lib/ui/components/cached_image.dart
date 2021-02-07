@@ -47,19 +47,17 @@ class CachedDioImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CachedDioImageState c = Get.put(CachedDioImageState(
-      cachedKey: cachedKey ?? imgUrl,
-      imgUrl: imgUrl,
-      dio: dio,
-    ));
-
-
-    return Obx(() {
-      return AnimatedSwitcher(
+    return GetX<CachedDioImageState>(
+      init: CachedDioImageState(
+        cachedKey: cachedKey ?? imgUrl,
+        imgUrl: imgUrl,
+        dio: dio,
+      ),
+      builder: (c) => AnimatedSwitcher(
         duration: this.duration ?? Duration(seconds: 1),
         child: buildBody(context, c),
-      );
-    });
+      ),
+    );
   }
 
   Widget buildBody(BuildContext context, CachedDioImageState c) {
