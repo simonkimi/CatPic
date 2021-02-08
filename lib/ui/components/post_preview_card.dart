@@ -1,13 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class PostPreviewCard extends StatelessWidget {
+  const PostPreviewCard({Key key, this.title, this.subTitle, this.body})
+      : super(key: key);
   final String title;
   final String subTitle;
   final Widget body;
-
-  const PostPreviewCard({Key key, this.title, this.subTitle, this.body}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +18,10 @@ class PostPreviewCard extends StatelessWidget {
         children: [
           body,
           Text(title),
-          Text(subTitle, style: TextStyle(
-              color: Color(0xFF909399)
-          ),)
+          Text(
+            subTitle,
+            style: const TextStyle(color: Color(0xFF909399)),
+          )
         ],
       ),
     );

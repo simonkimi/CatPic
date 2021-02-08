@@ -38,7 +38,7 @@ class _MainDrawerState extends State<MainDrawer> {
   Expanded buildBody() {
     return Expanded(
       child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         child: Column(
           key: Key(showWebsiteList ? 'WebsiteList' : 'MainMenu'),
           children: showWebsiteList ? buildWebsiteList() : buildMainMenu(),
@@ -53,7 +53,7 @@ class _MainDrawerState extends State<MainDrawer> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: mainStore.websiteList.map((element) {
-            var scheme = getSchemeString(element.scheme);
+            final scheme = getSchemeString(element.scheme);
             ImageProvider favicon;
             if (element.favicon.isNotEmpty) {
               favicon = MemoryImage(element.favicon);
@@ -74,9 +74,9 @@ class _MainDrawerState extends State<MainDrawer> {
           }).toList(),
         ),
       ),
-      Divider(),
+      const Divider(),
       ListTile(
-        leading: Icon(Icons.settings),
+        leading: const Icon(Icons.settings),
         title: Text(S.of(context).website_manager),
         onTap: () {
           Navigator.pushNamed(context, WebsiteManagerPage.routeName);
@@ -92,37 +92,37 @@ class _MainDrawerState extends State<MainDrawer> {
           padding: EdgeInsets.zero,
           children: [
             ListTile(
-              leading: Icon(Icons.home),
+              leading: const Icon(Icons.home),
               title: Text(S.of(context).home),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.local_fire_department),
+              leading: const Icon(Icons.local_fire_department),
               title: Text(S.of(context).hot),
               onTap: () {},
             ),
             // Expanded(child: null),
             ListTile(
-              leading: Icon(Icons.favorite),
+              leading: const Icon(Icons.favorite),
               title: Text(S.of(context).favourite),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.history),
+              leading: const Icon(Icons.history),
               title: Text(S.of(context).history),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.download_rounded),
+              leading: const Icon(Icons.download_rounded),
               title: Text(S.of(context).download),
               onTap: () {},
             ),
           ],
         ),
       ),
-      Divider(),
+      const Divider(),
       ListTile(
-        leading: Icon(Icons.settings),
+        leading: const Icon(Icons.settings),
         title: Text(S.of(context).setting),
         onTap: () {},
       )
@@ -133,14 +133,14 @@ class _MainDrawerState extends State<MainDrawer> {
     var subTitle = S.of(context).no_website;
     ImageProvider favicon;
     if (mainStore.websiteEntity != null) {
-      var scheme = getSchemeString(mainStore.websiteEntity.scheme);
+      final scheme = getSchemeString(mainStore.websiteEntity.scheme);
       subTitle = '$scheme://${mainStore.websiteEntity.host}/';
       if (mainStore.websiteEntity.favicon.isNotEmpty) {
         favicon = MemoryImage(mainStore.websiteEntity.favicon);
       }
     }
     return UserAccountsDrawerHeader(
-      accountName: Text(mainStore.websiteEntity?.name ?? "CatPic"),
+      accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
       accountEmail: Text(subTitle),
       currentAccountPicture: CircleAvatar(
         backgroundImage: favicon,
@@ -171,9 +171,9 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    print("MainDrawer initState");
+    print('MainDrawer initState');
     _eventSiteChangeListener = EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      print("event: EventSiteChange");
+      print('event: EventSiteChange');
       mainStore.updateList();
     });
   }
@@ -181,7 +181,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void dispose() {
     super.dispose();
-    print("MainDrawer dispose");
+    print('MainDrawer dispose');
     _eventSiteChangeListener.cancel();
   }
 }

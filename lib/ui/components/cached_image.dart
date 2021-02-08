@@ -17,14 +17,6 @@ typedef ErrorBuilder = Widget Function(BuildContext context, Object err);
 enum LoadingType { DONE, LOADING, ERROR }
 
 class CachedDioImage extends StatefulWidget {
-  final ImageWidgetBuilder imageBuilder;
-  final LoadingWidgetBuilder loadingBuilder;
-  final ErrorBuilder errorBuilder;
-  final String cachedKey;
-  final String imgUrl;
-  final Dio dio;
-  final Duration duration;
-
   const CachedDioImage({
     Key key,
     this.dio,
@@ -35,6 +27,14 @@ class CachedDioImage extends StatefulWidget {
     @required this.loadingBuilder,
     @required this.errorBuilder,
   }) : super(key: key);
+
+  final ImageWidgetBuilder imageBuilder;
+  final LoadingWidgetBuilder loadingBuilder;
+  final ErrorBuilder errorBuilder;
+  final String cachedKey;
+  final String imgUrl;
+  final Dio dio;
+  final Duration duration;
 
   @override
   _CachedDioImageState createState() => _CachedDioImageState();
@@ -65,7 +65,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: widget.duration ?? Duration(milliseconds: 500),
+      duration: widget.duration ?? const Duration(milliseconds: 500),
       child: buildBody(context),
     );
   }
@@ -74,10 +74,11 @@ class _CachedDioImageState extends State<CachedDioImage> {
     if (loadingType == LoadingType.DONE) {
       return widget.imageBuilder(context, data);
     } else if (loadingType == LoadingType.LOADING) {
-      return widget.loadingBuilder(context, ImageChunkEvent(
-        cumulativeBytesLoaded: receivedSize,
-        expectedTotalBytes: totalSize
-      ));
+      return widget.loadingBuilder(
+          context,
+          ImageChunkEvent(
+              cumulativeBytesLoaded: receivedSize,
+              expectedTotalBytes: totalSize));
     } else {
       return widget.errorBuilder(context, err);
     }
@@ -85,14 +86,14 @@ class _CachedDioImageState extends State<CachedDioImage> {
 
   Future<void> fetchData() async {
     try {
-      var cached = await getCached();
+      final cached = await getCached();
       if (cached != null) {
         setState(() {
           data = cached;
           loadingType = LoadingType.DONE;
         });
       } else {
-        var rsp = await _dio.get<List<int>>(widget.imgUrl,
+        final rsp = await _dio.get<List<int>>(widget.imgUrl,
             options: Options(responseType: ResponseType.bytes),
             onReceiveProgress: (received, total) {
           if (mounted) {
@@ -122,8 +123,8 @@ class _CachedDioImageState extends State<CachedDioImage> {
   }
 
   Future<Uint8List> getCached() async {
-    var cachedManager = DefaultCacheManager();
-    var fileInfo = await cachedManager.getFileFromCache(cachedKey);
+    final cachedManager = DefaultCacheManager();
+    final fileInfo = await cachedManager.getFileFromCache(cachedKey);
     if (fileInfo != null && fileInfo.file != null) {
       return await fileInfo.file.readAsBytes();
     }
@@ -131,7 +132,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
   }
 
   Future<void> setCached(Uint8List imageBytes) async {
-    var cachedManager = DefaultCacheManager();
+    final cachedManager = DefaultCacheManager();
     await cachedManager.putFile(cachedKey, imageBytes);
   }
 }

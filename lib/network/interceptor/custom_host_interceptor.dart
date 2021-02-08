@@ -7,13 +7,13 @@ class CustomHostInterceptor extends Interceptor {
 
   @override
   Future onRequest(RequestOptions options) async {
-    var uri = options.uri;
+    final uri = options.uri;
     if (hostList.isEmpty) {
-      var hostDao = DatabaseHelper().hostDao;
+      final hostDao = DatabaseHelper().hostDao;
       hostList = await hostDao.getAll();
     }
 
-    var hostTarget =
+    final hostTarget =
         hostList.firstWhere((e) => e.host == uri.host, orElse: () => null);
     if (hostTarget != null) {
       options.path = uri.replace(host: hostTarget.ip).toString();

@@ -4,14 +4,16 @@ import 'package:xml2json/xml2json.dart';
 
 class GelbooruTagParse {
   static List<BooruTag> parse(String tagXml) {
-    var xml2json = Xml2Json();
+    final xml2json = Xml2Json();
     xml2json.parse(tagXml);
-    Map<String, dynamic> json = jsonDecode(xml2json.toGData());
+    final Map<String, dynamic> json = jsonDecode(xml2json.toGData());
 
-    if (!json.containsKey('tags')) return [];
-    Map<String, dynamic> tags = json['tags'];
-    if (!tags.containsKey('tag')) return [];
-    List<dynamic> tag = tags['tag'];
+    if (!json.containsKey('tags'))
+      return [];
+    final Map<String, dynamic> tags = json['tags'];
+    if (!tags.containsKey('tag'))
+      return [];
+    final List<dynamic> tag = tags['tag'];
 
     return tag.map((e) {
       return BooruTag(

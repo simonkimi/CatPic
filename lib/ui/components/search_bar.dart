@@ -2,15 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchBar extends StatefulWidget {
-  final OnQueryChangedCallback onSubmitted;
-  final FloatingSearchBarBuilder candidateBuilder;
-  final List<Widget> actions;
-  final Widget body;
-
-  final FloatingSearchBarController controller;
-  final String defaultHint;
-
-  SearchBar({
+  const SearchBar({
     Key key,
     this.actions,
     this.controller,
@@ -19,6 +11,14 @@ class SearchBar extends StatefulWidget {
     @required this.candidateBuilder,
     this.body,
   }) : super(key: key);
+
+  final OnQueryChangedCallback onSubmitted;
+  final FloatingSearchBarBuilder candidateBuilder;
+  final List<Widget> actions;
+  final Widget body;
+
+  final FloatingSearchBarController controller;
+  final String defaultHint;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -45,14 +45,14 @@ class _SearchBarState extends State<SearchBar> {
     return FloatingSearchBar(
       hint: _searchText.isEmpty ? defaultHint : _searchText,
       controller: controller,
-      scrollPadding: EdgeInsets.only(top: 16, bottom: 56),
-      transitionDuration: Duration(milliseconds: 300),
+      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+      transitionDuration: const Duration(milliseconds: 300),
       transitionCurve: Curves.easeInOut,
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       axisAlignment: isPortrait ? 0.0 : -1.0,
       openAxisAlignment: 0.0,
       maxWidth: isPortrait ? 600 : 500,
-      debounceDelay: Duration(milliseconds: 100),
+      debounceDelay: const Duration(milliseconds: 100),
       body: widget.body,
       onQueryChanged: (query) {
         if (controller.isOpen) {

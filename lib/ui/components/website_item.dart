@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class WebsiteItem extends StatelessWidget {
-  final Widget title;
-  final Widget subtitle;
-  final ImageProvider leadingImage;
-  final Function onSettingPress;
-  final Function onDeletePress;
-
   const WebsiteItem(
       {Key key,
       @required this.title,
@@ -17,11 +11,16 @@ class WebsiteItem extends StatelessWidget {
       @required this.onSettingPress,
       @required this.onDeletePress})
       : super(key: key);
+  final Widget title;
+  final Widget subtitle;
+  final ImageProvider leadingImage;
+  final Function onSettingPress;
+  final Function onDeletePress;
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
-        actionPane: SlidableDrawerActionPane(),
+        actionPane: const SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: ListTile(
           title: title,

@@ -3,7 +3,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 
 class DanbooruParse {
   static List<BooruPost> parsePostList(String postJson) {
-    List<dynamic> posts = jsonDecode(postJson);
+    final List<dynamic> posts = jsonDecode(postJson);
     return posts.map((e) {
       return BooruPost(
         id: e['id'],
@@ -45,10 +45,10 @@ class DanbooruParse {
   }
 
   static  Map<String, List<String>> _parseTag(Map<String, dynamic> json) {
-    var result = <String, List<String>>{};
+    final result = <String, List<String>>{};
     json.forEach((key, value) {
       if (key.startsWith('tag_string_')) {
-        var k = key.substring('tag_string_'.length, key.length);
+        final k = key.substring('tag_string_'.length, key.length);
         result[k] = value.split(' ');
       }
     });

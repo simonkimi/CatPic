@@ -1,11 +1,10 @@
-import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/utils/image/cached_dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
-  static String routeName = "MainPage";
+  static String routeName = 'MainPage';
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -22,15 +21,14 @@ class _MainPageState extends State<MainPage> {
             Image(
               image: CachedDioImageProvider(
                 url:
-                    "https://img2.gelbooru.com/images/55/b0/55b0e398ffcdfc87ab70a0ccc66c391f.jpg",
+                    'https://img2.gelbooru.com/images/55/b0/55b0e398ffcdfc87ab70a0ccc66c391f.jpg',
                 dio: Dio(),
                 cachedKey: '123123',
               ),
               loadingBuilder: (BuildContext context, Widget child,
                   ImageChunkEvent loadingProgress) {
-                if (loadingProgress == null) return child;
-                int currentLength = loadingProgress.cumulativeBytesLoaded;
-                int totalLength = loadingProgress.expectedTotalBytes;
+                if (loadingProgress == null)
+                  return child;
                 return CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
                       ? loadingProgress.cumulativeBytesLoaded /

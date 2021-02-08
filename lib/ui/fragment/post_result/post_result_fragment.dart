@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
@@ -7,30 +9,30 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-import 'dart:ui';
+
 import 'post_result_store.dart';
 
 typedef ValueCallBack = void Function(String);
 
 class PostResultFragment extends StatefulWidget {
-  final String searchText;
-  final BooruAdapter adapter;
-  final ValueCallBack onSearch;
-
-  PostResultFragment({
+  const PostResultFragment({
     Key key,
     this.searchText = '',
     @required this.adapter,
     @required this.onSearch,
   }) : super(key: key);
 
+  final String searchText;
+  final BooruAdapter adapter;
+  final ValueCallBack onSearch;
+
   @override
   _PostResultFragmentState createState() => _PostResultFragmentState();
 }
 
 mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
-  var _searchBarController = FloatingSearchBarController();
-  var _refreshController = RefreshController(initialRefresh: false);
+  final _searchBarController = FloatingSearchBarController();
+  final _refreshController = RefreshController(initialRefresh: false);
 
   PostResultStore _store;
 
@@ -77,7 +79,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
         FloatingSearchBarAction(
           showIfOpened: false,
           child: CircularButton(
-            icon: Icon(Icons.filter_alt_outlined),
+            icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {},
           ),
         ),
@@ -105,7 +107,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
   }
 
   Widget _itemBuilder(BuildContext ctx, int index) {
-    var post = _store.postList[index];
+    final post = _store.postList[index];
     return PostPreviewCard(
       key: Key('item${post.id}'),
       title: '# ${post.id}',
@@ -129,7 +131,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
   }
 
   Widget buildWaterFlow() {
-    var height = MediaQueryData.fromWindow(window).padding.top;
+    final height = MediaQueryData.fromWindow(window).padding.top;
     return FloatingSearchBarScrollNotifier(
       child: SmartRefresher(
         enablePullUp: true,
@@ -142,8 +144,9 @@ class _PostResultFragmentState extends State<PostResultFragment>
         onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + height),
-          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),
+          gridDelegate:
+              const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),
           itemCount: _store.postList.length,
           itemBuilder: _itemBuilder,
         ),

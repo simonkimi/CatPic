@@ -1,20 +1,6 @@
 import 'package:flutter/material.dart';
 
 class TextInputTile extends StatefulWidget {
-  final Widget title;
-  final Widget subtitle;
-  final Widget leading;
-  final ValueChanged<String> onChanged;
-
-  final Widget dialogTitle;
-  final String hintText;
-  final String labelText;
-
-  final String defaultValue;
-
-  final String positiveText;
-  final String negativeText;
-
   const TextInputTile(
       {Key key,
       this.title,
@@ -28,6 +14,20 @@ class TextInputTile extends StatefulWidget {
       this.positiveText,
       this.negativeText})
       : super(key: key);
+
+  final Widget title;
+  final Widget subtitle;
+  final Widget leading;
+  final ValueChanged<String> onChanged;
+
+  final Widget dialogTitle;
+  final String hintText;
+  final String labelText;
+
+  final String defaultValue;
+
+  final String positiveText;
+  final String negativeText;
 
   @override
   _TextInputTileState createState() => _TextInputTileState();

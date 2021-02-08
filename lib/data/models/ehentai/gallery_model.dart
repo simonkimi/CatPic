@@ -1,4 +1,14 @@
 class GalleryModel {
+  GalleryModel(
+      {this.maxPageIndex,
+      this.parent,
+      this.visible,
+      this.fileSize,
+      this.favorited,
+      this.tags,
+      this.previewImages,
+      this.comments});
+
   final String parent;
   final String visible;
   final String fileSize;
@@ -7,24 +17,13 @@ class GalleryModel {
   List<PreviewImage> previewImages;
   final int maxPageIndex;
   final List<CommentModel> comments;
-
-  GalleryModel({
-    this.maxPageIndex,
-    this.parent,
-    this.visible,
-    this.fileSize,
-    this.favorited,
-    this.tags,
-    this.previewImages,
-    this.comments
-  });
 }
 
 class TagModels {
+  TagModels({this.key, this.value});
+
   final String key;
   final List<String> value;
-
-  TagModels({this.key, this.value});
 
   @override
   String toString() {
@@ -33,12 +32,12 @@ class TagModels {
 }
 
 class PreviewImage {
+  PreviewImage({this.height, this.image, this.positioning, this.target});
+
   final int height;
   final String image;
   final int positioning;
   final String target;
-
-  PreviewImage({this.height, this.image, this.positioning, this.target});
 
   @override
   String toString() {
@@ -47,15 +46,15 @@ class PreviewImage {
 }
 
 class CommentModel {
-  final String username;
-  final String comment;
-  final String commentTime;
-
   CommentModel({
     this.username,
     this.comment,
     this.commentTime,
   });
+
+  final String username;
+  final String comment;
+  final String commentTime;
 
   @override
   String toString() {

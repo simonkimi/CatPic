@@ -2,7 +2,6 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
-import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,6 +37,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    Navigator.popUntil(context, (route) => false);
+
     return Scaffold(
       drawer: MainDrawer(),
       body: buildEmpty(),
@@ -45,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void changeSearchBody(String tag, SearchType type) {
-    var widget = buildSearchBody(tag, type);
+    final widget = buildSearchBody(tag, type);
     setState(() {
       searchBody = widget;
     });
@@ -70,6 +72,7 @@ class _SearchPageState extends State<SearchPage> {
           break;
       }
     }
+    return null;
   }
 
   Widget buildEmpty() {
@@ -92,7 +95,7 @@ class _SearchPageState extends State<SearchPage> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Text(

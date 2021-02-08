@@ -1,14 +1,4 @@
 class GalleryImgModel {
-  final String imgUrl;
-  final String imgSize;
-  final int width;
-  final int height;
-
-  final int rawWidth;
-  final int rawHeight;
-  final String rawImgUrl;
-  final String rawImgSize;
-
   GalleryImgModel({
     this.imgUrl,
     this.imgSize,
@@ -19,6 +9,16 @@ class GalleryImgModel {
     this.rawWidth,
     this.rawHeight,
   });
+
+  final String imgUrl;
+  final String imgSize;
+  final int width;
+  final int height;
+
+  final int rawWidth;
+  final int rawHeight;
+  final String rawImgUrl;
+  final String rawImgSize;
 
   @override
   String toString() {

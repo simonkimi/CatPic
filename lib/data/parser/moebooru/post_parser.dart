@@ -3,7 +3,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {
-    List<dynamic> posts = jsonDecode(postJson);
+    final List<dynamic> posts = jsonDecode(postJson);
     return posts.map((e) {
       return BooruPost(
         id: e['id'],

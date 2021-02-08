@@ -18,6 +18,17 @@ import 'package:flutter/cupertino.dart';
 /// [displayOriginal] 详情页面显示大图
 @Entity(tableName: 'WebsiteEntity')
 class WebsiteEntity {
+  WebsiteEntity({
+    this.id,
+    @required this.name,
+    @required this.host,
+    @required this.scheme,
+    @required this.type,
+    @required this.useHostList,
+    @required this.favicon,
+    this.cookies,
+  });
+
   @PrimaryKey(autoGenerate: true)
   final int id;
 
@@ -31,24 +42,13 @@ class WebsiteEntity {
 
   Uint8List favicon;
 
-  WebsiteEntity({
-    this.id,
-    @required this.name,
-    @required this.host,
-    @required this.scheme,
-    @required this.type,
-    @required this.useHostList,
-    @required this.favicon,
-    this.cookies,
-  });
-
   BooruAdapter getAdapter() {
-    if (this.type == WebsiteType.GELBOORU.index) {
+    if (type == WebsiteType.GELBOORU.index) {
       return GelbooruAdapter(this);
-    } else if (this.type == WebsiteType.MOEBOORU.index) {
+    } else if (type == WebsiteType.MOEBOORU.index) {
       return MoebooruAdapter(this);
     }
-    // TODO Danbooru Adapter
+    // TODO(me): Danbooru Adapter
     throw Exception('TODO Danbooru Adapter');
   }
 }

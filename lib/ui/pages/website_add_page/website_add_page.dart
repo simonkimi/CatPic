@@ -25,20 +25,20 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   @override
   void initState() {
     super.initState();
-    debugPrint("WebsiteAddPage initState");
+    debugPrint('WebsiteAddPage initState');
     websiteName = '';
     websiteHost = '';
     scheme = WebsiteScheme.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
     useHostList = false;
     domainFronting = false;
-    trustHost = "";
+    trustHost = '';
   }
 
   @override
   void dispose() {
     super.dispose();
-    debugPrint("WebsiteAddPage dispose");
+    debugPrint('WebsiteAddPage dispose');
   }
 
   @override
@@ -54,9 +54,9 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       child: ListView(
         children: [
           ...buildBasicSetting(),
-          Divider(),
+          const Divider(),
           ...buildWebsiteSetting(),
-          Divider(),
+          const Divider(),
           ...buildAdvanceSetting(),
         ],
       ),
@@ -68,7 +68,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       title: Text(S.of(context).add_website),
       // 左上角的返回按钮
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
         onPressed: () {
           EventBusUtil().bus.fire(EventSiteChange());
           Navigator.pop(context);
@@ -78,7 +78,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       actions: [
         // 右上角的确认按钮
         IconButton(
-          icon: Icon(Icons.check),
+          icon: const Icon(Icons.check),
           onPressed: () {
             // 保存网站后返回并且刷新页面
             saveWebsite().then((result) {
@@ -103,7 +103,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         title: Text(S.of(context).website_nickname),
         subtitle:
             Text(websiteName.isEmpty ? S.of(context).not_set : websiteName),
-        leading: SizedBox(),
+        leading: const SizedBox(),
         onChanged: (value) {
           setState(() {
             websiteName = value;
@@ -121,7 +121,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         title: Text(S.of(context).host),
         subtitle:
             Text(websiteHost.isEmpty ? S.of(context).not_set : websiteHost),
-        leading: Icon(Icons.home),
+        leading: const Icon(Icons.home),
         hintText: 'example.org',
         defaultValue: websiteHost,
         onChanged: (value) {
@@ -133,7 +133,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       SwitchListTile(
         title: Text(S.of(context).scheme),
         subtitle: Text(S.of(context).scheme_https),
-        secondary: Icon(Icons.http),
+        secondary: const Icon(Icons.http),
         value: scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
           setState(() {
@@ -146,18 +146,18 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       PopupMenuButton(
         itemBuilder: (context) => [
           PopupMenuItem(
-              child: Text('EHentai'), value: WebsiteType.EHENTAI.index),
+              child: const Text('EHentai'), value: WebsiteType.EHENTAI.index),
           PopupMenuItem(
-              child: Text('Gelbooru'), value: WebsiteType.GELBOORU.index),
+              child: const Text('Gelbooru'), value: WebsiteType.GELBOORU.index),
           PopupMenuItem(
-              child: Text('Moebooru'), value: WebsiteType.MOEBOORU.index),
+              child: const Text('Moebooru'), value: WebsiteType.MOEBOORU.index),
           PopupMenuItem(
-              child: Text('Danbooru'), value: WebsiteType.DANBOORU.index),
+              child: const Text('Danbooru'), value: WebsiteType.DANBOORU.index),
         ],
         child: ListTile(
           title: Text(S.of(context).site_type),
           subtitle: Text(websiteTypeName[websiteType]),
-          leading: Icon(Icons.search),
+          leading: const Icon(Icons.search),
         ),
         onSelected: (value) {
           setState(() {
@@ -177,7 +177,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         subtitle:
             Text(useHostList ? trustHost : S.of(context).use_host_list_desc),
         value: useHostList,
-        secondary: Icon(Icons.list_alt),
+        secondary: const Icon(Icons.list_alt),
         onChanged: (value) {
           setHostList(value);
         },
@@ -185,7 +185,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       SwitchListTile(
         title: Text(S.of(context).domain_fronting),
         subtitle: Text(S.of(context).domain_fronting_desc),
-        secondary: Icon(Icons.airplanemode_active_rounded),
+        secondary: const Icon(Icons.airplanemode_active_rounded),
         value: domainFronting,
         onChanged: (value) {
           setState(() {
@@ -216,18 +216,18 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   /// 当要开启自定义host的时候进行请求真实ip
   void setHostList(bool targetValue) async {
     if (targetValue) {
-      var host = getHost(websiteHost);
+      final host = getHost(websiteHost);
       if (host.isNotEmpty) {
         // 判断是否已经存在
-        var hostDao = DatabaseHelper().hostDao;
-        var hostExist = await hostDao.getByHost(host);
+        final hostDao = DatabaseHelper().hostDao;
+        final hostExist = await hostDao.getByHost(host);
         if (hostExist != null) {
           setState(() {
             useHostList = true;
             trustHost = hostExist.ip;
           });
         } else {
-          var cancelFunc = BotToast.showLoading();
+          final cancelFunc = BotToast.showLoading();
           getTrustHost(host).then((host) {
             cancelFunc();
             if (host.isNotEmpty) {
@@ -262,8 +262,8 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     }
     
     // 保存网站
-    var websiteDao = DatabaseHelper().websiteDao;
-    var entity = WebsiteEntity(
+    final websiteDao = DatabaseHelper().websiteDao;
+    final entity = WebsiteEntity(
       cookies: '',
       host: websiteHost,
       name: websiteName,
@@ -272,17 +272,17 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       type: websiteType,
       favicon: Uint8List.fromList([]),
     );
-    var id = await websiteDao.addSite(entity);
+    final id = await websiteDao.addSite(entity);
     
     // 保存自定义host
     if (useHostList) {
-      var hostDao = DatabaseHelper().hostDao;
-      var existHost = await hostDao.getByHost(websiteHost);
+      final hostDao = DatabaseHelper().hostDao;
+      final existHost = await hostDao.getByHost(websiteHost);
       if (existHost != null) {
         await hostDao.removeHost([existHost]);
       }
 
-      var hostEntity = HostEntity(
+      final hostEntity = HostEntity(
         host: websiteHost,
         ip: trustHost,
         sni: domainFronting

@@ -9,13 +9,13 @@ import 'package:dio/src/dio.dart';
 import 'booru_adapter.dart';
 
 class GelbooruAdapter implements BooruAdapter {
-  final WebsiteEntity websiteEntity;
-
-  GelbooruClient client;
-
   GelbooruAdapter(this.websiteEntity) {
     client = GelbooruClient(websiteEntity);
   }
+
+  final WebsiteEntity websiteEntity;
+
+  GelbooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
@@ -24,14 +24,14 @@ class GelbooruAdapter implements BooruAdapter {
 
   @override
   Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
-    var str =
+    final str =
         await client.postsList(tags: tags, limit: limit, pid: page * limit);
     return GelbooruPostParser.parse(str);
   }
 
   @override
   Future<List<BooruTag>> tagList({String name, int page, int limit}) async {
-    var str = await client.tagsList(limit: limit, names: name);
+    final str = await client.tagsList(limit: limit, names: name);
     return GelbooruTagParse.parse(str);
   }
 

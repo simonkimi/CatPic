@@ -23,6 +23,7 @@ void main() async {
   await SPHelper().init();
   await mainStore.init();
   runApp(MyApp());
+  return;
 }
 
 class MyApp extends StatelessWidget {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
       theme: theme.blueTheme,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         RefreshLocalizations.delegate,
@@ -40,14 +41,14 @@ class MyApp extends StatelessWidget {
       ],
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('en'),
         Locale('zh', 'CN'),
       ],
       home: SearchPage(),
       getPages: [
         GetPage(name: MainPage.routeName, page: () => MainPage()),
-        GetPage(name: LoginPage.routeName, page: () => LoginPage()),
+        GetPage(name: LoginPage.routeName, page: () => const LoginPage()),
         GetPage(name: WebsiteManagerPage.routeName, page: () => WebsiteManagerPage()),
         GetPage(name: WebsiteAddPage.routeName, page: () => WebsiteAddPage()),
         GetPage(name: HostManagerPage.routeName, page: () => HostManagerPage()),

@@ -1,4 +1,21 @@
 class PreViewModel {
+  PreViewModel({
+    this.gid,
+    this.gtoken,
+    this.title,
+    this.tag,
+    this.uploader,
+    this.uploadTime,
+    this.pages,
+    this.stars,
+    this.targetUrl,
+    this.previewImg,
+    this.language,
+    this.keyTags,
+    this.previewHeight,
+    this.previewWidth,
+  });
+
   final String title;
   final String tag;
   final String uploader;
@@ -19,23 +36,6 @@ class PreViewModel {
 
   String titleJpn;
 
-  PreViewModel({
-    this.gid,
-    this.gtoken,
-    this.title,
-    this.tag,
-    this.uploader,
-    this.uploadTime,
-    this.pages,
-    this.stars,
-    this.targetUrl,
-    this.previewImg,
-    this.language,
-    this.keyTags,
-    this.previewHeight,
-    this.previewWidth,
-  });
-
   @override
   String toString() {
     return 'PreViewModel title: $title upload: $uploadTime';
@@ -43,10 +43,10 @@ class PreViewModel {
 }
 
 class PreviewTag {
+  PreviewTag({this.tag, this.color});
+
   final String tag;
   final int color;
-
-  PreviewTag({this.tag, this.color});
 
   @override
   String toString() {

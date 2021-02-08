@@ -4,13 +4,13 @@ import 'dao/website_dao.dart';
 import 'database.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper _databaseHelper = DatabaseHelper._internal();
-
   factory DatabaseHelper() => _databaseHelper;
 
-  AppDatabase _database;
-
   DatabaseHelper._internal();
+
+  static final DatabaseHelper _databaseHelper = DatabaseHelper._internal();
+
+  AppDatabase _database;
 
   Future<void> init() async {
     _database =
@@ -18,5 +18,6 @@ class DatabaseHelper {
   }
 
   WebsiteDao get websiteDao => _database.websiteDao;
+
   HostDao get hostDao => _database.hostDao;
 }

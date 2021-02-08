@@ -18,20 +18,20 @@ abstract class MainStoreBase with Store {
 
   @action
   Future<void> init() async {
-    var websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DatabaseHelper().websiteDao;
     websiteList = await websiteDao.getAll();
-    var lastWebsite = SPHelper().pref.getInt("last_website") ?? -1;
+    final lastWebsite = SPHelper().pref.getInt('last_website') ?? -1;
     websiteEntity =
         websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
-    if (websiteEntity == null && websiteList.length != 0) {
+    if (websiteEntity == null && websiteList.isNotEmpty) {
       websiteEntity = websiteList[0];
-      SPHelper().pref.setInt("last_website", websiteEntity.id);
+      SPHelper().pref.setInt('last_website', websiteEntity.id);
     }
   }
 
   @action
   Future<void> updateList() async {
-    var websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DatabaseHelper().websiteDao;
     websiteList = await websiteDao.getAll();
     // 判断当前网站是否被删
     if (websiteEntity != null) {
@@ -40,7 +40,7 @@ abstract class MainStoreBase with Store {
           websiteEntity = websiteList[0];
         } else {
           websiteEntity = null;
-          SPHelper().pref.setInt("last_website", -1);
+          SPHelper().pref.setInt('last_website', -1);
           return;
         }
       }
@@ -51,21 +51,21 @@ abstract class MainStoreBase with Store {
     }
     // 写入上次网站记忆
     if (websiteEntity != null) {
-      SPHelper().pref.setInt("last_website", websiteEntity.id);
+      SPHelper().pref.setInt('last_website', websiteEntity.id);
     }
   }
 
   @action
   Future<void> setWebsite(WebsiteEntity entity) async {
     websiteEntity = entity;
-    SPHelper().pref.setInt("last_website", websiteEntity.id);
+    SPHelper().pref.setInt('last_website', websiteEntity.id);
   }
 
   @action
   Future<void> setWebsiteFavicon(int entityId, Uint8List favicon) async {
     if (favicon.isNotEmpty) {
-      var websiteDao = DatabaseHelper().websiteDao;
-      var entity = await websiteDao.getById(entityId);
+      final websiteDao = DatabaseHelper().websiteDao;
+      final entity = await websiteDao.getById(entityId);
       entity.favicon = favicon;
       await websiteDao.updateSite(entity);
       if (websiteEntity.id == entity.id) {
@@ -76,4 +76,4 @@ abstract class MainStoreBase with Store {
   }
 }
 
-var mainStore = MainStore();
+final mainStore = MainStore();

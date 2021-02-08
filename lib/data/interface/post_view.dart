@@ -1,7 +1,7 @@
 abstract class PostViewInterface {
-  final String searchText;
-
   PostViewInterface(this.searchText);
+
+  final String searchText;
 
   Future<void> loadNextPage();
 }

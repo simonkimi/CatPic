@@ -46,7 +46,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
 
   Widget buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       tooltip: S.of(context).add,
       onPressed: () {
         _showDialog();
@@ -58,7 +58,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
     return AppBar(
       title: Text(S.of(context).host_manager),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
         onPressed: () {
           Navigator.of(context).pop();
         },
@@ -68,17 +68,17 @@ class _HostManagerPageState extends State<HostManagerPage> {
   }
 
   Future<void> init() async {
-    var hostDao = DatabaseHelper().hostDao;
+    final hostDao = DatabaseHelper().hostDao;
     hostEntities = await hostDao.getAll();
     setState(() {});
   }
 
   Future<void> _showDialog() async {
-    await showDialog(
+    await showDialog<void>(
         context: context,
         builder: (context) {
-          var hostController = TextEditingController();
-          var ipController = TextEditingController();
+          final hostController = TextEditingController();
+          final ipController = TextEditingController();
           var sni = false;
           return StatefulBuilder(builder: (context, localState) {
             return AlertDialog(
@@ -87,16 +87,16 @@ class _HostManagerPageState extends State<HostManagerPage> {
                   children: [
                     TextField(
                       controller: hostController,
-                      decoration: InputDecoration(
-                        labelText: "Host",
-                        hintText: "example.com",
+                      decoration: const InputDecoration(
+                        labelText: 'Host',
+                        hintText: 'example.com',
                       ),
                     ),
                     TextField(
                       controller: ipController,
-                      decoration: InputDecoration(
-                        labelText: "IP",
-                        hintText: "12.34.56.78",
+                      decoration: const InputDecoration(
+                        labelText: 'IP',
+                        hintText: '12.34.56.78',
                       ),
                     ),
                     SwitchListTile(
@@ -115,10 +115,10 @@ class _HostManagerPageState extends State<HostManagerPage> {
               ),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.autorenew_sharp),
+                  icon: const Icon(Icons.autorenew_sharp),
                   onPressed: () {
-                    var host = getHost(hostController.text);
-                    var cancelFunc = BotToast.showLoading();
+                    final host = getHost(hostController.text);
+                    final cancelFunc = BotToast.showLoading();
                     getTrustHost(host).then((value) {
                       cancelFunc();
                       if (value.isNotEmpty) {
@@ -158,14 +158,14 @@ class _HostManagerPageState extends State<HostManagerPage> {
       BotToast.showText(text: S.of(context).host_empty);
       return false;
     }
-    var reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
+    final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
     if (!reg.hasMatch(ip)) {
       BotToast.showText(text: S.of(context).illegal_ip);
       return false;
     }
-    var dao = DatabaseHelper().hostDao;
+    final dao = DatabaseHelper().hostDao;
     await dao.removeHost([await dao.getByHost(host)]);
-    var hostEntity = HostEntity(host: host, ip: ip, sni: useSni);
+    final hostEntity = HostEntity(host: host, ip: ip, sni: useSni);
     await dao.addHost(hostEntity);
     await init();
     return true;

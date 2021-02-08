@@ -4,13 +4,15 @@ import 'package:xml2json/xml2json.dart';
 
 class GelbooruPostParser {
   static List<BooruPost> parse(String postXml) {
-    var xml2json = Xml2Json();
+    final xml2json = Xml2Json();
     xml2json.parse(postXml);
-    Map<String, dynamic> json = jsonDecode(xml2json.toGData());
-    if (!json.containsKey('posts')) return [];
-    Map<String, dynamic> posts = json['posts'];
-    if (!posts.containsKey('post')) return [];
-    List<dynamic> post = posts['post'];
+    final Map<String, dynamic> json = jsonDecode(xml2json.toGData());
+    if (!json.containsKey('posts'))
+      return [];
+    final Map<String, dynamic> posts = json['posts'];
+    if (!posts.containsKey('post'))
+      return [];
+    final List<dynamic> post = posts['post'];
     return post.map((e) {
       return BooruPost(
         id: e['id'],

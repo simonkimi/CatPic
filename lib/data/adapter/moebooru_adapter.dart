@@ -9,13 +9,13 @@ import 'package:dio/src/dio.dart';
 import 'booru_adapter.dart';
 
 class MoebooruAdapter implements BooruAdapter {
-  final WebsiteEntity websiteEntity;
-
-  MoebooruClient client;
-
   MoebooruAdapter(this.websiteEntity) {
     client = MoebooruClient(websiteEntity);
   }
+
+  final WebsiteEntity websiteEntity;
+
+  MoebooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
@@ -24,13 +24,13 @@ class MoebooruAdapter implements BooruAdapter {
 
   @override
   Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
-    var str = await client.postsList(tags: tags, limit: limit, page: page);
+    final str = await client.postsList(tags: tags, limit: limit, page: page);
     return MoebooruPostParse.parse(str);
   }
 
   @override
   Future<List<BooruTag>> tagList({String name, int page, int limit}) async {
-    var str = await client.tagsList(name: name, page: page, limit: limit);
+    final str = await client.tagsList(name: name, page: page, limit: limit);
     return MoebooruTagParse.parse(str);
   }
 

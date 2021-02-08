@@ -17,14 +17,14 @@ class WebsiteManagerPage extends StatefulWidget {
 }
 
 class _WebsiteManagerState extends State<WebsiteManagerPage> {
-  var eventBus = EventBusUtil().bus;
+  final eventBus = EventBusUtil().bus;
   StreamSubscription<EventSiteChange> _eventSiteChangeListener;
   List<WebsiteEntity> websiteList;
 
   @override
   void initState() {
     super.initState();
-    debugPrint("WebsiteManagerPage initState");
+    debugPrint('WebsiteManagerPage initState');
     updateWebsiteList();
     _eventSiteChangeListener = eventBus.on<EventSiteChange>().listen((event) {
       updateWebsiteList();
@@ -32,7 +32,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   }
 
   void updateWebsiteList() {
-    var websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DatabaseHelper().websiteDao;
     websiteDao.getAll().then((value) {
       setState(() {
         websiteList = value;
@@ -50,7 +50,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
       ),
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -62,7 +62,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
         onPressed: () {
           Navigator.pushNamed(context, WebsiteAddPage.routeName);
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
       ),
     );
@@ -70,9 +70,9 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
 
   List<Widget> buildWebsiteList() {
     return websiteList?.map((e) {
-          var title = e.name;
-          var scheme = getSchemeString(e.scheme);
-          var subTitle = '$scheme://${e.host}/';
+          final title = e.name;
+          final scheme = getSchemeString(e.scheme);
+          final subTitle = '$scheme://${e.host}/';
           ImageProvider favIcon;
           if (e.favicon.isNotEmpty) {
             favIcon = MemoryImage(e.favicon);
@@ -83,7 +83,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
             subtitle: Text(subTitle),
             leadingImage: favIcon,
             onDeletePress: () {
-              var websiteDao = DatabaseHelper().websiteDao;
+              final websiteDao = DatabaseHelper().websiteDao;
               websiteDao.removeSite([e]).then((value) {
                 EventBusUtil().bus.fire(EventSiteChange());
               });
@@ -97,7 +97,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   @override
   void dispose() {
     super.dispose();
-    debugPrint("WebsiteManagerPage dispose");
+    debugPrint('WebsiteManagerPage dispose');
     _eventSiteChangeListener.cancel();
   }
 }

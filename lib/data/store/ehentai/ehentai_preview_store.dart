@@ -13,14 +13,14 @@ part 'ehentai_preview_store.g.dart';
 class EHentaiPreviewStore = EHentaiPreviewStoreBase with _$EHentaiPreviewStore;
 
 abstract class EHentaiPreviewStoreBase extends PostViewInterface with Store {
+  EHentaiPreviewStoreBase(String searchText, this.entity) : super(searchText) {
+    client = EhClient(entity);
+  }
+
   final WebsiteEntity entity;
 
   EhClient client;
   int page = 0;
-
-  EHentaiPreviewStoreBase(String searchText, this.entity) : super(searchText) {
-    client = EhClient(entity);
-  }
 
   @observable
   List<PreViewModel> previewList = [];
@@ -28,9 +28,10 @@ abstract class EHentaiPreviewStoreBase extends PostViewInterface with Store {
   @action
   Future<void> loadDetailPage(int id) async {}
 
+  @override
   @action
   Future<void> loadNextPage() async {
-    var pageHtml =
+    final pageHtml =
         await client.getIndex(EhFilter.buildAdvanceFilter(page: page));
     previewList.addAll(PreviewParser(pageHtml).parse());
     page += 1;
@@ -43,7 +44,7 @@ abstract class EHentaiPreviewStoreBase extends PostViewInterface with Store {
   List<SimpleCardModel> get simpleCardList => previewList.map((e) {
         return SimpleCardModel(
           title: e.title,
-          subTitle: "${e.previewWidth} * ${e.previewHeight}",
+          subTitle: '${e.previewWidth} * ${e.previewHeight}',
         );
       }).toList();
 

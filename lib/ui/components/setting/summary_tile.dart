@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class SummaryTile extends StatelessWidget {
-  final String text;
-
   const SummaryTile(this.text, {Key key}) : super(key: key);
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 70, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10),
       child: Text(
         text,
         style: TextStyle(

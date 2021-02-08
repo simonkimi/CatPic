@@ -10,23 +10,25 @@ part 'post_result_store.g.dart';
 
 class PostResultStore = PostResultStoreBase with _$PostResultStore;
 
-abstract class PostResultStoreBase with Store implements PostViewInterface{
-  final String searchText;
-  final BooruAdapter adapter;
-
+abstract class PostResultStoreBase with Store implements PostViewInterface {
   PostResultStoreBase({
     @required this.searchText,
     @required this.adapter,
   });
 
+  @override
+  final String searchText;
+  final BooruAdapter adapter;
+
   var postList = ObservableList<BooruPost>();
   var page = 0;
 
+  @override
   @action
   Future<void> loadNextPage() async {
-    var list = await adapter.postList(tags: searchText, page: page, limit: 50);
+    final list = await adapter.postList(tags: searchText, page: page, limit: 50);
     if (list.isEmpty) {
-        throw NoMorePage();
+      throw NoMorePage();
     }
     postList.addAll(list);
     page += 1;

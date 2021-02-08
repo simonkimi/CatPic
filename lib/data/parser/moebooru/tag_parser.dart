@@ -3,7 +3,7 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 
 class MoebooruTagParse {
   static List<BooruTag> parse(String tagJson) {
-    List<dynamic> json = jsonDecode(tagJson);
+    final List<dynamic> json = jsonDecode(tagJson);
 
     return json.map((e) {
       return BooruTag(
