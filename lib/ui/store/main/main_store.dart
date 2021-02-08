@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/data/database/sp_helper.dart';
+import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:mobx/mobx.dart';
 
@@ -26,15 +27,21 @@ abstract class MainStoreBase with Store {
 
   @action
   Future<void> init() async {
+    // 初始化数据
     final websiteDao = DatabaseHelper().websiteDao;
     websiteList = await websiteDao.getAll();
     final lastWebsite = SPHelper().pref.getInt('last_website') ?? -1;
     websiteEntity =
         websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
     if (websiteEntity == null && websiteList.isNotEmpty) {
-      websiteEntity = websiteList[0];
-      SPHelper().pref.setInt('last_website', websiteEntity.id);
+      setWebsite(websiteList[0]);
     }
+    // 尝试获取图标
+    websiteList.where((e) => e.favicon.isEmpty).forEach((element) {
+      getFavicon(element).then((favicon) {
+        setWebsiteFavicon(element.id, favicon);
+      });
+    });
   }
 
   @action

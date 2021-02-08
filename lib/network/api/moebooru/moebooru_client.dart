@@ -12,11 +12,11 @@ class MoebooruClient extends BaseClient {
   Future<String> postsList({int limit, int page, String tags}) async {
     final uri = Uri(path: 'post.json', queryParameters: {
       'limit': (limit ?? 100).toString(),
-      'page': page ?? '',
+      'page': page?.toString() ?? '',
       'tags': tags ?? ''
     });
 
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
   /// 获取tag详细信息
@@ -29,7 +29,7 @@ class MoebooruClient extends BaseClient {
       'limit': (limit ?? 100).toString(),
     });
 
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
   /// 获取评论列表
@@ -41,7 +41,7 @@ class MoebooruClient extends BaseClient {
         'id': id
       }
     );
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
   /// 获取图集列表, 加载20个
@@ -55,7 +55,7 @@ class MoebooruClient extends BaseClient {
           'page': page.toString()
         }
     );
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
   /// 获取图集详细内容

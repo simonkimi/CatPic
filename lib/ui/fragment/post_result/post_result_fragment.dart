@@ -124,7 +124,10 @@ class _PostResultFragmentState extends State<PostResultFragment>
           );
         },
         errorBuilder: (_, err) {
-          return null;
+          return AspectRatio(
+            aspectRatio: post.width / post.height,
+            child: Text('Fail ${err.toString()}'),
+          );
         },
       ),
     );

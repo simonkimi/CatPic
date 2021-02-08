@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
@@ -12,22 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'package:catpic/router.dart';
 
-class WebsiteManagerPage extends StatefulWidget {
-  static String routeName = 'WebsiteManager';
-
-  @override
-  _WebsiteManagerState createState() => _WebsiteManagerState();
-}
-
-class _WebsiteManagerState extends State<WebsiteManagerPage> {
-  final eventBus = EventBusUtil().bus;
-
-  @override
-  void initState() {
-    super.initState();
-    debugPrint('WebsiteManagerPage initState');
-  }
-
+class WebsiteManagerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,11 +69,5 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
           );
         })?.toList() ??
         [];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    debugPrint('WebsiteManagerPage dispose');
   }
 }

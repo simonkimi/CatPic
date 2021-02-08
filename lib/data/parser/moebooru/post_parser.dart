@@ -6,8 +6,8 @@ class MoebooruPostParse {
     final List<dynamic> posts = jsonDecode(postJson);
     return posts.map((e) {
       return BooruPost(
-        id: e['id'],
-        creatorId: e['creator_id'],
+        id: e['id'].toString(),
+        creatorId: e['creator_id'].toString(),
         md5: e['md5'],
         previewURL: e['preview_url'],
         sampleURL: e['sample_url'],
@@ -19,7 +19,7 @@ class MoebooruPostParse {
         previewWidth: e['preview_width'],
         previewHeight: e['preview_height'],
         rating: _getRating(e['rating']),
-        status: e['is_status_locked'] ? 'active' : 'inactive',
+        status: e['status'],
         tags: {'_': e['tags'].split(' ')},
         source: e['source']
       );

@@ -38,12 +38,12 @@ class MyRouteParser extends RouteInformationParser<String> {
 
 class MyRouteDelegate extends RouterDelegate<String>
     with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
-  MyRouteDelegate({@required this.home}) {
-    onGenerateRoute = (settings) {
-      return MaterialPageRoute<CatPicPage>(
-          settings: settings, builder: (ctx) => null);
-    };
-  }
+  MyRouteDelegate({
+    @required this.home,
+    @required this.onGenerateRoute,
+  });
+
+  final RouteFactory onGenerateRoute;
 
   final CatPicPage home;
   final _stack = <CatPicPage>[];
@@ -53,8 +53,6 @@ class MyRouteDelegate extends RouterDelegate<String>
     assert(delegate is MyRouteDelegate, 'Delegate type must match');
     return delegate as MyRouteDelegate;
   }
-
-  RouteFactory onGenerateRoute;
 
   @override
   GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -116,6 +114,7 @@ class MyRouteDelegate extends RouterDelegate<String>
       key: navigatorKey,
       onPopPage: _onPopPage,
       pages: List.of(_stack),
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }
