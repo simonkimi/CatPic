@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -36,14 +38,14 @@ class MyRouteParser extends RouteInformationParser<String> {
 
 class MyRouteDelegate extends RouterDelegate<String>
     with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
-  MyRouteDelegate({@required this.homeBuilder}) {
+  MyRouteDelegate({@required this.home}) {
     onGenerateRoute = (settings) {
       return MaterialPageRoute<CatPicPage>(
-          settings: settings, builder: homeBuilder);
+          settings: settings, builder: (ctx) => null);
     };
   }
 
-  final WidgetBuilder homeBuilder;
+  final CatPicPage home;
   final _stack = <CatPicPage>[];
 
   static MyRouteDelegate of(BuildContext context) {
@@ -70,6 +72,20 @@ class MyRouteDelegate extends RouterDelegate<String>
     notifyListeners();
   }
 
+  void cleanSearchPageRouter() {
+    var end = -1;
+    for (var i = _stack.length - 1; i >= 0; i--) {
+      if (_stack[i].name?.startsWith('SearchPage') ?? false) {
+        end = i;
+        break;
+      }
+    }
+    if (end != -1) {
+      _stack.removeRange(0, end);
+      notifyListeners();
+    }
+  }
+
   @override
   Future<void> setInitialRoutePath(String configuration) {
     return setNewRoutePath(configuration);
@@ -79,11 +95,7 @@ class MyRouteDelegate extends RouterDelegate<String>
   Future<void> setNewRoutePath(String configuration) {
     _stack
       ..clear()
-      ..add(CatPicPage(
-        key: ValueKey(configuration),
-        name: configuration,
-        builder: homeBuilder,
-      ));
+      ..add(home);
     return SynchronousFuture<void>(null);
   }
 

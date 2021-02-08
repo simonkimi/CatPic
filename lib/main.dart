@@ -35,7 +35,11 @@ class MyApp extends StatelessWidget {
       ],
       builder: BotToastInit(),
       routerDelegate: MyRouteDelegate(
-        homeBuilder: (context) => SearchPage()
+        home: CatPicPage(
+          key: const ValueKey('SearchPage_index'),
+          name: 'SearchPage_index',
+          builder: (ctx) => SearchPage()
+        ),
       ),
       routeInformationParser: MyRouteParser(),
       supportedLocales: const [

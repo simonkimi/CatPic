@@ -17,8 +17,6 @@ class MainDrawer extends StatefulWidget {
 class _MainDrawerState extends State<MainDrawer> {
   bool showWebsiteList = false;
 
-  StreamSubscription<EventSiteChange> _eventSiteChangeListener;
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -179,16 +177,11 @@ class _MainDrawerState extends State<MainDrawer> {
   void initState() {
     super.initState();
     print('MainDrawer initState');
-    _eventSiteChangeListener = EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      print('event: EventSiteChange');
-      mainStore.updateList();
-    });
   }
 
   @override
   void dispose() {
     super.dispose();
     print('MainDrawer dispose');
-    _eventSiteChangeListener.cancel();
   }
 }

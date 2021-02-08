@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/data/database/sp_helper.dart';
+import 'package:catpic/utils/event_util.dart';
 import 'package:mobx/mobx.dart';
 
 part 'main_store.g.dart';
@@ -10,6 +11,13 @@ part 'main_store.g.dart';
 class MainStore = MainStoreBase with _$MainStore;
 
 abstract class MainStoreBase with Store {
+  MainStoreBase() {
+    EventBusUtil().bus.on<EventSiteListChange>().listen((event) {
+      print('event: EventSiteListChange');
+      updateList();
+    });
+  }
+
   @observable
   List<WebsiteEntity> websiteList = [];
 
@@ -36,29 +44,23 @@ abstract class MainStoreBase with Store {
     // 判断当前网站是否被删
     if (websiteEntity != null) {
       if (websiteList.where((e) => e.id == websiteEntity.id ?? false).isEmpty) {
-        if (websiteList.isNotEmpty) {
-          websiteEntity = websiteList[0];
-        } else {
-          websiteEntity = null;
-          SPHelper().pref.setInt('last_website', -1);
-          return;
-        }
+        await setWebsite(websiteList.isNotEmpty ? websiteList[0] : null);
+        return;
       }
     }
     // 判断是有候选网站
     if (websiteEntity == null && websiteList.isNotEmpty) {
-      websiteEntity = websiteList[0];
-    }
-    // 写入上次网站记忆
-    if (websiteEntity != null) {
-      SPHelper().pref.setInt('last_website', websiteEntity.id);
+      await setWebsite(websiteList[0]);
     }
   }
 
   @action
   Future<void> setWebsite(WebsiteEntity entity) async {
-    websiteEntity = entity;
-    SPHelper().pref.setInt('last_website', websiteEntity.id);
+    if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
+      websiteEntity = entity;
+      EventBusUtil().bus.fire(EventSiteChange());
+      SPHelper().pref.setInt('last_website', websiteEntity?.id ?? -1);
+    }
   }
 
   @action
@@ -68,7 +70,7 @@ abstract class MainStoreBase with Store {
       final entity = await websiteDao.getById(entityId);
       entity.favicon = favicon;
       await websiteDao.updateSite(entity);
-      if (websiteEntity.id == entity.id) {
+      if (websiteEntity?.id == entity.id ?? false) {
         websiteEntity = entity;
       }
       await updateList();

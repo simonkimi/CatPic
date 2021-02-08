@@ -70,7 +70,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
-          EventBusUtil().bus.fire(EventSiteChange());
+          EventBusUtil().bus.fire(EventSiteListChange());
           Navigator.pop(context);
         },
         tooltip: S.of(context).back,
@@ -83,7 +83,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
             // 保存网站后返回并且刷新页面
             saveWebsite().then((result) {
               if (result) {
-                EventBusUtil().bus.fire(EventSiteChange());
+                EventBusUtil().bus.fire(EventSiteListChange());
                 Navigator.pop(context);
               }
             });

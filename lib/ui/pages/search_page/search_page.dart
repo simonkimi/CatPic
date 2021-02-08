@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website_fragment.dart';
 import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
-
+import 'package:catpic/router.dart';
 
 enum SearchType { POST, POOL, ARTIST }
 
@@ -19,12 +22,28 @@ class _SearchPageState extends State<SearchPage> {
   SearchType searchType;
   Widget searchBody;
 
+  StreamSubscription<EventSiteChange> _eventSiteChangeListener;
+
   @override
   void initState() {
     super.initState();
     searchText = '';
     searchType = SearchType.POST;
     searchBody = buildSearchBody(searchText, searchType);
+
+    _eventSiteChangeListener =
+        EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      MyRouteDelegate.of(context).cleanSearchPageRouter();
+      setState(() {
+        searchBody = buildSearchBody('', SearchType.POST);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _eventSiteChangeListener.cancel();
   }
 
   @override

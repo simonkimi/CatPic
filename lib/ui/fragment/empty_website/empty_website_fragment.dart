@@ -1,5 +1,6 @@
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
+import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -15,9 +16,9 @@ class EmptyWebsiteFragment extends StatelessWidget {
             onTap: () {
               MyRouteDelegate.of(context).push(
                 CatPicPage(
-                  key: const ValueKey('empty'),
-                  name: '/empty',
-                  builder: (ctx) => WebsiteAddPage(),
+                  key: const ValueKey('WebsiteManagerPage'),
+                  name: '/WebsiteManagerPage',
+                  builder: (ctx) => WebsiteManagerPage(),
                 ),
               );
             },

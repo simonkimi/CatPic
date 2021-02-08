@@ -5,6 +5,7 @@ import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
@@ -20,26 +21,11 @@ class WebsiteManagerPage extends StatefulWidget {
 
 class _WebsiteManagerState extends State<WebsiteManagerPage> {
   final eventBus = EventBusUtil().bus;
-  StreamSubscription<EventSiteChange> _eventSiteChangeListener;
-  List<WebsiteEntity> websiteList;
 
   @override
   void initState() {
     super.initState();
     debugPrint('WebsiteManagerPage initState');
-    updateWebsiteList();
-    _eventSiteChangeListener = eventBus.on<EventSiteChange>().listen((event) {
-      updateWebsiteList();
-    });
-  }
-
-  void updateWebsiteList() {
-    final websiteDao = DatabaseHelper().websiteDao;
-    websiteDao.getAll().then((value) {
-      setState(() {
-        websiteList = value;
-      });
-    });
   }
 
   @override
@@ -77,7 +63,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   }
 
   List<Widget> buildWebsiteList() {
-    return websiteList?.map((e) {
+    return mainStore.websiteList.map((e) {
           final title = e.name;
           final scheme = getSchemeString(e.scheme);
           final subTitle = '$scheme://${e.host}/';
@@ -93,7 +79,7 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
             onDeletePress: () {
               final websiteDao = DatabaseHelper().websiteDao;
               websiteDao.removeSite([e]).then((value) {
-                EventBusUtil().bus.fire(EventSiteChange());
+                EventBusUtil().bus.fire(EventSiteListChange());
               });
             },
             onSettingPress: () {},
@@ -106,6 +92,5 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
   void dispose() {
     super.dispose();
     debugPrint('WebsiteManagerPage dispose');
-    _eventSiteChangeListener.cancel();
   }
 }
