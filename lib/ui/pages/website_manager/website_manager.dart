@@ -9,6 +9,8 @@ import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
+import 'package:catpic/router.dart';
+
 class WebsiteManagerPage extends StatefulWidget {
   static String routeName = 'WebsiteManager';
 
@@ -60,7 +62,13 @@ class _WebsiteManagerState extends State<WebsiteManagerPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, WebsiteAddPage.routeName);
+          MyRouteDelegate.of(context).push(
+            CatPicPage(
+              key: const ValueKey('WebsiteAddPage'),
+              name: '/WebsiteAddPage',
+              builder: (ctx) => WebsiteAddPage(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,

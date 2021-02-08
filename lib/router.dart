@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CatPicPage extends Page<CatPicPage> {
@@ -19,4 +20,90 @@ class CatPicPage extends Page<CatPicPage> {
 
   @override
   String toString() => name;
+}
+
+class MyRouteParser extends RouteInformationParser<String> {
+  @override
+  Future<String> parseRouteInformation(RouteInformation routeInformation) {
+    return SynchronousFuture(routeInformation.location);
+  }
+
+  @override
+  RouteInformation restoreRouteInformation(String configuration) {
+    return RouteInformation(location: configuration);
+  }
+}
+
+class MyRouteDelegate extends RouterDelegate<String>
+    with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
+  MyRouteDelegate({@required this.homeBuilder}) {
+    onGenerateRoute = (settings) {
+      return MaterialPageRoute<CatPicPage>(
+          settings: settings, builder: homeBuilder);
+    };
+  }
+
+  final WidgetBuilder homeBuilder;
+  final _stack = <CatPicPage>[];
+
+  static MyRouteDelegate of(BuildContext context) {
+    final RouterDelegate delegate = Router.of(context).routerDelegate;
+    assert(delegate is MyRouteDelegate, 'Delegate type must match');
+    return delegate as MyRouteDelegate;
+  }
+
+  RouteFactory onGenerateRoute;
+
+  @override
+  GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  List<String> get stack => List.unmodifiable(_stack);
+
+  void push(CatPicPage page) {
+    _stack.add(page);
+    notifyListeners();
+  }
+
+  void remove(String routeName) {
+    print('remove $routeName');
+    _stack.removeWhere((element) => element.name == routeName);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setInitialRoutePath(String configuration) {
+    return setNewRoutePath(configuration);
+  }
+
+  @override
+  Future<void> setNewRoutePath(String configuration) {
+    _stack
+      ..clear()
+      ..add(CatPicPage(
+        key: ValueKey(configuration),
+        name: configuration,
+        builder: homeBuilder,
+      ));
+    return SynchronousFuture<void>(null);
+  }
+
+  bool _onPopPage(Route<dynamic> route, dynamic result) {
+    if (_stack.isNotEmpty) {
+      print('stack: ${_stack.map((e) => e.name).toList()}');
+      if (_stack.last.name == route.settings.name) {
+        _stack.removeWhere((e) => e.name == route.settings.name);
+        notifyListeners();
+      }
+    }
+    return route.didPop(result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      onPopPage: _onPopPage,
+      pages: List.of(_stack),
+    );
+  }
 }

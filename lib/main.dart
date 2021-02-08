@@ -1,17 +1,11 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/sp_helper.dart';
+import 'package:catpic/router.dart';
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
-import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
-import 'package:catpic/ui/pages/login_page/login_page.dart';
-import 'package:catpic/ui/pages/main_page/main_page.dart';
-import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
-import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'data/database/database_helper.dart';
@@ -29,7 +23,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp.router(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
       theme: theme.blueTheme,
@@ -40,19 +34,13 @@ class MyApp extends StatelessWidget {
         S.delegate
       ],
       builder: BotToastInit(),
-      navigatorObservers: [BotToastNavigatorObserver()],
+      routerDelegate: MyRouteDelegate(
+        homeBuilder: (context) => SearchPage()
+      ),
+      routeInformationParser: MyRouteParser(),
       supportedLocales: const [
         Locale('en'),
         Locale('zh', 'CN'),
-      ],
-      home: SearchPage(),
-      getPages: [
-        GetPage(name: MainPage.routeName, page: () => MainPage()),
-        GetPage(name: LoginPage.routeName, page: () => const LoginPage()),
-        GetPage(name: WebsiteManagerPage.routeName, page: () => WebsiteManagerPage()),
-        GetPage(name: WebsiteAddPage.routeName, page: () => WebsiteAddPage()),
-        GetPage(name: HostManagerPage.routeName, page: () => HostManagerPage()),
-        GetPage(name: SearchPage.routeName, page: () => SearchPage()),
       ],
     );
   }
