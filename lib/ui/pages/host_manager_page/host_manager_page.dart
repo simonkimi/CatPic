@@ -28,19 +28,20 @@ class _HostManagerPageState extends State<HostManagerPage> {
   ListView buildBody() {
     return ListView(
       children: hostEntities?.map((e) {
-        return Dismissible(
-          key: ValueKey(e.id),
-          child: ListTile(
-            title: Text(e.host),
-            subtitle: Text(e.ip),
-          ),
-          onDismissed: (_) {
-            DatabaseHelper().hostDao.removeHost([e]).then((value) {
-              init();
-            });
-          },
-        );
-      })?.toList() ?? [],
+            return Dismissible(
+              key: ValueKey(e.id),
+              child: ListTile(
+                title: Text(e.host),
+                subtitle: Text(e.ip),
+              ),
+              onDismissed: (_) {
+                DatabaseHelper().hostDao.removeHost([e]).then((value) {
+                  init();
+                });
+              },
+            );
+          })?.toList() ??
+          [],
     );
   }
 
@@ -107,7 +108,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                         });
                       },
                       title: Text(
-                        S.of(context).domain_fronting,
+                        S.of(context).direct_link,
                       ),
                     )
                   ],

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/host_entity.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
@@ -30,9 +29,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     websiteHost = '';
     scheme = WebsiteScheme.HTTPS.index;
     websiteType = WebsiteType.GELBOORU.index;
-    useHostList = false;
-    domainFronting = false;
-    trustHost = '';
+    useDoH = false;
+    directLink = false;
   }
 
   @override
@@ -137,9 +135,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         value: scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
           setState(() {
-            scheme = value
-                ? WebsiteScheme.HTTPS.index
-                : WebsiteScheme.HTTP.index;
+            scheme =
+                value ? WebsiteScheme.HTTPS.index : WebsiteScheme.HTTP.index;
           });
         },
       ),
@@ -173,29 +170,29 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     return [
       SummaryTile(S.of(context).advanced_settings),
       SwitchListTile(
-        title: Text(S.of(context).use_host_list),
-        subtitle:
-            Text(useHostList ? trustHost : S.of(context).use_host_list_desc),
-        value: useHostList,
+        title: Text(S.of(context).use_doh),
+        subtitle: Text(S.of(context).use_doh_desc),
+        value: useDoH,
         secondary: const Icon(Icons.list_alt),
         onChanged: (value) {
-          setHostList(value);
+          useDoH = value;
         },
       ),
       SwitchListTile(
-        title: Text(S.of(context).domain_fronting),
-        subtitle: Text(S.of(context).domain_fronting_desc),
+        title: Text(S.of(context).direct_link),
+        subtitle: Text(S.of(context).direct_link_desc),
         secondary: const Icon(Icons.airplanemode_active_rounded),
-        value: domainFronting,
+        value: directLink,
         onChanged: (value) {
           setState(() {
-            if (!value) {
-              domainFronting = value;
-            } else if (value && useHostList) {
-              domainFronting = value;
-            } else {
-              BotToast.showText(text: S.of(context).turn_on_host);
-            }
+            setState(() {
+              if (value) {
+                directLink = true;
+                useDoH = true;
+              } else {
+                directLink = false;
+              }
+            });
           });
         },
       ),
@@ -208,48 +205,8 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   String websiteHost;
   int scheme;
   int websiteType;
-  bool domainFronting;
-  bool useHostList;
-
-  String trustHost;
-
-  /// 当要开启自定义host的时候进行请求真实ip
-  void setHostList(bool targetValue) async {
-    if (targetValue) {
-      final host = getHost(websiteHost);
-      if (host.isNotEmpty) {
-        // 判断是否已经存在
-        final hostDao = DatabaseHelper().hostDao;
-        final hostExist = await hostDao.getByHost(host);
-        if (hostExist != null) {
-          setState(() {
-            useHostList = true;
-            trustHost = hostExist.ip;
-          });
-        } else {
-          final cancelFunc = BotToast.showLoading();
-          getTrustHost(host).then((host) {
-            cancelFunc();
-            if (host.isNotEmpty) {
-              setState(() {
-                useHostList = true;
-                trustHost = host;
-              });
-            } else {
-              BotToast.showText(text: S.of(context).trusted_host_auto_failed);
-            }
-          });
-        }
-      } else {
-        BotToast.showText(text: S.of(context).host_empty);
-      }
-    } else {
-      setState(() {
-        useHostList = false;
-        domainFronting = false;
-      });
-    }
-  }
+  bool directLink;
+  bool useDoH;
 
   /// 保存网站
   Future<bool> saveWebsite() async {
@@ -260,7 +217,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     if (websiteName.isEmpty) {
       websiteName = websiteHost;
     }
-    
+
     // 保存网站
     final websiteDao = DatabaseHelper().websiteDao;
     final entity = WebsiteEntity(
@@ -268,27 +225,12 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       host: websiteHost,
       name: websiteName,
       scheme: scheme,
-      useHostList: useHostList,
+      useDoH: useDoH,
       type: websiteType,
+      directLink: directLink,
       favicon: Uint8List.fromList([]),
     );
     final id = await websiteDao.addSite(entity);
-    
-    // 保存自定义host
-    if (useHostList) {
-      final hostDao = DatabaseHelper().hostDao;
-      final existHost = await hostDao.getByHost(websiteHost);
-      if (existHost != null) {
-        await hostDao.removeHost([existHost]);
-      }
-
-      final hostEntity = HostEntity(
-        host: websiteHost,
-        ip: trustHost,
-        sni: domainFronting
-      );
-      hostDao.addHost(hostEntity);
-    }
 
     // 获取封面图片
     getFavicon(entity).then((favicon) {
@@ -296,6 +238,4 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
     });
     return true;
   }
-
-
 }

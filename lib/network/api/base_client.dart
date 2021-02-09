@@ -17,7 +17,7 @@ class DioBuilder {
       };
     final scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';
-    if (websiteEntity.useHostList) {
+    if (websiteEntity.useDoH) {
       dio.interceptors.add(CustomHostInterceptor());
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {

@@ -276,10 +276,40 @@ class S {
   }
 
   /// `Use DoH`
-  String get use_host_list {
+  String get use_doh {
     return Intl.message(
       'Use DoH',
-      name: 'use_host_list',
+      name: 'use_doh',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Workaround DNS poisoning in some nations`
+  String get use_doh_desc {
+    return Intl.message(
+      'Workaround DNS poisoning in some nations',
+      name: 'use_doh_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Direct Link`
+  String get direct_link {
+    return Intl.message(
+      'Direct Link',
+      name: 'direct_link',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bypass SNI blocking`
+  String get direct_link_desc {
+    return Intl.message(
+      'Bypass SNI blocking',
+      name: 'direct_link_desc',
       desc: '',
       args: [],
     );
@@ -290,36 +320,6 @@ class S {
     return Intl.message(
       'Get trusted host failed',
       name: 'trusted_host_auto_failed',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Workaround DNS poisoning in some nations`
-  String get use_host_list_desc {
-    return Intl.message(
-      'Workaround DNS poisoning in some nations',
-      name: 'use_host_list_desc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Domain Fronting`
-  String get domain_fronting {
-    return Intl.message(
-      'Domain Fronting',
-      name: 'domain_fronting',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Bypass SNI blocking`
-  String get domain_fronting_desc {
-    return Intl.message(
-      'Bypass SNI blocking',
-      name: 'domain_fronting_desc',
       desc: '',
       args: [],
     );

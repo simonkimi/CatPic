@@ -24,8 +24,9 @@ class WebsiteEntity {
     @required this.host,
     @required this.scheme,
     @required this.type,
-    @required this.useHostList,
+    @required this.useDoH,
     @required this.favicon,
+    @required this.directLink,
     this.cookies,
   });
 
@@ -37,7 +38,9 @@ class WebsiteEntity {
   final int scheme;
   final int type;
 
-  final bool useHostList;
+  final bool useDoH;
+  final bool directLink;
+
   final String cookies;
 
   Uint8List favicon;
