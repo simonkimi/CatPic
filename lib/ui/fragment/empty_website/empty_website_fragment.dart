@@ -1,5 +1,4 @@
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

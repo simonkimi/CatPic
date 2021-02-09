@@ -5,7 +5,6 @@ import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catpic/router.dart';
-import 'package:uuid/uuid.dart';
 
 class MainDrawer extends StatefulWidget {
   @override
