@@ -1,4 +1,3 @@
-
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
@@ -9,14 +8,17 @@ import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/router.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class WebsiteManagerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          children: buildWebsiteList(),
+      body: Observer(
+        builder: (ctx) => SafeArea(
+          child: ListView(
+            children: buildWebsiteList(),
+          ),
         ),
       ),
       appBar: AppBar(
