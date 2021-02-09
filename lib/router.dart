@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +48,10 @@ class MyRouteDelegate extends RouterDelegate<String>
   final CatPicPage home;
   final _stack = <CatPicPage>[];
 
+  GlobalKey<NavigatorState> _navigatorKey;
+
+  CatPicPage _currentPage;
+
   static MyRouteDelegate of(BuildContext context) {
     final RouterDelegate delegate = Router.of(context).routerDelegate;
     assert(delegate is MyRouteDelegate, 'Delegate type must match');
@@ -56,11 +59,13 @@ class MyRouteDelegate extends RouterDelegate<String>
   }
 
   @override
-  GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> get navigatorKey =>
+      _navigatorKey ??= GlobalKey<NavigatorState>();
 
   List<String> get stack => List.unmodifiable(_stack);
 
   void push(CatPicPage page) {
+    _currentPage = page;
     _stack.add(page);
     notifyListeners();
   }
@@ -70,13 +75,9 @@ class MyRouteDelegate extends RouterDelegate<String>
     notifyListeners();
   }
 
-  void remove(String routeName) {
-    print('remove $routeName');
-    _stack.removeWhere((element) => element.name == routeName);
-    notifyListeners();
-  }
 
   void cleanSearchPageRouter() {
+    print('路由栈${_stack.map((e) => e.name).toList()}');
     var end = -1;
     for (var i = _stack.length - 1; i >= 0; i--) {
       if (_stack[i].name?.startsWith('SearchPage') ?? false) {
@@ -86,6 +87,7 @@ class MyRouteDelegate extends RouterDelegate<String>
     }
     if (end != -1) {
       _stack.removeRange(0, end);
+      print('$end 改变后路由栈${_stack.map((e) => e.name).toList()}');
       notifyListeners();
     }
   }
@@ -100,16 +102,15 @@ class MyRouteDelegate extends RouterDelegate<String>
     _stack
       ..clear()
       ..add(home);
+    _currentPage = home;
     return SynchronousFuture<void>(null);
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
+    print('$_currentPage, ${route.isCurrent} ${route}');
     if (_stack.isNotEmpty) {
-      print('stack: ${_stack.map((e) => e.name).toList()}');
-      if (_stack.last.name == route.settings.name) {
-        _stack.removeWhere((e) => e.name == route.settings.name);
-        notifyListeners();
-      }
+      _stack.removeLast();
+      _currentPage = _stack.last;
     }
     return route.didPop(result);
   }

@@ -37,7 +37,7 @@ class EmptyWebsiteFragment extends StatelessWidget {
                   Text(
                     S.of(context).to_add_website,
                     style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor),
                   )

@@ -54,19 +54,21 @@ class _MainDrawerState extends State<MainDrawer> {
             if (element.favicon.isNotEmpty) {
               favicon = MemoryImage(element.favicon);
             }
-            return ListTile(
-              key: Key('site${element.name}'),
-              title: Text(element.name),
-              subtitle: Text('$scheme://${element.host}/'),
-              selected: mainStore.websiteEntity?.id == element.id ?? false,
-              leading: CircleAvatar(
-                backgroundColor: Colors.white,
-                backgroundImage: favicon,
-              ),
-              onTap: () {
-                mainStore.setWebsite(element);
-              },
-            );
+            return Builder(
+                key: Key('site${element.name}'),
+                builder: (context) => ListTile(
+                      subtitle: Text('$scheme://${element.host}/'),
+                      selected:
+                          mainStore.websiteEntity?.id == element.id ?? false,
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        backgroundImage: favicon,
+                      ),
+                      onTap: () {
+                        Scaffold.of(context).openEndDrawer();
+                        mainStore.setWebsite(element);
+                      },
+                    ));
           }).toList(),
         ),
       ),
@@ -152,16 +154,18 @@ class _MainDrawerState extends State<MainDrawer> {
       otherAccountsPictures: mainStore.websiteList
           .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
           .map((element) {
-        return InkWell(
-            onTap: () {
-              mainStore.setWebsite(element);
-            },
-            child: CircleAvatar(
-              backgroundImage: element.favicon.isNotEmpty
-                  ? MemoryImage(element.favicon)
-                  : null,
-              backgroundColor: Colors.white,
-            ));
+        return Builder(
+            builder: (ctx) => InkWell(
+                onTap: () {
+                  mainStore.setWebsite(element);
+                  Scaffold.of(ctx).openEndDrawer();
+                },
+                child: CircleAvatar(
+                  backgroundImage: element.favicon.isNotEmpty
+                      ? MemoryImage(element.favicon)
+                      : null,
+                  backgroundColor: Colors.white,
+                )));
       }).toList(),
     );
   }

@@ -67,7 +67,6 @@ class WebsiteManagerPage extends StatelessWidget {
             },
             onSettingPress: () {},
           );
-        })?.toList() ??
-        [];
+        }).toList();
   }
 }
