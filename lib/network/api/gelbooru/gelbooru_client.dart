@@ -18,7 +18,7 @@ class GelbooruClient extends BaseClient {
       'tags': tags ?? ''
     });
 
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
   /// 获取tag详细信息
@@ -32,7 +32,7 @@ class GelbooruClient extends BaseClient {
       'limit': (limit ?? 100).toString()
     });
 
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 
 
@@ -46,6 +46,6 @@ class GelbooruClient extends BaseClient {
       'post_id': postId,
     });
 
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data;
   }
 }

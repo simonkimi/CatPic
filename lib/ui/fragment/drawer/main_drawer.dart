@@ -1,13 +1,11 @@
-import 'dart:async';
-
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
-import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catpic/router.dart';
+import 'package:uuid/uuid.dart';
 
 class MainDrawer extends StatefulWidget {
   @override
@@ -78,13 +76,9 @@ class _MainDrawerState extends State<MainDrawer> {
         leading: const Icon(Icons.settings),
         title: Text(S.of(context).website_manager),
         onTap: () {
-          MyRouteDelegate.of(context).push(
-            CatPicPage(
-              key: const ValueKey('WebsiteManagerPage'),
-              name: '/WebsiteManagerPage',
-              builder: (ctx) => WebsiteManagerPage(),
-            ),
-          );
+          MyRouteDelegate.of(context).push(CatPicPage(
+            builder: (ctx) => WebsiteManagerPage(),
+          ));
         },
       )
     ];

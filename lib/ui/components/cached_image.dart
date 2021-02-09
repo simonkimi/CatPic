@@ -43,7 +43,6 @@ class CachedDioImage extends StatefulWidget {
 class _CachedDioImageState extends State<CachedDioImage> {
   Dio _dio;
   Object err;
-  double progress;
   int totalSize;
   int receivedSize;
   Uint8List data;
@@ -54,7 +53,6 @@ class _CachedDioImageState extends State<CachedDioImage> {
   void initState() {
     super.initState();
     _dio = widget.dio ?? Dio();
-    progress = 0;
     totalSize = 0;
     receivedSize = 0;
     loadingType = LoadingType.LOADING;
@@ -100,7 +98,6 @@ class _CachedDioImageState extends State<CachedDioImage> {
             setState(() {
               receivedSize = received;
               totalSize = total;
-              progress = total != -1 ? receivedSize / totalSize : 0;
             });
           }
         });

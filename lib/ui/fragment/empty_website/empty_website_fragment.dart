@@ -16,8 +16,6 @@ class EmptyWebsiteFragment extends StatelessWidget {
             onTap: () {
               MyRouteDelegate.of(context).push(
                 CatPicPage(
-                  key: const ValueKey('WebsiteManagerPage'),
-                  name: '/WebsiteManagerPage',
                   builder: (ctx) => WebsiteManagerPage(),
                 ),
               );

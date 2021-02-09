@@ -5,7 +5,7 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
 
-Future<String> getTrustHost(String url) async {
+Future<String> getDoH(String url) async {
   try {
     final query = 'https://cloudflare-dns.com/dns-query?name=$url&type=A';
     final dio = Dio()..options.connectTimeout = 10 * 1000;

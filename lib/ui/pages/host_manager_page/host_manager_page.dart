@@ -80,7 +80,6 @@ class _HostManagerPageState extends State<HostManagerPage> {
         builder: (context) {
           final hostController = TextEditingController();
           final ipController = TextEditingController();
-          var sni = false;
           return StatefulBuilder(builder: (context, localState) {
             return AlertDialog(
               content: SingleChildScrollView(
@@ -100,17 +99,6 @@ class _HostManagerPageState extends State<HostManagerPage> {
                         hintText: '12.34.56.78',
                       ),
                     ),
-                    SwitchListTile(
-                      value: sni,
-                      onChanged: (value) {
-                        localState(() {
-                          sni = value;
-                        });
-                      },
-                      title: Text(
-                        S.of(context).direct_link,
-                      ),
-                    )
                   ],
                 ),
               ),
@@ -120,7 +108,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                   onPressed: () {
                     final host = getHost(hostController.text);
                     final cancelFunc = BotToast.showLoading();
-                    getTrustHost(host).then((value) {
+                    getDoH(host).then((value) {
                       cancelFunc();
                       if (value.isNotEmpty) {
                         localState(() {
@@ -136,10 +124,9 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 FlatButton(
                   onPressed: () {
                     saveHost(
-                            host: getHost(hostController.text),
-                            ip: ipController.text,
-                            useSni: sni)
-                        .then((value) {
+                      host: getHost(hostController.text),
+                      ip: ipController.text,
+                    ).then((value) {
                       if (value) {
                         Navigator.of(context).pop();
                       }
@@ -154,7 +141,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
         });
   }
 
-  Future<bool> saveHost({String host, String ip, bool useSni}) async {
+  Future<bool> saveHost({String host, String ip}) async {
     if (host.isEmpty || ip.isEmpty) {
       BotToast.showText(text: S.of(context).host_empty);
       return false;
@@ -166,7 +153,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
     }
     final dao = DatabaseHelper().hostDao;
     await dao.removeHost([await dao.getByHost(host)]);
-    final hostEntity = HostEntity(host: host, ip: ip, sni: useSni);
+    final hostEntity = HostEntity(host: host, ip: ip, websiteId: -1);
     await dao.addHost(hostEntity);
     await init();
     return true;

@@ -7,7 +7,7 @@ class HostEntity {
     this.id,
     @required this.host,
     @required this.ip,
-    @required this.sni,
+    @required this.websiteId,
   });
 
   @PrimaryKey(autoGenerate: true)
@@ -15,5 +15,5 @@ class HostEntity {
 
   final String host;
   final String ip;
-  final bool sni;
+  final int websiteId;
 }

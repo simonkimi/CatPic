@@ -11,8 +11,6 @@ import 'package:catpic/router.dart';
 enum SearchType { POST, POOL, ARTIST }
 
 class SearchPage extends StatefulWidget {
-  static String routeName = 'SearchPage';
-
   @override
   _SearchPageState createState() => _SearchPageState();
 }

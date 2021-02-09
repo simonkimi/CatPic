@@ -33,8 +33,6 @@ class WebsiteManagerPage extends StatelessWidget {
         onPressed: () {
           MyRouteDelegate.of(context).push(
             CatPicPage(
-              key: const ValueKey('WebsiteAddPage'),
-              name: '/WebsiteAddPage',
               builder: (ctx) => WebsiteAddPage(),
             ),
           );

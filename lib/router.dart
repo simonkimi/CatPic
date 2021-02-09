@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+typedef CatPicPageBuilder = CatPicPage Function();
+
 class CatPicPage extends Page<CatPicPage> {
   const CatPicPage({
-    @required LocalKey key,
-    @required String name,
+    LocalKey key,
+    String name,
     @required this.builder,
   }) : super(key: key, name: name);
 
@@ -61,6 +63,11 @@ class MyRouteDelegate extends RouterDelegate<String>
 
   void push(CatPicPage page) {
     _stack.add(page);
+    notifyListeners();
+  }
+
+  void pushBuilder(CatPicPageBuilder builder) {
+    _stack.add(builder());
     notifyListeners();
   }
 

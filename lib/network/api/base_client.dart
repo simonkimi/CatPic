@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:dio/dio.dart';
-import 'package:catpic/network/interceptor/custom_host_interceptor.dart';
+import 'package:catpic/network/interceptor/host_interceptor.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:dio/adapter.dart';
 
@@ -15,10 +16,13 @@ class DioBuilder {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
       };
+
+
     final scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';
+    dio.transformer = EncodeTransformer();
     if (websiteEntity.useDoH) {
-      dio.interceptors.add(CustomHostInterceptor());
+      dio.interceptors.add(HostInterceptor(dio: dio, directLink: websiteEntity.directLink, websiteId: websiteEntity.id));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {
         client.badCertificateCallback = (cert, host, port) => true;

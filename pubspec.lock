@@ -50,6 +50,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.5"
+  brotli:
+    dependency: "direct main"
+    description:
+      name: brotli
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.4.0"
   build:
     dependency: transitive
     description:

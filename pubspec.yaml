@@ -28,6 +28,7 @@ dependencies:
   pull_to_refresh: ^1.6.3
   flutter_cache_manager: ^2.1.1
   flutter_svg: any
+  brotli: ^0.4.0
 
 
 dev_dependencies:

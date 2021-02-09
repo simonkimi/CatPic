@@ -175,7 +175,9 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         value: useDoH,
         secondary: const Icon(Icons.list_alt),
         onChanged: (value) {
-          useDoH = value;
+          setState(() {
+            useDoH = value;
+          });
         },
       ),
       SwitchListTile(

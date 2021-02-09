@@ -121,6 +121,15 @@ class _PostResultFragmentState extends State<PostResultFragment>
         loadingBuilder: (_, progress) {
           return AspectRatio(
             aspectRatio: post.width / post.height,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: ((progress.expectedTotalBytes ?? 0) != 0) &&
+                        ((progress.cumulativeBytesLoaded ?? 0) != 0)
+                    ? progress.cumulativeBytesLoaded /
+                        progress.expectedTotalBytes
+                    : 0.0,
+              ),
+            ),
           );
         },
         errorBuilder: (_, err) {
