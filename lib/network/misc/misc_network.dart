@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 
 Future<String> getDoH(String url) async {
@@ -32,7 +33,9 @@ Future<Uint8List> getFavicon(WebsiteEntity entity) async {
     final dio = DioBuilder.build(entity);
     final req = await dio.get<List<int>>('favicon.ico',
         options: Options(responseType: ResponseType.bytes));
-    return Uint8List.fromList(req.data);
+    final u8 = Uint8List.fromList(req.data);
+    MemoryImage(u8);
+    return u8;
   } catch (e) {
     print('下载Favicon失败: $e');
     return Uint8List.fromList([]);
