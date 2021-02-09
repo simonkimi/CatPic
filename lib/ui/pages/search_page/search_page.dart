@@ -64,11 +64,9 @@ class _SearchPageState extends State<SearchPage> {
       switch (searchType) {
         case SearchType.POST:
           return PostResultFragment(
+            key: ValueKey('${mainStore.websiteEntity.host}${type.index}$tag'),
             searchText: tag,
             adapter: mainStore.websiteEntity.getAdapter(),
-            onSearch: (value) {
-              changeSearchBody(value.trim(), SearchType.POST);
-            },
           );
         case SearchType.POOL:
           throw Exception('TODO POOL');

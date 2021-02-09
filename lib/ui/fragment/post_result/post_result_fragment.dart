@@ -19,12 +19,10 @@ class PostResultFragment extends StatefulWidget {
     Key key,
     this.searchText = '',
     @required this.adapter,
-    @required this.onSearch,
   }) : super(key: key);
 
   final String searchText;
   final BooruAdapter adapter;
-  final ValueCallBack onSearch;
 
   @override
   _PostResultFragmentState createState() => _PostResultFragmentState();
@@ -55,15 +53,37 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       _refreshController.loadFailed();
     }
   }
+
+  Future<void> initSearch() async {
+    try {
+      await _refreshController.requestRefresh();
+      await _store.loadNextPage();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      _refreshController.refreshFailed();
+    }
+  }
+
+  Future<void> _newSearch(String tag) async {
+    await _store.launchNewSearch(tag);
+    await initSearch();
+  }
 }
 
 class _PostResultFragmentState extends State<PostResultFragment>
     with _PostResultFragmentMixin {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     _store =
         PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
-    _store.loadNextPage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initSearch();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Observer(
       builder: (_) => _buildSearchBar(),
     );
@@ -72,8 +92,9 @@ class _PostResultFragmentState extends State<PostResultFragment>
   Widget _buildSearchBar() {
     return SearchBar(
       controller: _searchBarController,
+      defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       onSubmitted: (value) {
-        widget.onSearch(value);
+        _newSearch(value);
       },
       actions: [
         FloatingSearchBarAction(
