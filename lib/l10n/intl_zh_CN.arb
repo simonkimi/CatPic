@@ -39,5 +39,10 @@
   "host_or_ip_empty": "主机和IP不能为空",
   "illegal_ip": "非法IP",
   "turn_on_host" : "必须先开启自定义主机!",
-  "to_add_website": "还没有网站, 点我添加一个!"
+  "to_add_website": "还没有网站, 点我添加一个!",
+
+  "safe": "安全",
+  "explicit": "暴露",
+  "questionable": "未知"
+
 }

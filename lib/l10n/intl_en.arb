@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "home": "Home",
   "posts": "Posts",
   "pools": "Pools",
@@ -12,7 +11,6 @@
   "menu": "Menu",
   "search": "Search",
   "delete": "Delete",
-
   "back": "Back",
   "add": "Add",
   "not_set": "Not set yet",
@@ -37,6 +35,10 @@
   "host_empty": "Host cannot be empty",
   "host_or_ip_empty": "Host and IP cannot be empty",
   "illegal_ip": "Illegal IP",
-  "turn_on_host" : "Custom host must be turned on first",
-  "to_add_website": "There is no website, click me to add one!"
+  "turn_on_host": "Custom host must be turned on first",
+  "to_add_website": "There is no website, click me to add one!",
+
+  "safe": "safe",
+  "explicit": "explicit",
+  "questionable": "questionable"
 }

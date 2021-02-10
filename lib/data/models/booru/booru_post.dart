@@ -1,4 +1,19 @@
+import 'package:catpic/generated/l10n.dart';
+import 'package:flutter/material.dart';
+
 enum PostRating { SAFE, EXPLICIT, QUESTIONABLE }
+
+String getRatingText(BuildContext context, PostRating rating) {
+  switch (rating) {
+    case PostRating.SAFE:
+      return S.of(context).safe;
+    case PostRating.EXPLICIT:
+      return S.of(context).explicit;
+    case PostRating.QUESTIONABLE:
+      return S.of(context).questionable;
+  }
+  return '';
+}
 
 class BooruPost {
   BooruPost({
@@ -18,10 +33,13 @@ class BooruPost {
     this.status,
     this.tags,
     this.source,
+    this.createTime,
+    this.score
   });
 
   final String id;
   final String creatorId;
+  final String createTime;
   final String md5;
 
   final String imgURL;
@@ -39,4 +57,5 @@ class BooruPost {
   final String status;
   final Map<String, List<String>> tags;
   final String source;
+  final String score;
 }

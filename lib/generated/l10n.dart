@@ -404,6 +404,36 @@ class S {
       args: [],
     );
   }
+
+  /// `safe`
+  String get safe {
+    return Intl.message(
+      'safe',
+      name: 'safe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `explicit`
+  String get explicit {
+    return Intl.message(
+      'explicit',
+      name: 'explicit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `questionable`
+  String get questionable {
+    return Intl.message(
+      'questionable',
+      name: 'questionable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
