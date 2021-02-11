@@ -1,5 +1,7 @@
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/router/catpic_page.dart';
+import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
@@ -7,7 +9,7 @@ import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
-import 'package:catpic/router.dart';
+
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class WebsiteManagerPage extends StatelessWidget {
@@ -34,9 +36,7 @@ class WebsiteManagerPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           MyRouteDelegate.of(context).push(
-            CatPicPage(
-              builder: (ctx) => WebsiteAddPage(),
-            ),
+            CatPicPage(body: WebsiteAddPage()),
           );
         },
         child: const Icon(Icons.add),
@@ -47,26 +47,26 @@ class WebsiteManagerPage extends StatelessWidget {
 
   List<Widget> buildWebsiteList() {
     return mainStore.websiteList.map((e) {
-          final title = e.name;
-          final scheme = getSchemeString(e.scheme);
-          final subTitle = '$scheme://${e.host}/';
-          ImageProvider favIcon;
-          if (e.favicon.isNotEmpty) {
-            favIcon = MemoryImage(e.favicon);
-          }
-          return WebsiteItem(
-            key: Key('website-$title'),
-            title: Text(title),
-            subtitle: Text(subTitle),
-            leadingImage: favIcon,
-            onDeletePress: () {
-              final websiteDao = DatabaseHelper().websiteDao;
-              websiteDao.removeSite([e]).then((value) {
-                EventBusUtil().bus.fire(EventSiteListChange());
-              });
-            },
-            onSettingPress: () {},
-          );
-        }).toList();
+      final title = e.name;
+      final scheme = getSchemeString(e.scheme);
+      final subTitle = '$scheme://${e.host}/';
+      ImageProvider favIcon;
+      if (e.favicon.isNotEmpty) {
+        favIcon = MemoryImage(e.favicon);
+      }
+      return WebsiteItem(
+        key: Key('website-$title'),
+        title: Text(title),
+        subtitle: Text(subTitle),
+        leadingImage: favIcon,
+        onDeletePress: () {
+          final websiteDao = DatabaseHelper().websiteDao;
+          websiteDao.removeSite([e]).then((value) {
+            EventBusUtil().bus.fire(EventSiteListChange());
+          });
+        },
+        onSettingPress: () {},
+      );
+    }).toList();
   }
 }

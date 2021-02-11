@@ -4,7 +4,7 @@ import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/adapter/gelbooru_adapter.dart';
 import 'package:catpic/data/adapter/moebooru_adapter.dart';
 import 'package:floor/floor.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /// 网站的类型
 /// [id] 主键

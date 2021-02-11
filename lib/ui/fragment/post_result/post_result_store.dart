@@ -2,7 +2,7 @@ import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/data/interface/post_view.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 

@@ -1,10 +1,12 @@
 import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/router/catpic_page.dart';
+import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:catpic/router.dart';
+
 
 class MainDrawer extends StatefulWidget {
   @override
@@ -78,7 +80,7 @@ class _MainDrawerState extends State<MainDrawer> {
         title: Text(S.of(context).website_manager),
         onTap: () {
           MyRouteDelegate.of(context).push(CatPicPage(
-            builder: (ctx) => WebsiteManagerPage(),
+            body: WebsiteManagerPage(),
           ));
         },
       )

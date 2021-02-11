@@ -137,7 +137,10 @@ class _PostResultFragmentState extends State<PostResultFragment>
         dio: widget.adapter.dio,
         imgUrl: post.previewURL,
         imageBuilder: (context, imgData) {
-          return Image(image: MemoryImage(imgData, scale: 0.1));
+          return Hero(
+            tag: post.md5,
+            child: Image(image: MemoryImage(imgData, scale: 0.1)),
+          );
         },
         loadingBuilder: (_, progress) {
           return AspectRatio(

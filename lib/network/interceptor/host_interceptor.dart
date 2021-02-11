@@ -2,7 +2,7 @@ import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/host_entity.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class HostInterceptor extends Interceptor {
   HostInterceptor(

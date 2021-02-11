@@ -1,43 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-typedef CatPicPageBuilder = CatPicPage Function();
+import 'catpic_page.dart';
 
-class CatPicPage extends Page<CatPicPage> {
-  const CatPicPage({
-    LocalKey key,
-    String name,
-    @required this.builder,
-  }) : super(key: key, name: name);
-
-  final WidgetBuilder builder;
-
-  @override
-  Route<CatPicPage> createRoute(BuildContext context) {
-    return MaterialPageRoute<CatPicPage>(
-      settings: this,
-      builder: builder,
-    );
-  }
-
-  @override
-  String toString() => name;
-}
-
-class MyRouteParser extends RouteInformationParser<String> {
-  @override
-  Future<String> parseRouteInformation(RouteInformation routeInformation) {
-    return SynchronousFuture(routeInformation.location);
-  }
-
-  @override
-  RouteInformation restoreRouteInformation(String configuration) {
-    return RouteInformation(location: configuration);
-  }
-}
-
-class MyRouteDelegate extends RouterDelegate<String>
-    with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
+class MyRouteDelegate extends RouterDelegate<AppPath>
+    with PopNavigatorRouterDelegateMixin<AppPath>, ChangeNotifier {
   MyRouteDelegate({
     @required this.home,
     @required this.onGenerateRoute,
@@ -70,6 +37,7 @@ class MyRouteDelegate extends RouterDelegate<String>
     notifyListeners();
   }
 
+
   void pushBuilder(CatPicPageBuilder builder) {
     _stack.add(builder());
     notifyListeners();
@@ -93,12 +61,12 @@ class MyRouteDelegate extends RouterDelegate<String>
   }
 
   @override
-  Future<void> setInitialRoutePath(String configuration) {
+  Future<void> setInitialRoutePath(AppPath configuration) {
     return setNewRoutePath(configuration);
   }
 
   @override
-  Future<void> setNewRoutePath(String configuration) {
+  Future<void> setNewRoutePath(AppPath configuration) {
     _stack
       ..clear()
       ..add(home);
@@ -107,7 +75,7 @@ class MyRouteDelegate extends RouterDelegate<String>
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
-    print('$_currentPage, ${route.isCurrent} ${route}');
+    print('_onPopPage $result');
     if (_stack.isNotEmpty) {
       _stack.removeLast();
       _currentPage = _stack.last;

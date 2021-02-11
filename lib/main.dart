@@ -1,6 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/sp_helper.dart';
-import 'package:catpic/router.dart';
+import 'package:catpic/router/catpic_page.dart';
+import 'package:catpic/router/route_delegate.dart';
+import 'package:catpic/router/router_parser.dart';
 import 'package:catpic/test/test_booru.dart';
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
@@ -19,7 +21,6 @@ void main() async {
   await SPHelper().init();
   await mainStore.init();
   runApp(MyApp());
-  return;
 }
 
 class MyApp extends StatelessWidget {
@@ -29,16 +30,13 @@ class MyApp extends StatelessWidget {
         home: CatPicPage(
           key: const ValueKey('SearchPage_index'),
           name: 'SearchPage_index',
-          builder: (ctx) => ImageViewPage(
-            booruPost: testBooru,
-          ),
+          body: SearchPage(),
         ),
         onGenerateRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              settings: settings,
-              builder: (ctx) => ImageViewPage(
-                    booruPost: testBooru,
-                  ));
+            settings: settings,
+            builder: (ctx) => SearchPage(),
+          );
         });
     return MaterialApp.router(
       title: 'CatPic',
