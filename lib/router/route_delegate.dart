@@ -19,6 +19,8 @@ class MyRouteDelegate extends RouterDelegate<AppPath>
 
   CatPicPage _currentPage;
 
+  CatPicPage get currentPage => _currentPage;
+
   static MyRouteDelegate of(BuildContext context) {
     final RouterDelegate delegate = Router.of(context).routerDelegate;
     assert(delegate is MyRouteDelegate, 'Delegate type must match');
@@ -37,12 +39,10 @@ class MyRouteDelegate extends RouterDelegate<AppPath>
     notifyListeners();
   }
 
-
   void pushBuilder(CatPicPageBuilder builder) {
     _stack.add(builder());
     notifyListeners();
   }
-
 
   void cleanSearchPageRouter() {
     print('路由栈${_stack.map((e) => e.name).toList()}');

@@ -1,5 +1,4 @@
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/test/test_booru.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
