@@ -31,6 +31,8 @@ class GelbooruPostParser {
         status: e['status'],
         tags: {'_': e['tags'].split(' ')},
         source: e['source'],
+        createTime: e['created_at'],
+        score: e['score']
       );
     }).toList();
   }

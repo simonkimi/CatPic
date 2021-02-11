@@ -26,18 +26,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final delegate = MyRouteDelegate(
-        home: CatPicPage(
-          key: const ValueKey('SearchPage_index'),
-          name: 'SearchPage_index',
-          body: SearchPage(),
-        ),
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(
-            settings: settings,
-            builder: (ctx) => SearchPage(),
-          );
-        });
     return MaterialApp.router(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
@@ -49,7 +37,19 @@ class MyApp extends StatelessWidget {
         S.delegate
       ],
       builder: BotToastInit(),
-      routerDelegate: delegate,
+      routerDelegate: MyRouteDelegate(
+          home: CatPicPage(
+            key: const ValueKey('SearchPage_index'),
+            name: 'SearchPage_index',
+            body: SearchPage(),
+          ),
+          onGenerateRoute: (RouteSettings settings) {
+            print('onGenerateRoute');
+            return MaterialPageRoute(
+              settings: settings,
+              builder: (ctx) => SearchPage(),
+            );
+          }),
       routeInformationParser: MyRouteParser(),
       supportedLocales: const [
         Locale('en'),

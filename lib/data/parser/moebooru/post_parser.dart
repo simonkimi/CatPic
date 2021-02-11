@@ -21,7 +21,9 @@ class MoebooruPostParse {
         rating: _getRating(e['rating']),
         status: e['status'],
         tags: {'_': e['tags'].split(' ')},
-        source: e['source']
+        source: e['source'],
+        score: e['score'],
+        createTime: _parseTime(e['updated_at']),
       );
     }).toList();
   }
@@ -39,5 +41,9 @@ class MoebooruPostParse {
         break;
     }
     return PostRating.QUESTIONABLE;
+  }
+
+  static String _parseTime(int timeStamp) {
+    return DateTime.fromMicrosecondsSinceEpoch(timeStamp * 1000).toString();
   }
 }

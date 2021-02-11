@@ -8,10 +8,12 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 class ImageViewPage extends StatefulWidget {
   const ImageViewPage({
     Key key,
-    this.booruPost,
+    @required this.booruPost,
+    @required this.heroTag
   }) : super(key: key);
 
   final BooruPost booruPost;
+  final String heroTag;
 
   @override
   _ImageViewPageState createState() => _ImageViewPageState();
@@ -29,19 +31,17 @@ class _ImageViewPageState extends State<ImageViewPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      body: buildBody(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: buildImg(),
       bottomNavigationBar: buildBottomBar(),
     );
   }
 
-  Widget buildBody() {
-    return Stack(
-      children: [
-        buildImg(),
-      ],
-    );
-  }
 
   Widget _sheetBuilder(BuildContext context, SheetState state) {
     return Container(
@@ -260,28 +260,31 @@ class _ImageViewPageState extends State<ImageViewPage>
       imgUrl: widget.booruPost.imgURL,
       imageBuilder: (context, imgData) {
         return Center(
-          child: ExtendedImage(
-            width: double.infinity,
-            height: double.infinity,
-            image: MemoryImage(imgData),
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                minScale: 0.9,
-                animationMinScale: 0.7,
-                maxScale: 5.0,
-                animationMaxScale: 5.0,
-                speed: 1.0,
-                inertialSpeed: 100.0,
-                initialScale: 1.0,
-                inPageView: false,
-                initialAlignment: InitialAlignment.center,
-                gestureDetailsIsChanged: (ge) {
-                  _showOrHideAppbar(ge);
-                },
-              );
-            },
-            onDoubleTap: _doubleTap,
+          child: Hero(
+            tag: widget.heroTag,
+            child: ExtendedImage(
+              width: double.infinity,
+              height: double.infinity,
+              image: MemoryImage(imgData),
+              mode: ExtendedImageMode.gesture,
+              initGestureConfigHandler: (state) {
+                return GestureConfig(
+                  minScale: 0.9,
+                  animationMinScale: 0.7,
+                  maxScale: 5.0,
+                  animationMaxScale: 5.0,
+                  speed: 1.0,
+                  inertialSpeed: 100.0,
+                  initialScale: 1.0,
+                  inPageView: false,
+                  initialAlignment: InitialAlignment.center,
+                  gestureDetailsIsChanged: (ge) {
+                    _showOrHideAppbar(ge);
+                  },
+                );
+              },
+              onDoubleTap: _doubleTap,
+            ),
           ),
         );
       },

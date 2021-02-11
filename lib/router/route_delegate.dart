@@ -79,6 +79,7 @@ class MyRouteDelegate extends RouterDelegate<AppPath>
     if (_stack.isNotEmpty) {
       _stack.removeLast();
       _currentPage = _stack.last;
+      notifyListeners();
     }
     return route.didPop(result);
   }
