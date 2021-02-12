@@ -1,18 +1,21 @@
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ImageViewPage extends StatefulWidget {
-  const ImageViewPage({
-    Key key,
-    @required this.booruPost,
-    @required this.heroTag
-  }) : super(key: key);
+  const ImageViewPage(
+      {Key key,
+      @required this.booruPost,
+      @required this.heroTag,
+      @required this.dio})
+      : super(key: key);
 
   final BooruPost booruPost;
   final String heroTag;
+  final Dio dio;
 
   @override
   _ImageViewPageState createState() => _ImageViewPageState();
@@ -40,7 +43,6 @@ class _ImageViewPageState extends State<ImageViewPage>
       bottomNavigationBar: buildBottomBar(),
     );
   }
-
 
   Widget _sheetBuilder(BuildContext context, SheetState state) {
     return Container(
@@ -106,7 +108,9 @@ class _ImageViewPageState extends State<ImageViewPage>
               ),
               Wrap(
                 spacing: 3,
-                children: widget.booruPost.tags['_'].map((e) {
+                children: widget.booruPost.tags['_']
+                    .where((e) => e.isNotEmpty)
+                    .map((e) {
                   return FilterChip(
                     key: ValueKey(e),
                     shape: RoundedRectangleBorder(
@@ -213,6 +217,12 @@ class _ImageViewPageState extends State<ImageViewPage>
         duration: const Duration(milliseconds: 150), vsync: this);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _doubleClickAnimationController.dispose();
+  }
+
   Widget buildBottomBar() {
     return BottomAppBar(
       color: Colors.transparent,
@@ -255,7 +265,72 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget buildImg() {
+    // return ExtendedImage(
+    //   image: CachedDioImageProvider(
+    //     dio: widget.dio,
+    //     url: widget.booruPost.imgURL,
+    //     cachedKey: widget.booruPost.md5,
+    //     cachedImg: true,
+    //   ),
+    //   height: double.infinity,
+    //   width: double.infinity,
+    //   enableLoadState: true,
+    //   handleLoadingProgress: true,
+    //   onDoubleTap: _doubleTap,
+    //   mode: ExtendedImageMode.gesture,
+    //   initGestureConfigHandler: (state) {
+    //     return GestureConfig(
+    //       minScale: 0.9,
+    //       animationMinScale: 0.7,
+    //       maxScale: 5.0,
+    //       animationMaxScale: 5.0,
+    //       speed: 1.0,
+    //       inertialSpeed: 100.0,
+    //       initialScale: 1.0,
+    //       inPageView: false,
+    //       initialAlignment: InitialAlignment.center,
+    //       gestureDetailsIsChanged: (ge) {
+    //         _showOrHideAppbar(ge);
+    //       },
+    //     );
+    //   },
+    //   loadStateChanged: (state) {
+    //     if (state.extendedImageLoadState == LoadState.loading) {
+    //       return Center(
+    //         child: CircularProgressIndicator(
+    //           value: ((state.loadingProgress?.expectedTotalBytes ?? 0) != 0) &&
+    //                   ((state.loadingProgress?.cumulativeBytesLoaded ?? 0) != 0)
+    //               ? state.loadingProgress.cumulativeBytesLoaded /
+    //                   state.loadingProgress.expectedTotalBytes
+    //               : 0.0,
+    //         ),
+    //       );
+    //     } else if (state.extendedImageLoadState == LoadState.completed) {
+    //       return state?.completedWidget;
+    //     } else if (state.extendedImageLoadState == LoadState.failed) {
+    //       return AspectRatio(
+    //         aspectRatio: widget.booruPost.width / widget.booruPost.height,
+    //         child: Center(
+    //           child: InkWell(
+    //             onTap: () {
+    //               state.reLoadImage();
+    //             },
+    //             child: const Center(
+    //               child: Text(
+    //                 '重新加载',
+    //                 style: TextStyle(color: Colors.white),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     }
+    //     return null;
+    //   },
+    // );
+
     return CachedDioImage(
+      dio: widget.dio,
       imgUrl: widget.booruPost.imgURL,
       imageBuilder: (context, imgData) {
         return Center(
@@ -306,14 +381,16 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   void _showOrHideAppbar(GestureDetails ge) {
-    if (mounted) {
+    final result = ge.totalScale < 1.2;
+    if (mounted && result != bottomBarVis) {
       setState(() {
-        bottomBarVis = ge.totalScale < 1.2;
+        bottomBarVis = result;
       });
     }
   }
 
   void _doubleTap(ExtendedImageGestureState state) {
+    print('double');
     final Offset pointerDownPosition = state.pointerDownPosition;
 
     _doubleClickAnimation?.removeListener(_doubleClickAnimationListener);

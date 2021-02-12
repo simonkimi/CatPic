@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website_fragment.dart';
 import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
@@ -30,10 +29,9 @@ class _SearchPageState extends State<SearchPage> {
 
     _eventSiteChangeListener =
         EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      MyRouteDelegate.of(context).cleanSearchPageRouter();
-      setState(() {
-        searchBody = buildSearchBody('', SearchType.POST);
-      });
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => SearchPage(),
+      ));
     });
   }
 

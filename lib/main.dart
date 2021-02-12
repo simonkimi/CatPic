@@ -1,8 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/sp_helper.dart';
-import 'package:catpic/router/catpic_page.dart';
-import 'package:catpic/router/route_delegate.dart';
-import 'package:catpic/router/router_parser.dart';
 import 'package:catpic/themes.dart' as theme;
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
@@ -24,7 +21,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'CatPic',
       debugShowCheckedModeBanner: false,
       theme: theme.purpleTheme,
@@ -34,21 +31,8 @@ class MyApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         S.delegate
       ],
+      home: SearchPage(),
       builder: BotToastInit(),
-      routerDelegate: MyRouteDelegate(
-          home: CatPicPage(
-            key: const ValueKey('SearchPage_index'),
-            name: 'SearchPage_index',
-            body: SearchPage(),
-          ),
-          onGenerateRoute: (RouteSettings settings) {
-            print('onGenerateRoute');
-            return MaterialPageRoute(
-              settings: settings,
-              builder: (ctx) => SearchPage(),
-            );
-          }),
-      routeInformationParser: MyRouteParser(),
       supportedLocales: const [
         Locale('en'),
         Locale('zh', 'CN'),

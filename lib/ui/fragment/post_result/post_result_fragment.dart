@@ -1,12 +1,11 @@
 import 'dart:ui';
 
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/router/catpic_page.dart';
-import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -142,12 +141,16 @@ class _PostResultFragmentState extends State<PostResultFragment>
         imageBuilder: (context, imgData) {
           return InkWell(
             onTap: () {
-              MyRouteDelegate.of(context).push(CatPicPage(
-                  body: ImageViewPage(
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageViewPage(
+                    dio: mainStore.websiteEntity.getAdapter().dio,
                     booruPost: post,
                     heroTag: post.md5,
-                  )
-              ));
+                  ),
+                ),
+              );
             },
             child: Hero(
               tag: post.md5,

@@ -1,7 +1,5 @@
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/router/catpic_page.dart';
-import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
@@ -35,9 +33,9 @@ class WebsiteManagerPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          MyRouteDelegate.of(context).push(
-            CatPicPage(body: WebsiteAddPage()),
-          );
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => WebsiteAddPage(),
+          ));
         },
         child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,

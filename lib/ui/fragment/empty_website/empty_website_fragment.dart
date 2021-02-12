@@ -1,11 +1,8 @@
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/router/catpic_page.dart';
-import 'package:catpic/router/route_delegate.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-
 
 class EmptyWebsiteFragment extends StatelessWidget {
   @override
@@ -15,11 +12,10 @@ class EmptyWebsiteFragment extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              MyRouteDelegate.of(context).push(
-                CatPicPage(
-                  body: WebsiteManagerPage(),
-                ),
-              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WebsiteManagerPage()));
             },
             child: Center(
               child: Column(

@@ -13,6 +13,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     @required this.cachedKey,
     @required this.url,
     @required this.dio,
+    this.cachedImg = false,
     this.scale = 1.0,
   });
 
@@ -20,6 +21,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
   final String url;
   final double scale;
   final String cachedKey;
+  final bool cachedImg;
 
   @override
   ImageStreamCompleter load(
@@ -47,11 +49,12 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
       CachedDioImageProvider key,
       DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    final cached = await getCached();
-    if (cached != null) {
-      return await decode(cached);
+    if (cachedImg) {
+      final cached = await getCached();
+      if (cached != null) {
+        return await decode(cached);
+      }
     }
-
     final rsp = await dio
         .get<List<int>>(url, options: Options(responseType: ResponseType.bytes),
             onReceiveProgress: (received, total) {
