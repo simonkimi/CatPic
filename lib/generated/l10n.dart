@@ -434,6 +434,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Resolution`
+  String get resolution {
+    return Intl.message(
+      'Resolution',
+      name: 'resolution',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ID`
+  String get post_id {
+    return Intl.message(
+      'ID',
+      name: 'post_id',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Score`
+  String get score {
+    return Intl.message(
+      'Score',
+      name: 'score',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Source`
+  String get source {
+    return Intl.message(
+      'Source',
+      name: 'source',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rating`
+  String get rating {
+    return Intl.message(
+      'Rating',
+      name: 'rating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connecting...`
+  String get connecting {
+    return Intl.message(
+      'Connecting...',
+      name: 'connecting',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

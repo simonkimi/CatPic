@@ -40,5 +40,11 @@
 
   "safe": "safe",
   "explicit": "explicit",
-  "questionable": "questionable"
+  "questionable": "questionable",
+  "resolution": "Resolution",
+  "post_id": "ID",
+  "score": "Score",
+  "source": "Source",
+  "rating": "Rating",
+  "connecting": "Connecting..."
 }

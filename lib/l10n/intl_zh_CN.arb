@@ -43,6 +43,11 @@
 
   "safe": "安全",
   "explicit": "暴露",
-  "questionable": "未知"
-
+  "questionable": "未知",
+  "resolution": "分辨率",
+  "post_id": "作品ID",
+  "score": "评分",
+  "source": "来源",
+  "rating": "评级",
+  "connecting": "连接中..."
 }

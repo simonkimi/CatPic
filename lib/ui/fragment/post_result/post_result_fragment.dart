@@ -183,19 +183,20 @@ class _PostResultFragmentState extends State<PostResultFragment>
   }
 
   Widget buildWaterFlow() {
-    final height = MediaQueryData.fromWindow(window).padding.top;
+    final barHeight = MediaQueryData.fromWindow(window).padding.top;
     return FloatingSearchBarScrollNotifier(
       child: SmartRefresher(
         enablePullUp: true,
         enablePullDown: true,
         controller: _refreshController,
         header: MaterialClassicHeader(
-          distance: height + 100,
+          distance: barHeight + 70,
+          height: barHeight + 80,
         ),
         onRefresh: _onRefresh,
         onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
-          padding: EdgeInsets.only(top: 60 + height),
+          padding: EdgeInsets.only(top: 60 + barHeight),
           gridDelegate:
               const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),

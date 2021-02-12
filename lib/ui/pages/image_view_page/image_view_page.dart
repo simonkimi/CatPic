@@ -1,4 +1,5 @@
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
@@ -26,7 +27,7 @@ class _ImageViewPageState extends State<ImageViewPage>
   Animation<double> _doubleClickAnimation;
   AnimationController _doubleClickAnimationController;
   Function _doubleClickAnimationListener;
-  List<double> doubleTapScales = <double>[1.0, 2.0, 4.0];
+  List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
 
   var bottomBarVis = true;
 
@@ -35,12 +36,9 @@ class _ImageViewPageState extends State<ImageViewPage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: buildImg(),
       bottomNavigationBar: buildBottomBar(),
+      extendBody: true,
     );
   }
 
@@ -78,13 +76,13 @@ class _ImageViewPageState extends State<ImageViewPage>
                 children: [
                   Expanded(
                     child: Text(
-                      '分辨率: ${widget.booruPost.width} x ${widget.booruPost.height}',
+                      '${S.of(context).resolution}: ${widget.booruPost.width} x ${widget.booruPost.height}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
                   Expanded(
                     child: Text(
-                      '作品ID: ${widget.booruPost.id}',
+                      'ID: ${widget.booruPost.id}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
@@ -94,13 +92,13 @@ class _ImageViewPageState extends State<ImageViewPage>
                 children: [
                   Expanded(
                     child: Text(
-                      '评级: ${getRatingText(context, widget.booruPost.rating)}',
+                      '${S.of(context).rating}: ${getRatingText(context, widget.booruPost.rating)}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
                   Expanded(
                     child: Text(
-                      '得分: ${widget.booruPost.score}',
+                      '${S.of(context).score}: ${widget.booruPost.score}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
@@ -198,15 +196,16 @@ class _ImageViewPageState extends State<ImageViewPage>
   void showAsBottomSheet() async {
     await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
-          elevation: 8,
-          cornerRadius: 16,
-          snapSpec: const SnapSpec(
-            snap: true,
-            snappings: [0.4, 0.7, 1.0],
-            positioning: SnapPositioning.relativeToAvailableSpace,
-          ),
-          builder: _sheetBuilder,
-          footerBuilder: _sheetFootBuilder);
+        elevation: 8,
+        cornerRadius: 16,
+        snapSpec: const SnapSpec(
+          snap: true,
+          snappings: [0.4, 0.7, 1.0],
+          positioning: SnapPositioning.relativeToAvailableSpace,
+        ),
+        builder: _sheetBuilder,
+        footerBuilder: _sheetFootBuilder,
+      );
     });
   }
 
@@ -265,73 +264,10 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget buildImg() {
-    // return ExtendedImage(
-    //   image: CachedDioImageProvider(
-    //     dio: widget.dio,
-    //     url: widget.booruPost.imgURL,
-    //     cachedKey: widget.booruPost.md5,
-    //     cachedImg: true,
-    //   ),
-    //   height: double.infinity,
-    //   width: double.infinity,
-    //   enableLoadState: true,
-    //   handleLoadingProgress: true,
-    //   onDoubleTap: _doubleTap,
-    //   mode: ExtendedImageMode.gesture,
-    //   initGestureConfigHandler: (state) {
-    //     return GestureConfig(
-    //       minScale: 0.9,
-    //       animationMinScale: 0.7,
-    //       maxScale: 5.0,
-    //       animationMaxScale: 5.0,
-    //       speed: 1.0,
-    //       inertialSpeed: 100.0,
-    //       initialScale: 1.0,
-    //       inPageView: false,
-    //       initialAlignment: InitialAlignment.center,
-    //       gestureDetailsIsChanged: (ge) {
-    //         _showOrHideAppbar(ge);
-    //       },
-    //     );
-    //   },
-    //   loadStateChanged: (state) {
-    //     if (state.extendedImageLoadState == LoadState.loading) {
-    //       return Center(
-    //         child: CircularProgressIndicator(
-    //           value: ((state.loadingProgress?.expectedTotalBytes ?? 0) != 0) &&
-    //                   ((state.loadingProgress?.cumulativeBytesLoaded ?? 0) != 0)
-    //               ? state.loadingProgress.cumulativeBytesLoaded /
-    //                   state.loadingProgress.expectedTotalBytes
-    //               : 0.0,
-    //         ),
-    //       );
-    //     } else if (state.extendedImageLoadState == LoadState.completed) {
-    //       return state?.completedWidget;
-    //     } else if (state.extendedImageLoadState == LoadState.failed) {
-    //       return AspectRatio(
-    //         aspectRatio: widget.booruPost.width / widget.booruPost.height,
-    //         child: Center(
-    //           child: InkWell(
-    //             onTap: () {
-    //               state.reLoadImage();
-    //             },
-    //             child: const Center(
-    //               child: Text(
-    //                 '重新加载',
-    //                 style: TextStyle(color: Colors.white),
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //     return null;
-    //   },
-    // );
-
     return CachedDioImage(
       dio: widget.dio,
       imgUrl: widget.booruPost.imgURL,
+      cachedKey: widget.booruPost.md5,
       imageBuilder: (context, imgData) {
         return Center(
           child: Hero(
@@ -367,13 +303,39 @@ class _ImageViewPageState extends State<ImageViewPage>
           child: Text(err.toString()),
         );
       },
-      loadingBuilder: (_, progress) {
-        return Center(
-          child: CircularProgressIndicator(
-            value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                    ((progress.cumulativeBytesLoaded ?? 0) != 0)
-                ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes
-                : 0.0,
+      loadingBuilder: (_, loadingProgress) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: Builder(
+            builder: (context) {
+              var progress = loadingProgress?.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes
+                  : 0.0;
+              progress = progress.isFinite ? progress : 0;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                      value: progress == 0 ? null : progress),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if (progress == 0)
+                    Text(
+                      S.of(context).connecting,
+                      style: const TextStyle(color: Colors.white),
+                    )
+                  else
+                    Text(
+                      '${(progress * 100).toStringAsFixed(2)}%',
+                      style: const TextStyle(color: Colors.white),
+                    )
+                ],
+              );
+            },
           ),
         );
       },
@@ -382,7 +344,7 @@ class _ImageViewPageState extends State<ImageViewPage>
 
   void _showOrHideAppbar(GestureDetails ge) {
     final result = ge.totalScale < 1.2;
-    if (mounted && result != bottomBarVis) {
+    if (result != bottomBarVis && mounted) {
       setState(() {
         bottomBarVis = result;
       });
@@ -390,7 +352,6 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   void _doubleTap(ExtendedImageGestureState state) {
-    print('double');
     final Offset pointerDownPosition = state.pointerDownPosition;
 
     _doubleClickAnimation?.removeListener(_doubleClickAnimationListener);
