@@ -264,87 +264,90 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget buildImg() {
-    return CachedDioImage(
-      dio: widget.dio,
-      imgUrl: widget.booruPost.imgURL,
-      cachedKey: widget.booruPost.md5,
-      imageBuilder: (context, imgData) {
-        return Center(
-          child: Hero(
-            tag: widget.heroTag,
-            child: ExtendedImage(
-              width: double.infinity,
-              height: double.infinity,
-              image: MemoryImage(imgData),
-              mode: ExtendedImageMode.gesture,
-              initGestureConfigHandler: (state) {
-                return GestureConfig(
-                  minScale: 0.9,
-                  animationMinScale: 0.7,
-                  maxScale: 5.0,
-                  animationMaxScale: 5.0,
-                  speed: 1.0,
-                  inertialSpeed: 100.0,
-                  initialScale: 1.0,
-                  inPageView: false,
-                  initialAlignment: InitialAlignment.center,
-                  gestureDetailsIsChanged: (ge) {
-                    _showOrHideAppbar(ge);
-                  },
+    return Container(
+      color: Colors.black,
+      child: CachedDioImage(
+        dio: widget.dio,
+        imgUrl: widget.booruPost.imgURL,
+        cachedKey: widget.booruPost.md5,
+        imageBuilder: (context, imgData) {
+          return Center(
+            child: Hero(
+              tag: widget.heroTag,
+              child: ExtendedImage(
+                width: double.infinity,
+                height: double.infinity,
+                image: MemoryImage(imgData),
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: (state) {
+                  return GestureConfig(
+                    minScale: 0.9,
+                    animationMinScale: 0.7,
+                    maxScale: 5.0,
+                    animationMaxScale: 5.0,
+                    speed: 1.0,
+                    inertialSpeed: 100.0,
+                    initialScale: 1.0,
+                    inPageView: false,
+                    initialAlignment: InitialAlignment.center,
+                    gestureDetailsIsChanged: (ge) {
+                      _showOrHideAppbar(ge);
+                    },
+                  );
+                },
+                onDoubleTap: _doubleTap,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, err, reload) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.error),
+              const SizedBox(height: 20,),
+              Text(err.toString()),
+            ],
+          );
+        },
+        loadingBuilder: (_, loadingProgress) {
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Builder(
+              builder: (context) {
+                var progress = loadingProgress?.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes
+                    : 0.0;
+                progress = progress.isFinite ? progress : 0;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                        value: progress == 0 ? null : progress),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    if (progress == 0)
+                      Text(
+                        S.of(context).connecting,
+                        style: const TextStyle(color: Colors.white),
+                      )
+                    else
+                      Text(
+                        '${(progress * 100).toStringAsFixed(2)}%',
+                        style: const TextStyle(color: Colors.white),
+                      )
+                  ],
                 );
               },
-              onDoubleTap: _doubleTap,
             ),
-          ),
-        );
-      },
-      errorBuilder: (context, err, reload) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.error),
-            const SizedBox(height: 20,),
-            Text(err.toString()),
-          ],
-        );
-      },
-      loadingBuilder: (_, loadingProgress) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Builder(
-            builder: (context) {
-              var progress = loadingProgress?.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes
-                  : 0.0;
-              progress = progress.isFinite ? progress : 0;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                      value: progress == 0 ? null : progress),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  if (progress == 0)
-                    Text(
-                      S.of(context).connecting,
-                      style: const TextStyle(color: Colors.white),
-                    )
-                  else
-                    Text(
-                      '${(progress * 100).toStringAsFixed(2)}%',
-                      style: const TextStyle(color: Colors.white),
-                    )
-                ],
-              );
-            },
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
