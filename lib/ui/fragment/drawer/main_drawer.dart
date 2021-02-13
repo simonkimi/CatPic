@@ -1,4 +1,6 @@
+import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -64,8 +66,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         backgroundImage: favicon,
                       ),
                       onTap: () {
-                        Scaffold.of(context).openEndDrawer();
-                        mainStore.setWebsite(element);
+                        pushNewWebsite(context, element);
                       },
                     ));
           }).toList(),
@@ -155,8 +156,7 @@ class _MainDrawerState extends State<MainDrawer> {
         return Builder(
             builder: (ctx) => InkWell(
                 onTap: () {
-                  mainStore.setWebsite(element);
-                  Scaffold.of(ctx).openEndDrawer();
+                  pushNewWebsite(ctx, element);
                 },
                 child: CircleAvatar(
                   backgroundImage: element.favicon.isNotEmpty
@@ -165,6 +165,15 @@ class _MainDrawerState extends State<MainDrawer> {
                   backgroundColor: Colors.white,
                 )));
       }).toList(),
+    );
+  }
+
+  Future<void> pushNewWebsite(BuildContext context, WebsiteEntity entity) async {
+    await mainStore.setWebsiteWithoutNotification(entity);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => SearchPage()),
+      (route) => route == null,
     );
   }
 

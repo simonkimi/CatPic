@@ -29,9 +29,7 @@ class _SearchPageState extends State<SearchPage> {
 
     _eventSiteChangeListener =
         EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => SearchPage(),
-      ));
+      changeSearchBody(searchText, searchType);
     });
   }
 

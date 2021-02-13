@@ -71,6 +71,14 @@ abstract class MainStoreBase with Store {
   }
 
   @action
+  Future<void> setWebsiteWithoutNotification(WebsiteEntity entity) async {
+    if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
+      websiteEntity = entity;
+      SPHelper().pref.setInt('last_website', websiteEntity?.id ?? -1);
+    }
+  }
+
+  @action
   Future<void> setWebsiteFavicon(int entityId, Uint8List favicon) async {
     if (favicon.isNotEmpty) {
       final websiteDao = DatabaseHelper().websiteDao;
