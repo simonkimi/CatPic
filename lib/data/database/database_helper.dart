@@ -1,3 +1,4 @@
+import 'package:catpic/data/database/dao/history_dao.dart';
 import 'package:catpic/data/database/dao/host_dao.dart';
 
 import 'dao/tag_dao.dart';
@@ -23,4 +24,6 @@ class DatabaseHelper {
   HostDao get hostDao => _database.hostDao;
 
   TagDao get tagDao => _database.tagDao;
+
+  HistoryDao get historyDao => _database.historyDao;
 }

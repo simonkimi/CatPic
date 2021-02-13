@@ -7,7 +7,7 @@ abstract class TagDao {
   Future<List<TagEntity>> getAll();
 
   @Insert(onConflict: OnConflictStrategy.ignore)
-  Future<int> addTag(TagEntity entity);
+  Future<List<int>> addTag(List<TagEntity> entity);
 
   @Query('SELECT * FROM TagEntity WHERE website = :website AND tag LIKE :tag')
   Future<List<TagEntity>> getStart(int website, String tag);

@@ -1,6 +1,9 @@
+import 'package:catpic/data/database/database_helper.dart';
+import 'package:catpic/data/database/entity/tag_entity.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +43,18 @@ class _ImageViewPageState extends State<ImageViewPage>
       bottomNavigationBar: buildBottomBar(),
       extendBody: true,
     );
+  }
+
+  Future<void> _writeTag() async {
+    final dao = DatabaseHelper().tagDao;
+    for (final tags in widget.booruPost.tags.values) {
+      await dao.addTag(tags.map((e) {
+        return TagEntity(
+          website: mainStore.websiteEntity.id,
+          tag: e,
+        );
+      }));
+    }
   }
 
   Widget _sheetBuilder(BuildContext context, SheetState state) {
@@ -214,6 +229,7 @@ class _ImageViewPageState extends State<ImageViewPage>
     super.initState();
     _doubleClickAnimationController = AnimationController(
         duration: const Duration(milliseconds: 150), vsync: this);
+    _writeTag();
   }
 
   @override
@@ -306,7 +322,9 @@ class _ImageViewPageState extends State<ImageViewPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Icon(Icons.error),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               Text(err.toString()),
             ],
           );
