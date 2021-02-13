@@ -22,7 +22,7 @@ class MoebooruPostParse {
         status: e['status'],
         tags: {'_': e['tags'].split(' ')},
         source: e['source'],
-        score: e['score'],
+        score: e['score'].toString(),
         createTime: _parseTime(e['updated_at']),
       );
     }).toList();

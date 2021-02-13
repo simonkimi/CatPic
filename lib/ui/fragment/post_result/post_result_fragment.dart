@@ -51,7 +51,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     try {
       await _store.loadNextPage();
       _refreshController.loadComplete();
-    } catch (e) {
+    } on Error catch (e) {
+      print(e.stackTrace);
       _refreshController.loadFailed();
     }
   }
@@ -61,7 +62,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       await _refreshController.requestRefresh();
       await _store.loadNextPage();
       _refreshController.refreshCompleted();
-    } catch (e) {
+    } on Error catch (e) {
+      print(e.stackTrace);
       _refreshController.refreshFailed();
     }
   }
@@ -190,7 +192,9 @@ class _PostResultFragmentState extends State<PostResultFragment>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
                   Icon(Icons.error),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text('点击重新加载'),
                 ],
               ),
