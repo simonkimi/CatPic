@@ -298,9 +298,15 @@ class _ImageViewPageState extends State<ImageViewPage>
           ),
         );
       },
-      errorBuilder: (context, err) {
-        return Center(
-          child: Text(err.toString()),
+      errorBuilder: (context, err, reload) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.error),
+            const SizedBox(height: 20,),
+            Text(err.toString()),
+          ],
         );
       },
       loadingBuilder: (_, loadingProgress) {

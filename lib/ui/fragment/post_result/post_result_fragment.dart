@@ -131,6 +131,20 @@ class _PostResultFragmentState extends State<PostResultFragment>
 
   Widget _itemBuilder(BuildContext ctx, int index) {
     final post = _store.postList[index];
+
+    final loadDetail = () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImageViewPage(
+            dio: mainStore.websiteEntity.getAdapter().dio,
+            booruPost: post,
+            heroTag: post.md5,
+          ),
+        ),
+      );
+    };
+
     return PostPreviewCard(
       key: Key('item${post.id}'),
       title: '# ${post.id}',
@@ -140,18 +154,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
         imgUrl: post.previewURL,
         imageBuilder: (context, imgData) {
           return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageViewPage(
-                    dio: mainStore.websiteEntity.getAdapter().dio,
-                    booruPost: post,
-                    heroTag: post.md5,
-                  ),
-                ),
-              );
-            },
+            onTap: loadDetail,
             child: Hero(
               tag: post.md5,
               child: Image(image: MemoryImage(imgData, scale: 0.1)),
@@ -159,23 +162,39 @@ class _PostResultFragmentState extends State<PostResultFragment>
           );
         },
         loadingBuilder: (_, progress) {
-          return AspectRatio(
-            aspectRatio: post.width / post.height,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                        ((progress.cumulativeBytesLoaded ?? 0) != 0)
-                    ? progress.cumulativeBytesLoaded /
-                        progress.expectedTotalBytes
-                    : 0.0,
+          return GestureDetector(
+            onTap: loadDetail,
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: ((progress.expectedTotalBytes ?? 0) != 0) &&
+                          ((progress.cumulativeBytesLoaded ?? 0) != 0)
+                      ? progress.cumulativeBytesLoaded /
+                          progress.expectedTotalBytes
+                      : 0.0,
+                ),
               ),
             ),
           );
         },
-        errorBuilder: (_, err) {
-          return AspectRatio(
-            aspectRatio: post.width / post.height,
-            child: Text('Fail ${err.toString()}'),
+        errorBuilder: (_, err, reload) {
+          return GestureDetector(
+            onTap: () {
+              reload();
+            },
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Icon(Icons.error),
+                  SizedBox(height: 10,),
+                  Text('点击重新加载'),
+                ],
+              ),
+            ),
           );
         },
       ),

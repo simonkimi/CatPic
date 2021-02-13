@@ -12,7 +12,8 @@ typedef ImageWidgetBuilder = Widget Function(
 typedef LoadingWidgetBuilder = Widget Function(
     BuildContext context, ImageChunkEvent chunkEvent);
 
-typedef ErrorBuilder = Widget Function(BuildContext context, Object err);
+typedef ErrorBuilder = Widget Function(
+    BuildContext context, Object err, Function reload);
 
 enum LoadingType { DONE, LOADING, ERROR }
 
@@ -22,6 +23,7 @@ class CachedDioImage extends StatefulWidget {
     this.dio,
     this.cachedKey,
     this.duration,
+    this.useCached = true,
     @required this.imgUrl,
     @required this.imageBuilder,
     @required this.loadingBuilder,
@@ -35,6 +37,7 @@ class CachedDioImage extends StatefulWidget {
   final String imgUrl;
   final Dio dio;
   final Duration duration;
+  final bool useCached;
 
   @override
   _CachedDioImageState createState() => _CachedDioImageState();
@@ -78,36 +81,48 @@ class _CachedDioImageState extends State<CachedDioImage> {
               cumulativeBytesLoaded: receivedSize,
               expectedTotalBytes: totalSize));
     } else {
-      return widget.errorBuilder(context, err);
+      return widget.errorBuilder(context, err, reload);
     }
+  }
+
+  Future<void> reload() async {
+    setState(() {
+      loadingType = LoadingType.LOADING;
+      err = null;
+    });
+    await fetchData();
   }
 
   Future<void> fetchData() async {
     try {
-      final cached = await getCached();
-      if (cached != null) {
-        setState(() {
-          data = cached;
-          loadingType = LoadingType.DONE;
-        });
-      } else {
-        final rsp = await _dio.get<List<int>>(widget.imgUrl,
-            options: Options(responseType: ResponseType.bytes),
-            onReceiveProgress: (received, total) {
-          if (mounted) {
-            setState(() {
-              receivedSize = received;
-              totalSize = total;
-            });
-          }
-        });
-        if (mounted) {
+      if (widget.useCached) {
+        final cached = await getCached();
+        if (cached != null) {
           setState(() {
-            data = Uint8List.fromList(rsp.data);
-            setCached(data);
+            data = cached;
             loadingType = LoadingType.DONE;
           });
+          return;
         }
+      }
+
+      final rsp = await _dio.get<List<int>>(widget.imgUrl,
+          options: Options(responseType: ResponseType.bytes),
+          onReceiveProgress: (received, total) {
+        if (mounted) {
+          setState(() {
+            receivedSize = received;
+            totalSize = total;
+          });
+        }
+      });
+
+      if (mounted) {
+        setState(() {
+          data = Uint8List.fromList(rsp.data);
+          setCached(data);
+          loadingType = LoadingType.DONE;
+        });
       }
     } catch (e) {
       if (mounted) {
