@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
@@ -44,6 +45,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     } catch (e) {
       _refreshController.loadFailed();
       _refreshController.refreshFailed();
+      BotToast.showText(text: e.toString());
     }
   }
 
@@ -54,6 +56,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     } on Error catch (e) {
       print(e.stackTrace);
       _refreshController.loadFailed();
+      BotToast.showText(text: e.toString());
     }
   }
 

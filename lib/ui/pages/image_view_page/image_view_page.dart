@@ -48,12 +48,14 @@ class _ImageViewPageState extends State<ImageViewPage>
   Future<void> _writeTag() async {
     final dao = DatabaseHelper().tagDao;
     for (final tags in widget.booruPost.tags.values) {
-      await dao.addTag(tags.map((e) {
-        return TagEntity(
-          website: mainStore.websiteEntity.id,
-          tag: e,
-        );
-      }));
+      for (final tagStr in tags) {
+        if (tagStr.isNotEmpty) {
+          await dao.addTag([TagEntity(
+            website: mainStore.websiteEntity.id,
+            tag: tagStr,
+          )]);
+        }
+      }
     }
   }
 

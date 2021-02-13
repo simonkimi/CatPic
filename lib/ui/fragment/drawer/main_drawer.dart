@@ -58,6 +58,7 @@ class _MainDrawerState extends State<MainDrawer> {
             return Builder(
                 key: Key('site${element.name}'),
                 builder: (context) => ListTile(
+                      title: Text(element.name),
                       subtitle: Text('$scheme://${element.host}/'),
                       selected:
                           mainStore.websiteEntity?.id == element.id ?? false,
@@ -168,7 +169,8 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  Future<void> pushNewWebsite(BuildContext context, WebsiteEntity entity) async {
+  Future<void> pushNewWebsite(
+      BuildContext context, WebsiteEntity entity) async {
     await mainStore.setWebsiteWithoutNotification(entity);
     Navigator.pushAndRemoveUntil(
       context,
