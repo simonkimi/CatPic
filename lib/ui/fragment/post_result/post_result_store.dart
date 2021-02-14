@@ -34,7 +34,7 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
   @action
   Future<void> loadNextPage() async {
     final list =
-        await adapter.postList(tags: searchText, page: page, limit: 50);
+        await adapter.postList(tags: searchText, page: page, limit: 10);
     if (list.isEmpty) {
       throw NoMorePage();
     }

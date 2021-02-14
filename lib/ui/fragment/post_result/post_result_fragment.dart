@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/components/icon_text.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
@@ -42,6 +44,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       await _store.refresh();
       _refreshController.loadComplete();
       _refreshController.refreshCompleted();
+    } on NoMorePage {
+      _refreshController.loadNoData();
     } catch (e) {
       _refreshController.loadFailed();
       _refreshController.refreshFailed();
@@ -53,6 +57,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     try {
       await _store.loadNextPage();
       _refreshController.loadComplete();
+    } on NoMorePage {
+      _refreshController.loadNoData();
     } on Error catch (e) {
       print(e.stackTrace);
       _refreshController.loadFailed();
@@ -214,13 +220,53 @@ class _PostResultFragmentState extends State<PostResultFragment>
       child: SmartRefresher(
         enablePullUp: true,
         enablePullDown: true,
+        footer: CustomFooter(
+          // ignore: missing_return
+          builder: (context, state) {
+            switch (state) {
+              case LoadStatus.idle:
+                return const IconText(
+                  '上拉加载',
+                  icon: Icon(Icons.arrow_upward),
+                );
+                break;
+              case LoadStatus.canLoading:
+                return const Text('松手加载');
+                break;
+              case LoadStatus.loading:
+                return Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                      ),
+                      SizedBox(width: 10,),
+                      Text('加载中')
+                    ],
+                  ),
+                );
+                break;
+              case LoadStatus.noMore:
+                return const Text('没有更多了');
+                break;
+              case LoadStatus.failed:
+                return const Text('加载失败');
+                break;
+            }
+          },
+        ),
         controller: _refreshController,
         header: MaterialClassicHeader(
           distance: barHeight + 70,
           height: barHeight + 80,
         ),
-        onRefresh: _onRefresh,
-        onLoading: _onLoadMore,
+        // onRefresh: _onRefresh,
+        // onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + barHeight),
           gridDelegate:
