@@ -421,7 +421,7 @@ packages:
     source: hosted
     version: "0.11.4"
   matcher:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: matcher
       url: "https://pub.flutter-io.cn"

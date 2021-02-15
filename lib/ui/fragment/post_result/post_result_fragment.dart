@@ -40,6 +40,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   PostResultStore _store;
 
   Future<void> _onRefresh() async {
+    print('_onRefresh');
     try {
       await _store.refresh();
       _refreshController.loadComplete();
@@ -54,6 +55,11 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   }
 
   Future<void> _onLoadMore() async {
+    print('_onLoadMore');
+    if (_refreshController.isRefresh) {
+      _refreshController.loadComplete();
+      return;
+    }
     try {
       await _store.loadNextPage();
       _refreshController.loadComplete();
@@ -66,20 +72,9 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  Future<void> initSearch() async {
-    try {
-      await _refreshController.requestRefresh();
-      await _store.loadNextPage();
-      _refreshController.refreshCompleted();
-    } on Error catch (e) {
-      print(e.stackTrace);
-      _refreshController.refreshFailed();
-    }
-  }
-
   Future<void> _newSearch(String tag) async {
     await _store.launchNewSearch(tag);
-    await initSearch();
+    await _refreshController.requestRefresh();
   }
 }
 
@@ -90,8 +85,8 @@ class _PostResultFragmentState extends State<PostResultFragment>
     super.initState();
     _store =
         PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      initSearch();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _refreshController.requestRefresh();
     });
   }
 

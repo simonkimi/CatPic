@@ -23,6 +23,7 @@ dependencies:
   event_bus: ^1.1.1
   shared_preferences: ^0.5.12+4
   xml2json: ^4.4.0
+  matcher: ^0.12.9
   material_floating_search_bar: ^0.2.6
   waterfall_flow: ^2.0.5
   pull_to_refresh: ^1.6.3
