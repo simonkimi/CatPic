@@ -52,6 +52,8 @@ class _CachedDioImageState extends State<CachedDioImage> {
   LoadingType loadingType;
   String cachedKey;
 
+  final cancelToken = CancelToken();
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +63,12 @@ class _CachedDioImageState extends State<CachedDioImage> {
     loadingType = LoadingType.LOADING;
     cachedKey = widget.cachedKey ?? widget.imgUrl;
     fetchData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    cancelToken.cancel();
   }
 
   @override
@@ -107,6 +115,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
       }
 
       final rsp = await _dio.get<List<int>>(widget.imgUrl,
+          cancelToken: cancelToken,
           options: Options(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {
         if (mounted) {
