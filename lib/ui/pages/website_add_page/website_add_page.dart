@@ -124,7 +124,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         defaultValue: websiteHost,
         onChanged: (value) {
           setState(() {
-            websiteHost = getHost(value);
+            websiteHost = value.getHost();
           });
         },
       ),

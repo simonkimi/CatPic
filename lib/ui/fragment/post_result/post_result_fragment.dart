@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
+import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
-import 'package:catpic/ui/components/icon_text.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
@@ -150,14 +150,14 @@ class _PostResultFragmentState extends State<PostResultFragment>
           builder: (context) => ImageViewPage(
             dio: mainStore.websiteEntity.getAdapter().dio,
             booruPost: post,
-            heroTag: post.md5,
+            heroTag: '${post.id}|${post.md5}',
           ),
         ),
       );
     };
 
     return PostPreviewCard(
-      key: Key('item${post.id}'),
+      key: Key('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: CachedDioImage(
@@ -167,7 +167,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
           return InkWell(
             onTap: loadDetail,
             child: Hero(
-              tag: post.md5,
+              tag: '${post.id}|${post.md5}',
               child: Image(image: MemoryImage(imgData, scale: 0.1)),
             ),
           );
@@ -214,59 +214,113 @@ class _PostResultFragmentState extends State<PostResultFragment>
     );
   }
 
+  Widget _buildFooter(BuildContext context, LoadStatus status) {
+    Widget buildRow(List<Widget> children) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: children,
+        ),
+      );
+    }
+
+    switch (status) {
+      case LoadStatus.idle:
+        return buildRow([
+          const Icon(Icons.arrow_upward),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            S.of(context).idle_loading,
+            style: const TextStyle(color: Colors.black),
+          ),
+        ]);
+        break;
+      case LoadStatus.canLoading:
+        return buildRow([
+          const Icon(Icons.arrow_downward),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            S.of(context).can_load_text,
+            style: const TextStyle(color: Colors.black),
+          )
+        ]);
+        break;
+      case LoadStatus.loading:
+        return buildRow([
+          const SizedBox(
+            width: 25,
+            height: 25,
+            child: CircularProgressIndicator(strokeWidth: 2.5),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            S.of(context).loading_text,
+            style: const TextStyle(color: Colors.black),
+          )
+        ]);
+        break;
+      case LoadStatus.noMore:
+        return buildRow([
+          const Icon(Icons.vertical_align_bottom),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            S.of(context).no_more_text,
+            style: const TextStyle(color: Colors.black),
+          )
+        ]);
+        break;
+      case LoadStatus.failed:
+        return buildRow([
+          const Icon(Icons.sms_failed),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            S.of(context).load_fail,
+            style: const TextStyle(color: Colors.black),
+          )
+        ]);
+        break;
+    }
+    return null;
+  }
+
   Widget buildWaterFlow() {
     final barHeight = MediaQueryData.fromWindow(window).padding.top;
     return FloatingSearchBarScrollNotifier(
       child: SmartRefresher(
         enablePullUp: true,
         enablePullDown: true,
+        // onRefresh: () async {
+        //   await Future.delayed(const Duration(seconds: 3), () {
+        //     _refreshController.refreshCompleted();
+        //   });
+        // },
+        // onLoading: () async {
+        //   await Future.delayed(const Duration(seconds: 3), () {
+        //     _refreshController.loadComplete();
+        //   });
+        // },
         footer: CustomFooter(
-          // ignore: missing_return
-          builder: (context, state) {
-            switch (state) {
-              case LoadStatus.idle:
-                return const IconText(
-                  '上拉加载',
-                  icon: Icon(Icons.arrow_upward),
-                );
-                break;
-              case LoadStatus.canLoading:
-                return const Text('松手加载');
-                break;
-              case LoadStatus.loading:
-                return Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      SizedBox(
-                        width: 25,
-                        height: 25,
-                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                      ),
-                      SizedBox(width: 10,),
-                      Text('加载中')
-                    ],
-                  ),
-                );
-                break;
-              case LoadStatus.noMore:
-                return const Text('没有更多了');
-                break;
-              case LoadStatus.failed:
-                return const Text('加载失败');
-                break;
-            }
-          },
+          builder: _buildFooter,
         ),
         controller: _refreshController,
         header: MaterialClassicHeader(
           distance: barHeight + 70,
           height: barHeight + 80,
         ),
-        // onRefresh: _onRefresh,
-        // onLoading: _onLoadMore,
+        onRefresh: _onRefresh,
+        onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + barHeight),
           gridDelegate:

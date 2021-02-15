@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:catpic/utils/colors_util.dart';
 
 final baseTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -13,7 +14,10 @@ final baseTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.blue,
   accentColor: Colors.blue[800],
+  primarySwatch: Colors.blue,
 );
+
+const _purplePrimary = Color(0xFF686BDD);
 
 final purpleTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -26,6 +30,7 @@ final purpleTheme = ThemeData(
   ),
   appBarTheme: const AppBarTheme(color: Color(0xFF686BDD)),
   brightness: Brightness.light,
-  primaryColor: const Color(0xFF686BDD),
+  primaryColor: _purplePrimary,
   accentColor: const Color(0xFF46489f),
+  primarySwatch: _purplePrimary.swatch,
 );

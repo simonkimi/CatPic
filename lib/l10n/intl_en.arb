@@ -46,5 +46,12 @@
   "score": "Score",
   "source": "Source",
   "rating": "Rating",
-  "connecting": "Connecting..."
+  "connecting": "Connecting...",
+
+  "tap_to_reload": "Tap to reload",
+  "idle_loading": "Pull up Load more",
+  "load_fail": "Load Failed",
+  "loading_text": "Loading...",
+  "no_more_text": "No more data",
+  "can_load_text": "Release to load more"
 }

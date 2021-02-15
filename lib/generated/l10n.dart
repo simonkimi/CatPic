@@ -494,6 +494,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Tap to reload`
+  String get tap_to_reload {
+    return Intl.message(
+      'Tap to reload',
+      name: 'tap_to_reload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pull up Load more`
+  String get idle_loading {
+    return Intl.message(
+      'Pull up Load more',
+      name: 'idle_loading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load Failed`
+  String get load_fail {
+    return Intl.message(
+      'Load Failed',
+      name: 'load_fail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading...`
+  String get loading_text {
+    return Intl.message(
+      'Loading...',
+      name: 'loading_text',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No more data`
+  String get no_more_text {
+    return Intl.message(
+      'No more data',
+      name: 'no_more_text',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Release to load more`
+  String get can_load_text {
+    return Intl.message(
+      'Release to load more',
+      name: 'can_load_text',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

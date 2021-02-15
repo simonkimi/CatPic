@@ -106,7 +106,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 IconButton(
                   icon: const Icon(Icons.autorenew_sharp),
                   onPressed: () {
-                    final host = getHost(hostController.text);
+                    final host = hostController.text.getHost();
                     final cancelFunc = BotToast.showLoading();
                     getDoH(host).then((value) {
                       cancelFunc();
@@ -124,7 +124,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 FlatButton(
                   onPressed: () {
                     saveHost(
-                      host: getHost(hostController.text),
+                      host: hostController.text.getHost(),
                       ip: ipController.text,
                     ).then((value) {
                       if (value) {
