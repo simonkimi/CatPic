@@ -8,17 +8,24 @@ class SearchBar extends StatefulWidget {
     this.controller,
     this.defaultHint,
     this.onSubmitted,
+    this.onQueryChanged,
+    this.debounceDelay,
     @required this.candidateBuilder,
     this.body,
+    this.onFocusChanged,
   }) : super(key: key);
 
   final OnQueryChangedCallback onSubmitted;
+  final OnQueryChangedCallback onQueryChanged;
+
   final FloatingSearchBarBuilder candidateBuilder;
   final List<Widget> actions;
   final Widget body;
 
   final FloatingSearchBarController controller;
   final String defaultHint;
+  final Duration debounceDelay;
+  final OnFocusChangedCallback onFocusChanged;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -55,6 +62,7 @@ class _SearchBarState extends State<SearchBar> {
       debounceDelay: const Duration(milliseconds: 100),
       body: widget.body,
       onQueryChanged: (query) {
+        widget.onQueryChanged(query);
         if (controller.isOpen) {
           setState(() {
             _searchTmp = query;
@@ -71,6 +79,7 @@ class _SearchBarState extends State<SearchBar> {
         });
       },
       onFocusChanged: (isFocused) {
+        widget.onFocusChanged(isFocused);
         if (isFocused) {
           controller.query = _searchTmp;
         }
@@ -80,4 +89,11 @@ class _SearchBarState extends State<SearchBar> {
       builder: widget.candidateBuilder,
     );
   }
+}
+
+class SearchSuggestions {
+  SearchSuggestions(this.title, [this.subTitle]);
+
+  final String title;
+  final String subTitle;
 }

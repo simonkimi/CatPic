@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/database/database_helper.dart';
+import 'package:catpic/data/database/entity/history_entity.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
@@ -36,6 +38,7 @@ class PostResultFragment extends StatefulWidget {
 mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   final _searchBarController = FloatingSearchBarController();
   final _refreshController = RefreshController(initialRefresh: false);
+  List<SearchSuggestions> suggestionList;
 
   PostResultStore _store;
 
@@ -76,6 +79,25 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     await _store.launchNewSearch(tag);
     await _refreshController.requestRefresh();
   }
+
+  Future<void> _searchTag(String tag) async {
+    if (tag.isNotEmpty) {
+      // 推荐Tag
+      final lastTag = tag.split(' ').last;
+      final dao = DatabaseHelper().tagDao;
+      final list = await dao.getStart(mainStore.websiteEntity.id, '$lastTag%');
+      setState(() {
+        suggestionList = list.map((e) => SearchSuggestions(e.tag)).toList();
+      });
+    } else {
+      // 历史搜索
+      final dao = DatabaseHelper().historyDao;
+      final list = await dao.getAll();
+      setState(() {
+        suggestionList = list.map((e) => SearchSuggestions(e.history)).toList();
+      });
+    }
+  }
 }
 
 class _PostResultFragmentState extends State<PostResultFragment>
@@ -83,6 +105,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
   @override
   void initState() {
     super.initState();
+    suggestionList = [];
     _store =
         PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -101,8 +124,15 @@ class _PostResultFragmentState extends State<PostResultFragment>
     return SearchBar(
       controller: _searchBarController,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
-      onSubmitted: (value) {
+      onSubmitted: (value) async {
         _newSearch(value);
+        DatabaseHelper().historyDao.addHistory(HistoryEntity(
+              history: value,
+              createTime: DateTime.now().millisecondsSinceEpoch,
+            ));
+      },
+      onFocusChanged: (isFocus) {
+        _searchTag(_searchBarController.query);
       },
       actions: [
         FloatingSearchBarAction(
@@ -117,21 +147,33 @@ class _PostResultFragmentState extends State<PostResultFragment>
         ),
       ],
       body: buildWaterFlow(),
-      candidateBuilder: (context, transition) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Material(
-            color: Colors.white,
-            elevation: 4.0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: Colors.accents.map((color) {
-                return Container(height: 112, color: color);
-              }).toList(),
-            ),
-          ),
-        );
-      },
+      onQueryChanged: _searchTag,
+      candidateBuilder: _buildSuggestionList,
+    );
+  }
+
+  Widget _buildSuggestionList(
+      BuildContext context, Animation<double> transition) {
+    return Material(
+      color: Colors.white,
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: suggestionList.map((e) {
+          return ListTile(
+            title: Text(e.title),
+            onTap: () {
+              final newTag = _searchBarController.query.split(' ')
+                ..removeLast()
+                ..add(e.title);
+              _searchBarController.query = newTag.join(' ') + ' ';
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -194,12 +236,12 @@ class _PostResultFragmentState extends State<PostResultFragment>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Icon(Icons.error),
-                  SizedBox(
+                children: [
+                  const Icon(Icons.error),
+                  const SizedBox(
                     height: 10,
                   ),
-                  Text('点击重新加载'),
+                  Text(S.of(context).tap_to_reload),
                 ],
               ),
             ),
@@ -296,16 +338,6 @@ class _PostResultFragmentState extends State<PostResultFragment>
       child: SmartRefresher(
         enablePullUp: true,
         enablePullDown: true,
-        // onRefresh: () async {
-        //   await Future.delayed(const Duration(seconds: 3), () {
-        //     _refreshController.refreshCompleted();
-        //   });
-        // },
-        // onLoading: () async {
-        //   await Future.delayed(const Duration(seconds: 3), () {
-        //     _refreshController.loadComplete();
-        //   });
-        // },
         footer: CustomFooter(
           builder: _buildFooter,
         ),

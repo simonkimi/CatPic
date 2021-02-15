@@ -3,11 +3,11 @@ import 'package:floor/floor.dart';
 
 @dao
 abstract class HistoryDao {
-  @Query('SELECT * FROM TagEntity')
+  @Query('SELECT * FROM HistoryEntity')
   Future<List<HistoryEntity>> getAll();
 
   @insert
-  Future<int> addTag(HistoryEntity entity);
+  Future<int> addHistory(HistoryEntity entity);
 
   @Query('DELETE * FROM HistoryEntity WHERE id = :id')
   Future<void> delete(int id);
