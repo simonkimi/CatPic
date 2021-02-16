@@ -6,7 +6,7 @@ class GelbooruTagParse {
     final root = XmlDocument.parse(tagXml);
     final nodes = root.firstChild.children;
 
-    return nodes.map((e) {
+    return nodes.where((e) => e.nodeType == XmlNodeType.ELEMENT).map((e) {
       return BooruTag(
           id: e.getAttributeNode('id').value,
           count: int.parse(e.getAttributeNode('count').value),

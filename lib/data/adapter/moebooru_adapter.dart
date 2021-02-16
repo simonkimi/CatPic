@@ -5,6 +5,7 @@ import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:dio/src/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import 'booru_adapter.dart';
 
@@ -25,13 +26,13 @@ class MoebooruAdapter implements BooruAdapter {
   @override
   Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
     final str = await client.postsList(tags: tags, limit: limit, page: page);
-    return MoebooruPostParse.parse(str);
+    return await compute(MoebooruPostParse.parse, str);
   }
 
   @override
   Future<List<BooruTag>> tagList({String name, int page, int limit}) async {
     final str = await client.tagsList(name: name, page: page, limit: limit);
-    return MoebooruTagParse.parse(str);
+    return await compute(MoebooruTagParse.parse, str);
   }
 
   @override
