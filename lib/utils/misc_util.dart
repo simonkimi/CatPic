@@ -5,7 +5,7 @@ String getSchemeString(int scheme) {
   return scheme == WebsiteScheme.HTTP.index ? 'http' : 'https';
 }
 
-extension HostExtension on String {
+extension StringHelper on String {
   String getHost() {
     final items = split('/')
         .where((e) => e != 'http:' && e != 'https:')
@@ -13,4 +13,6 @@ extension HostExtension on String {
         .toList();
     return items.isNotEmpty ? items[0] : '';
   }
+
+  int toInt() => int.tryParse(this);
 }

@@ -1,29 +1,33 @@
 import 'dart:convert';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/data/parser/moebooru/post_model.dart';
 
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {
     final List<dynamic> posts = jsonDecode(postJson);
+
     return posts.map((e) {
+      final root = Root.fromJson(e);
+
       return BooruPost(
-        id: e['id'].toString(),
-        creatorId: e['creator_id'].toString(),
-        md5: e['md5'],
-        previewURL: e['preview_url'],
-        sampleURL: e['sample_url'],
-        imgURL: e['file_url'],
-        width: e['width'],
-        height: e['height'],
-        sampleWidth: e['sample_width'],
-        sampleHeight: e['sample_height'],
-        previewWidth: e['preview_width'],
-        previewHeight: e['preview_height'],
-        rating: _getRating(e['rating']),
-        status: e['status'],
-        tags: {'_': e['tags'].split(' ')},
-        source: e['source'],
-        score: e['score'].toString(),
-        createTime: _parseTime(e['updated_at']),
+        id: root.id.toString(),
+        creatorId: root.creatorId.toString(),
+        md5: root.md5,
+        previewURL: root.previewUrl,
+        sampleURL: root.sampleUrl,
+        imgURL: root.fileUrl,
+        width: root.width,
+        height: root.height,
+        sampleWidth: root.sampleWidth,
+        sampleHeight: root.sampleHeight,
+        previewWidth: root.previewWidth,
+        previewHeight: root.previewHeight,
+        rating: _getRating(root.rating),
+        status: root.status,
+        tags: {'_': root.tags.split(' ')},
+        source: root.source,
+        score: root.score.toString(),
+        createTime: _parseTime(root.updatedAt),
       );
     }).toList();
   }

@@ -50,7 +50,9 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       _refreshController.refreshCompleted();
     } on NoMorePage {
       _refreshController.loadNoData();
+      _refreshController.refreshCompleted();
     } catch (e) {
+      debugPrint(e.toString());
       _refreshController.loadFailed();
       _refreshController.refreshFailed();
       BotToast.showText(text: e.toString());
@@ -58,7 +60,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   }
 
   Future<void> _onLoadMore() async {
-    print('_onLoadMore');
+    debugPrint('_onLoadMore');
     if (_refreshController.isRefresh) {
       _refreshController.loadComplete();
       return;

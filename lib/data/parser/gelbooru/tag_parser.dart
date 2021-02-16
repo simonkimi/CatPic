@@ -1,26 +1,17 @@
-import 'dart:convert';
 import 'package:catpic/data/models/booru/booru_tag.dart';
-import 'package:xml2json/xml2json.dart';
+import 'package:xml/xml.dart';
 
 class GelbooruTagParse {
   static List<BooruTag> parse(String tagXml) {
-    final xml2json = Xml2Json();
-    xml2json.parse(tagXml);
-    final Map<String, dynamic> json = jsonDecode(xml2json.toGData());
+    final root = XmlDocument.parse(tagXml);
+    final nodes = root.firstChild.children;
 
-    if (!json.containsKey('tags'))
-      return [];
-    final Map<String, dynamic> tags = json['tags'];
-    if (!tags.containsKey('tag'))
-      return [];
-    final List<dynamic> tag = tags['tag'];
-
-    return tag.map((e) {
+    return nodes.map((e) {
       return BooruTag(
-          id: e['id'],
-          count: int.parse(e['count']),
-          name: e['name'],
-          type: _getBooruTagType(e['type']));
+          id: e.getAttributeNode('id').value,
+          count: int.parse(e.getAttributeNode('count').value),
+          name: e.getAttributeNode('name').value,
+          type: _getBooruTagType(e.getAttributeNode('type').value));
     }).toList();
   }
 

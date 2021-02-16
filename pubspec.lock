@@ -421,7 +421,7 @@ packages:
     source: hosted
     version: "0.11.4"
   matcher:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: matcher
       url: "https://pub.flutter-io.cn"
@@ -839,19 +839,12 @@ packages:
     source: hosted
     version: "0.1.2"
   xml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: xml
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.5.1"
-  xml2json:
-    dependency: "direct main"
-    description:
-      name: xml2json
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.4.0"
   yaml:
     dependency: transitive
     description:
