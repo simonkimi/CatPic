@@ -57,7 +57,6 @@ class PreviewParser {
     if (targetUrl.isNotEmpty) {
       final re = RegExp(r'/g/(\w+)/(\w+)/');
       final match = re.firstMatch(targetUrl);
-      print('${match[1]}, ${match[2]}');
       return [match[1], match[2]];
     }
     return ['', ''];

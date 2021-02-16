@@ -265,10 +265,10 @@ class S {
     );
   }
 
-  /// `ADVANCED SETTINGS (optional)`
+  /// `ADVANCED SETTINGS`
   String get advanced_settings {
     return Intl.message(
-      'ADVANCED SETTINGS (optional)',
+      'ADVANCED SETTINGS',
       name: 'advanced_settings',
       desc: '',
       args: [],

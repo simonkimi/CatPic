@@ -25,7 +25,7 @@
   "scheme": "协议",
   "scheme_https": "使用更安全的HTTPS协议",
   "site_type": "站点类型",
-  "advanced_settings": "高级设置(可选)",
+  "advanced_settings": "高级设置",
   "use_doh": "使用DoH",
   "use_doh_desc": "解决某些地区的 DNS 污染问题",
   "direct_link": "开启直连",

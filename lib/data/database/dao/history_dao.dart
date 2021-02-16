@@ -3,8 +3,14 @@ import 'package:floor/floor.dart';
 
 @dao
 abstract class HistoryDao {
-  @Query('SELECT * FROM HistoryEntity')
+  @Query('SELECT * FROM HistoryEntity ORDER BY createTime')
   Future<List<HistoryEntity>> getAll();
+
+  @Query('SELECT * FROM HistoryEntity WHERE history = :history')
+  Future<HistoryEntity> getByHistory(String history);
+
+  @update
+  Future<void> updateHistory(HistoryEntity entity);
 
   @insert
   Future<int> addHistory(HistoryEntity entity);

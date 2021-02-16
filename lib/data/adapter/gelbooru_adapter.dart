@@ -25,8 +25,7 @@ class GelbooruAdapter implements BooruAdapter {
 
   @override
   Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
-    final str =
-        await client.postsList(tags: tags, limit: limit, pid: page * limit);
+    final str = await client.postsList(tags: tags, limit: limit, pid: page);
 
     return await compute(GelbooruPostParser.parse, str);
   }

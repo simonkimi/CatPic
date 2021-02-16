@@ -23,7 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static _notInlinedMessages(_) => <String, Function> {
     "add" : MessageLookupByLibrary.simpleMessage("添加"),
     "add_website" : MessageLookupByLibrary.simpleMessage("添加网站"),
-    "advanced_settings" : MessageLookupByLibrary.simpleMessage("高级设置(可选)"),
+    "advanced_settings" : MessageLookupByLibrary.simpleMessage("高级设置"),
     "back" : MessageLookupByLibrary.simpleMessage("返回"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("基础设置"),
     "can_load_text" : MessageLookupByLibrary.simpleMessage("松手加载数据"),

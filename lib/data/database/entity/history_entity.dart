@@ -11,5 +11,5 @@ class HistoryEntity {
   @PrimaryKey(autoGenerate: true)
   final int id;
   final String history;
-  final int createTime;
+  int createTime;
 }

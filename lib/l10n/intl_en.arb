@@ -23,7 +23,7 @@
   "scheme": "Scheme",
   "scheme_https": "Using more secure HTTPS scheme",
   "site_type": "Site type",
-  "advanced_settings": "ADVANCED SETTINGS (optional)",
+  "advanced_settings": "ADVANCED SETTINGS",
   "use_doh": "Use DoH",
   "use_doh_desc": "Workaround DNS poisoning in some nations",
   "direct_link": "Direct Link",

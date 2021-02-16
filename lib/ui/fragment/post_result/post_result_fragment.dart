@@ -70,8 +70,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       _refreshController.loadComplete();
     } on NoMorePage {
       _refreshController.loadNoData();
-    } on Error catch (e) {
-      print(e.stackTrace);
+    } catch (e) {
+      print(e.toString());
       _refreshController.loadFailed();
       BotToast.showText(text: e.toString());
     }
@@ -98,6 +98,20 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       setState(() {
         suggestionList = list.map((e) => SearchSuggestions(e.history)).toList();
       });
+    }
+  }
+
+  Future<void> _setSearchHistory(String tag) async {
+    final dao = DatabaseHelper().historyDao;
+    final history = await dao.getByHistory(tag);
+    if (history != null) {
+      history.createTime = DateTime.now().millisecondsSinceEpoch;
+      await dao.updateHistory(history);
+    } else {
+      dao.addHistory(HistoryEntity(
+        history: tag,
+        createTime: DateTime.now().millisecondsSinceEpoch,
+      ));
     }
   }
 }
@@ -127,11 +141,8 @@ class _PostResultFragmentState extends State<PostResultFragment>
       controller: _searchBarController,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       onSubmitted: (value) async {
-        _newSearch(value);
-        DatabaseHelper().historyDao.addHistory(HistoryEntity(
-              history: value,
-              createTime: DateTime.now().millisecondsSinceEpoch,
-            ));
+        _newSearch(value.trim());
+        _setSearchHistory(value.trim());
       },
       onFocusChanged: (isFocus) {
         _searchTag(_searchBarController.query);

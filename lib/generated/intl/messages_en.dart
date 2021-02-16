@@ -23,7 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static _notInlinedMessages(_) => <String, Function> {
     "add" : MessageLookupByLibrary.simpleMessage("Add"),
     "add_website" : MessageLookupByLibrary.simpleMessage("Add Website"),
-    "advanced_settings" : MessageLookupByLibrary.simpleMessage("ADVANCED SETTINGS (optional)"),
+    "advanced_settings" : MessageLookupByLibrary.simpleMessage("ADVANCED SETTINGS"),
     "back" : MessageLookupByLibrary.simpleMessage("Back"),
     "basic_settings" : MessageLookupByLibrary.simpleMessage("BASIC SETTINGS"),
     "can_load_text" : MessageLookupByLibrary.simpleMessage("Release to load more"),
