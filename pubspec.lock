@@ -698,6 +698,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.0-nullsafety.2"
+  sp_util:
+    dependency: "direct main"
+    description:
+      name: sp_util
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.2"
   sqflite:
     dependency: transitive
     description:

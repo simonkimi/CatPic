@@ -32,7 +32,7 @@ class SettingPage extends StatelessWidget {
     return [
       const SummaryTile('显示'),
       SwitchListTile(
-        title: Text('卡片布局'),
+        title: const Text('卡片布局'),
         secondary: const Icon(Icons.apps),
         value: settingStore.useCardWidget,
         onChanged: (value) {

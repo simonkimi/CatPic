@@ -1,4 +1,4 @@
-import 'package:catpic/utils/sp_util.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
 
 part 'setting_store.g.dart';

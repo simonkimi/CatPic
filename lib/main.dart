@@ -1,13 +1,12 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/store/setting/setting_store.dart';
-import 'package:catpic/utils/sp_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:catpic/themes/themes.dart' as theme;
+import 'package:sp_util/sp_util.dart';
 
 import 'data/database/database_helper.dart';
 import 'generated/l10n.dart';

@@ -4,7 +4,7 @@ import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
-import 'package:catpic/utils/sp_util.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
 
 part 'main_store.g.dart';
