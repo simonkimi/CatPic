@@ -53,5 +53,6 @@
   "load_fail": "Load Failed",
   "loading_text": "Loading...",
   "no_more_text": "No more data",
-  "can_load_text": "Release to load more"
+  "can_load_text": "Release to load more",
+  "network_error": "Network Error"
 }

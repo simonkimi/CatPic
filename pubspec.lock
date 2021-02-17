@@ -286,13 +286,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
-  flutter_hooks:
-    dependency: "direct main"
-    description:
-      name: flutter_hooks
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.15.0"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -684,6 +677,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.1"
+  smart_select:
+    dependency: "direct main"
+    description:
+      name: smart_select
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.3.2"
   source_gen:
     dependency: transitive
     description:

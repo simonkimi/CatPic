@@ -1,6 +1,5 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
-import 'package:catpic/network/interceptor/logger_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
 import 'package:catpic/utils/misc_util.dart';

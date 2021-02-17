@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "load_fail" : MessageLookupByLibrary.simpleMessage("加载失败"),
     "loading_text" : MessageLookupByLibrary.simpleMessage("加载中..."),
     "menu" : MessageLookupByLibrary.simpleMessage("菜单"),
+    "network_error" : MessageLookupByLibrary.simpleMessage("网络错误"),
     "no_more_text" : MessageLookupByLibrary.simpleMessage("没有更多数据了"),
     "no_website" : MessageLookupByLibrary.simpleMessage("还没有网站, 快去添加一个!"),
     "not_set" : MessageLookupByLibrary.simpleMessage("未指定"),

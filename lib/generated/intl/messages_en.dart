@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "load_fail" : MessageLookupByLibrary.simpleMessage("Load Failed"),
     "loading_text" : MessageLookupByLibrary.simpleMessage("Loading..."),
     "menu" : MessageLookupByLibrary.simpleMessage("Menu"),
+    "network_error" : MessageLookupByLibrary.simpleMessage("Network Error"),
     "no_more_text" : MessageLookupByLibrary.simpleMessage("No more data"),
     "no_website" : MessageLookupByLibrary.simpleMessage("There is no website, go and add one!"),
     "not_set" : MessageLookupByLibrary.simpleMessage("Not set yet"),

@@ -1,7 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/sp_helper.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
+import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/ui/store/setting/setting_store.dart';
+import 'package:catpic/utils/sp_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -12,9 +14,10 @@ import 'generated/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SpUtil.getInstance();
   await DatabaseHelper().init();
-  await SPHelper().init();
   await mainStore.init();
+  await settingStore.init();
   runApp(CatPicApp());
 }
 
@@ -31,7 +34,7 @@ class CatPicApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         S.delegate
       ],
-      home: SearchPage(),
+      home: SettingPage(),
       builder: BotToastInit(),
       supportedLocales: const [
         Locale('en'),

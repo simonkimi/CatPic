@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'dart:ui' as ui;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database_helper.dart';
@@ -11,6 +10,7 @@ import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -51,6 +51,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     } on NoMorePage {
       _refreshController.loadNoData();
       _refreshController.refreshCompleted();
+    } on DioError catch (e) {
+      BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
     } catch (e) {
       debugPrint(e.toString());
       _refreshController.loadFailed();
@@ -70,6 +72,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       _refreshController.loadComplete();
     } on NoMorePage {
       _refreshController.loadNoData();
+    } on DioError catch (e) {
+      BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
     } catch (e) {
       print(e.toString());
       _refreshController.loadFailed();
@@ -96,12 +100,16 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       final dao = DatabaseHelper().historyDao;
       final list = await dao.getAll();
       setState(() {
-        suggestionList = list.map((e) => SearchSuggestions(e.history)).toList();
+        suggestionList = list
+            .where((e) => e.history.trim().isNotEmpty)
+            .map((e) => SearchSuggestions(e.history))
+            .toList();
       });
     }
   }
 
   Future<void> _setSearchHistory(String tag) async {
+    if (tag.isEmpty) return;
     final dao = DatabaseHelper().historyDao;
     final history = await dao.getByHistory(tag);
     if (history != null) {
@@ -228,12 +236,17 @@ class _PostResultFragmentState extends State<PostResultFragment>
             child: AspectRatio(
               aspectRatio: post.width / post.height,
               child: Center(
-                child: CircularProgressIndicator(
-                  value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                          ((progress.cumulativeBytesLoaded ?? 0) != 0)
-                      ? progress.cumulativeBytesLoaded /
-                          progress.expectedTotalBytes
-                      : 0.0,
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    value: ((progress.expectedTotalBytes ?? 0) != 0) &&
+                            ((progress.cumulativeBytesLoaded ?? 0) != 0)
+                        ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes
+                        : 0.0,
+                    strokeWidth: 2.5,
+                  ),
                 ),
               ),
             ),
@@ -346,7 +359,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
   }
 
   Widget buildWaterFlow() {
-    final barHeight = MediaQueryData.fromWindow(window).padding.top;
+    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return FloatingSearchBarScrollNotifier(
       child: SmartRefresher(
         enablePullUp: true,

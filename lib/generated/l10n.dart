@@ -554,6 +554,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Network Error`
+  String get network_error {
+    return Intl.message(
+      'Network Error',
+      name: 'network_error',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -7,12 +7,18 @@ class SummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 10),
-      child: Text(
+    return ListTile(
+      leading: const SizedBox(
+        width: 10,
+        height: 10,
+      ),
+      title: Text(
         text,
         style: TextStyle(
-            color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+          color: Theme.of(context).primaryColor,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

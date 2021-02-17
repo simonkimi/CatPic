@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/website_entity.dart';
-import 'package:catpic/data/database/sp_helper.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
+import 'package:catpic/utils/sp_util.dart';
 import 'package:mobx/mobx.dart';
 
 part 'main_store.g.dart';
@@ -30,7 +30,7 @@ abstract class MainStoreBase with Store {
     // 初始化数据
     final websiteDao = DatabaseHelper().websiteDao;
     websiteList = await websiteDao.getAll();
-    final lastWebsite = SPHelper().pref.getInt('last_website') ?? -1;
+    final lastWebsite = SpUtil.getInt('last_website') ?? -1;
     websiteEntity =
         websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
     if (websiteEntity == null && websiteList.isNotEmpty) {
@@ -66,7 +66,7 @@ abstract class MainStoreBase with Store {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
       EventBusUtil().bus.fire(EventSiteChange());
-      SPHelper().pref.setInt('last_website', websiteEntity?.id ?? -1);
+      SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
     }
   }
 
@@ -74,7 +74,7 @@ abstract class MainStoreBase with Store {
   Future<void> setWebsiteWithoutNotification(WebsiteEntity entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
-      SPHelper().pref.setInt('last_website', websiteEntity?.id ?? -1);
+      SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
     }
   }
 

@@ -56,5 +56,6 @@
   "load_fail": "加载失败",
   "loading_text": "加载中...",
   "no_more_text": "没有更多数据了",
-  "can_load_text": "松手加载数据"
+  "can_load_text": "松手加载数据",
+  "network_error": "网络错误"
 }
