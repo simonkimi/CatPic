@@ -195,10 +195,10 @@ class S {
     );
   }
 
-  /// `BASIC SETTINGS`
+  /// `Basic Settings`
   String get basic_settings {
     return Intl.message(
-      'BASIC SETTINGS',
+      'Basic Settings',
       name: 'basic_settings',
       desc: '',
       args: [],
@@ -215,10 +215,10 @@ class S {
     );
   }
 
-  /// `WEBSITE SETTINGS`
+  /// `Website Settings`
   String get website_settings {
     return Intl.message(
-      'WEBSITE SETTINGS',
+      'Website Settings',
       name: 'website_settings',
       desc: '',
       args: [],
@@ -265,10 +265,10 @@ class S {
     );
   }
 
-  /// `ADVANCED SETTINGS`
+  /// `Advanced Settings`
   String get advanced_settings {
     return Intl.message(
-      'ADVANCED SETTINGS',
+      'Advanced Settings',
       name: 'advanced_settings',
       desc: '',
       args: [],
@@ -560,6 +560,126 @@ class S {
     return Intl.message(
       'Network Error',
       name: 'network_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display`
+  String get display {
+    return Intl.message(
+      'Display',
+      name: 'display',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thumbnail`
+  String get preview {
+    return Intl.message(
+      'Thumbnail',
+      name: 'preview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Larger`
+  String get sample {
+    return Intl.message(
+      'Larger',
+      name: 'sample',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Raw`
+  String get raw {
+    return Intl.message(
+      'Raw',
+      name: 'raw',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preview Quality`
+  String get preview_quality {
+    return Intl.message(
+      'Preview Quality',
+      name: 'preview_quality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sample Quality`
+  String get sample_quality {
+    return Intl.message(
+      'Sample Quality',
+      name: 'sample_quality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Quality`
+  String get download_quality {
+    return Intl.message(
+      'Download Quality',
+      name: 'download_quality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quality`
+  String get quality {
+    return Intl.message(
+      'Quality',
+      name: 'quality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Card Layout`
+  String get card_layout {
+    return Intl.message(
+      'Card Layout',
+      name: 'card_layout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Column Num`
+  String get column_num {
+    return Intl.message(
+      'Column Num',
+      name: 'column_num',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Per Page Limit`
+  String get per_page_limit {
+    return Intl.message(
+      'Per Page Limit',
+      name: 'per_page_limit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display Info Bar`
+  String get display_info_bar {
+    return Intl.message(
+      'Display Info Bar',
+      name: 'display_info_bar',
       desc: '',
       args: [],
     );

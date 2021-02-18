@@ -4,6 +4,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -50,10 +51,12 @@ class _ImageViewPageState extends State<ImageViewPage>
     for (final tags in widget.booruPost.tags.values) {
       for (final tagStr in tags) {
         if (tagStr.isNotEmpty) {
-          await dao.addTag([TagEntity(
-            website: mainStore.websiteEntity.id,
-            tag: tagStr,
-          )]);
+          await dao.addTag([
+            TagEntity(
+              website: mainStore.websiteEntity.id,
+              tag: tagStr,
+            )
+          ]);
         }
       }
     }
@@ -282,11 +285,23 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget buildImg() {
+    String imageUrl;
+    switch (settingStore.displayQuality) {
+      case ImageQuality.preview:
+        imageUrl = widget.booruPost.previewURL;
+        break;
+      case ImageQuality.sample:
+        imageUrl = widget.booruPost.sampleURL;
+        break;
+      case ImageQuality.raw:
+        imageUrl = widget.booruPost.imgURL;
+        break;
+    }
     return Container(
       color: Colors.black,
       child: CachedDioImage(
         dio: widget.dio,
-        imgUrl: widget.booruPost.imgURL,
+        imgUrl: imageUrl,
         cachedKey: widget.booruPost.md5,
         imageBuilder: (context, imgData) {
           return Center(

@@ -7,6 +7,12 @@ final settingStore = SettingStore();
 
 class SettingStore = SettingStoreBase with _$SettingStore;
 
+class ImageQuality {
+  static const int preview = 0;
+  static const int sample = 1;
+  static const int raw = 2;
+}
+
 abstract class SettingStoreBase with Store {
   @observable
   bool useCardWidget = true;
@@ -17,14 +23,48 @@ abstract class SettingStoreBase with Store {
   @observable
   int eachPageItem = 50;
 
+  @observable
   int previewRowNum = 3;
+
+  @observable
+  int previewQuality = ImageQuality.preview;
+
+  @observable
+  int displayQuality = ImageQuality.sample;
+
+  @observable
+  int downloadQuality = ImageQuality.raw;
 
   @action
   Future<void> init() async {
-    useCardWidget = SpUtil.getBool('useCardWidget') ?? true;
-    showCardDetail = SpUtil.getBool('showCardDetail') ?? true;
-    eachPageItem = SpUtil.getInt('eachPageItem') ?? 50;
-    previewRowNum = SpUtil.getInt('previewRowNum') ?? 3;
+    useCardWidget = SpUtil.getBool('useCardWidget', defValue: true);
+    showCardDetail = SpUtil.getBool('showCardDetail', defValue: true);
+    eachPageItem = SpUtil.getInt('eachPageItem', defValue: 50);
+    previewRowNum = SpUtil.getInt('previewRowNum', defValue: 3);
+    previewQuality =
+        SpUtil.getInt('previewQuality', defValue: ImageQuality.preview);
+    displayQuality =
+        SpUtil.getInt('displayQuality', defValue: ImageQuality.sample);
+    downloadQuality =
+        SpUtil.getInt('downloadQuality', defValue: ImageQuality.raw);
+  }
+
+  @action
+  void setPreviewQuality(int value) {
+    previewQuality = value;
+    SpUtil.putInt('previewQuality', value);
+  }
+
+  @action
+  void setDisplayQuality(int value) {
+    displayQuality = value;
+    SpUtil.putInt('displayQuality', value);
+  }
+
+  @action
+  void setDownloadQuality(int value) {
+    downloadQuality = value;
+    SpUtil.putInt('downloadQuality', value);
   }
 
   @action
@@ -37,5 +77,17 @@ abstract class SettingStoreBase with Store {
   void setPreviewRowNum(int value) {
     previewRowNum = value;
     SpUtil.putInt('previewRowNum', value);
+  }
+
+  @action
+  void setShowCardDetail(bool value) {
+    showCardDetail = value;
+    SpUtil.putBool('showCardDetail', value);
+  }
+
+  @action
+  void setEachPageItem(int value) {
+    eachPageItem = value;
+    SpUtil.putInt('eachPageItem', value);
   }
 }

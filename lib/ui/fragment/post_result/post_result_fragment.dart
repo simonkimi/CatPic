@@ -10,6 +10,7 @@ import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -214,13 +215,26 @@ class _PostResultFragmentState extends State<PostResultFragment>
       );
     };
 
+    String imageUrl;
+    switch (settingStore.previewQuality) {
+      case ImageQuality.preview:
+        imageUrl = post.previewURL;
+        break;
+      case ImageQuality.sample:
+        imageUrl = post.sampleURL;
+        break;
+      case ImageQuality.raw:
+        imageUrl = post.imgURL;
+        break;
+    }
+
     return PostPreviewCard(
       key: Key('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: CachedDioImage(
         dio: widget.adapter.dio,
-        imgUrl: post.previewURL,
+        imgUrl: imageUrl,
         imageBuilder: (context, imgData) {
           return InkWell(
             onTap: loadDetail,
@@ -376,9 +390,11 @@ class _PostResultFragmentState extends State<PostResultFragment>
         onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + barHeight),
-          gridDelegate:
-              const SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),
+          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+            crossAxisCount: settingStore.previewRowNum,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
+          ),
           itemCount: _store.postList.length,
           itemBuilder: _itemBuilder,
         ),

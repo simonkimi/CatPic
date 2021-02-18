@@ -57,5 +57,18 @@
   "loading_text": "加载中...",
   "no_more_text": "没有更多数据了",
   "can_load_text": "松手加载数据",
-  "network_error": "网络错误"
+  "network_error": "网络错误",
+
+  "display": "显示",
+  "preview": "缩略图",
+  "sample": "大图",
+  "raw": "原图",
+  "preview_quality": "预览质量",
+  "sample_quality": "看图质量",
+  "download_quality": "下载质量",
+  "quality": "质量",
+  "card_layout": "卡片布局",
+  "column_num": "列数",
+  "per_page_limit": "每页限制",
+  "display_info_bar": "显示信息栏"
 }
