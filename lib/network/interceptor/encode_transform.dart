@@ -10,8 +10,7 @@ class EncodeTransformer extends DefaultTransformer {
     if (response.headers['content-encoding']?.contains('br') ?? false) {
       if (options.responseType == ResponseType.bytes) {
         final data = <int>[];
-        final stream = response.stream;
-        await stream.forEach(data.addAll);
+        await response.stream.forEach(data.addAll);
         return brotli.decode(Uint8List.fromList(data));
       }
       return await brotli.decodeStream(response.stream);

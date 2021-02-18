@@ -389,7 +389,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
         onRefresh: _onRefresh,
         onLoading: _onLoadMore,
         child: WaterfallFlow.builder(
-          padding: EdgeInsets.only(top: 60 + barHeight),
+          padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: settingStore.previewRowNum,
             mainAxisSpacing: 5,
