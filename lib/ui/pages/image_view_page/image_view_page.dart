@@ -8,6 +8,7 @@ import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ImageViewPage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _ImageViewPageState extends State<ImageViewPage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      body: buildImg(),
+      body: Observer(builder: (_) => buildImg()),
       bottomNavigationBar: buildBottomBar(),
       extendBody: true,
     );
@@ -297,12 +298,13 @@ class _ImageViewPageState extends State<ImageViewPage>
         imageUrl = widget.booruPost.imgURL;
         break;
     }
+
     return Container(
       color: Colors.black,
       child: CachedDioImage(
         dio: widget.dio,
         imgUrl: imageUrl,
-        cachedKey: widget.booruPost.md5,
+        cachedKey: '$imageUrl${widget.booruPost.md5}',
         imageBuilder: (context, imgData) {
           return Center(
             child: Hero(
@@ -334,16 +336,28 @@ class _ImageViewPageState extends State<ImageViewPage>
           );
         },
         errorBuilder: (context, err, reload) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(Icons.error),
-              const SizedBox(
-                height: 20,
+          return GestureDetector(
+            onTap: reload(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    err.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
-              Text(err.toString()),
-            ],
+            ),
           );
         },
         loadingBuilder: (_, loadingProgress) {
