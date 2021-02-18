@@ -5,7 +5,6 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-
 Future<String> getDoH(String url) async {
   try {
     final query = 'https://cloudflare-dns.com/dns-query?name=$url&type=A';
@@ -30,12 +29,13 @@ Future<String> getDoH(String url) async {
 
 Future<Uint8List> getFavicon(WebsiteEntity entity) async {
   try {
+    print('获取网站图标 ${entity.name}');
     final dio = DioBuilder.build(entity);
-    final req = await dio.get<List<int>>('favicon.ico',
+    final req = await dio.get<Uint8List>('favicon.ico',
         options: Options(responseType: ResponseType.bytes));
-    final u8 = Uint8List.fromList(req.data);
-    MemoryImage(u8);
-    return u8;
+    print('下载完成, 准备解码');
+    MemoryImage(req.data);
+    return req.data;
   } catch (e) {
     print('下载Favicon失败: $e');
     return Uint8List.fromList([]);

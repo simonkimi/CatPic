@@ -8,7 +8,7 @@ import 'package:dio/adapter.dart';
 class DioBuilder {
   static Dio build(WebsiteEntity websiteEntity) {
     final dio = Dio()
-      ..options.connectTimeout = 1000 * 10
+      ..options.connectTimeout = 1000 * 60
       ..options.headers = {
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language':
