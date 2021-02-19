@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
+import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -28,6 +31,22 @@ class SettingPage extends StatelessWidget {
         ...buildQuality(context),
       ],
     );
+  }
+
+  List<Widget> buildAndroid(BuildContext context) {
+    return [
+      SummaryTile(S.of(context).download),
+      ListTile(
+        title: Text(S.of(context).download_uri),
+        subtitle: Text(settingStore.downloadUri.isNotEmpty
+            ? settingStore.downloadUri
+            : S.of(context).not_set),
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => AndroidDownloadPage()));
+        },
+      )
+    ];
   }
 
   List<Widget> buildQuality(BuildContext context) {

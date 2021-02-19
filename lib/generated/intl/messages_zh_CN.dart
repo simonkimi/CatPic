@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "display_info_bar" : MessageLookupByLibrary.simpleMessage("显示信息栏"),
     "download" : MessageLookupByLibrary.simpleMessage("下载"),
     "download_quality" : MessageLookupByLibrary.simpleMessage("下载质量"),
+    "download_uri" : MessageLookupByLibrary.simpleMessage("下载路径"),
     "explicit" : MessageLookupByLibrary.simpleMessage("暴露"),
     "favourite" : MessageLookupByLibrary.simpleMessage("收藏"),
     "history" : MessageLookupByLibrary.simpleMessage("历史"),

@@ -53,6 +53,8 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       _refreshController.loadNoData();
       _refreshController.refreshCompleted();
     } on DioError catch (e) {
+      _refreshController.loadFailed();
+      _refreshController.refreshFailed();
       BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
     } catch (e) {
       debugPrint(e.toString());
@@ -74,6 +76,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     } on NoMorePage {
       _refreshController.loadNoData();
     } on DioError catch (e) {
+      _refreshController.loadFailed();
       BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
     } catch (e) {
       print(e.toString());

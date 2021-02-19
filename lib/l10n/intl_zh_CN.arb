@@ -70,5 +70,7 @@
   "card_layout": "卡片布局",
   "column_num": "列数",
   "per_page_limit": "每页限制",
-  "display_info_bar": "显示信息栏"
+  "display_info_bar": "显示信息栏",
+
+  "download_uri": "下载路径"
 }

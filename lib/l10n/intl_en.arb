@@ -67,5 +67,7 @@
   "card_layout": "Card Layout",
   "column_num": "Column Num",
   "per_page_limit": "Per Page Limit",
-  "display_info_bar": "Display Info Bar"
+  "display_info_bar": "Display Info Bar",
+
+  "download_uri": "Download Location"
 }

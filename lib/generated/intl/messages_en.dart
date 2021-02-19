@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "display_info_bar" : MessageLookupByLibrary.simpleMessage("Display Info Bar"),
     "download" : MessageLookupByLibrary.simpleMessage("Downloads"),
     "download_quality" : MessageLookupByLibrary.simpleMessage("Download Quality"),
+    "download_uri" : MessageLookupByLibrary.simpleMessage("Download Location"),
     "explicit" : MessageLookupByLibrary.simpleMessage("explicit"),
     "favourite" : MessageLookupByLibrary.simpleMessage("Favourite"),
     "history" : MessageLookupByLibrary.simpleMessage("History"),

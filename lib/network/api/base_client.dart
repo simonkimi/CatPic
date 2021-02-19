@@ -23,9 +23,10 @@ class DioBuilder {
     // dio.interceptors.add(LoggerInterceptor());
     if (websiteEntity.useDoH) {
       dio.interceptors.add(HostInterceptor(
-          dio: dio,
-          directLink: websiteEntity.directLink,
-          websiteId: websiteEntity.id));
+        dio: dio,
+        directLink: websiteEntity.directLink,
+        websiteId: websiteEntity.id,
+      ));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {
         client.badCertificateCallback = (cert, host, port) => true;

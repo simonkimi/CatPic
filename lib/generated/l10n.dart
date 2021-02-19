@@ -684,6 +684,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Download Location`
+  String get download_uri {
+    return Intl.message(
+      'Download Location',
+      name: 'download_uri',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -13,27 +13,39 @@ class ImageQuality {
   static const int raw = 2;
 }
 
+class DownloadMode {
+  static const None = 0;
+  static const AndroidTradition = 1;
+  static const AndroidSAF = 2;
+}
+
 abstract class SettingStoreBase with Store {
   @observable
-  bool useCardWidget = true;
+  bool useCardWidget = true; // 卡片布局
 
   @observable
-  bool showCardDetail = true;
+  bool showCardDetail = true; // 显示底栏
 
   @observable
-  int eachPageItem = 50;
+  int eachPageItem = 50; // 每页数量
 
   @observable
-  int previewRowNum = 3;
+  int previewRowNum = 3; // 显示列数
 
   @observable
-  int previewQuality = ImageQuality.preview;
+  int previewQuality = ImageQuality.preview; // 预览质量
 
   @observable
-  int displayQuality = ImageQuality.sample;
+  int displayQuality = ImageQuality.sample; // 显示质量
 
   @observable
-  int downloadQuality = ImageQuality.raw;
+  int downloadQuality = ImageQuality.raw; // 下载质量
+
+  @observable
+  int downloadModel = DownloadMode.None;
+
+  @observable
+  String downloadUri = ''; // 下载路径
 
   @action
   Future<void> init() async {
@@ -41,12 +53,26 @@ abstract class SettingStoreBase with Store {
     showCardDetail = SpUtil.getBool('showCardDetail', defValue: true);
     eachPageItem = SpUtil.getInt('eachPageItem', defValue: 50);
     previewRowNum = SpUtil.getInt('previewRowNum', defValue: 3);
+    downloadModel = SpUtil.getInt('downloadModel', defValue: DownloadMode.None);
+    downloadUri = SpUtil.getString('downloadUri', defValue: '');
     previewQuality =
         SpUtil.getInt('previewQuality', defValue: ImageQuality.preview);
     displayQuality =
         SpUtil.getInt('displayQuality', defValue: ImageQuality.sample);
     downloadQuality =
         SpUtil.getInt('downloadQuality', defValue: ImageQuality.raw);
+  }
+
+  @action
+  void setDownloadUri(String value) {
+    downloadUri = value;
+    SpUtil.putString('downloadUri', value);
+  }
+
+  @action
+  void setDownloadModel(int value) {
+    downloadModel = value;
+    SpUtil.putInt('downloadModel', value);
   }
 
   @action

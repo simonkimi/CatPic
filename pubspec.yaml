@@ -47,6 +47,7 @@ flutter:
 
   assets:
     - assets/svg/
+    - assets/imgs/
 
 
 flutter_intl:

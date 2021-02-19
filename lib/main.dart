@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/store/setting/setting_store.dart';
@@ -32,7 +33,7 @@ class CatPicApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         S.delegate
       ],
-      home: SearchPage(),
+      home: AndroidDownloadPage(),
       builder: BotToastInit(),
       supportedLocales: const [
         Locale('en'),
