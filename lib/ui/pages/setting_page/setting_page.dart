@@ -27,14 +27,15 @@ class SettingPage extends StatelessWidget {
     return ListView(
       children: [
         ...buildDisplaySetting(context),
-        const Divider(),
         ...buildQuality(context),
+        if (Platform.isAndroid) ...buildAndroid(context),
       ],
     );
   }
 
   List<Widget> buildAndroid(BuildContext context) {
     return [
+      const Divider(),
       SummaryTile(S.of(context).download),
       ListTile(
         title: Text(S.of(context).download_uri),
@@ -45,6 +46,7 @@ class SettingPage extends StatelessWidget {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => AndroidDownloadPage()));
         },
+        leading: const Icon(Icons.drive_file_move_outline),
       )
     ];
   }
@@ -56,6 +58,7 @@ class SettingPage extends StatelessWidget {
       S2Choice(value: ImageQuality.raw, title: S.of(context).raw),
     ];
     return [
+      const Divider(),
       SummaryTile(S.of(context).quality),
       SmartSelect<int>.single(
         tileBuilder: (context, state) {

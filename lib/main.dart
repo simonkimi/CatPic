@@ -33,7 +33,7 @@ class CatPicApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         S.delegate
       ],
-      home: AndroidDownloadPage(),
+      home: SearchPage(),
       builder: BotToastInit(),
       supportedLocales: const [
         Locale('en'),
