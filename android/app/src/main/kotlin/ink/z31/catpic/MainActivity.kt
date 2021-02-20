@@ -2,9 +2,12 @@ package ink.z31.catpic
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
+import androidx.documentfile.provider.DocumentFile
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.lang.Exception
 
 class MainActivity : FlutterActivity() {
     companion object {
@@ -22,6 +25,46 @@ class MainActivity : FlutterActivity() {
                 // 请求SAF路径
                 requestSAFUri()
                 safResult = result
+            } else if (call.method == "save_image") {
+                val data = call.argument<ByteArray>("data")!!
+                val fileName = call.argument<String>("fileName")!!
+                val uri = call.argument<String>("uri")!!
+                savePicture(data, fileName, uri, result)
+            }
+        }
+    }
+
+    private fun savePicture(data: ByteArray, fileName: String, uriStr: String, result: MethodChannel.Result?) {
+        val uri = Uri.parse(uriStr)
+        val permissions =
+                contentResolver.persistedUriPermissions.filter { it.isReadPermission && it.isWritePermission && it.uri == uri }
+        if (permissions.isEmpty()) {
+            result?.error("permission", "Permission Denied", null)
+        }
+        Thread().run {
+            try {
+                val document = DocumentFile.fromTreeUri(this@MainActivity, uri)!!
+                val mime = if (fileName.endsWith("jpg", ignoreCase = true) || fileName.endsWith("jpeg", ignoreCase = true)) {
+                    "image/jpg"
+                } else if (fileName.endsWith("png", ignoreCase = true)) {
+                    "image/png"
+                } else if (fileName.endsWith("png", ignoreCase = true)) {
+                    "image/gif"
+                } else {
+                    "image/jpg"
+                }
+                val file = document.createFile(mime, fileName)
+                if (file != null) {
+                    contentResolver.openOutputStream(file.uri, "w").use {
+                        it?.write(data)
+                        it?.close()
+                    }
+                    result?.success(null)
+                } else {
+                    result?.error("file", "Write File Error", null)
+                }
+            } catch (e: Exception) {
+
             }
         }
     }
@@ -46,10 +89,10 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             SAF_CODE -> {
-                val uri: Uri? = data?.data;
+                val uri: Uri? = data?.data
                 uriRegister(uri)
                 safResult?.success(uri?.toString() ?: "")
-                safResult = null;
+                safResult = null
             }
         }
     }

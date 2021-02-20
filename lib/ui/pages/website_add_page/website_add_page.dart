@@ -63,10 +63,17 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(S.of(context).add_website),
+      centerTitle: true,
+      title: Text(
+        S.of(context).add_website,
+        style: const TextStyle(fontSize: 18),
+      ),
       // 左上角的返回按钮
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          size: 18,
+        ),
         onPressed: () {
           EventBusUtil().bus.fire(EventSiteListChange());
           Navigator.pop(context);
@@ -76,7 +83,10 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
       actions: [
         // 右上角的确认按钮
         IconButton(
-          icon: const Icon(Icons.check),
+          icon: const Icon(
+            Icons.check,
+            size: 20,
+          ),
           onPressed: () {
             // 保存网站后返回并且刷新页面
             saveWebsite().then((result) {

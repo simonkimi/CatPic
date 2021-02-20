@@ -72,5 +72,11 @@
   "per_page_limit": "每页限制",
   "display_info_bar": "显示信息栏",
 
-  "download_uri": "下载路径"
+  "download_uri": "下载路径",
+  "saf_desc1": "以SAF模式保存图片, 您必须选择一个目录授权CatPic访问",
+  "saf_desc2": "步骤1: 点击右上角显示内部储存设备(部分设备不需要)",
+  "saf_desc3": "步骤2: 在侧栏中选择设备(部分设备不需要)",
+  "saf_desc4": "步骤3: 选择一个您喜欢的路径, 或者新建一个文件夹",
+  "saf_desc5": "步骤4: 点击确认授权访问此文件夹",
+  "download_manager": "下载管理"
 }

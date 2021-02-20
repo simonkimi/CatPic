@@ -57,6 +57,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: Text(S.of(context).host_manager),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),

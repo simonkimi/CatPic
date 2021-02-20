@@ -69,5 +69,11 @@
   "per_page_limit": "Per Page Limit",
   "display_info_bar": "Display Info Bar",
 
-  "download_uri": "Download Location"
+  "download_uri": "Download Location",
+  "saf_desc1": "To save pictures in saf mode, you must select a directory to authorize catpic to access",
+  "saf_desc2": "Step 1: click the top right corner to display the internal storage device (some devices are not required)",
+  "saf_desc3": "Step 2: select devices in the sidebar (some devices are not required)",
+  "saf_desc4": "Step 3: choose a path you like, or create a new folder",
+  "saf_desc5": "Step 4: click confirm to authorize access to this folder",
+  "download_manager": "Download Manager"
 }

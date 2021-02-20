@@ -694,6 +694,66 @@ class S {
       args: [],
     );
   }
+
+  /// `To save pictures in saf mode, you must select a directory to authorize catpic to access`
+  String get saf_desc1 {
+    return Intl.message(
+      'To save pictures in saf mode, you must select a directory to authorize catpic to access',
+      name: 'saf_desc1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Step 1: click the top right corner to display the internal storage device (some devices are not required)`
+  String get saf_desc2 {
+    return Intl.message(
+      'Step 1: click the top right corner to display the internal storage device (some devices are not required)',
+      name: 'saf_desc2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Step 2: select devices in the sidebar (some devices are not required)`
+  String get saf_desc3 {
+    return Intl.message(
+      'Step 2: select devices in the sidebar (some devices are not required)',
+      name: 'saf_desc3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Step 3: choose a path you like, or create a new folder`
+  String get saf_desc4 {
+    return Intl.message(
+      'Step 3: choose a path you like, or create a new folder',
+      name: 'saf_desc4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Step 4: click confirm to authorize access to this folder`
+  String get saf_desc5 {
+    return Intl.message(
+      'Step 4: click confirm to authorize access to this folder',
+      name: 'saf_desc5',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download Manager`
+  String get download_manager {
+    return Intl.message(
+      'Download Manager',
+      name: 'download_manager',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
