@@ -60,7 +60,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
       centerTitle: true,
       title: Text(S.of(context).host_manager),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
           Navigator.of(context).pop();
         },

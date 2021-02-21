@@ -114,7 +114,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
         }
       }
 
-      final rsp = await _dio.get<List<int>>(widget.imgUrl,
+      final rsp = await _dio.get<Uint8List>(widget.imgUrl,
           cancelToken: cancelToken,
           options: Options(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {
@@ -128,7 +128,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
 
       if (mounted) {
         setState(() {
-          data = Uint8List.fromList(rsp.data);
+          data = rsp.data;
           setCached(data);
           loadingType = LoadingType.DONE;
         });
