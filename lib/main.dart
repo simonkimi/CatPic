@@ -1,5 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/ui/pages/download_page/download_manager.dart';
+import 'package:catpic/ui/pages/main_page/main_page.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class CatPicApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         S.delegate
       ],
-      home: DownloadManagerPage(),
+      home: MainPage(),
       builder: BotToastInit(),
       supportedLocales: const [
         Locale('en'),

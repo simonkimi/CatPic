@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/tag_entity.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
@@ -27,8 +30,35 @@ class ImageViewPage extends StatefulWidget {
   _ImageViewPageState createState() => _ImageViewPageState();
 }
 
+mixin _ImageViewPageMixin<T extends StatefulWidget> on State<T> {
+  Future<void> download(BooruPost post) async {
+    var downloadUrl = '';
+    switch (settingStore.downloadQuality) {
+      case ImageQuality.sample:
+        downloadUrl = post.sampleURL;
+        break;
+      case ImageQuality.preview:
+        downloadUrl = post.previewURL;
+        break;
+      case ImageQuality.raw:
+      default:
+        downloadUrl = post.imgURL;
+        break;
+    }
+    final dio = mainStore.websiteEntity.getAdapter().dio;
+    final downloadPath = settingStore.downloadUri;
+    final rsp = await dio.get<Uint8List>(downloadUrl,
+        options: Options(responseType: ResponseType.bytes),
+        onReceiveProgress: (count, total) {
+      print('$count, $total');
+    });
+
+    await bridge.writeFile(rsp.data, post.md5, downloadPath);
+  }
+}
+
 class _ImageViewPageState extends State<ImageViewPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, _ImageViewPageMixin {
   Animation<double> _doubleClickAnimation;
   AnimationController _doubleClickAnimationController;
   Function _doubleClickAnimationListener;
@@ -45,22 +75,6 @@ class _ImageViewPageState extends State<ImageViewPage>
       bottomNavigationBar: buildBottomBar(),
       extendBody: true,
     );
-  }
-
-  Future<void> _writeTag() async {
-    final dao = DatabaseHelper().tagDao;
-    for (final tags in widget.booruPost.tags.values) {
-      for (final tagStr in tags) {
-        if (tagStr.isNotEmpty) {
-          await dao.addTag([
-            TagEntity(
-              website: mainStore.websiteEntity.id,
-              tag: tagStr,
-            )
-          ]);
-        }
-      }
-    }
   }
 
   Widget _sheetBuilder(BuildContext context, SheetState state) {
@@ -201,7 +215,9 @@ class _ImageViewPageState extends State<ImageViewPage>
           Expanded(
             flex: 1,
             child: FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                download(widget.booruPost);
+              },
               color: Theme.of(context).primaryColor,
               child: const Icon(
                 Icons.download_rounded,
@@ -432,5 +448,21 @@ class _ImageViewPageState extends State<ImageViewPage>
         .drive(Tween<double>(begin: begin, end: end));
     _doubleClickAnimation.addListener(_doubleClickAnimationListener);
     _doubleClickAnimationController.forward();
+  }
+
+  Future<void> _writeTag() async {
+    final dao = DatabaseHelper().tagDao;
+    for (final tags in widget.booruPost.tags.values) {
+      for (final tagStr in tags) {
+        if (tagStr.isNotEmpty) {
+          await dao.addTag([
+            TagEntity(
+              website: mainStore.websiteEntity.id,
+              tag: tagStr,
+            )
+          ]);
+        }
+      }
+    }
   }
 }
