@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/tag_entity.dart';
@@ -30,35 +31,8 @@ class ImageViewPage extends StatefulWidget {
   _ImageViewPageState createState() => _ImageViewPageState();
 }
 
-mixin _ImageViewPageMixin<T extends StatefulWidget> on State<T> {
-  Future<void> download(BooruPost post) async {
-    var downloadUrl = '';
-    switch (settingStore.downloadQuality) {
-      case ImageQuality.sample:
-        downloadUrl = post.sampleURL;
-        break;
-      case ImageQuality.preview:
-        downloadUrl = post.previewURL;
-        break;
-      case ImageQuality.raw:
-      default:
-        downloadUrl = post.imgURL;
-        break;
-    }
-    final dio = mainStore.websiteEntity.getAdapter().dio;
-    final downloadPath = settingStore.downloadUri;
-    final rsp = await dio.get<Uint8List>(downloadUrl,
-        options: Options(responseType: ResponseType.bytes),
-        onReceiveProgress: (count, total) {
-      print('$count, $total');
-    });
-
-    await bridge.writeFile(rsp.data, post.md5, downloadPath);
-  }
-}
-
 class _ImageViewPageState extends State<ImageViewPage>
-    with TickerProviderStateMixin, _ImageViewPageMixin {
+    with TickerProviderStateMixin {
   Animation<double> _doubleClickAnimation;
   AnimationController _doubleClickAnimationController;
   Function _doubleClickAnimationListener;
@@ -168,66 +142,108 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget _sheetFootBuilder(BuildContext context, SheetState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Expanded(
-            flex: 1,
-            child: OutlineButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.message_outlined,
+    return StatefulBuilder(builder: (context, setLocalState) {
+      double downloadProgress = 0;
+      bool isDownload = false;
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              flex: 1,
+              child: OutlineButton(
+                onPressed: () {},
+                child: Icon(
+                  Icons.message_outlined,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: OutlineButton(
+                onPressed: () {},
+                child: Icon(
+                  Icons.favorite_outline,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: OutlineButton(
+                onPressed: () {},
+                child: Icon(
+                  Icons.location_on_outlined,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 1,
+              child: FlatButton(
+                onPressed: () async {
+                  BotToast.showText(text: '开始下载了');
+                  if (isDownload) return;
+                  setLocalState(() {
+                    isDownload = true;
+                  });
+                  var downloadUrl = '';
+                  switch (settingStore.downloadQuality) {
+                    case ImageQuality.sample:
+                      downloadUrl = widget.booruPost.sampleURL;
+                      break;
+                    case ImageQuality.preview:
+                      downloadUrl = widget.booruPost.previewURL;
+                      break;
+                    case ImageQuality.raw:
+                    default:
+                      downloadUrl = widget.booruPost.imgURL;
+                      break;
+                  }
+                  final dio = mainStore.websiteEntity.getAdapter().dio;
+                  final downloadPath = settingStore.downloadUri;
+                  final rsp = await dio.get<Uint8List>(downloadUrl,
+                      options: Options(responseType: ResponseType.bytes),
+                      onReceiveProgress: (count, total) {
+                    setLocalState(() {
+                      downloadProgress = count / total;
+                    });
+                  });
+
+                  await bridge.writeFile(
+                      rsp.data, downloadUrl.split('/').last, downloadPath);
+                  setLocalState(() {
+                    isDownload = false;
+                  });
+                },
                 color: Theme.of(context).primaryColor,
+                child: isDownload
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          value: downloadProgress,
+                          valueColor:
+                              const AlwaysStoppedAnimation(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.download_rounded,
+                        color: Colors.white,
+                      ),
               ),
             ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            flex: 1,
-            child: OutlineButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.favorite_outline,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            flex: 1,
-            child: OutlineButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            flex: 1,
-            child: FlatButton(
-              onPressed: () {
-                download(widget.booruPost);
-              },
-              color: Theme.of(context).primaryColor,
-              child: const Icon(
-                Icons.download_rounded,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   void showAsBottomSheet() async {
