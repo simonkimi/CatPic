@@ -10,6 +10,7 @@ class DownloadEntity {
     this.websiteId,
     this.imgUrl,
     this.largerUrl,
+    this.quality
   });
 
   @PrimaryKey(autoGenerate: true)
@@ -20,4 +21,5 @@ class DownloadEntity {
   final String imgUrl;
   final String largerUrl;
   final String previewUrl;
+  int quality;
 }

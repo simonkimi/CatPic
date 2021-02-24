@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:catpic/data/database/dao/download_dao.dart';
 import 'package:catpic/data/database/dao/history_dao.dart';
 import 'package:catpic/data/database/dao/host_dao.dart';
+import 'package:catpic/data/database/entity/download_entity.dart';
 import 'package:catpic/data/database/entity/history_entity.dart';
 import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
@@ -21,6 +23,7 @@ part 'database.g.dart';
   HostEntity,
   TagEntity,
   HistoryEntity,
+  DownloadEntity
 ])
 abstract class AppDatabase extends FloorDatabase {
   WebsiteDao get websiteDao;
@@ -30,4 +33,6 @@ abstract class AppDatabase extends FloorDatabase {
   TagDao get tagDao;
 
   HistoryDao get historyDao;
+
+  DownloadDao get downloadDao;
 }

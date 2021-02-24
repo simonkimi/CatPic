@@ -1,7 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/tag_entity.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
@@ -143,9 +139,6 @@ class _ImageViewPageState extends State<ImageViewPage>
 
   Widget _sheetFootBuilder(BuildContext context, SheetState state) {
     return StatefulBuilder(builder: (context, setLocalState) {
-      double downloadProgress = 0;
-      bool isDownload = false;
-
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
@@ -188,56 +181,13 @@ class _ImageViewPageState extends State<ImageViewPage>
               flex: 1,
               child: FlatButton(
                 onPressed: () async {
-                  BotToast.showText(text: '开始下载了');
-                  if (isDownload) return;
-                  setLocalState(() {
-                    isDownload = true;
-                  });
-                  var downloadUrl = '';
-                  switch (settingStore.downloadQuality) {
-                    case ImageQuality.sample:
-                      downloadUrl = widget.booruPost.sampleURL;
-                      break;
-                    case ImageQuality.preview:
-                      downloadUrl = widget.booruPost.previewURL;
-                      break;
-                    case ImageQuality.raw:
-                    default:
-                      downloadUrl = widget.booruPost.imgURL;
-                      break;
-                  }
-                  final dio = mainStore.websiteEntity.getAdapter().dio;
-                  final downloadPath = settingStore.downloadUri;
-                  final rsp = await dio.get<Uint8List>(downloadUrl,
-                      options: Options(responseType: ResponseType.bytes),
-                      onReceiveProgress: (count, total) {
-                    setLocalState(() {
-                      downloadProgress = count / total;
-                    });
-                  });
-
-                  await bridge.writeFile(
-                      rsp.data, downloadUrl.split('/').last, downloadPath);
-                  setLocalState(() {
-                    isDownload = false;
-                  });
+                  // TODO 链接点击下载
                 },
                 color: Theme.of(context).primaryColor,
-                child: isDownload
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          value: downloadProgress,
-                          valueColor:
-                              const AlwaysStoppedAnimation(Colors.white),
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Icon(
-                        Icons.download_rounded,
-                        color: Colors.white,
-                      ),
+                child: const Icon(
+                  Icons.download_rounded,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
