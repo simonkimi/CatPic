@@ -1,8 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/tag_entity.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/ui/store/main/main_store.dart';
 import 'package:catpic/ui/store/setting/setting_store.dart';
 import 'package:dio/dio.dart';
@@ -181,7 +183,9 @@ class _ImageViewPageState extends State<ImageViewPage>
               flex: 1,
               child: FlatButton(
                 onPressed: () async {
-                  // TODO 链接点击下载
+                  downloadStore.createDownloadTask(
+                      widget.dio, widget.booruPost);
+                  BotToast.showText(text: '已经添加到下载列表');
                 },
                 color: Theme.of(context).primaryColor,
                 child: const Icon(
