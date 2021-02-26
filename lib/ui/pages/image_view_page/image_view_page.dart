@@ -183,9 +183,13 @@ class _ImageViewPageState extends State<ImageViewPage>
               flex: 1,
               child: FlatButton(
                 onPressed: () async {
-                  downloadStore.createDownloadTask(
-                      widget.dio, widget.booruPost);
-                  BotToast.showText(text: '已经添加到下载列表');
+                  try {
+                    downloadStore.createDownloadTask(
+                        widget.dio, widget.booruPost);
+                    BotToast.showText(text: '已经添加到下载列表');
+                  } on TaskExistedException {
+                    BotToast.showText(text: '任务已存在');
+                  }
                 },
                 color: Theme.of(context).primaryColor,
                 child: const Icon(

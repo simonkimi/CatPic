@@ -15,6 +15,8 @@ final downloadStore = DownloadStore();
 
 class DownloadStore = DownloadStoreBase with _$DownloadStore;
 
+class TaskExistedException implements Exception {}
+
 abstract class DownloadStoreBase with Store {
   var downloadList = ObservableList<DownloadEntity>();
 
@@ -25,6 +27,12 @@ abstract class DownloadStoreBase with Store {
 
   @action
   Future<void> createDownloadTask(Dio dio, BooruPost booruPost) async {
+    if (downloadList
+        .where((e) => e.md5 == booruPost.md5 && e.postId == booruPost.id)
+        .isNotEmpty) {
+      throw TaskExistedException();
+    }
+
     String downloadUrl = '';
     switch (settingStore.downloadQuality) {
       case ImageQuality.sample:
