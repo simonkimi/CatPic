@@ -51,7 +51,7 @@ abstract class DownloadStoreBase with Store {
         largerUrl: booruPost.sampleURL,
         previewUrl: booruPost.previewURL,
         md5: booruPost.md5,
-        progress: 0,
+        isFinish: false,
         postId: booruPost.id,
         quality: settingStore.downloadQuality,
         websiteId: mainStore.websiteEntity.id);
@@ -66,9 +66,9 @@ abstract class DownloadStoreBase with Store {
     final rsp = await dio
         .get<Uint8List>(url, options: Options(responseType: ResponseType.bytes),
             onReceiveProgress: (count, total) {
-      entity.progress = count / total;
+      // entity.progress = count / total;
     });
-    entity.progress = 1;
+    // entity.progress = 1;
     await bridge.writeFile(rsp.data, fileName, downloadPath);
   }
 }

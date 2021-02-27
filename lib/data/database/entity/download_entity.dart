@@ -11,7 +11,7 @@ class DownloadEntity {
       this.imgUrl,
       this.largerUrl,
       this.quality,
-      this.progress});
+      this.isFinish});
 
   @PrimaryKey(autoGenerate: true)
   final int id;
@@ -21,6 +21,6 @@ class DownloadEntity {
   final String imgUrl;
   final String largerUrl;
   final String previewUrl;
-  double progress;
+  final bool isFinish;
   int quality;
 }
