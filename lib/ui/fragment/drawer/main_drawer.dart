@@ -2,7 +2,7 @@ import 'package:catpic/data/database/entity/website_entity.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
-import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';

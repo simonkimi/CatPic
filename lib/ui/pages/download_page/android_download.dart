@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/bridge/android_bridge.dart';
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/ui/store/setting/setting_store.dart';
+import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 
 class AndroidDownloadPage extends StatelessWidget {

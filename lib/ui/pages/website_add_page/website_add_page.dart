@@ -7,7 +7,7 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
-import 'package:catpic/ui/store/main/main_store.dart';
+import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
