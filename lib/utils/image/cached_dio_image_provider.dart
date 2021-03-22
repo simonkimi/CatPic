@@ -10,9 +10,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
   CachedDioImageProvider({
-    @required this.cachedKey,
-    @required this.url,
-    @required this.dio,
+    required this.cachedKey,
+    required this.url,
+    required this.dio,
     this.cachedImg = false,
     this.scale = 1.0,
   });

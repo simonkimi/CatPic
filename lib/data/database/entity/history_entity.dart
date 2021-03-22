@@ -4,12 +4,12 @@ import 'package:floor/floor.dart';
 class HistoryEntity {
   HistoryEntity({
     this.id,
-    this.history,
-    this.createTime,
+    required this.history,
+    required this.createTime,
   });
 
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
   final String history;
   int createTime;
 }

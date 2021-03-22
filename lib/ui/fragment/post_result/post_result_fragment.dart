@@ -26,7 +26,7 @@ class PostResultFragment extends StatefulWidget {
   const PostResultFragment({
     Key key,
     this.searchText = '',
-    @required this.adapter,
+    required this.adapter,
   }) : super(key: key);
 
   final String searchText;

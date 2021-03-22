@@ -6,7 +6,7 @@ class TextInputTile extends StatefulWidget {
       this.title,
       this.subtitle,
       this.leading,
-      @required this.onChanged,
+      required this.onChanged,
       this.dialogTitle,
       this.hintText,
       this.labelText,

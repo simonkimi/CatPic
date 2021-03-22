@@ -14,7 +14,7 @@ class HostManagerPage extends StatefulWidget {
 }
 
 class _HostManagerPageState extends State<HostManagerPage> {
-  List<HostEntity> hostEntities;
+  List<HostEntity>? hostEntities;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 });
               },
             );
-          })?.toList() ??
+          }).toList() ??
           [],
     );
   }
@@ -142,7 +142,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
         });
   }
 
-  Future<bool> saveHost({String host, String ip}) async {
+  Future<bool> saveHost({required String host, required String ip}) async {
     if (host.isEmpty || ip.isEmpty) {
       BotToast.showText(text: S.of(context).host_empty);
       return false;

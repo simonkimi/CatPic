@@ -10,7 +10,7 @@ class SearchBar extends StatefulWidget {
     this.onSubmitted,
     this.onQueryChanged,
     this.debounceDelay,
-    @required this.candidateBuilder,
+    required this.candidateBuilder,
     this.body,
     this.onFocusChanged,
   }) : super(key: key);

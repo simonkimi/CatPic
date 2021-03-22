@@ -9,15 +9,15 @@ abstract class BooruAdapter {
   List<SupportPage> getSupportPage();
 
   Future<List<BooruPost>> postList({
-    @required String tags,
-    @required int page,
-    @required int limit,
+    required String tags,
+    required int page,
+    required int limit,
   });
 
   Future<List<BooruTag>> tagList({
-    @required String name,
-    @required int page,
-    @required int limit,
+    required String name,
+    required int page,
+    required int limit,
   });
 
   Dio get dio;

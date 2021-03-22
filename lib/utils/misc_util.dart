@@ -1,6 +1,6 @@
 import 'package:catpic/data/database/entity/website_entity.dart';
 
-String getSchemeString(int scheme) {
+String? getSchemeString(int? scheme) {
   if (scheme == null) return null;
   return scheme == WebsiteScheme.HTTP.index ? 'http' : 'https';
 }
@@ -14,5 +14,5 @@ extension StringHelper on String {
     return items.isNotEmpty ? items[0] : '';
   }
 
-  int toInt() => int.tryParse(this);
+  int toInt() => int.tryParse(this) ?? 0;
 }

@@ -13,12 +13,13 @@ Future<String> getDoH(String url) async {
     final req = await dio.get<String>(query,
         options: Options(headers: {'Accept': 'application/dns-json'}));
 
-    final dataJson = json.decode(req.data);
-
-    for (final host in dataJson['Answer']) {
-      final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
-      if (reg.hasMatch(host['data'])) {
-        return host['data'];
+    if (req.data != null) {
+      final dataJson = json.decode(req.data!);
+      for (final host in dataJson['Answer']) {
+        final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
+        if (reg.hasMatch(host['data'])) {
+          return host['data'];
+        }
       }
     }
     return '';
@@ -34,8 +35,11 @@ Future<Uint8List> getFavicon(WebsiteEntity entity) async {
     final req = await dio.get<Uint8List>('favicon.ico',
         options: Options(responseType: ResponseType.bytes));
     print('下载完成, 准备解码');
-    MemoryImage(req.data);
-    return req.data;
+    if (req.data != null) {
+      MemoryImage(req.data!);
+      return req.data!;
+    }
+    throw Exception();
   } catch (e) {
     print('下载Favicon失败: $e');
     return Uint8List.fromList([]);

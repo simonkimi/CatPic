@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class LargeCardModel {
   LargeCardModel({
-    @required this.title,
-    @required this.subTitle,
-    @required this.stars,
-    @required this.pages,
-    @required this.tag,
-    @required this.subscript,
-    @required this.tags,
+    required this.title,
+    required this.subTitle,
+    required this.stars,
+    required this.pages,
+    required this.tag,
+    required this.subscript,
+    required this.tags,
   });
 
   final String title;

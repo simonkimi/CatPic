@@ -16,7 +16,7 @@ class GelbooruAdapter implements BooruAdapter {
 
   final WebsiteEntity websiteEntity;
 
-  GelbooruClient client;
+  late GelbooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
@@ -24,14 +24,16 @@ class GelbooruAdapter implements BooruAdapter {
   }
 
   @override
-  Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
+  Future<List<BooruPost>> postList(
+      {required String tags, required int page, required int limit}) async {
     final str = await client.postsList(tags: tags, limit: limit, pid: page);
 
     return await compute(GelbooruPostParser.parse, str);
   }
 
   @override
-  Future<List<BooruTag>> tagList({String name, int page, int limit}) async {
+  Future<List<BooruTag>> tagList(
+      {required String name, required int page, required int limit}) async {
     final str = await client.tagsList(limit: limit, names: name);
     return await compute(GelbooruTagParse.parse, str);
   }

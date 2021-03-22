@@ -10,7 +10,7 @@ class GalleryImgParser {
   GalleryImgModel parse() {
     final document = parser.parse(html).body;
 
-    final meta = parseWidthHeightSize(document);
+    final meta = parseWidthHeightSize(document!);
     final width = int.parse(meta[0]);
     final height = int.parse(meta[1]);
     final imgSize = meta[2];
@@ -35,17 +35,23 @@ class GalleryImgParser {
   }
 
   List<String> parseWidthHeightSize(Element element) {
-    final metaElement = element.querySelector('#i2').children[1];
-    final re = RegExp(r'::\s(\d+)\sx\s(\d+)\s::\s([\d.]+\s.+)');
-    final match = re.firstMatch(metaElement.text);
-    return [match[1], match[2], match[3]];
+    final metaElement = element.querySelector('#i2')?.children[1];
+    if (metaElement != null) {
+      final re = RegExp(r'::\s(\d+)\sx\s(\d+)\s::\s([\d.]+\s.+)');
+      final match = re.firstMatch(metaElement.text)!;
+      return [match[1]!, match[2]!, match[3]!];
+    }
+    return [];
   }
 
   List<String> parseRawImg(Element element) {
     final rawElement = element.querySelector('#i7 > a');
-    final url = rawElement.attributes['href'];
-    final re = RegExp(r'(\d+)\sx\s(\d+)\s([\d.]+\s.+)\s');
-    final match = re.firstMatch(rawElement.text);
-    return [match[1], match[2], match[3], url];
+    if (rawElement != null) {
+      final url = rawElement.attributes['href'];
+      final re = RegExp(r'(\d+)\sx\s(\d+)\s([\d.]+\s.+)\s');
+      final match = re.firstMatch(rawElement.text)!;
+      return [match[1]!, match[2]!, match[3]!, url!];
+    }
+    return [];
   }
 }

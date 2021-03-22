@@ -1,13 +1,13 @@
 class GalleryImgModel {
   GalleryImgModel({
-    this.imgUrl,
-    this.imgSize,
-    this.rawImgUrl,
-    this.rawImgSize,
-    this.width,
-    this.height,
-    this.rawWidth,
-    this.rawHeight,
+    required this.imgUrl,
+    required this.imgSize,
+    required this.rawImgUrl,
+    required this.rawImgSize,
+    required this.width,
+    required this.height,
+    required this.rawWidth,
+    required this.rawHeight,
   });
 
   final String imgUrl;

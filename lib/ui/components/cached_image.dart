@@ -24,10 +24,10 @@ class CachedDioImage extends StatefulWidget {
     this.cachedKey,
     this.duration,
     this.useCached = true,
-    @required this.imgUrl,
-    @required this.imageBuilder,
-    @required this.loadingBuilder,
-    @required this.errorBuilder,
+    required this.imgUrl,
+    required this.imageBuilder,
+    required this.loadingBuilder,
+    required this.errorBuilder,
   }) : super(key: key);
 
   final ImageWidgetBuilder imageBuilder;

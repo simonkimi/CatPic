@@ -13,7 +13,7 @@ class DatabaseHelper {
 
   static final DatabaseHelper _databaseHelper = DatabaseHelper._internal();
 
-  AppDatabase _database;
+  late AppDatabase _database;
 
   Future<void> init() async {
     _database =

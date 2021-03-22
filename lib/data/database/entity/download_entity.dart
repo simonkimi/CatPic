@@ -2,19 +2,20 @@ import 'package:floor/floor.dart';
 
 @Entity(tableName: 'DownloadEntity')
 class DownloadEntity {
-  DownloadEntity(
-      {this.id,
-      this.postId,
-      this.previewUrl,
-      this.md5,
-      this.websiteId,
-      this.imgUrl,
-      this.largerUrl,
-      this.quality,
-      this.isFinish});
+  DownloadEntity({
+    this.id,
+    required this.postId,
+    required this.previewUrl,
+    required this.md5,
+    required this.websiteId,
+    required this.imgUrl,
+    required this.largerUrl,
+    required this.quality,
+    required this.isFinish,
+  });
 
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
   final String postId;
   final String md5;
   final int websiteId;

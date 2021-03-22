@@ -9,53 +9,46 @@ class MoebooruClient extends BaseClient {
   /// [limit] How many posts you want to retrieve. There is a hard limit of 100
   /// [page] The page number.
   /// [tags] The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.
-  Future<String> postsList({int limit, int page, String tags}) async {
+  Future<String> postsList(
+      {required int limit, required int page, required String tags}) async {
     final uri = Uri(path: 'post.json', queryParameters: {
-      'limit': (limit ?? 100).toString(),
-      'page': page?.toString() ?? '',
-      'tags': tags ?? ''
+      'limit': limit.toString(),
+      'page': page.toString(),
+      'tags': tags
     });
 
-    return (await dio.getUri<String>(uri)).data;
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   /// 获取tag详细信息
   /// [limit] How many tags to retrieve. Setting this to 0 will return every tag.
   /// [name] The exact name of the tag.
   /// [page] The page number.
-  Future<String> tagsList({int limit, String name, int page}) async {
+  Future<String> tagsList(
+      {required int limit, required String name, required int page}) async {
     final uri = Uri(path: 'tag.json', queryParameters: {
-      'name': name ?? '',
-      'limit': (limit ?? 100).toString(),
+      'name': name,
+      'limit': limit.toString(),
     });
 
-    return (await dio.getUri<String>(uri)).data;
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   /// 获取评论列表
   /// [id] The id number of the comment to retrieve.
   Future<String> commentsList(String id) async {
-    final uri = Uri(
-      path: 'comment/show.json',
-      queryParameters: {
-        'id': id
-      }
-    );
-    return (await dio.getUri<String>(uri)).data;
+    final uri = Uri(path: 'comment/show.json', queryParameters: {'id': id});
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   /// 获取图集列表, 加载20个
   /// [query] The title.
   /// [page] The page.
-  Future<String> poolList({String query, int page}) async {
+  Future<String> poolList({required String query, required int page}) async {
     final uri = Uri(
         path: 'pool.json',
-        queryParameters: {
-          'query': query,
-          'page': page.toString()
-        }
-    );
-    return (await dio.getUri<String>(uri)).data;
+        queryParameters: {'query': query, 'page': page.toString()});
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   /// 获取图集详细内容
@@ -64,25 +57,17 @@ class MoebooruClient extends BaseClient {
   Future<String> postShow(int id, int page) async {
     final uri = Uri(
         path: 'pool/show.json',
-        queryParameters: {
-          'id': id.toString(),
-          'page': page.toString()
-        }
-    );
+        queryParameters: {'id': id.toString(), 'page': page.toString()});
     return (await dio.getUri(uri)).data;
   }
 
   /// 画师列表
   /// [name] The name (or a fragment of the name) of the artist.
   /// [id] The page number.
-  Future<String> artistList({String name, int page}) async {
+  Future<String> artistList({required String name, required int page}) async {
     final uri = Uri(
         path: 'artist.json',
-        queryParameters: {
-          'name': name,
-          'page': page.toString()
-        }
-    );
+        queryParameters: {'name': name, 'page': page.toString()});
     return (await dio.getUri(uri)).data;
   }
 }

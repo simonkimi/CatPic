@@ -25,7 +25,7 @@ class DioBuilder {
       dio.interceptors.add(HostInterceptor(
         dio: dio,
         directLink: websiteEntity.directLink,
-        websiteId: websiteEntity.id,
+        websiteId: websiteEntity.id!,
       ));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {
@@ -41,5 +41,5 @@ abstract class BaseClient {
     dio = DioBuilder.build(websiteEntity);
   }
 
-  Dio dio;
+  late Dio dio;
 }

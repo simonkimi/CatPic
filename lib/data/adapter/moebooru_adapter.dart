@@ -16,7 +16,7 @@ class MoebooruAdapter implements BooruAdapter {
 
   final WebsiteEntity websiteEntity;
 
-  MoebooruClient client;
+  late MoebooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
@@ -24,13 +24,15 @@ class MoebooruAdapter implements BooruAdapter {
   }
 
   @override
-  Future<List<BooruPost>> postList({String tags, int page, int limit}) async {
+  Future<List<BooruPost>> postList(
+      {required String tags, required int page, required int limit}) async {
     final str = await client.postsList(tags: tags, limit: limit, page: page);
     return await compute(MoebooruPostParse.parse, str);
   }
 
   @override
-  Future<List<BooruTag>> tagList({String name, int page, int limit}) async {
+  Future<List<BooruTag>> tagList(
+      {required String name, required int page, required int limit}) async {
     final str = await client.tagsList(name: name, page: page, limit: limit);
     return await compute(MoebooruTagParse.parse, str);
   }

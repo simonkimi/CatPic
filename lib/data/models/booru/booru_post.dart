@@ -12,30 +12,28 @@ String getRatingText(BuildContext context, PostRating rating) {
     case PostRating.QUESTIONABLE:
       return S.of(context).questionable;
   }
-  return '';
 }
 
 class BooruPost {
-  BooruPost({
-    this.id,
-    this.md5,
-    this.creatorId,
-    this.imgURL,
-    this.previewURL,
-    this.sampleURL,
-    this.width,
-    this.height,
-    this.sampleWidth,
-    this.sampleHeight,
-    this.previewWidth,
-    this.previewHeight,
-    this.rating,
-    this.status,
-    this.tags,
-    this.source,
-    this.createTime,
-    this.score
-  });
+  BooruPost(
+      {required this.id,
+      required this.md5,
+      required this.creatorId,
+      required this.imgURL,
+      required this.previewURL,
+      required this.sampleURL,
+      required this.width,
+      required this.height,
+      required this.sampleWidth,
+      required this.sampleHeight,
+      required this.previewWidth,
+      required this.previewHeight,
+      required this.rating,
+      required this.status,
+      required this.tags,
+      required this.source,
+      required this.createTime,
+      required this.score});
 
   final String id;
   final String creatorId;

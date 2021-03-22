@@ -12,8 +12,8 @@ class PostResultStore = PostResultStoreBase with _$PostResultStore;
 
 abstract class PostResultStoreBase with Store implements PostViewInterface {
   PostResultStoreBase({
-    @required this.searchText,
-    @required this.adapter,
+    required this.searchText,
+    required this.adapter,
   });
 
   final BooruAdapter adapter;

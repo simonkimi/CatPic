@@ -20,18 +20,18 @@ import 'package:flutter/material.dart';
 class WebsiteEntity {
   WebsiteEntity({
     this.id,
-    @required this.name,
-    @required this.host,
-    @required this.scheme,
-    @required this.type,
-    @required this.useDoH,
-    @required this.favicon,
-    @required this.directLink,
+    required this.name,
+    required this.host,
+    required this.scheme,
+    required this.type,
+    required this.useDoH,
+    required this.favicon,
+    required this.directLink,
     this.cookies,
   });
 
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
 
   final String name;
   final String host;
@@ -41,7 +41,7 @@ class WebsiteEntity {
   final bool useDoH;
   final bool directLink;
 
-  final String cookies;
+  final String? cookies;
 
   Uint8List favicon;
 

@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class HostEntity {
   HostEntity({
     this.id,
-    @required this.host,
-    @required this.ip,
-    @required this.websiteId,
+    required this.host,
+    required this.ip,
+    required this.websiteId,
   });
 
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
 
   final String host;
   final String ip;

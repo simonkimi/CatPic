@@ -40,17 +40,15 @@ abstract class SettingStoreBase with Store {
 
   @action
   Future<void> init() async {
-    useCardWidget = SpUtil.getBool('useCardWidget', defValue: true);
-    showCardDetail = SpUtil.getBool('showCardDetail', defValue: true);
-    eachPageItem = SpUtil.getInt('eachPageItem', defValue: 50);
-    previewRowNum = SpUtil.getInt('previewRowNum', defValue: 3);
-    downloadUri = SpUtil.getString('downloadUri', defValue: '');
-    previewQuality =
-        SpUtil.getInt('previewQuality', defValue: ImageQuality.preview);
-    displayQuality =
-        SpUtil.getInt('displayQuality', defValue: ImageQuality.sample);
-    downloadQuality =
-        SpUtil.getInt('downloadQuality', defValue: ImageQuality.raw);
+    final sp = SpUtil.getSp()!;
+    useCardWidget = sp.getBool('useCardWidget') ?? true;
+    showCardDetail = sp.getBool('showCardDetail') ?? true;
+    eachPageItem = sp.getInt('eachPageItem') ?? 50;
+    previewRowNum = sp.getInt('previewRowNum') ?? 3;
+    downloadUri = sp.getString('downloadUri') ?? '';
+    previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
+    displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
+    downloadQuality = sp.getInt('downloadQuality') ?? ImageQuality.raw;
   }
 
   @action

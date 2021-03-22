@@ -16,9 +16,9 @@ import 'package:sliding_sheet/sliding_sheet.dart';
 class ImageViewPage extends StatefulWidget {
   const ImageViewPage(
       {Key key,
-      @required this.booruPost,
-      @required this.heroTag,
-      @required this.dio})
+      required this.booruPost,
+      required this.heroTag,
+      required this.dio})
       : super(key: key);
 
   final BooruPost booruPost;

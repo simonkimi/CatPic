@@ -2,13 +2,10 @@ import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/database/entity/host_entity.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 class HostInterceptor extends Interceptor {
   HostInterceptor(
-      {@required this.directLink,
-      @required this.dio,
-      @required this.websiteId});
+      {required this.directLink, required this.dio, required this.websiteId});
 
   final Dio dio;
   final bool directLink;
@@ -17,23 +14,25 @@ class HostInterceptor extends Interceptor {
   List<HostEntity> hostList = [];
 
   @override
-  Future onRequest(RequestOptions options) async {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     final uri = options.uri;
     if (hostList.isEmpty) {
       await updateHostLink();
     }
-    var hostTarget =
-        hostList.firstWhere((e) => e.host == uri.host, orElse: () => null)?.ip;
-    hostTarget ??= await getHost(uri.host);
+    final hostTargetList = hostList.where((e) => e.host == uri.host);
+    if (hostTargetList.isNotEmpty) {
+      final hostTarget = await getHost(uri.host);
 
-    if (hostTarget.isNotEmpty) {
-      options.path = uri.replace(host: hostTarget).toString();
-      if (directLink) {
-        options.headers['Host'] = uri.host;
+      if (hostTarget.isNotEmpty) {
+        options.path = uri.replace(host: hostTarget).toString();
+        if (directLink) {
+          options.headers['Host'] = uri.host;
+        }
       }
     }
 
-    return options;
+    return handler.next(options);
   }
 
   Future<void> updateHostLink() async {

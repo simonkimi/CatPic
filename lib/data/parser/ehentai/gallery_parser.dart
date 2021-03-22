@@ -8,10 +8,14 @@ class GalleryParser {
   final String galleryHtml;
 
   GalleryModel parse() {
-    final document = parser.parse(galleryHtml).body;
+    final document = parser.parse(galleryHtml).body!;
     final tags = parseTags(document);
-    final favcount = int.parse(
-        document.querySelector('#favcount').text.replaceAll(' times', ''));
+    final favcount = int.tryParse(document
+                .querySelector('#favcount')
+                ?.text
+                .replaceAll(' times', '') ??
+            '') ??
+        0;
     final fileSize = document
         .querySelectorAll('#gdd > table > tbody > tr')[4]
         .children[1]
@@ -26,13 +30,16 @@ class GalleryParser {
         fileSize: fileSize,
         previewImages: previewImages,
         maxPageIndex: maxPageIndex,
-        comments: comments);
+        comments: comments,
+        // TODO parent, visible
+        parent: '',
+        visible: '');
   }
 
   List<TagModels> parseTags(Element e) {
     final tagElements = e.querySelectorAll('#taglist > table > tbody > tr');
     return tagElements.map((e) {
-      var title = e.children[0]?.text ?? '';
+      var title = e.children[0].text;
       final tags = e.children[1].children.map((e) => e.text).toList();
       title = title.substring(0, title.length - 1);
       return TagModels(key: title, value: tags);
@@ -46,21 +53,22 @@ class GalleryParser {
       final style = e.children[0].attributes['style'];
       final re = RegExp(
           r'height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
-      final data = re.firstMatch(style);
+      final data = re.firstMatch(style!)!;
 
-      final aElement = e.querySelector('a');
+      final aElement = e.querySelector('a')!;
       return PreviewImage(
-        height: int.parse(data[1]),
-        image: data[2],
-        positioning: int.parse(data[3]),
-        target: aElement.attributes['href'],
+        height: int.tryParse(data[1] ?? '') ?? 0,
+        image: data[2]!,
+        positioning: int.parse(data[3]!),
+        target: aElement.attributes['href']!,
       );
     }).toList();
   }
 
   /// 解析最大面数
   int parseMaxPage(Element element) {
-    final bottomBarElements = element.querySelectorAll('.ptb > tbody > tr > td');
+    final bottomBarElements =
+        element.querySelectorAll('.ptb > tbody > tr > td');
     final ele = bottomBarElements[bottomBarElements.length - 2];
     return int.parse(ele.text);
   }
@@ -69,16 +77,16 @@ class GalleryParser {
     final comments = element.querySelectorAll('.c1');
 
     return comments.map((e) {
-      final uploader = e.querySelector('.c3 > a').text ?? '';
+      final uploader = e.querySelector('.c3 > a')?.text ?? '';
       final re = RegExp(r'on\s([\w\s,:]+)\sby');
-      final uploadTimeText = e.querySelector('.c3').text;
-      final match = re.firstMatch(uploadTimeText);
+      final uploadTimeText = e.querySelector('.c3')!.text;
+      final match = re.firstMatch(uploadTimeText)!;
       var comment =
-          e.querySelector('.c6')?.innerHtml?.replaceAll('<br>', '\n') ?? '';
+          e.querySelector('.c6')?.innerHtml.replaceAll('<br>', '\n') ?? '';
       final commentDocument = parser.parse(comment);
-      comment = commentDocument.body.text;
+      comment = commentDocument.body!.text;
       return CommentModel(
-          commentTime: match[1], username: uploader, comment: comment);
+          commentTime: match[1]!, username: uploader, comment: comment);
     }).toList();
   }
 }

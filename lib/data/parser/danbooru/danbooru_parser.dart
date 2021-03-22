@@ -9,42 +9,39 @@ class DanbooruParse {
         id: e['id'],
         creatorId: e['uploader_id'],
         md5: e['md5'],
-
         previewURL: e['preview_file_url'],
         sampleURL: e['large_file_url'],
         imgURL: e['file_url'],
-
         width: e['image_width'],
         height: e['image_height'],
         sampleWidth: e['image_width'],
         sampleHeight: e['image_height'],
         previewWidth: e['image_width'],
         previewHeight: e['image_height'],
-
         rating: _getRating(e['rating']),
         status: e['is_status_locked'] ? 'active' : 'inactive',
         tags: _parseTag(e),
-        source: e['source']
+        source: e['source'],
+        // TODO createTime score未解析
+        createTime: '',
+        score: '',
       );
     }).toList();
   }
 
-  static  PostRating _getRating(String name) {
+  static PostRating _getRating(String name) {
     switch (name) {
       case 's':
         return PostRating.SAFE;
-        break;
       case 'e':
         return PostRating.EXPLICIT;
-        break;
       case 'q':
         return PostRating.QUESTIONABLE;
-        break;
     }
     return PostRating.QUESTIONABLE;
   }
 
-  static  Map<String, List<String>> _parseTag(Map<String, dynamic> json) {
+  static Map<String, List<String>> _parseTag(Map<String, dynamic> json) {
     final result = <String, List<String>>{};
     json.forEach((key, value) {
       if (key.startsWith('tag_string_')) {

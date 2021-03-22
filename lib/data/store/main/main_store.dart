@@ -20,10 +20,10 @@ abstract class MainStoreBase with Store {
   }
 
   @observable
-  List<WebsiteEntity> websiteList = [];
+  List<WebsiteEntity> websiteList = <WebsiteEntity>[];
 
   @observable
-  WebsiteEntity websiteEntity;
+  WebsiteEntity? websiteEntity;
 
   @action
   Future<void> init() async {
@@ -31,15 +31,18 @@ abstract class MainStoreBase with Store {
     final websiteDao = DatabaseHelper().websiteDao;
     websiteList = await websiteDao.getAll();
     final lastWebsite = SpUtil.getInt('last_website') ?? -1;
-    websiteEntity =
-        websiteList.firstWhere((v) => v.id == lastWebsite, orElse: () => null);
-    if (websiteEntity == null && websiteList.isNotEmpty) {
-      setWebsite(websiteList[0]);
+
+    final availList = websiteList.where((v) => v.id == lastWebsite);
+    if (availList.isNotEmpty) {
+      websiteEntity = availList.toList()[0];
+      if (websiteEntity == null && websiteList.isNotEmpty) {
+        setWebsite(websiteList[0]);
+      }
     }
     // 尝试获取图标
     websiteList.where((e) => e.favicon.isEmpty).forEach((element) {
       getFavicon(element).then((favicon) {
-        setWebsiteFavicon(element.id, favicon);
+        setWebsiteFavicon(element.id!, favicon);
       });
     });
   }
@@ -50,7 +53,7 @@ abstract class MainStoreBase with Store {
     websiteList = await websiteDao.getAll();
     // 判断当前网站是否被删
     if (websiteEntity != null) {
-      if (websiteList.where((e) => e.id == websiteEntity.id ?? false).isEmpty) {
+      if (websiteList.where((e) => e.id == websiteEntity!.id).isEmpty) {
         await setWebsite(websiteList.isNotEmpty ? websiteList[0] : null);
         return;
       }
@@ -62,7 +65,7 @@ abstract class MainStoreBase with Store {
   }
 
   @action
-  Future<void> setWebsite(WebsiteEntity entity) async {
+  Future<void> setWebsite(WebsiteEntity? entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
       EventBusUtil().bus.fire(EventSiteChange());
@@ -71,7 +74,7 @@ abstract class MainStoreBase with Store {
   }
 
   @action
-  Future<void> setWebsiteWithoutNotification(WebsiteEntity entity) async {
+  Future<void> setWebsiteWithoutNotification(WebsiteEntity? entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
       SpUtil.putInt('last_website', websiteEntity?.id ?? -1);

@@ -1,13 +1,14 @@
 class GalleryModel {
-  GalleryModel(
-      {this.maxPageIndex,
-      this.parent,
-      this.visible,
-      this.fileSize,
-      this.favorited,
-      this.tags,
-      this.previewImages,
-      this.comments});
+  GalleryModel({
+    required this.maxPageIndex,
+    required this.parent,
+    required this.visible,
+    required this.fileSize,
+    required this.favorited,
+    required this.tags,
+    required this.previewImages,
+    required this.comments,
+  });
 
   final String parent;
   final String visible;
@@ -20,7 +21,7 @@ class GalleryModel {
 }
 
 class TagModels {
-  TagModels({this.key, this.value});
+  TagModels({required this.key, required this.value});
 
   final String key;
   final List<String> value;
@@ -32,7 +33,11 @@ class TagModels {
 }
 
 class PreviewImage {
-  PreviewImage({this.height, this.image, this.positioning, this.target});
+  PreviewImage(
+      {required this.height,
+      required this.image,
+      required this.positioning,
+      required this.target});
 
   final int height;
   final String image;
@@ -47,9 +52,9 @@ class PreviewImage {
 
 class CommentModel {
   CommentModel({
-    this.username,
-    this.comment,
-    this.commentTime,
+    required this.username,
+    required this.comment,
+    required this.commentTime,
   });
 
   final String username;

@@ -5,11 +5,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class WebsiteItem extends StatelessWidget {
   const WebsiteItem(
       {Key key,
-      @required this.title,
-      @required this.subtitle,
-      @required this.leadingImage,
-      @required this.onSettingPress,
-      @required this.onDeletePress})
+      required this.title,
+      required this.subtitle,
+      required this.leadingImage,
+      required this.onSettingPress,
+      required this.onDeletePress})
       : super(key: key);
   final Widget title;
   final Widget subtitle;

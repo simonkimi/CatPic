@@ -56,8 +56,8 @@ class PreviewParser {
   List<String> parseToken(String targetUrl) {
     if (targetUrl.isNotEmpty) {
       final re = RegExp(r'/g/(\w+)/(\w+)/');
-      final match = re.firstMatch(targetUrl);
-      return [match[1], match[2]];
+      final match = re.firstMatch(targetUrl)!;
+      return [match[1]!, match[2]!];
     }
     return ['', ''];
   }
@@ -76,10 +76,10 @@ class PreviewParser {
     final starElement = e.querySelector('.ir');
     if (starElement != null) {
       final re = RegExp(r':-?(\d+)px\s-?(\d+)px');
-      final style = starElement.attributes['style'];
+      final style = starElement.attributes['style']!;
       final starData = re.firstMatch(style);
-      final num1 = int.parse(starData[1]);
-      final num2 = int.parse(starData[2]);
+      final num1 = int.tryParse(starData?[1] ?? '') ?? 0;
+      final num2 = int.tryParse(starData?[2] ?? '') ?? 1;
       return 5 - (num1 / 16) - (num2 > 10 ? 0.5 : 0);
     }
     return 0;
@@ -91,10 +91,10 @@ class PreviewParser {
       final tag = e.text;
       var color = 0;
       if (e.attributes.containsKey('style')) {
-        final style = e.attributes['style'];
+        final style = e.attributes['style']!;
         final reg = RegExp(r',#(\w{6})\)');
         final match = reg.firstMatch(style);
-        color = int.parse(match[1], radix: 16);
+        color = int.parse(match![1]!, radix: 16);
       }
       return PreviewTag(tag: tag, color: color);
     }).toList();
@@ -105,7 +105,7 @@ class PreviewParser {
     final tagElement = element.querySelectorAll('.gt');
     for (final e in tagElement) {
       if (e.attributes['title']?.contains('language') ?? false) {
-        return e.attributes['title']?.substring('language:'.length);
+        return e.attributes['title']?.substring('language:'.length) ?? '';
       }
     }
     return '';
@@ -117,8 +117,8 @@ class PreviewParser {
     if (imgElement != null) {
       final styleText = imgElement.attributes['style'];
       final re = RegExp(r'height:(\d+?)px;width:(\d+?)px');
-      final reM = re.firstMatch(styleText);
-      return [int.parse(reM[1]), int.parse(reM[2])];
+      final reM = re.firstMatch(styleText!)!;
+      return [int.parse(reM[1]!), int.parse(reM[2]!)];
     }
     return [0, 0];
   }

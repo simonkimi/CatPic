@@ -1,20 +1,20 @@
 class PreViewModel {
-  PreViewModel({
-    this.gid,
-    this.gtoken,
-    this.title,
-    this.tag,
-    this.uploader,
-    this.uploadTime,
-    this.pages,
-    this.stars,
-    this.targetUrl,
-    this.previewImg,
-    this.language,
-    this.keyTags,
-    this.previewHeight,
-    this.previewWidth,
-  });
+  PreViewModel(
+      {required this.gid,
+      required this.gtoken,
+      required this.title,
+      required this.tag,
+      required this.uploader,
+      required this.uploadTime,
+      required this.pages,
+      required this.stars,
+      required this.targetUrl,
+      required this.previewImg,
+      required this.language,
+      required this.keyTags,
+      required this.previewHeight,
+      required this.previewWidth,
+      this.titleJpn});
 
   final String title;
   final String tag;
@@ -34,7 +34,7 @@ class PreViewModel {
   final String gid;
   final String gtoken;
 
-  String titleJpn;
+  String? titleJpn;
 
   @override
   String toString() {
@@ -43,7 +43,7 @@ class PreViewModel {
 }
 
 class PreviewTag {
-  PreviewTag({this.tag, this.color});
+  PreviewTag({required this.tag, required this.color});
 
   final String tag;
   final int color;

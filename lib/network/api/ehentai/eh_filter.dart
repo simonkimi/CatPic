@@ -1,15 +1,16 @@
 class EhFilter {
-  static int tagFilter(
-      {bool misc,
-      bool doujinsh,
-      bool manga,
-      bool artistCG,
-      bool gameCG,
-      bool imageSet,
-      bool cosplay,
-      bool asianPorn,
-      bool nonh,
-      bool western}) {
+  static int tagFilter({
+    required bool misc,
+    required bool doujinsh,
+    required bool manga,
+    required bool artistCG,
+    required bool gameCG,
+    required bool imageSet,
+    required bool cosplay,
+    required bool asianPorn,
+    required bool nonh,
+    required bool western,
+  }) {
     var filter = 0;
     filter += !misc ? 1 << 0 : 0;
     filter += !doujinsh ? 1 << 1 : 0;
@@ -31,12 +32,12 @@ class EhFilter {
   /// [endPage] 结束页面
   /// [minRating] 最低星级
   static Map<String, dynamic> buildAdvanceFilter({
-    String searchText,
-    int excludeTag,
-    int startPage,
-    int endPage,
-    int minRating,
-    int page,
+    required String searchText,
+    required int excludeTag,
+    required int startPage,
+    required int endPage,
+    required int minRating,
+    required int page,
   }) {
     return {
       'advsearch': 1,

@@ -3,10 +3,9 @@ import 'package:floor/floor.dart';
 @Entity(tableName: 'TagEntity')
 class TagEntity {
   TagEntity({
-    this.website,
-    this.tag,
+    required this.website,
+    required this.tag,
   });
-
 
   @PrimaryKey()
   final String tag;

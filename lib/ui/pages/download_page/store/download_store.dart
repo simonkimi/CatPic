@@ -54,7 +54,7 @@ abstract class DownloadStoreBase with Store {
         isFinish: false,
         postId: booruPost.id,
         quality: settingStore.downloadQuality,
-        websiteId: mainStore.websiteEntity.id);
+        websiteId: mainStore.websiteEntity.id!);
     downloadList.add(entity);
     await downloadFile(dio, downloadUrl, downloadUrl.split('/').last, entity);
   }
@@ -69,6 +69,6 @@ abstract class DownloadStoreBase with Store {
       // entity.progress = count / total;
     });
     // entity.progress = 1;
-    await bridge.writeFile(rsp.data, fileName, downloadPath);
+    await bridge.writeFile(rsp.data!, fileName, downloadPath);
   }
 }
