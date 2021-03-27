@@ -1,4 +1,4 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
@@ -48,31 +48,37 @@ class _MainDrawerState extends State<MainDrawer> {
   List<Widget> buildWebsiteList() {
     return [
       Expanded(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: mainStore.websiteList.map((element) {
-            final scheme = getSchemeString(element.scheme);
-            ImageProvider favicon;
-            if (element.favicon.isNotEmpty) {
-              favicon = MemoryImage(element.favicon);
-            }
-            return Builder(
-                key: Key('site${element.name}'),
-                builder: (context) => ListTile(
-                      title: Text(element.name),
-                      subtitle: Text('$scheme://${element.host}/'),
-                      selected:
-                          mainStore.websiteEntity?.id == element.id ?? false,
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        backgroundImage: favicon,
-                      ),
-                      onTap: () {
-                        pushNewWebsite(context, element);
-                      },
-                    ));
-          }).toList(),
-        ),
+        child: StreamBuilder<List<WebsiteTableData>>(
+            stream: DatabaseHelper().websiteDao.getAllStream(),
+            initialData: const [],
+            builder: (context, snapshot) {
+              return ListView(
+                padding: EdgeInsets.zero,
+                children: snapshot.data?.map((element) {
+                      final scheme = getSchemeString(element.scheme);
+                      ImageProvider? favicon;
+                      if (element.favicon.isNotEmpty) {
+                        favicon = MemoryImage(element.favicon);
+                      }
+                      return Builder(
+                          key: Key('site${element.name}'),
+                          builder: (context) => ListTile(
+                                title: Text(element.name),
+                                subtitle: Text('$scheme://${element.host}/'),
+                                selected:
+                                    mainStore.websiteEntity?.id == element.id,
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: favicon,
+                                ),
+                                onTap: () {
+                                  pushNewWebsite(context, element);
+                                },
+                              ));
+                    }).toList() ??
+                    [],
+              );
+            }),
       ),
       const Divider(),
       ListTile(
@@ -137,12 +143,12 @@ class _MainDrawerState extends State<MainDrawer> {
 
   Widget buildUserAccountsDrawerHeader() {
     var subTitle = S.of(context).no_website;
-    ImageProvider favicon;
+    ImageProvider? favicon;
     if (mainStore.websiteEntity != null) {
-      final scheme = getSchemeString(mainStore.websiteEntity.scheme);
-      subTitle = '$scheme://${mainStore.websiteEntity.host}/';
-      if (mainStore.websiteEntity.favicon.isNotEmpty) {
-        favicon = MemoryImage(mainStore.websiteEntity.favicon);
+      final scheme = getSchemeString(mainStore.websiteEntity!.scheme);
+      subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
+      if (mainStore.websiteEntity!.favicon.isNotEmpty) {
+        favicon = MemoryImage(mainStore.websiteEntity!.favicon);
       }
     }
     return UserAccountsDrawerHeader(
@@ -176,12 +182,12 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   Future<void> pushNewWebsite(
-      BuildContext context, WebsiteEntity entity) async {
+      BuildContext context, WebsiteTableData entity) async {
     await mainStore.setWebsiteWithoutNotification(entity);
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => SearchPage()),
-      (route) => route == null,
+      (route) => false,
     );
   }
 

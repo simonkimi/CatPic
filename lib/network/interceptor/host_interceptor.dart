@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:dio/dio.dart';
+import 'package:moor/moor.dart';
 
 class HostInterceptor extends Interceptor {
   HostInterceptor(
@@ -46,14 +47,13 @@ class HostInterceptor extends Interceptor {
     final ip = await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
-      final entity =
-          HostTableData(id: 0, host: host, ip: ip, websiteId: websiteId);
+      final entity = HostTableCompanion(host: Value(host), ip: Value(ip), websiteId: Value(websiteId));
       await hostDao.insert(entity);
-      hostList.add(entity);
-      dio.lock();
+      hostList = await hostDao.getAll();
+      dio.unlock();
       return ip;
     } else {
-      dio.lock();
+      dio.unlock();
       return '';
     }
   }

@@ -10,7 +10,7 @@ class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
 
   Future<List<HostTableData>> getAll() => select(hostTable).get();
 
-  Future<int> insert(HostTableData entity) => into(hostTable).insert(entity);
+  Future<int> insert(HostTableCompanion entity) => into(hostTable).insert(entity);
 
   Future<int> remove(HostTableData entity) => delete(hostTable).delete(entity);
 
