@@ -1,7 +1,6 @@
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 enum SupportPage { POSTS, POOLS, ARTISTS, TAGS }
 

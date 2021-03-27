@@ -15,7 +15,7 @@ class GelbooruAdapter implements BooruAdapter {
     client = GelbooruClient(websiteEntity);
   }
 
-  final WebsiteEntity websiteEntity;
+  final WebsiteTableData websiteEntity;
 
   late GelbooruClient client;
 

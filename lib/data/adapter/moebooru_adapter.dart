@@ -14,7 +14,7 @@ class MoebooruAdapter implements BooruAdapter {
     client = MoebooruClient(websiteEntity);
   }
 
-  final WebsiteEntity websiteEntity;
+  final WebsiteTableData websiteEntity;
 
   late MoebooruClient client;
 

@@ -20,10 +20,10 @@ abstract class MainStoreBase with Store {
   }
 
   @observable
-  List<WebsiteEntity> websiteList = <WebsiteEntity>[];
+  List<WebsiteTableData> websiteList = <WebsiteTableData>[];
 
   @observable
-  WebsiteEntity? websiteEntity;
+  WebsiteTableData? websiteEntity;
 
   @action
   Future<void> init() async {
@@ -42,7 +42,7 @@ abstract class MainStoreBase with Store {
     // 尝试获取图标
     websiteList.where((e) => e.favicon.isEmpty).forEach((element) {
       getFavicon(element).then((favicon) {
-        setWebsiteFavicon(element.id!, favicon);
+        setWebsiteFavicon(element.id, favicon);
       });
     });
   }
@@ -65,7 +65,7 @@ abstract class MainStoreBase with Store {
   }
 
   @action
-  Future<void> setWebsite(WebsiteEntity? entity) async {
+  Future<void> setWebsite(WebsiteTableData? entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
       EventBusUtil().bus.fire(EventSiteChange());
@@ -74,7 +74,7 @@ abstract class MainStoreBase with Store {
   }
 
   @action
-  Future<void> setWebsiteWithoutNotification(WebsiteEntity? entity) async {
+  Future<void> setWebsiteWithoutNotification(WebsiteTableData? entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       websiteEntity = entity;
       SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
