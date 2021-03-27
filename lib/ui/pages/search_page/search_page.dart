@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website_fragment.dart';
 import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
 import 'package:catpic/data/store/main/main_store.dart';
+import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 enum SearchType { POST, POOL, ARTIST }
@@ -16,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   late String searchText;
   late SearchType searchType;
   late Widget searchBody;
-
+  late StreamSubscription<EventSiteChange> _eventSiteChangeListener;
 
   @override
   void initState() {
@@ -24,11 +27,17 @@ class _SearchPageState extends State<SearchPage> {
     searchText = '';
     searchType = SearchType.POST;
     searchBody = buildSearchBody(searchText, searchType);
+
+    _eventSiteChangeListener =
+        EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      changeSearchBody(searchText, searchType);
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+    _eventSiteChangeListener.cancel();
   }
 
   @override

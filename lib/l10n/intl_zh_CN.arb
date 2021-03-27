@@ -49,7 +49,7 @@
   "score": "评分",
   "source": "来源",
   "rating": "评级",
-  "connecting": "连接中...",
+  "connecting": "连接服务器中...",
 
   "tap_to_reload": "点击重新加载",
   "idle_loading": "上拉加载",

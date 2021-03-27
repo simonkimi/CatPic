@@ -5,13 +5,14 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/api/base_client.dart';
-import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/utils/image/cached_dio_image_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -117,9 +118,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
     final dao = DatabaseHelper().historyDao;
     final history = await dao.get(tag);
     if (history != null) {
-      await dao.updateHistory(history.copyWith(
-        createTime: DateTime.now()
-      ));
+      await dao.updateHistory(history.copyWith(createTime: DateTime.now()));
     } else {
       dao.insert(HistoryTableCompanion.insert(history: tag));
     }
@@ -233,60 +232,67 @@ class _PostResultFragmentState extends State<PostResultFragment>
       key: Key('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
-      body: CachedDioImage(
-        dio: widget.adapter.dio,
-        imgUrl: imageUrl,
-        imageBuilder: (context, imgData) {
-          return InkWell(
-            onTap: loadDetail,
-            child: Hero(
-              tag: '${post.id}|${post.md5}',
-              child: Image(image: MemoryImage(imgData, scale: 0.1)),
-            ),
-          );
-        },
-        loadingBuilder: (_, progress) {
-          return GestureDetector(
-            onTap: loadDetail,
-            child: AspectRatio(
-              aspectRatio: post.width / post.height,
-              child: Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                            ((progress.cumulativeBytesLoaded) != 0)
-                        ? progress.cumulativeBytesLoaded /
-                            progress.expectedTotalBytes!
-                        : 0.0,
-                    strokeWidth: 2.5,
+      body: ExtendedImage(
+        image: CachedDioImageProvider(
+          dio: widget.adapter.dio,
+          url: imageUrl,
+          cachedKey: imageUrl,
+        ),
+        handleLoadingProgress: true,
+        enableLoadState: true,
+        loadStateChanged: (ExtendedImageState state) {
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              return GestureDetector(
+                onTap: loadDetail,
+                child: AspectRatio(
+                  aspectRatio: post.width / post.height,
+                  child: Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        value: state.loadingProgress?.expectedTotalBytes != null
+                            ? state.loadingProgress!.cumulativeBytesLoaded /
+                            state.loadingProgress!.expectedTotalBytes!
+                            : 0,
+                        strokeWidth: 2.5,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
-        errorBuilder: (_, err, reload) {
-          return GestureDetector(
-            onTap: () {
-              reload();
-            },
-            child: AspectRatio(
-              aspectRatio: post.width / post.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error),
-                  const SizedBox(
-                    height: 10,
+              );
+            case LoadState.completed:
+              return InkWell(
+                onTap: loadDetail,
+                child: Hero(
+                  tag: '${post.id}|${post.md5}',
+                  child: ExtendedRawImage(
+                    image: state.extendedImageInfo?.image,
                   ),
-                  Text(S.of(context).tap_to_reload),
-                ],
-              ),
-            ),
-          );
+                ),
+              );
+            case LoadState.failed:
+              return GestureDetector(
+                onTap: () {
+                  state.reLoadImage();
+                },
+                child: AspectRatio(
+                  aspectRatio: post.width / post.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(S.of(context).tap_to_reload),
+                    ],
+                  ),
+                ),
+              );
+          }
         },
       ),
     );

@@ -2,10 +2,10 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/generated/l10n.dart';
-import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/utils/image/cached_dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -30,21 +30,19 @@ class ImageViewPage extends StatefulWidget {
 
 class _ImageViewPageState extends State<ImageViewPage>
     with TickerProviderStateMixin {
-  late Animation<double> _doubleClickAnimation;
+  late Animation<double>? _doubleClickAnimation;
   late AnimationController _doubleClickAnimationController;
-  late VoidCallback _doubleClickAnimationListener;
-  List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
-
-  late bool bottomBarVis = true;
+  VoidCallback? _doubleClickAnimationListener;
+  final doubleTapScales = <double>[1.0, 2.0, 3.0];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
+      extendBody: true,
       body: Observer(builder: (_) => buildImg()),
       bottomNavigationBar: buildBottomBar(),
-      extendBody: true,
     );
   }
 
@@ -235,46 +233,45 @@ class _ImageViewPageState extends State<ImageViewPage>
 
   Widget buildBottomBar() {
     return BottomAppBar(
+      elevation: 0,
       color: Colors.transparent,
-      child: Visibility(
-        visible: bottomBarVis,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  iconSize: 16,
-                  icon: const Icon(
-                    Icons.info_outline,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    showAsBottomSheet();
-                  },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                iconSize: 16,
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  iconSize: 16,
-                  icon: const Icon(
-                    Icons.save_alt,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
+                onPressed: () {
+                  showAsBottomSheet();
+                },
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                iconSize: 16,
+                icon: const Icon(
+                  Icons.save_alt,
+                  color: Colors.white,
                 ),
-              ],
-            )
-          ],
-        ),
+                onPressed: () {},
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
 
   Widget buildImg() {
+    print('build img');
     late String imageUrl;
     switch (settingStore.displayQuality) {
       case ImageQuality.preview:
@@ -290,118 +287,125 @@ class _ImageViewPageState extends State<ImageViewPage>
 
     return Container(
       color: Colors.black,
-      child: CachedDioImage(
-        dio: widget.dio,
-        imgUrl: imageUrl,
-        cachedKey: '$imageUrl${widget.booruPost.md5}',
-        imageBuilder: (context, imgData) {
-          return Center(
-            child: Hero(
-              tag: widget.heroTag,
-              child: ExtendedImage(
-                width: double.infinity,
-                height: double.infinity,
-                image: MemoryImage(imgData),
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: (state) {
-                  return GestureConfig(
-                    minScale: 0.9,
-                    animationMinScale: 0.7,
-                    maxScale: 5.0,
-                    animationMaxScale: 5.0,
-                    speed: 1.0,
-                    inertialSpeed: 100.0,
-                    initialScale: 1.0,
-                    inPageView: false,
-                    initialAlignment: InitialAlignment.center,
-                    gestureDetailsIsChanged: (ge) {
-                      _showOrHideAppbar(ge);
-                    },
-                  );
-                },
-                onDoubleTap: _doubleTap,
-              ),
-            ),
-          );
+      child: ExtendedImage(
+        width: double.infinity,
+        height: double.infinity,
+        image: CachedDioImageProvider(
+          url: imageUrl,
+          dio: widget.dio,
+          cachedKey: '$imageUrl${widget.booruPost.md5}',
+          cachedImg: true,
+        ),
+        handleLoadingProgress: true,
+        enableLoadState: true,
+        loadStateChanged: (ExtendedImageState state) {
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              return buildLoading(state.loadingProgress);
+            case LoadState.completed:
+              return buildCompleted(state);
+            case LoadState.failed:
+              return buildError(state);
+          }
         },
-        errorBuilder: (context, err, reload) {
-          return GestureDetector(
-            onTap: reload(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    err.toString(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-        loadingBuilder: (_, loadingProgress) {
-          return Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: Builder(
-              builder: (context) {
-                var progress = loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : 0.0;
-                progress = progress.isFinite ? progress : 0;
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                        value: progress == 0 ? null : progress),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    if (progress == 0)
-                      Text(
-                        S.of(context).connecting,
-                        style: const TextStyle(color: Colors.white),
-                      )
-                    else
-                      Text(
-                        '${(progress * 100).toStringAsFixed(2)}%',
-                        style: const TextStyle(color: Colors.white),
-                      )
-                  ],
-                );
-              },
-            ),
+        mode: ExtendedImageMode.gesture,
+        onDoubleTap: _doubleTap,
+        initGestureConfigHandler: (state) {
+          return GestureConfig(
+            minScale: 0.9,
+            animationMinScale: 0.7,
+            maxScale: 5.0,
+            animationMaxScale: 5.0,
+            speed: 1.0,
+            inertialSpeed: 100.0,
+            initialScale: 1.0,
+            inPageView: false,
+            initialAlignment: InitialAlignment.center,
           );
         },
       ),
     );
   }
 
-  void _showOrHideAppbar(GestureDetails? ge) {
-    final result = (ge?.totalScale ?? 0.0) < 1.2;
-    if (result != bottomBarVis && mounted) {
-      setState(() {
-        bottomBarVis = result;
-      });
-    }
+  Hero buildCompleted(ExtendedImageState state) {
+    return Hero(
+              tag: widget.heroTag,
+              child: ExtendedRawImage(
+                image: state.extendedImageInfo?.image,
+              ),
+            );
+  }
+
+  GestureDetector buildError(ExtendedImageState state) {
+    return GestureDetector(
+      onTap: state.reLoadImage,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error,
+              color: Colors.white,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              state.lastException.toString(),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildLoading(ImageChunkEvent? loadingProgress) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Builder(
+        builder: (context) {
+          late double progress;
+          if (loadingProgress == null) {
+            progress = 0.0;
+          } else {
+            progress = loadingProgress.cumulativeBytesLoaded /
+                (loadingProgress.expectedTotalBytes ?? 0);
+          }
+          progress = progress.isFinite ? progress : 0.0;
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(value: progress == 0 ? null : progress),
+              const SizedBox(
+                height: 20,
+              ),
+              if (progress == 0)
+                Text(
+                  S.of(context).connecting,
+                  style: const TextStyle(color: Colors.white),
+                )
+              else
+                Text(
+                  '${(progress * 100).toStringAsFixed(2)}%',
+                  style: const TextStyle(color: Colors.white),
+                )
+            ],
+          );
+        },
+      ),
+    );
   }
 
   void _doubleTap(ExtendedImageGestureState state) {
-    final Offset pointerDownPosition = state.pointerDownPosition!;
-
-    _doubleClickAnimation.removeListener(_doubleClickAnimationListener);
+    final Offset? pointerDownPosition = state.pointerDownPosition;
+    if (_doubleClickAnimationListener != null) {
+      _doubleClickAnimation?.removeListener(_doubleClickAnimationListener!);
+    }
     _doubleClickAnimationController.stop();
     _doubleClickAnimationController.reset();
 
@@ -414,12 +418,12 @@ class _ImageViewPageState extends State<ImageViewPage>
 
     _doubleClickAnimationListener = () {
       state.handleDoubleTap(
-          scale: _doubleClickAnimation.value,
+          scale: _doubleClickAnimation?.value,
           doubleTapPosition: pointerDownPosition);
     };
     _doubleClickAnimation = _doubleClickAnimationController
         .drive(Tween<double>(begin: begin, end: end));
-    _doubleClickAnimation.addListener(_doubleClickAnimationListener);
+    _doubleClickAnimation!.addListener(_doubleClickAnimationListener!);
     _doubleClickAnimationController.forward();
   }
 

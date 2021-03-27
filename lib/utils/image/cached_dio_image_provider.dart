@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -28,13 +29,19 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
       CachedDioImageProvider key, DecoderCallback decode) {
     final StreamController<ImageChunkEvent> chunkEvents =
         StreamController<ImageChunkEvent>();
-
+    // chunkEvents.stream.listen((event) {print(event);});
     return MultiFrameImageStreamCompleter(
-        chunkEvents: chunkEvents.stream,
-        codec: _loadAsync(key, decode, chunkEvents),
-        scale: key.scale,
-        debugLabel: key.url,
-        informationCollector: _imageStreamInformationCollector(key));
+      chunkEvents: chunkEvents.stream,
+      codec: _loadAsync(key, decode, chunkEvents),
+      scale: key.scale,
+      debugLabel: key.url,
+      informationCollector: () {
+        return <DiagnosticsNode>[
+          DiagnosticsProperty<ImageProvider>('Image provider', this),
+          DiagnosticsProperty<CachedDioImageProvider>('Image key', key),
+        ];
+      },
+    );
   }
 
   @override
@@ -47,7 +54,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
       DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
     if (cachedImg) {
-      final cached = await getCached();
+      final cached = await _getCached();
       if (cached != null) {
         return await decode(cached);
       }
@@ -60,15 +67,18 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
         expectedTotalBytes: total,
       ));
     });
+    if (rsp.data == null) {
+      throw StateError('$url is empty and cannot be loaded as an image.');
+    }
     final bytes = Uint8List.fromList(rsp.data!);
     if (bytes.lengthInBytes == 0) {
       throw StateError('$url is empty and cannot be loaded as an image.');
     }
-    setCached(bytes);
+    _setCached(bytes);
     return await decode(bytes);
   }
 
-  Future<Uint8List?> getCached() async {
+  Future<Uint8List?> _getCached() async {
     final cachedManager = DefaultCacheManager();
     final fileInfo = await cachedManager.getFileFromCache(cachedKey);
     if (fileInfo != null) {
@@ -77,23 +87,8 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     return null;
   }
 
-  Future<void> setCached(Uint8List imageBytes) async {
+  Future<void> _setCached(Uint8List imageBytes) async {
     final cachedManager = DefaultCacheManager();
     await cachedManager.putFile(cachedKey, imageBytes);
-  }
-
-  InformationCollector? _imageStreamInformationCollector(
-      CachedDioImageProvider key) {
-    InformationCollector? collector;
-    assert(() {
-      collector = () {
-        return <DiagnosticsNode>[
-          DiagnosticsProperty<ImageProvider>('Image provider', this),
-          DiagnosticsProperty<CachedDioImageProvider>('Image key', key),
-        ];
-      };
-      return true;
-    }());
-    return collector;
   }
 }

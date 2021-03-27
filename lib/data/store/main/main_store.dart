@@ -10,13 +10,6 @@ part 'main_store.g.dart';
 class MainStore = MainStoreBase with _$MainStore;
 
 abstract class MainStoreBase with Store {
-  MainStoreBase() {
-    EventBusUtil().bus.on<EventSiteListChange>().listen((event) {
-      print('event: EventSiteListChange');
-      updateList();
-    });
-  }
-
   @observable
   List<WebsiteTableData> websiteList = [];
 

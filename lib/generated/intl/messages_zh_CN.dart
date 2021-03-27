@@ -30,7 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "card_layout" : MessageLookupByLibrary.simpleMessage("卡片布局"),
     "column_num" : MessageLookupByLibrary.simpleMessage("列数"),
     "confirm" : MessageLookupByLibrary.simpleMessage("确认"),
-    "connecting" : MessageLookupByLibrary.simpleMessage("连接中..."),
+    "connecting" : MessageLookupByLibrary.simpleMessage("连接服务器中..."),
     "delete" : MessageLookupByLibrary.simpleMessage("删除"),
     "direct_link" : MessageLookupByLibrary.simpleMessage("开启直连"),
     "direct_link_desc" : MessageLookupByLibrary.simpleMessage("突破SNI封锁"),
