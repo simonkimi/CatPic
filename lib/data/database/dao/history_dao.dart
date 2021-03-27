@@ -1,20 +1,21 @@
-import 'package:catpic/data/database/entity/history_entity.dart';
-import 'package:floor/floor.dart';
+import 'package:catpic/data/database/entity/history.dart';
+import 'package:moor/moor.dart';
 
-@dao
-abstract class HistoryDao {
-  @Query('SELECT * FROM HistoryEntity ORDER BY createTime DESC')
-  Future<List<HistoryEntity>> getAll();
+import '../database.dart';
 
-  @Query('SELECT * FROM HistoryEntity WHERE history = :history')
-  Future<HistoryEntity> getByHistory(String history);
+part 'history_dao.g.dart';
 
-  @update
-  Future<void> updateHistory(HistoryEntity entity);
+@UseDao(tables: [HistoryTable])
+class HistoryDao extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
+  HistoryDao(attachedDatabase) : super(attachedDatabase);
 
-  @insert
-  Future<int> addHistory(HistoryEntity entity);
+  Future<List<HistoryTableData>> getAll() => select(historyTable).get();
 
-  @Query('DELETE * FROM HistoryEntity WHERE id = :id')
-  Future<void> delete(int id);
+  Future<List<HistoryTableData>> get(String history) =>
+      (select(historyTable)..where((tbl) => tbl.history.equals(history))).get();
+
+  Future<void> updateHistory(HistoryTableData data) =>
+      update(historyTable).replace(data);
+
+  Future<void> insert(HistoryTableData data) => into(historyTable).insert(data);
 }

@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:catpic/themes/themes.dart' as theme;
 import 'package:sp_util/sp_util.dart';
-import 'package:catpic/data/database/database_helper.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'generated/l10n.dart';
@@ -13,7 +12,6 @@ import 'generated/l10n.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SpUtil.getInstance();
-  await DatabaseHelper().init();
   await mainStore.init();
   await settingStore.init();
   runApp(CatPicApp());

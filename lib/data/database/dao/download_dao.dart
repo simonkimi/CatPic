@@ -1,11 +1,13 @@
-import 'package:catpic/data/database/entity/download_entity.dart';
-import 'package:floor/floor.dart';
+import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/download.dart';
+import 'package:moor/moor.dart';
 
-@dao
-abstract class DownloadDao {
-  @insert
-  Future<int> create(DownloadEntity entity);
+part 'download_dao.g.dart';
 
-  @Query('SELECT * FROM DownloadEntity')
-  Future<List<DownloadEntity>> getALL();
+
+@UseDao(tables: [DownloadTable])
+class DownloadDao extends DatabaseAccessor<AppDataBase> with _$DownloadDaoMixin {
+  DownloadDao(attachedDatabase) : super(attachedDatabase);
+
+  Future<List<DownloadTableData>> getAll() => select(downloadTable).get();
 }

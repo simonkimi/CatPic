@@ -17,9 +17,6 @@ dependencies:
   dio: ^4.0.0-prev3
   event_bus: ^2.0.0
   extended_image: ^3.0.0
-
-  floor: ^1.0.0
-
   flutter_cache_manager: ^3.0.0-nullsafety.1
   flutter_mobx: ^2.0.0-nullsafety.3
   flutter_slidable: ^0.6.0-nullsafety.0
@@ -34,6 +31,11 @@ dependencies:
   xml: ^5.0.2
   es_compression: ^2.0.1
 
+  moor: 4.2.1
+  sqlite3_flutter_libs: 0.4.1
+  path_provider: 2.0.1
+  path: 1.8.0
+
 
   pull_to_refresh:
     git:
@@ -46,11 +48,8 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^1.12.2
   mobx_codegen: ^2.0.0-nullsafety.2
-  floor_generator: ^1.0.0
+  moor_generator: 4.2.1
 
-dependency_overrides:
-  source_gen: ^1.0.0
-  build: ^2.0.0
 
 
 flutter:

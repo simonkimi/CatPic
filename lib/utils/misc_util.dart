@@ -1,4 +1,6 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+
+
+import 'package:catpic/data/database/database.dart';
 
 String? getSchemeString(int? scheme) {
   if (scheme == null) return null;

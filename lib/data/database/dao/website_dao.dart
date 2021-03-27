@@ -1,20 +1,25 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
-import 'package:floor/floor.dart';
+import 'package:catpic/data/database/entity/website.dart';
+import 'package:moor/moor.dart';
+import '../database.dart';
 
-@dao
-abstract class WebsiteDao {
-  @Query('SELECT * FROM WebsiteEntity')
-  Future<List<WebsiteEntity>> getAll();
+part 'website_dao.g.dart';
 
-  @Query('SELECT * FROM WebsiteEntity where id = :id')
-  Future<WebsiteEntity> getById(int id);
+@UseDao(tables: [WebsiteTable])
+class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
+  WebsiteDao(attachedDatabase) : super(attachedDatabase);
 
-  @insert
-  Future<int> addSite(WebsiteEntity entity);
+  Future<List<WebsiteTableData>> getAll() => select(websiteTable).get();
 
-  @delete
-  Future<void> removeSite(List<WebsiteEntity> entities);
+  Future<List<WebsiteTableData>> getById(int id) =>
+      (select(websiteTable)..where((tbl) => tbl.id.equals(id))).get();
 
-  @update
-  Future<void> updateSite(WebsiteEntity entity);
+  Stream<List<WebsiteTableData>> getAllStream() => select(websiteTable).watch();
+
+  Future<void> insert(WebsiteTableData data) => into(websiteTable).insert(data);
+
+  Future<void> remove(WebsiteTableData data) =>
+      delete(websiteTable).delete(data);
+
+  Future<void> updateSite(WebsiteTableData data) =>
+      update(websiteTable).replace(data);
 }

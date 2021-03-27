@@ -1,38 +1,23 @@
-import 'dart:async';
-import 'dart:typed_data';
+import 'package:moor/moor.dart';
 
-import 'package:catpic/data/database/dao/download_dao.dart';
-import 'package:catpic/data/database/dao/history_dao.dart';
-import 'package:catpic/data/database/dao/host_dao.dart';
-import 'package:catpic/data/database/entity/download_entity.dart';
-import 'package:catpic/data/database/entity/history_entity.dart';
-import 'package:floor/floor.dart';
-import 'package:sqflite/sqflite.dart' as sqflite;
-
-import 'dao/history_dao.dart';
-import 'dao/tag_dao.dart';
-import 'dao/website_dao.dart';
-import 'entity/host_entity.dart';
-import 'entity/tag_entity.dart';
-import 'entity/website_entity.dart';
+import 'entity/download.dart';
+import 'entity/history.dart';
+import 'entity/host.dart';
+import 'entity/tag.dart';
+import 'entity/website.dart';
 
 part 'database.g.dart';
 
-@Database(version: 1, entities: [
-  WebsiteEntity,
-  HostEntity,
-  TagEntity,
-  HistoryEntity,
-  DownloadEntity
+@UseMoor(tables: [
+  DownloadTable,
+  HistoryTable,
+  HostTable,
+  TagTable,
+  WebsiteTable
 ])
-abstract class AppDatabase extends FloorDatabase {
-  WebsiteDao get websiteDao;
+class AppDataBase extends _$AppDataBase {
+  AppDataBase(QueryExecutor e) : super(e);
 
-  HostDao get hostDao;
-
-  TagDao get tagDao;
-
-  HistoryDao get historyDao;
-
-  DownloadDao get downloadDao;
+  @override
+  int get schemaVersion => 1;
 }

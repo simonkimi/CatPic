@@ -1,21 +1,22 @@
+import 'package:catpic/data/database/entity/host.dart';
+import 'package:moor/moor.dart';
+import '../database.dart';
 
-import 'package:catpic/data/database/entity/host_entity.dart';
-import 'package:floor/floor.dart';
+part 'host_dao.g.dart';
 
-@dao
-abstract class HostDao {
-  @Query('SELECT * FROM HostEntity')
-  Future<List<HostEntity>> getAll();
+@UseDao(tables: [HostTable])
+class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
+  HostDao(attachedDatabase) : super(attachedDatabase);
 
-  @insert
-  Future<int> addHost(HostEntity entity);
+  Future<void> getAll() => select(hostTable).get();
 
-  @delete
-  Future<void> removeHost(List<HostEntity> entities);
+  Future<int> insert(HostTableData entity) => into(hostTable).insert(entity);
 
-  @update
-  Future<void> updateHost(HostEntity entity);
+  Future<int> remove(HostTableData entity) => delete(hostTable).delete(entity);
 
-  @Query('SELECT * FROM HostEntity where host = :host')
-  Future<HostEntity> getByHost(String host);
+  Future<bool> updateHost(HostTableData entity) =>
+      update(hostTable).replace(entity);
+
+  Future<List<HostTableData>> getByHost(String host) =>
+      (select(hostTable)..where((tbl) => tbl.host.equals(host))).get();
 }

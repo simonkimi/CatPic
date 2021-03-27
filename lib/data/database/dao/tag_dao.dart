@@ -1,17 +1,26 @@
-import 'package:catpic/data/database/entity/tag_entity.dart';
-import 'package:floor/floor.dart';
+import 'package:catpic/data/database/entity/tag.dart';
+import 'package:moor/moor.dart';
+import '../database.dart';
 
-@dao
-abstract class TagDao {
-  @Query('SELECT * FROM TagEntity')
-  Future<List<TagEntity>> getAll();
+part 'tag_dao.g.dart';
 
-  @Insert(onConflict: OnConflictStrategy.ignore)
-  Future<List<int>> addTag(List<TagEntity> entity);
+@UseDao(tables: [TagTable])
+class TagDao extends DatabaseAccessor<AppDataBase> with _$TagDaoMixin {
+  TagDao(attachedDatabase) : super(attachedDatabase);
 
-  @Query('SELECT * FROM TagEntity WHERE website = :website AND tag LIKE :tag')
-  Future<List<TagEntity>> getStart(int website, String tag);
+  Future<List<TagTableData>> getAll() => select(tagTable).get();
 
-  @Query('DELETE * FROM TagEntity')
-  Future<void> deleteAll();
+  Future<void> insert(List<TagTableData> entities) async {
+    final table = into(tagTable);
+    for (final entity in entities) {
+      await table.insert(entity, mode: InsertMode.insertOrIgnore);
+    }
+  }
+
+  Future<List<TagTableData>> getStart(int website, String tag) async {
+    return (select(tagTable)
+          ..where(
+              (tbl) => tbl.website.equals(website) & tbl.tag.like('%$tag%')))
+        .get();
+  }
 }
