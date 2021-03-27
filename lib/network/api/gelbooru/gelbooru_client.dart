@@ -1,9 +1,9 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 
 import '../base_client.dart';
 
 class GelbooruClient extends BaseClient {
-  GelbooruClient(WebsiteEntity websiteEntity) : super(websiteEntity);
+  GelbooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
   /// 获取Posts
   /// [limit] How many posts you want to retrieve. There is a default limit of 100 posts per request.

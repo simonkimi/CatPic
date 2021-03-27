@@ -13,13 +13,13 @@ typedef LoadingWidgetBuilder = Widget Function(
     BuildContext context, ImageChunkEvent chunkEvent);
 
 typedef ErrorBuilder = Widget Function(
-    BuildContext context, Object err, Function reload);
+    BuildContext context, Object? err, Function reload);
 
 enum LoadingType { DONE, LOADING, ERROR }
 
 class CachedDioImage extends StatefulWidget {
   const CachedDioImage({
-    Key key,
+    Key? key,
     this.dio,
     this.cachedKey,
     this.duration,
@@ -33,10 +33,10 @@ class CachedDioImage extends StatefulWidget {
   final ImageWidgetBuilder imageBuilder;
   final LoadingWidgetBuilder loadingBuilder;
   final ErrorBuilder errorBuilder;
-  final String cachedKey;
+  final String? cachedKey;
   final String imgUrl;
-  final Dio dio;
-  final Duration duration;
+  final Dio? dio;
+  final Duration? duration;
   final bool useCached;
 
   @override
@@ -44,13 +44,13 @@ class CachedDioImage extends StatefulWidget {
 }
 
 class _CachedDioImageState extends State<CachedDioImage> {
-  Dio _dio;
-  Object err;
-  int totalSize;
-  int receivedSize;
-  Uint8List data;
-  LoadingType loadingType;
-  String cachedKey;
+  late Dio _dio;
+  late Object? err;
+  late int totalSize;
+  late int receivedSize;
+  late Uint8List data;
+  late LoadingType loadingType;
+  late String cachedKey;
 
   final cancelToken = CancelToken();
 
@@ -128,7 +128,7 @@ class _CachedDioImageState extends State<CachedDioImage> {
 
       if (mounted) {
         setState(() {
-          data = rsp.data;
+          data = rsp.data!;
           setCached(data);
           loadingType = LoadingType.DONE;
         });
@@ -143,10 +143,10 @@ class _CachedDioImageState extends State<CachedDioImage> {
     }
   }
 
-  Future<Uint8List> getCached() async {
+  Future<Uint8List?> getCached() async {
     final cachedManager = DefaultCacheManager();
     final fileInfo = await cachedManager.getFileFromCache(cachedKey);
-    if (fileInfo != null && fileInfo.file != null) {
+    if (fileInfo != null) {
       return await fileInfo.file.readAsBytes();
     }
     return null;

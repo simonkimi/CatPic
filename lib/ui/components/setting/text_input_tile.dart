@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextInputTile extends StatefulWidget {
   const TextInputTile(
-      {Key key,
+      {Key? key,
       this.title,
       this.subtitle,
       this.leading,
@@ -15,19 +15,19 @@ class TextInputTile extends StatefulWidget {
       this.negativeText})
       : super(key: key);
 
-  final Widget title;
-  final Widget subtitle;
-  final Widget leading;
+  final Widget? title;
+  final Widget? subtitle;
+  final Widget? leading;
   final ValueChanged<String> onChanged;
 
-  final Widget dialogTitle;
-  final String hintText;
-  final String labelText;
+  final Widget? dialogTitle;
+  final String? hintText;
+  final String? labelText;
 
-  final String defaultValue;
+  final String? defaultValue;
 
-  final String positiveText;
-  final String negativeText;
+  final String? positiveText;
+  final String? negativeText;
 
   @override
   _TextInputTileState createState() => _TextInputTileState();
@@ -35,7 +35,7 @@ class TextInputTile extends StatefulWidget {
 
 class _TextInputTileState extends State<TextInputTile> {
   var controller = TextEditingController();
-  String value;
+  late String value;
 
   @override
   void initState() {

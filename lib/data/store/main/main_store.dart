@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-
-
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
@@ -20,7 +18,7 @@ abstract class MainStoreBase with Store {
   }
 
   @observable
-  List<WebsiteTableData> websiteList = <WebsiteTableData>[];
+  List<WebsiteTableData> websiteList = [];
 
   @observable
   WebsiteTableData? websiteEntity;
@@ -86,10 +84,12 @@ abstract class MainStoreBase with Store {
     if (favicon.isNotEmpty) {
       final websiteDao = DatabaseHelper().websiteDao;
       final entity = await websiteDao.getById(entityId);
-      entity.favicon = favicon;
-      await websiteDao.updateSite(entity);
-      if (websiteEntity?.id == entity.id ?? false) {
-        websiteEntity = entity;
+
+      if (entity != null) {
+        await websiteDao.updateSite(entity.copyWith(favicon: favicon));
+        if (websiteEntity?.id == entity.id) {
+          websiteEntity = entity;
+        }
       }
       await updateList();
     }

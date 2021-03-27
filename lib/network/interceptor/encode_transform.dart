@@ -1,7 +1,6 @@
 import 'dart:typed_data';
-
-import 'package:brotli/brotli.dart';
 import 'package:dio/dio.dart';
+import 'package:es_compression/brotli.dart';
 
 class EncodeTransformer extends DefaultTransformer {
   @override
@@ -13,7 +12,9 @@ class EncodeTransformer extends DefaultTransformer {
         await response.stream.forEach(data.addAll);
         return brotli.decode(Uint8List.fromList(data));
       }
-      return await brotli.decodeStream(response.stream);
+      return response.stream
+          .map((event) => event.toList())
+          .transform(brotli.decoder);
     }
     return super.transformResponse(options, response);
   }

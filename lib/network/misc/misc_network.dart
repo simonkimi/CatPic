@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ Future<String> getDoH(String url) async {
   }
 }
 
-Future<Uint8List> getFavicon(WebsiteEntity entity) async {
+Future<Uint8List> getFavicon(WebsiteTableData entity) async {
   try {
     print('获取网站图标 ${entity.name}');
     final dio = DioBuilder.build(entity);

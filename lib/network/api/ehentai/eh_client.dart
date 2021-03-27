@@ -1,10 +1,9 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 
 import '../base_client.dart';
 
-
 class EhClient extends BaseClient {
-  EhClient(WebsiteEntity websiteEntity) : super(websiteEntity);
+  EhClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
   /// 主页
   /// [filter] 过滤器, 由[buildSimpleFilter]和[buildAdvanceFilter]构建

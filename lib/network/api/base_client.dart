@@ -1,4 +1,4 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
@@ -6,7 +6,7 @@ import 'package:catpic/utils/misc_util.dart';
 import 'package:dio/adapter.dart';
 
 class DioBuilder {
-  static Dio build(WebsiteEntity websiteEntity) {
+  static Dio build(WebsiteTableData websiteEntity) {
     final dio = Dio()
       ..options.connectTimeout = 1000 * 60
       ..options.headers = {
@@ -37,7 +37,7 @@ class DioBuilder {
 }
 
 abstract class BaseClient {
-  BaseClient(WebsiteEntity websiteEntity) {
+  BaseClient(WebsiteTableData websiteEntity) {
     dio = DioBuilder.build(websiteEntity);
   }
 

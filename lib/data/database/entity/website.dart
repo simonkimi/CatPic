@@ -22,9 +22,10 @@ class WebsiteTable extends Table {
 
   BoolColumn get directLink => boolean()();
 
-  TextColumn get cookies => text().nullable()();
+  TextColumn get cookies => text().withDefault(const Constant(''))();
 
-  BlobColumn get favicon => blob().nullable()();
+  BlobColumn get favicon =>
+      blob().clientDefault(() => Uint8List.fromList([]))();
 }
 
 enum WebsiteScheme { HTTP, HTTPS }

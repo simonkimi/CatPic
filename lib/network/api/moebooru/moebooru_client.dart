@@ -1,9 +1,9 @@
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
 
 import '../base_client.dart';
 
 class MoebooruClient extends BaseClient {
-  MoebooruClient(WebsiteEntity websiteEntity) : super(websiteEntity);
+  MoebooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
   /// 获取Posts
   /// [limit] How many posts you want to retrieve. There is a hard limit of 100

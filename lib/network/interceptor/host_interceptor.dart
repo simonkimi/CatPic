@@ -1,5 +1,4 @@
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/host_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:dio/dio.dart';
 
@@ -11,7 +10,7 @@ class HostInterceptor extends Interceptor {
   final bool directLink;
   final int websiteId;
 
-  List<HostEntity> hostList = [];
+  List<HostTableData> hostList = [];
 
   @override
   Future<void> onRequest(
@@ -47,8 +46,9 @@ class HostInterceptor extends Interceptor {
     final ip = await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
-      final entity = HostEntity(host: host, ip: ip, websiteId: websiteId);
-      await hostDao.addHost(entity);
+      final entity =
+          HostTableData(id: 0, host: host, ip: ip, websiteId: websiteId);
+      await hostDao.insert(entity);
       hostList.add(entity);
       dio.lock();
       return ip;

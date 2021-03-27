@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class IconText extends StatelessWidget {
   const IconText(this.text,
-      {Key key,
+      {Key? key,
       this.icon,
       this.iconSize,
       this.direction = Axis.horizontal,
@@ -13,29 +13,27 @@ class IconText extends StatelessWidget {
       this.textAlign,
       this.overflow = TextOverflow.ellipsis,
       this.offstage})
-      : assert(direction != null),
-        assert(overflow != null),
-        super(key: key);
+      : super(key: key);
 
-  final String text;
-  final Icon icon;
-  final double iconSize;
+  final String? text;
+  final Icon? icon;
+  final double? iconSize;
   final Axis direction;
-  final bool offstage;
+  final bool? offstage;
 
   final EdgeInsetsGeometry iconPadding;
-  final TextStyle style;
-  final int maxLines;
-  final bool softWrap;
+  final TextStyle? style;
+  final int? maxLines;
+  final bool? softWrap;
   final TextOverflow overflow;
-  final TextAlign textAlign;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
     if (icon == null) {
       // 只有文字
       return Text(text ?? '', style: style);
-    } else if (text == null || text.isEmpty) {
+    } else if (text?.isEmpty ?? false) {
       // 只有图标
       return Padding(
         padding: iconPadding,
@@ -66,7 +64,7 @@ class IconText extends StatelessWidget {
         ),
         maxLines: maxLines,
         softWrap: softWrap ?? true,
-        overflow: overflow ?? TextOverflow.clip,
+        overflow: overflow,
         textAlign: textAlign ??
             (direction == Axis.horizontal ? TextAlign.start : TextAlign.center),
       );

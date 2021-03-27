@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SummaryTile extends StatelessWidget {
-  const SummaryTile(this.text, {Key key}) : super(key: key);
+  const SummaryTile(this.text, {Key? key}) : super(key: key);
 
   final String text;
 

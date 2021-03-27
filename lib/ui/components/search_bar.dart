@@ -3,7 +3,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar({
-    Key key,
+    Key? key,
     this.actions,
     this.controller,
     this.defaultHint,
@@ -15,17 +15,17 @@ class SearchBar extends StatefulWidget {
     this.onFocusChanged,
   }) : super(key: key);
 
-  final OnQueryChangedCallback onSubmitted;
-  final OnQueryChangedCallback onQueryChanged;
+  final OnQueryChangedCallback? onSubmitted;
+  final OnQueryChangedCallback? onQueryChanged;
 
   final FloatingSearchBarBuilder candidateBuilder;
-  final List<Widget> actions;
-  final Widget body;
+  final List<Widget>? actions;
+  final Widget? body;
 
-  final FloatingSearchBarController controller;
-  final String defaultHint;
-  final Duration debounceDelay;
-  final OnFocusChangedCallback onFocusChanged;
+  final FloatingSearchBarController? controller;
+  final String? defaultHint;
+  final Duration? debounceDelay;
+  final OnFocusChangedCallback? onFocusChanged;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -34,8 +34,8 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   var _searchText = '';
   var _searchTmp = '';
-  FloatingSearchBarController controller;
-  String defaultHint;
+  late FloatingSearchBarController controller;
+  late String defaultHint;
 
   @override
   void initState() {
@@ -58,11 +58,13 @@ class _SearchBarState extends State<SearchBar> {
       physics: const BouncingScrollPhysics(),
       axisAlignment: isPortrait ? 0.0 : -1.0,
       openAxisAlignment: 0.0,
-      maxWidth: isPortrait ? 600 : 500,
+      openWidth: isPortrait ? 600 : 500,
       debounceDelay: const Duration(milliseconds: 100),
       body: widget.body,
       onQueryChanged: (query) {
-        widget.onQueryChanged(query);
+        if (widget.onQueryChanged != null) {
+          widget.onQueryChanged!(query);
+        }
         if (controller.isOpen) {
           setState(() {
             _searchTmp = query;
@@ -72,14 +74,16 @@ class _SearchBarState extends State<SearchBar> {
       onSubmitted: (query) {
         controller.close();
         if (widget.onSubmitted != null) {
-          widget.onSubmitted(query);
+          widget.onSubmitted!(query);
         }
         setState(() {
           _searchText = query;
         });
       },
       onFocusChanged: (isFocused) {
-        widget.onFocusChanged(isFocused);
+        if (widget.onFocusChanged != null) {
+          widget.onFocusChanged!(isFocused);
+        }
         if (isFocused) {
           controller.query = _searchTmp;
         }
@@ -95,5 +99,5 @@ class SearchSuggestions {
   SearchSuggestions(this.title, [this.subTitle]);
 
   final String title;
-  final String subTitle;
+  final String? subTitle;
 }

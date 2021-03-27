@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class WebsiteItem extends StatelessWidget {
   const WebsiteItem(
-      {Key key,
+      {Key? key,
       required this.title,
       required this.subtitle,
       required this.leadingImage,
@@ -35,13 +35,17 @@ class WebsiteItem extends StatelessWidget {
             caption: S.of(context).setting,
             color: Theme.of(context).primaryColor,
             icon: Icons.settings,
-            onTap: onSettingPress,
+            onTap: () {
+              onSettingPress();
+            },
           ),
           IconSlideAction(
             caption: S.of(context).delete,
             color: Colors.red,
             icon: Icons.delete,
-            onTap: onDeletePress,
+            onTap: () {
+              onDeletePress();
+            },
           ),
         ]);
   }

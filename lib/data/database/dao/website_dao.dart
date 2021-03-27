@@ -10,8 +10,9 @@ class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
 
   Future<List<WebsiteTableData>> getAll() => select(websiteTable).get();
 
-  Future<List<WebsiteTableData>> getById(int id) =>
-      (select(websiteTable)..where((tbl) => tbl.id.equals(id))).get();
+  Future<WebsiteTableData?> getById(int id) =>
+      (select(websiteTable)..where((tbl) => tbl.id.equals(id)))
+          .getSingleOrNull();
 
   Stream<List<WebsiteTableData>> getAllStream() => select(websiteTable).watch();
 

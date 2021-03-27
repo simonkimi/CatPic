@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class PostPreviewCard extends StatelessWidget {
-  const PostPreviewCard({Key key, this.title, this.subTitle, this.body})
+  const PostPreviewCard(
+      {Key? key,
+      required this.title,
+      required this.subTitle,
+      required this.body})
       : super(key: key);
   final String title;
   final String subTitle;

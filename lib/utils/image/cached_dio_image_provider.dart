@@ -25,10 +25,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
 
   @override
   ImageStreamCompleter load(
-      CachedDioImageProvider key,
-      Future<ui.Codec> Function(Uint8List bytes,
-              {bool allowUpscaling, int cacheHeight, int cacheWidth})
-          decode) {
+      CachedDioImageProvider key, DecoderCallback decode) {
     final StreamController<ImageChunkEvent> chunkEvents =
         StreamController<ImageChunkEvent>();
 
@@ -63,7 +60,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
         expectedTotalBytes: total,
       ));
     });
-    final bytes = Uint8List.fromList(rsp.data);
+    final bytes = Uint8List.fromList(rsp.data!);
     if (bytes.lengthInBytes == 0) {
       throw StateError('$url is empty and cannot be loaded as an image.');
     }
@@ -71,10 +68,10 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     return await decode(bytes);
   }
 
-  Future<Uint8List> getCached() async {
+  Future<Uint8List?> getCached() async {
     final cachedManager = DefaultCacheManager();
     final fileInfo = await cachedManager.getFileFromCache(cachedKey);
-    if (fileInfo != null && fileInfo.file != null) {
+    if (fileInfo != null) {
       return await fileInfo.file.readAsBytes();
     }
     return null;
@@ -85,9 +82,9 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     await cachedManager.putFile(cachedKey, imageBytes);
   }
 
-  InformationCollector _imageStreamInformationCollector(
+  InformationCollector? _imageStreamInformationCollector(
       CachedDioImageProvider key) {
-    InformationCollector collector;
+    InformationCollector? collector;
     assert(() {
       collector = () {
         return <DiagnosticsNode>[

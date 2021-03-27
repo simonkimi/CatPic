@@ -8,7 +8,7 @@ part 'host_dao.g.dart';
 class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
   HostDao(attachedDatabase) : super(attachedDatabase);
 
-  Future<void> getAll() => select(hostTable).get();
+  Future<List<HostTableData>> getAll() => select(hostTable).get();
 
   Future<int> insert(HostTableData entity) => into(hostTable).insert(entity);
 
@@ -17,6 +17,7 @@ class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
   Future<bool> updateHost(HostTableData entity) =>
       update(hostTable).replace(entity);
 
-  Future<List<HostTableData>> getByHost(String host) =>
-      (select(hostTable)..where((tbl) => tbl.host.equals(host))).get();
+  Future<HostTableData?> getByHost(String host) =>
+      (select(hostTable)..where((tbl) => tbl.host.equals(host)))
+          .getSingleOrNull();
 }
