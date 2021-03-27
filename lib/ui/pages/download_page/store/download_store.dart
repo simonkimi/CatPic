@@ -32,7 +32,7 @@ abstract class DownloadStoreBase with Store {
       throw TaskExistedException();
     }
 
-    var dao = DatabaseHelper().downloadDao;
+    final dao = DatabaseHelper().downloadDao;
 
     String downloadUrl = '';
     switch (settingStore.downloadQuality) {

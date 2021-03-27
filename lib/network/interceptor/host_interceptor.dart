@@ -1,7 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:dio/dio.dart';
-import 'package:moor/moor.dart';
 
 class HostInterceptor extends Interceptor {
   HostInterceptor(

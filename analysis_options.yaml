@@ -43,6 +43,8 @@ analyzer:
     - "lib/i18n/messages_*.dart"
     - "lib/src/http/**"
     - "lib/generated/**"
+    - "lib/data/database/database.g.dart"
+    - "**.g.dart"
 
 linter:
   rules:

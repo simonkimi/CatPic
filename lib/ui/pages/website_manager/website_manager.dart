@@ -3,7 +3,6 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
-import 'package:catpic/utils/event_util.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 

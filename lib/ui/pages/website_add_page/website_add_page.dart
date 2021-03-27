@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';

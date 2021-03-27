@@ -1,5 +1,4 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
-import 'package:flutter/material.dart';
 
 class LargeCardModel {
   LargeCardModel({

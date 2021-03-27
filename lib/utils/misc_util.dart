@@ -1,4 +1,3 @@
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 
 String? getSchemeString(int? scheme) {

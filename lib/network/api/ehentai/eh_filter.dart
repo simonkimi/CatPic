@@ -32,12 +32,12 @@ class EhFilter {
   /// [endPage] 结束页面
   /// [minRating] 最低星级
   static Map<String, dynamic> buildAdvanceFilter({
-    required String searchText,
-    required int excludeTag,
-    required int startPage,
-    required int endPage,
-    required int minRating,
-    required int page,
+    String? searchText,
+    int? excludeTag,
+    int? startPage,
+    int? endPage,
+    int? minRating,
+    int? page,
   }) {
     return {
       'advsearch': 1,

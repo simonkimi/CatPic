@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website_fragment.dart';
 import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
 import 'package:catpic/data/store/main/main_store.dart';
-import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 enum SearchType { POST, POOL, ARTIST }
@@ -59,10 +57,8 @@ class _SearchPageState extends State<SearchPage> {
           );
         case SearchType.POOL:
           throw Exception('TODO POOL');
-          break;
         case SearchType.ARTIST:
           throw Exception('TODO ARTIST');
-          break;
       }
     }
     return EmptyWebsiteFragment();
