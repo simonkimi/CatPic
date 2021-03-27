@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/host_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -14,7 +13,7 @@ class HostManagerPage extends StatefulWidget {
 }
 
 class _HostManagerPageState extends State<HostManagerPage> {
-  List<HostEntity>? hostEntities;
+  late List<HostTableData>? hostEntities;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 subtitle: Text(e.ip),
               ),
               onDismissed: (_) {
-                DatabaseHelper().hostDao.removeHost([e]).then((value) {
+                DatabaseHelper().hostDao.remove(e).then((value) {
                   init();
                 });
               },
@@ -153,9 +152,14 @@ class _HostManagerPageState extends State<HostManagerPage> {
       return false;
     }
     final dao = DatabaseHelper().hostDao;
-    await dao.removeHost([await dao.getByHost(host)]);
-    final hostEntity = HostEntity(host: host, ip: ip, websiteId: -1);
-    await dao.addHost(hostEntity);
+
+    final oldHost = await dao.getByHost(host);
+    if (oldHost != null) {
+      await dao.remove(oldHost);
+    }
+    final hostEntity =
+        HostTableCompanion.insert(host: host, ip: ip, websiteId: -1);
+    await dao.insert(hostEntity);
     await init();
     return true;
   }

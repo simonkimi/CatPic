@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/tag_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
@@ -14,12 +13,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ImageViewPage extends StatefulWidget {
-  const ImageViewPage(
-      {Key key,
-      required this.booruPost,
-      required this.heroTag,
-      required this.dio})
-      : super(key: key);
+  const ImageViewPage({
+    Key? key,
+    required this.booruPost,
+    required this.heroTag,
+    required this.dio,
+  }) : super(key: key);
 
   final BooruPost booruPost;
   final String heroTag;
@@ -31,12 +30,12 @@ class ImageViewPage extends StatefulWidget {
 
 class _ImageViewPageState extends State<ImageViewPage>
     with TickerProviderStateMixin {
-  Animation<double> _doubleClickAnimation;
-  AnimationController _doubleClickAnimationController;
-  Function _doubleClickAnimationListener;
+  late Animation<double> _doubleClickAnimation;
+  late AnimationController _doubleClickAnimationController;
+  late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
 
-  var bottomBarVis = true;
+  late bool bottomBarVis = true;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +112,7 @@ class _ImageViewPageState extends State<ImageViewPage>
               ),
               Wrap(
                 spacing: 3,
-                children: widget.booruPost.tags['_']
+                children: widget.booruPost.tags['_']!
                     .where((e) => e.isNotEmpty)
                     .map((e) {
                   return FilterChip(
@@ -276,7 +275,7 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   Widget buildImg() {
-    String imageUrl;
+    late String imageUrl;
     switch (settingStore.displayQuality) {
       case ImageQuality.preview:
         imageUrl = widget.booruPost.previewURL;
@@ -356,9 +355,9 @@ class _ImageViewPageState extends State<ImageViewPage>
             height: double.infinity,
             child: Builder(
               builder: (context) {
-                var progress = loadingProgress?.expectedTotalBytes != null
+                var progress = loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes
+                        loadingProgress.expectedTotalBytes!
                     : 0.0;
                 progress = progress.isFinite ? progress : 0;
                 return Column(
@@ -390,8 +389,8 @@ class _ImageViewPageState extends State<ImageViewPage>
     );
   }
 
-  void _showOrHideAppbar(GestureDetails ge) {
-    final result = ge.totalScale < 1.2;
+  void _showOrHideAppbar(GestureDetails? ge) {
+    final result = (ge?.totalScale ?? 0.0) < 1.2;
     if (result != bottomBarVis && mounted) {
       setState(() {
         bottomBarVis = result;
@@ -400,13 +399,13 @@ class _ImageViewPageState extends State<ImageViewPage>
   }
 
   void _doubleTap(ExtendedImageGestureState state) {
-    final Offset pointerDownPosition = state.pointerDownPosition;
+    final Offset pointerDownPosition = state.pointerDownPosition!;
 
-    _doubleClickAnimation?.removeListener(_doubleClickAnimationListener);
+    _doubleClickAnimation.removeListener(_doubleClickAnimationListener);
     _doubleClickAnimationController.stop();
     _doubleClickAnimationController.reset();
 
-    final begin = state.gestureDetails.totalScale;
+    final begin = state.gestureDetails?.totalScale ?? 0;
     var endIndex = doubleTapScales.indexOf(begin) + 1;
     if (endIndex >= doubleTapScales.length) {
       endIndex -= doubleTapScales.length;
@@ -429,12 +428,10 @@ class _ImageViewPageState extends State<ImageViewPage>
     for (final tags in widget.booruPost.tags.values) {
       for (final tagStr in tags) {
         if (tagStr.isNotEmpty) {
-          await dao.addTag([
-            TagEntity(
-              website: mainStore.websiteEntity.id,
-              tag: tagStr,
-            )
-          ]);
+          await dao.insert(TagTableCompanion.insert(
+            website: mainStore.websiteEntity!.id,
+            tag: tagStr,
+          ));
         }
       }
     }

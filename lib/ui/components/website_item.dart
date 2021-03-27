@@ -13,7 +13,7 @@ class WebsiteItem extends StatelessWidget {
       : super(key: key);
   final Widget title;
   final Widget subtitle;
-  final ImageProvider leadingImage;
+  final ImageProvider? leadingImage;
   final Function onSettingPress;
   final Function onDeletePress;
 

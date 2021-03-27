@@ -52,5 +52,5 @@ class DatabaseHelper {
 
   HistoryDao get historyDao => _database.historyDao;
 
-  DownloadDao get downloadTable => _database.downloadDao;
+  DownloadDao get downloadDao => _database.downloadDao;
 }

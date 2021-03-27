@@ -16,7 +16,7 @@ class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
 
   Stream<List<WebsiteTableData>> getAllStream() => select(websiteTable).watch();
 
-  Future<void> insert(WebsiteTableData data) => into(websiteTable).insert(data);
+  Future<int> insert(WebsiteTableCompanion data) => into(websiteTable).insert(data);
 
   Future<void> remove(WebsiteTableData data) =>
       delete(websiteTable).delete(data);

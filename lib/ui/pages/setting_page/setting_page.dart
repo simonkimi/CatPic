@@ -81,9 +81,9 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
-        value: settingStore.previewQuality,
+        selectedValue: settingStore.previewQuality,
         onChange: (value) {
-          settingStore.setPreviewQuality(value.value);
+          settingStore.setPreviewQuality(value.value!);
         },
         title: S.of(context).preview_quality,
         choiceItems: qualityChoice,
@@ -96,9 +96,9 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
-        value: settingStore.displayQuality,
+        selectedValue: settingStore.displayQuality,
         onChange: (value) {
-          settingStore.setDisplayQuality(value.value);
+          settingStore.setDisplayQuality(value.value!);
         },
         title: S.of(context).sample_quality,
         choiceItems: qualityChoice,
@@ -111,9 +111,9 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
-        value: settingStore.downloadQuality,
+        selectedValue: settingStore.downloadQuality,
         onChange: (value) {
-          settingStore.setDownloadQuality(value.value);
+          settingStore.setDownloadQuality(value.value!);
         },
         title: S.of(context).download_quality,
         choiceItems: qualityChoice,
@@ -140,9 +140,9 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
-        value: settingStore.previewRowNum,
+        selectedValue: settingStore.previewRowNum,
         onChange: (value) {
-          settingStore.setPreviewRowNum(value.value);
+          settingStore.setPreviewRowNum(value.value!);
         },
         title: S.of(context).column_num,
         choiceItems: List.generate(
@@ -164,9 +164,9 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
-        value: settingStore.eachPageItem,
+        selectedValue: settingStore.eachPageItem,
         onChange: (value) {
-          settingStore.setEachPageItem(value.value);
+          settingStore.setEachPageItem(value.value!);
         },
         title: S.of(context).per_page_limit,
         choiceItems: List.generate(7, (index) {

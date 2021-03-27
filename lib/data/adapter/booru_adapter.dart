@@ -2,6 +2,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:dio/dio.dart';
 
+
 enum SupportPage { POSTS, POOLS, ARTISTS, TAGS }
 
 abstract class BooruAdapter {
@@ -21,3 +22,4 @@ abstract class BooruAdapter {
 
   Dio get dio;
 }
+

@@ -672,6 +672,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.5.0"
+  smart_select:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: null-safety
+      resolved-ref: aed82cc0a8431515928d27d4ecb1885c32540755
+      url: "https://github.com/iktakahiro/flutter_smart_select.git"
+    source: git
+    version: "4.3.2"
   source_gen:
     dependency: transitive
     description:

@@ -1,4 +1,8 @@
+import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/adapter/gelbooru_adapter.dart';
+import 'package:catpic/data/adapter/moebooru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
@@ -25,7 +29,7 @@ class DioBuilder {
       dio.interceptors.add(HostInterceptor(
         dio: dio,
         directLink: websiteEntity.directLink,
-        websiteId: websiteEntity.id!,
+        websiteId: websiteEntity.id,
       ));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {
@@ -42,4 +46,14 @@ abstract class BaseClient {
   }
 
   late Dio dio;
+}
+
+BooruAdapter getAdapter(WebsiteTableData table) {
+  if (table.type == WebsiteType.GELBOORU.index) {
+    return GelbooruAdapter(table);
+  } else if (table.type == WebsiteType.MOEBOORU.index) {
+    return MoebooruAdapter(table);
+  }
+  // TODO(me): Danbooru Adapter
+  throw Exception('TODO Danbooru Adapter');
 }

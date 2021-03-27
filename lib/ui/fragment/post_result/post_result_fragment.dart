@@ -1,10 +1,10 @@
 import 'dart:ui' as ui;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/history_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
@@ -24,7 +24,7 @@ typedef ValueCallBack = void Function(String);
 
 class PostResultFragment extends StatefulWidget {
   const PostResultFragment({
-    Key key,
+    Key? key,
     this.searchText = '',
     required this.adapter,
   }) : super(key: key);
@@ -39,9 +39,9 @@ class PostResultFragment extends StatefulWidget {
 mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   final _searchBarController = FloatingSearchBarController();
   final _refreshController = RefreshController(initialRefresh: false);
-  List<SearchSuggestions> suggestionList;
+  late List<SearchSuggestions> suggestionList;
 
-  PostResultStore _store;
+  late PostResultStore _store;
 
   Future<void> _onRefresh() async {
     print('_onRefresh');
@@ -95,7 +95,7 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
       // 推荐Tag
       final lastTag = tag.split(' ').last;
       final dao = DatabaseHelper().tagDao;
-      final list = await dao.getStart(mainStore.websiteEntity.id, '$lastTag%');
+      final list = await dao.getStart(mainStore.websiteEntity!.id, lastTag);
       setState(() {
         suggestionList = list.map((e) => SearchSuggestions(e.tag)).toList();
       });
@@ -115,15 +115,13 @@ mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
   Future<void> _setSearchHistory(String tag) async {
     if (tag.isEmpty) return;
     final dao = DatabaseHelper().historyDao;
-    final history = await dao.getByHistory(tag);
+    final history = await dao.get(tag);
     if (history != null) {
-      history.createTime = DateTime.now().millisecondsSinceEpoch;
-      await dao.updateHistory(history);
-    } else {
-      dao.addHistory(HistoryEntity(
-        history: tag,
-        createTime: DateTime.now().millisecondsSinceEpoch,
+      await dao.updateHistory(history.copyWith(
+        createTime: DateTime.now()
       ));
+    } else {
+      dao.insert(HistoryTableCompanion.insert(history: tag));
     }
   }
 }
@@ -136,7 +134,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
     suggestionList = [];
     _store =
         PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       await _refreshController.requestRefresh();
     });
   }
@@ -210,7 +208,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
         context,
         MaterialPageRoute(
           builder: (context) => ImageViewPage(
-            dio: mainStore.websiteEntity.getAdapter().dio,
+            dio: getAdapter(mainStore.websiteEntity!).dio,
             booruPost: post,
             heroTag: '${post.id}|${post.md5}',
           ),
@@ -218,7 +216,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
       );
     };
 
-    String imageUrl;
+    late String imageUrl;
     switch (settingStore.previewQuality) {
       case ImageQuality.preview:
         imageUrl = post.previewURL;
@@ -258,9 +256,9 @@ class _PostResultFragmentState extends State<PostResultFragment>
                   height: 24,
                   child: CircularProgressIndicator(
                     value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                            ((progress.cumulativeBytesLoaded ?? 0) != 0)
+                            ((progress.cumulativeBytesLoaded) != 0)
                         ? progress.cumulativeBytesLoaded /
-                            progress.expectedTotalBytes
+                            progress.expectedTotalBytes!
                         : 0.0,
                     strokeWidth: 2.5,
                   ),
@@ -294,7 +292,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
     );
   }
 
-  Widget _buildFooter(BuildContext context, LoadStatus status) {
+  Widget _buildFooter(BuildContext context, LoadStatus? status) {
     Widget buildRow(List<Widget> children) {
       return Padding(
         padding: const EdgeInsets.only(top: 20),
@@ -306,7 +304,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
       );
     }
 
-    switch (status) {
+    switch (status ?? LoadStatus.loading) {
       case LoadStatus.idle:
         return buildRow([
           const Icon(Icons.arrow_upward),
@@ -318,7 +316,6 @@ class _PostResultFragmentState extends State<PostResultFragment>
             style: const TextStyle(color: Colors.black),
           ),
         ]);
-        break;
       case LoadStatus.canLoading:
         return buildRow([
           const Icon(Icons.arrow_downward),
@@ -330,7 +327,6 @@ class _PostResultFragmentState extends State<PostResultFragment>
             style: const TextStyle(color: Colors.black),
           )
         ]);
-        break;
       case LoadStatus.loading:
         return buildRow([
           const SizedBox(
@@ -346,7 +342,6 @@ class _PostResultFragmentState extends State<PostResultFragment>
             style: const TextStyle(color: Colors.black),
           )
         ]);
-        break;
       case LoadStatus.noMore:
         return buildRow([
           const Icon(Icons.vertical_align_bottom),
@@ -358,7 +353,6 @@ class _PostResultFragmentState extends State<PostResultFragment>
             style: const TextStyle(color: Colors.black),
           )
         ]);
-        break;
       case LoadStatus.failed:
         return buildRow([
           const Icon(Icons.sms_failed),
@@ -370,9 +364,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
             style: const TextStyle(color: Colors.black),
           )
         ]);
-        break;
     }
-    return null;
   }
 
   Widget buildWaterFlow() {

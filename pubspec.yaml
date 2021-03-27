@@ -42,6 +42,11 @@ dependencies:
       url: https://github.com/fzyzcjy/flutter_pulltorefresh
       ref: 0bb4f70dd7540ffe032bbc2a6994df388b4f1c39
 
+  smart_select:
+    git:
+      url: https://github.com/iktakahiro/flutter_smart_select.git
+      ref: null-safety
+
 
 dev_dependencies:
   flutter_test:

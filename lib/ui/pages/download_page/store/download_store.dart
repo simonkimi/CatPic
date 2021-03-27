@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/download_entity.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -18,11 +17,11 @@ class DownloadStore = DownloadStoreBase with _$DownloadStore;
 class TaskExistedException implements Exception {}
 
 abstract class DownloadStoreBase with Store {
-  var downloadList = ObservableList<DownloadEntity>();
+  var downloadList = ObservableList<DownloadTableData>();
 
   Future<void> init() async {
     final dao = DatabaseHelper().downloadDao;
-    downloadList.addAll(await dao.getALL());
+    downloadList.addAll(await dao.getAll());
   }
 
   @action
@@ -32,6 +31,8 @@ abstract class DownloadStoreBase with Store {
         .isNotEmpty) {
       throw TaskExistedException();
     }
+
+    var dao = DatabaseHelper().downloadDao;
 
     String downloadUrl = '';
     switch (settingStore.downloadQuality) {
@@ -46,7 +47,7 @@ abstract class DownloadStoreBase with Store {
         downloadUrl = booruPost.imgURL;
         break;
     }
-    final entity = DownloadEntity(
+    final entity = DownloadTableCompanion.insert(
         imgUrl: booruPost.imgURL,
         largerUrl: booruPost.sampleURL,
         previewUrl: booruPost.previewURL,
@@ -54,14 +55,16 @@ abstract class DownloadStoreBase with Store {
         isFinish: false,
         postId: booruPost.id,
         quality: settingStore.downloadQuality,
-        websiteId: mainStore.websiteEntity.id!);
-    downloadList.add(entity);
+        websiteId: mainStore.websiteEntity!.id);
+
+    await dao.insert(entity);
+    await init();
     await downloadFile(dio, downloadUrl, downloadUrl.split('/').last, entity);
   }
 
   @action
-  Future<void> downloadFile(
-      Dio dio, String url, String fileName, DownloadEntity entity) async {
+  Future<void> downloadFile(Dio dio, String url, String fileName,
+      DownloadTableCompanion entity) async {
     final downloadPath = settingStore.downloadUri;
     final rsp = await dio
         .get<Uint8List>(url, options: Options(responseType: ResponseType.bytes),

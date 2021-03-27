@@ -1,4 +1,4 @@
-import 'package:catpic/data/database/database_helper.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
@@ -56,7 +56,7 @@ class WebsiteManagerPage extends StatelessWidget {
       final title = e.name;
       final scheme = getSchemeString(e.scheme);
       final subTitle = '$scheme://${e.host}/';
-      ImageProvider favIcon;
+      ImageProvider? favIcon;
       if (e.favicon.isNotEmpty) {
         favIcon = MemoryImage(e.favicon);
       }
@@ -67,9 +67,7 @@ class WebsiteManagerPage extends StatelessWidget {
         leadingImage: favIcon,
         onDeletePress: () {
           final websiteDao = DatabaseHelper().websiteDao;
-          websiteDao.removeSite([e]).then((value) {
-            EventBusUtil().bus.fire(EventSiteListChange());
-          });
+          websiteDao.remove(e);
         },
         onSettingPress: () {},
       );

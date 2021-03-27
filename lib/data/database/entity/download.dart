@@ -12,6 +12,8 @@ class DownloadTable extends Table {
 
   TextColumn get imgUrl => text()();
 
+  TextColumn get previewUrl => text()();
+
   TextColumn get largerUrl => text()();
 
   IntColumn get quality => integer()();

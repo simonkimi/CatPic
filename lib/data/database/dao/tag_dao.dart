@@ -10,12 +10,8 @@ class TagDao extends DatabaseAccessor<AppDataBase> with _$TagDaoMixin {
 
   Future<List<TagTableData>> getAll() => select(tagTable).get();
 
-  Future<void> insert(List<TagTableData> entities) async {
-    final table = into(tagTable);
-    for (final entity in entities) {
-      await table.insert(entity, mode: InsertMode.insertOrIgnore);
-    }
-  }
+  Future<void> insert(TagTableCompanion entity) =>
+      into(tagTable).insert(entity, mode: InsertMode.insertOrIgnore);
 
   Future<List<TagTableData>> getStart(int website, String tag) async {
     return (select(tagTable)

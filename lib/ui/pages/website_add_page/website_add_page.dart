@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/database_helper.dart';
-import 'package:catpic/data/database/entity/website_entity.dart';
+import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
@@ -163,10 +163,10 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         ],
         child: ListTile(
           title: Text(S.of(context).site_type),
-          subtitle: Text(websiteTypeName[websiteType]),
+          subtitle: Text(websiteTypeName[websiteType]!),
           leading: const Icon(Icons.search),
         ),
-        onSelected: (value) {
+        onSelected: (int value) {
           setState(() {
             websiteType = value;
           });
@@ -213,12 +213,12 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
 }
 
 mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
-  String websiteName;
-  String websiteHost;
-  int scheme;
-  int websiteType;
-  bool directLink;
-  bool useDoH;
+  late String websiteName;
+  late String websiteHost;
+  late int scheme;
+  late int websiteType;
+  late bool directLink;
+  late bool useDoH;
 
   /// 保存网站
   Future<bool> saveWebsite() async {
@@ -232,20 +232,19 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
 
     // 保存网站
     final websiteDao = DatabaseHelper().websiteDao;
-    final entity = WebsiteEntity(
-      cookies: '',
+    final entity = WebsiteTableCompanion.insert(
       host: websiteHost,
       name: websiteName,
       scheme: scheme,
       useDoH: useDoH,
       type: websiteType,
       directLink: directLink,
-      favicon: Uint8List.fromList([]),
     );
-    final id = await websiteDao.addSite(entity);
+    final id = await websiteDao.insert(entity);
 
+    final table = await websiteDao.getById(id);
     // 获取封面图片
-    getFavicon(entity).then((favicon) {
+    getFavicon(table!).then((favicon) {
       mainStore.setWebsiteFavicon(id, favicon);
     });
     return true;

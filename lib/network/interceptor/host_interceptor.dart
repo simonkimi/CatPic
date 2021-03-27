@@ -47,8 +47,8 @@ class HostInterceptor extends Interceptor {
     final ip = await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
-      final entity = HostTableCompanion(host: Value(host), ip: Value(ip), websiteId: Value(websiteId));
-      await hostDao.insert(entity);
+      await hostDao.insert(
+          HostTableCompanion.insert(host: host, ip: ip, websiteId: websiteId));
       hostList = await hostDao.getAll();
       dio.unlock();
       return ip;
