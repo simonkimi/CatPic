@@ -55,7 +55,7 @@ class _SearchBarState extends State<SearchBar> {
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: const Duration(milliseconds: 300),
       transitionCurve: Curves.easeInOut,
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       axisAlignment: isPortrait ? 0.0 : -1.0,
       openAxisAlignment: 0.0,
       openWidth: isPortrait ? 600 : 500,

@@ -176,12 +176,8 @@ class _PostResultFragmentState extends State<PostResultFragment>
 
   Widget _buildSuggestionList(
       BuildContext context, Animation<double> transition) {
-    return Material(
-      color: Colors.white,
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+    print('_buildSuggestionList');
+    return Card(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: suggestionList.map((e) {

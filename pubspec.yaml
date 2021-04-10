@@ -22,7 +22,6 @@ dependencies:
   flutter_slidable: ^0.6.0-nullsafety.0
   flutter_svg: 0.21.0-nullsafety.0
   html: ^0.15.0
-  material_floating_search_bar: ^0.3.3
   shared_preferences: ^2.0.5
   sliding_sheet: ^0.5.0
   sp_util: ^2.0.3
@@ -35,6 +34,10 @@ dependencies:
   sqlite3_flutter_libs: 0.4.1
   path_provider: 2.0.1
   path: 1.8.0
+
+  material_floating_search_bar:
+    git:
+      url: https://github.com/simonkimi/material_floating_search_bar.git
 
 
   pull_to_refresh:
