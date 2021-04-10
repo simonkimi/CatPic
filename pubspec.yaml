@@ -16,7 +16,7 @@ dependencies:
   bot_toast: ^4.0.1
   dio: ^4.0.0-prev3
   event_bus: ^2.0.0
-  extended_image: ^4.0.0
+  extended_image: ^4.0.1
   flutter_cache_manager: ^3.0.0
   flutter_mobx: ^2.0.0-nullsafety.3
   flutter_slidable: ^0.6.0-nullsafety.0

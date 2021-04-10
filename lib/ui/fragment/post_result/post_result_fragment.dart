@@ -1,18 +1,13 @@
 import 'dart:ui' as ui;
-import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
-import 'package:catpic/utils/image/cached_dio_image_provider.dart';
-import 'package:dio/dio.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -20,8 +15,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'post_result_store.dart';
-
-typedef ValueCallBack = void Function(String);
 
 class PostResultFragment extends StatefulWidget {
   const PostResultFragment({
@@ -37,106 +30,9 @@ class PostResultFragment extends StatefulWidget {
   _PostResultFragmentState createState() => _PostResultFragmentState();
 }
 
-mixin _PostResultFragmentMixin<T extends StatefulWidget> on State<T> {
-  final _searchBarController = FloatingSearchBarController();
-  final _refreshController = RefreshController(initialRefresh: false);
-  late List<SearchSuggestions> suggestionList;
-
-  late PostResultStore _store;
-
-  Future<void> _onRefresh() async {
-    print('_onRefresh');
-    try {
-      await _store.refresh();
-      _refreshController.loadComplete();
-      _refreshController.refreshCompleted();
-    } on NoMorePage {
-      _refreshController.loadNoData();
-      _refreshController.refreshCompleted();
-    } on DioError catch (e) {
-      _refreshController.loadFailed();
-      _refreshController.refreshFailed();
-      BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
-    } catch (e) {
-      debugPrint(e.toString());
-      _refreshController.loadFailed();
-      _refreshController.refreshFailed();
-      BotToast.showText(text: e.toString());
-    }
-  }
-
-  Future<void> _onLoadMore() async {
-    debugPrint('_onLoadMore');
-    if (_refreshController.isRefresh) {
-      _refreshController.loadComplete();
-      return;
-    }
-    try {
-      await _store.loadNextPage();
-      _refreshController.loadComplete();
-    } on NoMorePage {
-      _refreshController.loadNoData();
-    } on DioError catch (e) {
-      _refreshController.loadFailed();
-      BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
-    } catch (e) {
-      print(e.toString());
-      _refreshController.loadFailed();
-      BotToast.showText(text: e.toString());
-    }
-  }
-
-  Future<void> _newSearch(String tag) async {
-    await _store.launchNewSearch(tag);
-    await _refreshController.requestRefresh();
-  }
-
-  Future<void> _searchTag(String tag) async {
-    if (tag.isNotEmpty) {
-      // 推荐Tag
-      final lastTag = tag.split(' ').last;
-      final dao = DatabaseHelper().tagDao;
-      final list = await dao.getStart(mainStore.websiteEntity!.id, lastTag);
-      setState(() {
-        suggestionList = list.map((e) => SearchSuggestions(e.tag)).toList();
-      });
-    } else {
-      // 历史搜索
-      final dao = DatabaseHelper().historyDao;
-      final list = await dao.getAll();
-      setState(() {
-        suggestionList = list
-            .where((e) => e.history.trim().isNotEmpty)
-            .map((e) => SearchSuggestions(e.history))
-            .toList();
-      });
-    }
-  }
-
-  Future<void> _setSearchHistory(String tag) async {
-    if (tag.isEmpty) return;
-    final dao = DatabaseHelper().historyDao;
-    final history = await dao.get(tag);
-    if (history != null) {
-      await dao.updateHistory(history.copyWith(createTime: DateTime.now()));
-    } else {
-      dao.insert(HistoryTableCompanion.insert(history: tag));
-    }
-  }
-}
-
-class _PostResultFragmentState extends State<PostResultFragment>
-    with _PostResultFragmentMixin {
-  @override
-  void initState() {
-    super.initState();
-    suggestionList = [];
-    _store =
-        PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      await _refreshController.requestRefresh();
-    });
-  }
+class _PostResultFragmentState extends State<PostResultFragment> {
+  late final PostResultStore _store =
+      PostResultStore(searchText: widget.searchText, adapter: widget.adapter);
 
   @override
   Widget build(BuildContext context) {
@@ -147,14 +43,14 @@ class _PostResultFragmentState extends State<PostResultFragment>
 
   Widget _buildSearchBar() {
     return SearchBar(
-      controller: _searchBarController,
+      controller: _store.searchBarController,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       onSubmitted: (value) async {
-        _newSearch(value.trim());
-        _setSearchHistory(value.trim());
+        _store.launchNewSearch(value.trim());
+        _store.setSearchHistory(value.trim());
       },
       onFocusChanged: (isFocus) {
-        _searchTag(_searchBarController.query);
+        _store.onSearchTagChange();
       },
       actions: [
         FloatingSearchBarAction(
@@ -169,7 +65,7 @@ class _PostResultFragmentState extends State<PostResultFragment>
         ),
       ],
       body: buildWaterFlow(),
-      onQueryChanged: _searchTag,
+      onQueryChanged: _store.onSearchTagChange,
       candidateBuilder: _buildSuggestionList,
     );
   }
@@ -180,14 +76,14 @@ class _PostResultFragmentState extends State<PostResultFragment>
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: suggestionList.map((e) {
+        children: _store.suggestionList.map((e) {
           return ListTile(
             title: Text(e.title),
             onTap: () {
-              final newTag = _searchBarController.query.split(' ')
+              final newTag = _store.searchBarController.query.split(' ')
                 ..removeLast()
                 ..add(e.title);
-              _searchBarController.query = newTag.join(' ') + ' ';
+              _store.searchBarController.query = newTag.join(' ') + ' ';
             },
           );
         }).toList(),
@@ -228,67 +124,60 @@ class _PostResultFragmentState extends State<PostResultFragment>
       key: Key('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
-      body: ExtendedImage(
-        image: CachedDioImageProvider(
-          dio: widget.adapter.dio,
-          url: imageUrl,
-          cachedKey: imageUrl,
-        ),
-        handleLoadingProgress: true,
-        enableLoadState: true,
-        loadStateChanged: (ExtendedImageState state) {
-          switch (state.extendedImageLoadState) {
-            case LoadState.loading:
-              return GestureDetector(
-                onTap: loadDetail,
-                child: AspectRatio(
-                  aspectRatio: post.width / post.height,
-                  child: Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        value: state.loadingProgress?.expectedTotalBytes != null
-                            ? state.loadingProgress!.cumulativeBytesLoaded /
-                            state.loadingProgress!.expectedTotalBytes!
-                            : 0,
-                        strokeWidth: 2.5,
-                      ),
-                    ),
+      body: CachedDioImage(
+        dio: widget.adapter.dio,
+        imgUrl: imageUrl,
+        imageBuilder: (context, imgData) {
+          return InkWell(
+            onTap: loadDetail,
+            child: Hero(
+              tag: '${post.id}|${post.md5}',
+              child: Image(image: MemoryImage(imgData, scale: 0.1)),
+            ),
+          );
+        },
+        loadingBuilder: (_, progress) {
+          return GestureDetector(
+            onTap: loadDetail,
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    value: ((progress.expectedTotalBytes ?? 0) != 0) &&
+                            ((progress.cumulativeBytesLoaded) != 0)
+                        ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!
+                        : 0.0,
+                    strokeWidth: 2.5,
                   ),
                 ),
-              );
-            case LoadState.completed:
-              return InkWell(
-                onTap: loadDetail,
-                child: Hero(
-                  tag: '${post.id}|${post.md5}',
-                  child: ExtendedRawImage(
-                    image: state.extendedImageInfo?.image,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (_, err, reload) {
+          return GestureDetector(
+            onTap: () {
+              reload();
+            },
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error),
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-              );
-            case LoadState.failed:
-              return GestureDetector(
-                onTap: () {
-                  state.reLoadImage();
-                },
-                child: AspectRatio(
-                  aspectRatio: post.width / post.height,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(S.of(context).tap_to_reload),
-                    ],
-                  ),
-                ),
-              );
-          }
+                  Text(S.of(context).tap_to_reload),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
@@ -378,13 +267,13 @@ class _PostResultFragmentState extends State<PostResultFragment>
         footer: CustomFooter(
           builder: _buildFooter,
         ),
-        controller: _refreshController,
+        controller: _store.refreshController,
         header: MaterialClassicHeader(
           distance: barHeight + 70,
           height: barHeight + 80,
         ),
-        onRefresh: _onRefresh,
-        onLoading: _onLoadMore,
+        onRefresh: _store.onRefresh,
+        onLoading: _store.onLoadMore,
         child: WaterfallFlow.builder(
           padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(

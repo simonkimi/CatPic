@@ -76,20 +76,22 @@ class _TextInputTileState extends State<TextInputTile> {
               ),
             ),
             actions: [
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
                 child: Text(widget.negativeText ?? 'No'),
               ),
-              FlatButton(
-                onPressed: () {
-                  widget.onChanged(controller.text);
-                  Navigator.of(context).pop();
-                },
-                child: Text(widget.positiveText ?? 'Yes'),
-                color: Theme.of(context).primaryColor,
-              ),
+              TextButton(
+                  onPressed: () {
+                    widget.onChanged(controller.text);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(widget.positiveText ?? 'Yes'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).primaryColor),
+                  )),
             ],
           );
         });

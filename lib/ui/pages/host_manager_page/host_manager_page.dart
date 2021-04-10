@@ -121,20 +121,22 @@ class _HostManagerPageState extends State<HostManagerPage> {
                     });
                   },
                 ),
-                FlatButton(
-                  onPressed: () {
-                    saveHost(
-                      host: hostController.text.getHost(),
-                      ip: ipController.text,
-                    ).then((value) {
-                      if (value) {
-                        Navigator.of(context).pop();
-                      }
-                    });
-                  },
-                  child: Text(S.of(context).confirm),
-                  color: Theme.of(context).primaryColor,
-                ),
+                TextButton(
+                    onPressed: () {
+                      saveHost(
+                        host: hostController.text.getHost(),
+                        ip: ipController.text,
+                      ).then((value) {
+                        if (value) {
+                          Navigator.of(context).pop();
+                        }
+                      });
+                    },
+                    child: Text(S.of(context).confirm),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).primaryColor),
+                    )),
               ],
             );
           });
