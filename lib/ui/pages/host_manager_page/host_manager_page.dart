@@ -5,15 +5,8 @@ import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
-class HostManagerPage extends StatefulWidget {
-  static var routeName = 'HostManager';
-
-  @override
-  _HostManagerPageState createState() => _HostManagerPageState();
-}
-
-class _HostManagerPageState extends State<HostManagerPage> {
-  late List<HostTableData>? hostEntities;
+class HostManagerPage extends StatelessWidget {
+  final database = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +17,27 @@ class _HostManagerPageState extends State<HostManagerPage> {
     );
   }
 
-  ListView buildBody() {
-    return ListView(
-      children: hostEntities?.map((e) {
-            return Dismissible(
-              key: ValueKey(e.id),
-              child: ListTile(
-                title: Text(e.host),
-                subtitle: Text(e.ip),
-              ),
-              onDismissed: (_) {
-                DatabaseHelper().hostDao.remove(e).then((value) {
-                  init();
-                });
-              },
-            );
-          }).toList() ??
-          [],
+  Widget buildBody() {
+    return StreamBuilder<List<HostTableData>>(
+      initialData: const [],
+      stream: database.hostDao.getAllStream(),
+      builder: (context, s) {
+        return ListView(
+          children: s.data?.map((e) {
+                return Dismissible(
+                  key: ValueKey(e.id),
+                  child: ListTile(
+                    title: Text(e.host),
+                    subtitle: Text(e.ip),
+                  ),
+                  onDismissed: (_) {
+                    DatabaseHelper().hostDao.remove(e);
+                  },
+                );
+              }).toList() ??
+              [],
+        );
+      },
     );
   }
 
@@ -49,7 +46,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
       child: const Icon(Icons.add),
       tooltip: S.of(context).add,
       onPressed: () {
-        _showDialog();
+        _showDialog(context);
       },
     );
   }
@@ -68,13 +65,7 @@ class _HostManagerPageState extends State<HostManagerPage> {
     );
   }
 
-  Future<void> init() async {
-    final hostDao = DatabaseHelper().hostDao;
-    hostEntities = await hostDao.getAll();
-    setState(() {});
-  }
-
-  Future<void> _showDialog() async {
+  Future<void> _showDialog(BuildContext context) async {
     await showDialog<void>(
         context: context,
         builder: (context) {
@@ -124,9 +115,10 @@ class _HostManagerPageState extends State<HostManagerPage> {
                 TextButton(
                     onPressed: () {
                       saveHost(
-                        host: hostController.text.getHost(),
-                        ip: ipController.text,
-                      ).then((value) {
+                              host: hostController.text.getHost(),
+                              ip: ipController.text,
+                              context: context)
+                          .then((value) {
                         if (value) {
                           Navigator.of(context).pop();
                         }
@@ -143,7 +135,10 @@ class _HostManagerPageState extends State<HostManagerPage> {
         });
   }
 
-  Future<bool> saveHost({required String host, required String ip}) async {
+  Future<bool> saveHost(
+      {required String host,
+      required String ip,
+      required BuildContext context}) async {
     if (host.isEmpty || ip.isEmpty) {
       BotToast.showText(text: S.of(context).host_empty);
       return false;
@@ -162,13 +157,6 @@ class _HostManagerPageState extends State<HostManagerPage> {
     final hostEntity =
         HostTableCompanion.insert(host: host, ip: ip, websiteId: -1);
     await dao.insert(hostEntity);
-    await init();
     return true;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    init();
   }
 }
