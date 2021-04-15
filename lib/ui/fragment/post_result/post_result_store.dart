@@ -1,12 +1,8 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/exception/no_more_page.dart';
 import 'package:catpic/data/interface/post_view.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/data/store/main/main_store.dart';
-import 'package:catpic/ui/components/search_bar.dart';
 import 'package:dio/dio.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -30,7 +26,6 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
   final refreshController = RefreshController(initialRefresh: true);
 
   Future<void> onRefresh() async {
-    print('_onRefresh');
     try {
       await refresh();
       refreshController.loadComplete();

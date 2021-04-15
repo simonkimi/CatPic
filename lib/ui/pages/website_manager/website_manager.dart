@@ -50,30 +50,32 @@ class WebsiteManagerPage extends StatelessWidget {
   }
 
   Widget _buildWebsiteList() {
-    return StreamBuilder<List<WebsiteTableData>>(builder: (context, s) {
-      return ListView(
-        children: s.data?.map((e) {
-              final title = e.name;
-              final scheme = getSchemeString(e.scheme);
-              final subTitle = '$scheme://${e.host}/';
-              ImageProvider? favIcon;
-              if (e.favicon.isNotEmpty) {
-                favIcon = MemoryImage(e.favicon);
-              }
-              return WebsiteItem(
-                key: Key('website-$title'),
-                title: Text(title),
-                subtitle: Text(subTitle),
-                leadingImage: favIcon,
-                onDeletePress: () {
-                  final websiteDao = DatabaseHelper().websiteDao;
-                  websiteDao.remove(e);
-                },
-                onSettingPress: () {},
-              );
-            }).toList() ??
-            [],
-      );
-    });
+    return StreamBuilder<List<WebsiteTableData>>(
+        stream: DatabaseHelper().websiteDao.getAllStream(),
+        builder: (context, s) {
+          return ListView(
+            children: s.data?.map((e) {
+                  final title = e.name;
+                  final scheme = getSchemeString(e.scheme);
+                  final subTitle = '$scheme://${e.host}/';
+                  ImageProvider? favIcon;
+                  if (e.favicon.isNotEmpty) {
+                    favIcon = MemoryImage(e.favicon);
+                  }
+                  return WebsiteItem(
+                    key: Key('website-$title'),
+                    title: Text(title),
+                    subtitle: Text(subTitle),
+                    leadingImage: favIcon,
+                    onDeletePress: () {
+                      final websiteDao = DatabaseHelper().websiteDao;
+                      websiteDao.remove(e);
+                    },
+                    onSettingPress: () {},
+                  );
+                }).toList() ??
+                [],
+          );
+        });
   }
 }

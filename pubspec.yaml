@@ -28,7 +28,7 @@ dependencies:
   waterfall_flow: ^3.0.1
   intl: ^0.17.0
   xml: ^5.0.2
-  es_compression: ^2.0.1
+  brotli: ^0.5.0
 
   moor: ^4.2.1
   sqlite3_flutter_libs: ^0.4.1
