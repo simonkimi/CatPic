@@ -10,7 +10,6 @@
   "menu": "菜单",
   "search": "搜索",
   "delete": "删除",
-
   "yes": "是",
   "no": "否",
   "positive": "确认",
@@ -18,6 +17,7 @@
   "add": "添加",
   "back": "返回",
   "not_set": "未指定",
+
   "website_manager": "网站管理",
   "add_website": "添加网站",
   "basic_settings": "基础设置",

@@ -184,10 +184,9 @@ class _ImageViewPageState extends State<ImageViewPage>
               child: DefaultButton(
                 onPressed: () async {
                   try {
-                    downloadStore.createDownloadTask(
-                        widget.dio, widget.booruPost);
+                    downloadStore.createDownloadTask(widget.booruPost);
                     BotToast.showText(text: '已经添加到下载列表');
-                  } on TaskExistedException {
+                  } on TaskExisted {
                     BotToast.showText(text: '任务已存在');
                   }
                 },

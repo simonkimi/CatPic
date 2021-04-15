@@ -1,8 +1,17 @@
 import 'package:moor/moor.dart';
 
 
+class DownloadStatus {
+  static const PENDING = 0;
+  static const FINISH = 1;
+  static const UNREACHABLE = 2;
+}
+
+
 class DownloadTable extends Table {
   IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get fileName => text()();
 
   TextColumn get postId => text()();
 
@@ -18,5 +27,5 @@ class DownloadTable extends Table {
 
   IntColumn get quality => integer()();
 
-  BoolColumn get isFinish => boolean()();
+  IntColumn get status => integer()();
 }

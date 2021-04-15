@@ -11,6 +11,13 @@ class DownloadDao extends DatabaseAccessor<AppDataBase>
 
   Future<List<DownloadTableData>> getAll() => select(downloadTable).get();
 
+  Stream<List<DownloadTableData>> getAllStream() => select(downloadTable).watch();
+
+  Future<List<DownloadTableData>> getPending() =>
+      (select(downloadTable)..where((tbl) => tbl.status.equals(DownloadStatus.PENDING))).get();
+
+  Future<void> replace(DownloadTableData data) => update(downloadTable).replace(data);
+
   Future<void> insert(DownloadTableCompanion data) =>
       into(downloadTable).insert(data);
 }
