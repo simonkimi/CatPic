@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -15,7 +15,7 @@ class SettingPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          S.of(context).setting,
+          I18n.of(context).setting,
           style: const TextStyle(fontSize: 18),
         ),
         leading: IconButton(
@@ -49,12 +49,12 @@ class SettingPage extends StatelessWidget {
   List<Widget> buildAndroid(BuildContext context) {
     return [
       const Divider(),
-      SummaryTile(S.of(context).download),
+      SummaryTile(I18n.of(context).download),
       ListTile(
-        title: Text(S.of(context).download_uri),
+        title: Text(I18n.of(context).download_uri),
         subtitle: Text(settingStore.downloadUri.isNotEmpty
             ? settingStore.downloadUri
-            : S.of(context).not_set),
+            : I18n.of(context).not_set),
         onTap: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (_) => AndroidDownloadPage()));
@@ -66,15 +66,15 @@ class SettingPage extends StatelessWidget {
 
   List<Widget> buildQuality(BuildContext context) {
     final qualityChoice = [
-      S2Choice(value: ImageQuality.preview, title: S.of(context).preview),
-      S2Choice(value: ImageQuality.sample, title: S.of(context).sample),
-      S2Choice(value: ImageQuality.raw, title: S.of(context).raw),
+      S2Choice(value: ImageQuality.preview, title: I18n.of(context).preview),
+      S2Choice(value: ImageQuality.sample, title: I18n.of(context).sample),
+      S2Choice(value: ImageQuality.raw, title: I18n.of(context).raw),
     ];
     return [
       const Divider(),
-      SummaryTile(S.of(context).quality),
+      SummaryTile(I18n.of(context).quality),
       SmartSelect<int>.single(
-        tileBuilder: (context, state) {
+        tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
             leading: const Icon(Icons.image_outlined),
@@ -85,11 +85,11 @@ class SettingPage extends StatelessWidget {
         onChange: (value) {
           settingStore.setPreviewQuality(value.value!);
         },
-        title: S.of(context).preview_quality,
+        title: I18n.of(context).preview_quality,
         choiceItems: qualityChoice,
       ),
       SmartSelect<int>.single(
-        tileBuilder: (context, state) {
+        tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
             leading: const Icon(Icons.image_search),
@@ -100,11 +100,11 @@ class SettingPage extends StatelessWidget {
         onChange: (value) {
           settingStore.setDisplayQuality(value.value!);
         },
-        title: S.of(context).sample_quality,
+        title: I18n.of(context).sample_quality,
         choiceItems: qualityChoice,
       ),
       SmartSelect<int>.single(
-        tileBuilder: (context, state) {
+        tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
             leading: const Icon(Icons.cloud_download_outlined),
@@ -115,7 +115,7 @@ class SettingPage extends StatelessWidget {
         onChange: (value) {
           settingStore.setDownloadQuality(value.value!);
         },
-        title: S.of(context).download_quality,
+        title: I18n.of(context).download_quality,
         choiceItems: qualityChoice,
       ),
     ];
@@ -123,9 +123,9 @@ class SettingPage extends StatelessWidget {
 
   List<Widget> buildDisplaySetting(BuildContext context) {
     return [
-      SummaryTile(S.of(context).display),
+      SummaryTile(I18n.of(context).display),
       SwitchListTile(
-        title: Text(S.of(context).card_layout),
+        title: Text(I18n.of(context).card_layout),
         secondary: const Icon(Icons.apps),
         value: settingStore.useCardWidget,
         onChanged: (value) {
@@ -133,7 +133,7 @@ class SettingPage extends StatelessWidget {
         },
       ),
       SmartSelect<int>.single(
-        tileBuilder: (context, state) {
+        tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
             leading: const Icon(Icons.view_column_outlined),
@@ -144,12 +144,12 @@ class SettingPage extends StatelessWidget {
         onChange: (value) {
           settingStore.setPreviewRowNum(value.value!);
         },
-        title: S.of(context).column_num,
+        title: I18n.of(context).column_num,
         choiceItems: List.generate(
             5, (index) => S2Choice(title: '${index + 2}', value: index + 2)),
       ),
       SwitchListTile(
-        title: Text(S.of(context).display_info_bar),
+        title: Text(I18n.of(context).display_info_bar),
         secondary: const Icon(Icons.info_outline),
         value: settingStore.showCardDetail,
         onChanged: (value) {
@@ -157,7 +157,7 @@ class SettingPage extends StatelessWidget {
         },
       ),
       SmartSelect<int>.single(
-        tileBuilder: (context, state) {
+        tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
             leading: const Icon(Icons.format_list_numbered_sharp),
@@ -168,7 +168,7 @@ class SettingPage extends StatelessWidget {
         onChange: (value) {
           settingStore.setEachPageItem(value.value!);
         },
-        title: S.of(context).per_page_limit,
+        title: I18n.of(context).per_page_limit,
         choiceItems: List.generate(7, (index) {
           final len = (index + 2) * 10;
           return S2Choice(title: len.toString(), value: len);

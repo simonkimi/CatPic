@@ -1,6 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class HostManagerPage extends StatelessWidget {
   Widget buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
       child: const Icon(Icons.add),
-      tooltip: S.of(context).add,
+      tooltip: I18n.of(context).add,
       onPressed: () {
         _showDialog(context);
       },
@@ -54,13 +54,13 @@ class HostManagerPage extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Text(S.of(context).host_manager),
+      title: Text(I18n.of(context).host_manager),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
           Navigator.of(context).pop();
         },
-        tooltip: S.of(context).back,
+        tooltip: I18n.of(context).back,
       ),
     );
   }
@@ -107,7 +107,7 @@ class HostManagerPage extends StatelessWidget {
                         });
                       } else {
                         BotToast.showText(
-                            text: S.of(context).trusted_host_auto_failed);
+                            text: I18n.of(context).trusted_host_auto_failed);
                       }
                     });
                   },
@@ -124,7 +124,7 @@ class HostManagerPage extends StatelessWidget {
                         }
                       });
                     },
-                    child: Text(S.of(context).confirm),
+                    child: Text(I18n.of(context).confirm),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).primaryColor),
@@ -140,12 +140,12 @@ class HostManagerPage extends StatelessWidget {
       required String ip,
       required BuildContext context}) async {
     if (host.isEmpty || ip.isEmpty) {
-      BotToast.showText(text: S.of(context).host_empty);
+      BotToast.showText(text: I18n.of(context).host_empty);
       return false;
     }
     final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
     if (!reg.hasMatch(ip)) {
-      BotToast.showText(text: S.of(context).illegal_ip);
+      BotToast.showText(text: I18n.of(context).illegal_ip);
       return false;
     }
     final dao = DatabaseHelper().hostDao;

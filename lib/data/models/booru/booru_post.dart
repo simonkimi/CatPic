@@ -1,4 +1,4 @@
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:flutter/material.dart';
 
 enum PostRating { SAFE, EXPLICIT, QUESTIONABLE }
@@ -6,11 +6,11 @@ enum PostRating { SAFE, EXPLICIT, QUESTIONABLE }
 String getRatingText(BuildContext context, PostRating rating) {
   switch (rating) {
     case PostRating.SAFE:
-      return S.of(context).safe;
+      return I18n.of(context).safe;
     case PostRating.EXPLICIT:
-      return S.of(context).explicit;
+      return I18n.of(context).explicit;
     case PostRating.QUESTIONABLE:
-      return S.of(context).questionable;
+      return I18n.of(context).questionable;
   }
 }
 

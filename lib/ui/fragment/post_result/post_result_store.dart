@@ -36,7 +36,7 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
     } on DioError catch (e) {
       refreshController.loadFailed();
       refreshController.refreshFailed();
-      // BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
+      // BotToast.showText(text: '${I18n.of(context).network_error}:${e.message}');
       print(e.message);
     } catch (e) {
       print(e.toString());
@@ -61,7 +61,7 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
     } on DioError catch (e) {
       refreshController.loadFailed();
       print(e.message);
-      // BotToast.showText(text: '${S.of(context).network_error}:${e.message}');
+      // BotToast.showText(text: '${I18n.of(context).network_error}:${e.message}');
     } catch (e) {
       print(e.toString());
       refreshController.loadFailed();

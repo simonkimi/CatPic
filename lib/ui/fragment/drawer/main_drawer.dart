@@ -1,5 +1,5 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
@@ -83,7 +83,7 @@ class _MainDrawerState extends State<MainDrawer> {
       const Divider(),
       ListTile(
         leading: const Icon(Icons.settings),
-        title: Text(S.of(context).website_manager),
+        title: Text(I18n.of(context).website_manager),
         onTap: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => WebsiteManagerPage()));
@@ -100,28 +100,28 @@ class _MainDrawerState extends State<MainDrawer> {
           children: [
             ListTile(
               leading: const Icon(Icons.home),
-              title: Text(S.of(context).home),
+              title: Text(I18n.of(context).home),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.local_fire_department),
-              title: Text(S.of(context).hot),
+              title: Text(I18n.of(context).hot),
               onTap: () {},
             ),
             // Expanded(child: null),
             ListTile(
               leading: const Icon(Icons.favorite),
-              title: Text(S.of(context).favourite),
+              title: Text(I18n.of(context).favourite),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.history),
-              title: Text(S.of(context).history),
+              title: Text(I18n.of(context).history),
               onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.download_rounded),
-              title: Text(S.of(context).download),
+              title: Text(I18n.of(context).download),
               onTap: () {},
             ),
           ],
@@ -130,7 +130,7 @@ class _MainDrawerState extends State<MainDrawer> {
       const Divider(),
       ListTile(
         leading: const Icon(Icons.settings),
-        title: Text(S.of(context).setting),
+        title: Text(I18n.of(context).setting),
         onTap: () {
           Navigator.push(
             context,
@@ -142,7 +142,7 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   Widget buildUserAccountsDrawerHeader() {
-    var subTitle = S.of(context).no_website;
+    var subTitle = I18n.of(context).no_website;
     ImageProvider? favicon;
     if (mainStore.websiteEntity != null) {
       final scheme = getSchemeString(mainStore.websiteEntity!.scheme);

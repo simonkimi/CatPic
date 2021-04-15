@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/data/store/main/main_store.dart';
@@ -82,7 +82,7 @@ class _ImageViewPageState extends State<ImageViewPage>
                 children: [
                   Expanded(
                     child: Text(
-                      '${S.of(context).resolution}: ${widget.booruPost.width} x ${widget.booruPost.height}',
+                      '${I18n.of(context).resolution}: ${widget.booruPost.width} x ${widget.booruPost.height}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
@@ -98,13 +98,13 @@ class _ImageViewPageState extends State<ImageViewPage>
                 children: [
                   Expanded(
                     child: Text(
-                      '${S.of(context).rating}: ${getRatingText(context, widget.booruPost.rating)}',
+                      '${I18n.of(context).rating}: ${getRatingText(context, widget.booruPost.rating)}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
                   Expanded(
                     child: Text(
-                      '${S.of(context).score}: ${widget.booruPost.score}',
+                      '${I18n.of(context).score}: ${widget.booruPost.score}',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
@@ -374,7 +374,7 @@ class _ImageViewPageState extends State<ImageViewPage>
                     ),
                     if (progress == 0)
                       Text(
-                        S.of(context).connecting,
+                        I18n.of(context).connecting,
                         style: const TextStyle(color: Colors.white),
                       )
                     else

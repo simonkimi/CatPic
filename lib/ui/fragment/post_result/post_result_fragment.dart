@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
@@ -133,7 +133,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Text(S.of(context).tap_to_reload),
+                  Text(I18n.of(context).tap_to_reload),
                 ],
               ),
             ),
@@ -163,7 +163,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             width: 10,
           ),
           Text(
-            S.of(context).idle_loading,
+            I18n.of(context).idle_loading,
             style: const TextStyle(color: Colors.black),
           ),
         ]);
@@ -174,7 +174,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             width: 10,
           ),
           Text(
-            S.of(context).can_load_text,
+            I18n.of(context).can_load_text,
             style: const TextStyle(color: Colors.black),
           )
         ]);
@@ -189,7 +189,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             width: 10,
           ),
           Text(
-            S.of(context).loading_text,
+            I18n.of(context).loading_text,
             style: const TextStyle(color: Colors.black),
           )
         ]);
@@ -200,7 +200,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             width: 10,
           ),
           Text(
-            S.of(context).no_more_text,
+            I18n.of(context).no_more_text,
             style: const TextStyle(color: Colors.black),
           )
         ]);
@@ -211,7 +211,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             width: 10,
           ),
           Text(
-            S.of(context).load_fail,
+            I18n.of(context).load_fail,
             style: const TextStyle(color: Colors.black),
           )
         ]);

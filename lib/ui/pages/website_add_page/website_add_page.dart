@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
@@ -62,7 +62,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
     return AppBar(
       centerTitle: true,
       title: Text(
-        S.of(context).add_website,
+        I18n.of(context).add_website,
         style: const TextStyle(fontSize: 18),
       ),
       // 左上角的返回按钮
@@ -74,7 +74,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         onPressed: () {
           Navigator.pop(context);
         },
-        tooltip: S.of(context).back,
+        tooltip: I18n.of(context).back,
       ),
       actions: [
         // 右上角的确认按钮
@@ -91,7 +91,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
               }
             });
           },
-          tooltip: S.of(context).confirm,
+          tooltip: I18n.of(context).confirm,
         )
       ],
     );
@@ -100,12 +100,12 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   /// 构建基础设置
   List<Widget> buildBasicSetting() {
     return [
-      SummaryTile(S.of(context).basic_settings),
+      SummaryTile(I18n.of(context).basic_settings),
       TextInputTile(
         defaultValue: websiteName,
-        title: Text(S.of(context).website_nickname),
+        title: Text(I18n.of(context).website_nickname),
         subtitle:
-            Text(websiteName.isEmpty ? S.of(context).not_set : websiteName),
+            Text(websiteName.isEmpty ? I18n.of(context).not_set : websiteName),
         leading: const SizedBox(),
         onChanged: (value) {
           setState(() {
@@ -119,11 +119,11 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   /// 构建网络设置
   List<Widget> buildWebsiteSetting() {
     return [
-      SummaryTile(S.of(context).website_settings),
+      SummaryTile(I18n.of(context).website_settings),
       TextInputTile(
-        title: Text(S.of(context).host),
+        title: Text(I18n.of(context).host),
         subtitle:
-            Text(websiteHost.isEmpty ? S.of(context).not_set : websiteHost),
+            Text(websiteHost.isEmpty ? I18n.of(context).not_set : websiteHost),
         leading: const Icon(Icons.home),
         hintText: 'example.org',
         defaultValue: websiteHost,
@@ -134,8 +134,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         },
       ),
       SwitchListTile(
-        title: Text(S.of(context).scheme),
-        subtitle: Text(S.of(context).scheme_https),
+        title: Text(I18n.of(context).scheme),
+        subtitle: Text(I18n.of(context).scheme_https),
         secondary: const Icon(Icons.http),
         value: scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
@@ -157,7 +157,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
               child: const Text('Danbooru'), value: WebsiteType.DANBOORU.index),
         ],
         child: ListTile(
-          title: Text(S.of(context).site_type),
+          title: Text(I18n.of(context).site_type),
           subtitle: Text(websiteTypeName[websiteType]!),
           leading: const Icon(Icons.search),
         ),
@@ -173,10 +173,10 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   /// 构建高级设置
   List<Widget> buildAdvanceSetting() {
     return [
-      SummaryTile(S.of(context).advanced_settings),
+      SummaryTile(I18n.of(context).advanced_settings),
       SwitchListTile(
-        title: Text(S.of(context).use_doh),
-        subtitle: Text(S.of(context).use_doh_desc),
+        title: Text(I18n.of(context).use_doh),
+        subtitle: Text(I18n.of(context).use_doh_desc),
         value: useDoH,
         secondary: const Icon(Icons.list_alt),
         onChanged: (value) {
@@ -186,8 +186,8 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         },
       ),
       SwitchListTile(
-        title: Text(S.of(context).direct_link),
-        subtitle: Text(S.of(context).direct_link_desc),
+        title: Text(I18n.of(context).direct_link),
+        subtitle: Text(I18n.of(context).direct_link_desc),
         secondary: const Icon(Icons.airplanemode_active_rounded),
         value: directLink,
         onChanged: (value) {
@@ -218,7 +218,7 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
   /// 保存网站
   Future<bool> saveWebsite() async {
     if (websiteHost.isEmpty) {
-      BotToast.showText(text: S.of(context).host_empty);
+      BotToast.showText(text: I18n.of(context).host_empty);
       return false;
     }
     if (websiteName.isEmpty) {

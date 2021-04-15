@@ -1,4 +1,4 @@
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -32,7 +32,7 @@ class WebsiteItem extends StatelessWidget {
         ),
         secondaryActions: [
           IconSlideAction(
-            caption: S.of(context).setting,
+            caption: I18n.of(context).setting,
             color: Theme.of(context).primaryColor,
             icon: Icons.settings,
             onTap: () {
@@ -40,7 +40,7 @@ class WebsiteItem extends StatelessWidget {
             },
           ),
           IconSlideAction(
-            caption: S.of(context).delete,
+            caption: I18n.of(context).delete,
             color: Colors.red,
             icon: Icons.delete,
             onTap: () {

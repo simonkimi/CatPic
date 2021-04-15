@@ -1,5 +1,5 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/utils/misc_util.dart';
@@ -40,10 +40,10 @@ class WebsiteManagerPage extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).pop();
         },
-        tooltip: S.of(context).back,
+        tooltip: I18n.of(context).back,
       ),
       title: Text(
-        S.of(context).website_manager,
+        I18n.of(context).website_manager,
         style: const TextStyle(fontSize: 18),
       ),
     );

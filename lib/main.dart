@@ -7,7 +7,7 @@ import 'package:catpic/themes/themes.dart' as theme;
 import 'package:sp_util/sp_util.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
-import 'generated/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,14 +28,11 @@ class CatPicApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         RefreshLocalizations.delegate,
-        S.delegate
+        AppLocalizations.delegate
       ],
       home: SearchPage(),
       builder: BotToastInit(),
-      supportedLocales: const [
-        Locale('en'),
-        Locale('zh', 'CN'),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }

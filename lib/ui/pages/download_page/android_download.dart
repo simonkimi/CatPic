@@ -1,6 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/bridge/android_bridge.dart';
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +19,7 @@ class AndroidDownloadPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).download),
+        title: Text(I18n.of(context).download),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -39,18 +39,18 @@ class AndroidDownloadPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ListView(
         children: [
-          Text(S.of(context).saf_desc1),
+          Text(I18n.of(context).saf_desc1),
           const SizedBox(height: 20),
-          Text(S.of(context).saf_desc2),
+          Text(I18n.of(context).saf_desc2),
           const Image(image: AssetImage('assets/imgs/step1-zh-CN.png')),
           const SizedBox(height: 20),
-          Text(S.of(context).saf_desc3),
+          Text(I18n.of(context).saf_desc3),
           const Image(image: AssetImage('assets/imgs/step2-zh-CN.png')),
           const SizedBox(height: 20),
-          Text(S.of(context).saf_desc4),
+          Text(I18n.of(context).saf_desc4),
           const Image(image: AssetImage('assets/imgs/step3-zh-CN.png')),
           const SizedBox(height: 20),
-          Text(S.of(context).saf_desc5),
+          Text(I18n.of(context).saf_desc5),
           const Image(image: AssetImage('assets/imgs/step4-zh-CN.png')),
           const SizedBox(height: 100)
         ],

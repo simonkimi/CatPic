@@ -1,6 +1,4 @@
 {
-  "@@locale": "zh_CN",
-
   "home": "主页",
   "posts": "投稿",
   "pools": "图集",
@@ -49,8 +47,8 @@
   "score": "评分",
   "source": "来源",
   "rating": "评级",
-  "connecting": "连接服务器中...",
 
+  "connecting": "连接服务器中...",
   "tap_to_reload": "点击重新加载",
   "idle_loading": "上拉加载",
   "load_fail": "加载失败",

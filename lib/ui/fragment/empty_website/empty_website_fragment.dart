@@ -1,4 +1,4 @@
-import 'package:catpic/generated/l10n.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -33,7 +33,7 @@ class EmptyWebsiteFragment extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    S.of(context).to_add_website,
+                    I18n.of(context).to_add_website,
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
