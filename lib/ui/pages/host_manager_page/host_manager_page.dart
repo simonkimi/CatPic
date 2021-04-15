@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/network/misc/misc_network.dart';
+import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
@@ -97,29 +97,27 @@ class HostManagerPage extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.autorenew_sharp),
-                  onPressed: () {
+                  onPressed: () async {
                     final host = hostController.text.getHost();
                     final cancelFunc = BotToast.showLoading();
-                    getDoH(host).then((value) {
-                      cancelFunc();
-                      if (value.isNotEmpty) {
-                        localState(() {
-                          ipController.text = value;
-                        });
-                      } else {
-                        BotToast.showText(
-                            text: I18n.of(context).trusted_host_auto_failed);
-                      }
-                    });
+                    final hostValue = await getDoH(host);
+                    cancelFunc();
+                    if (hostValue.isNotEmpty) {
+                      localState(() {
+                        ipController.text = hostValue;
+                      });
+                    } else {
+                      BotToast.showText(
+                          text: I18n.of(context).trusted_host_auto_failed);
+                    }
                   },
                 ),
-
                 DefaultButton(
                   onPressed: () {
                     saveHost(
-                        host: hostController.text.getHost(),
-                        ip: ipController.text,
-                        context: context)
+                            host: hostController.text.getHost(),
+                            ip: ipController.text,
+                            context: context)
                         .then((value) {
                       if (value) {
                         Navigator.of(context).pop();

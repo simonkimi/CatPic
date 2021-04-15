@@ -15,28 +15,28 @@ class ImageQuality {
 
 abstract class SettingStoreBase with Store {
   @observable
-  bool useCardWidget = true; // 卡片布局
+  var useCardWidget = true; // 卡片布局
 
   @observable
-  bool showCardDetail = true; // 显示底栏
+  var showCardDetail = true; // 显示底栏
 
   @observable
-  int eachPageItem = 50; // 每页数量
+  var eachPageItem = 50; // 每页数量
 
   @observable
-  int previewRowNum = 3; // 显示列数
+  var previewRowNum = 3; // 显示列数
 
   @observable
-  int previewQuality = ImageQuality.preview; // 预览质量
+  var previewQuality = ImageQuality.preview; // 预览质量
 
   @observable
-  int displayQuality = ImageQuality.sample; // 显示质量
+  var displayQuality = ImageQuality.sample; // 显示质量
 
   @observable
-  int downloadQuality = ImageQuality.raw; // 下载质量
+  var downloadQuality = ImageQuality.raw; // 下载质量
 
   @observable
-  String downloadUri = ''; // 下载路径
+  var downloadUri = ''; // 下载路径
 
   @action
   Future<void> init() async {

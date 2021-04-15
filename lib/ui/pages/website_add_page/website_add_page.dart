@@ -2,7 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/network/misc/misc_network.dart';
+import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/ui/components/setting/summary_tile.dart';
 import 'package:catpic/ui/components/setting/text_input_tile.dart';
 import 'package:catpic/data/store/main/main_store.dart';
