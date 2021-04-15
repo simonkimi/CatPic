@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../i18n.dart';
+import '../default_button.dart';
+
 class TextInputTile extends StatefulWidget {
   const TextInputTile(
       {Key? key,
@@ -80,18 +83,15 @@ class _TextInputTileState extends State<TextInputTile> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(widget.negativeText ?? 'No'),
+                child: Text(widget.negativeText ?? I18n.of(context).positive),
               ),
-              TextButton(
-                  onPressed: () {
-                    widget.onChanged(controller.text);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(widget.positiveText ?? 'Yes'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).primaryColor),
-                  )),
+              DefaultButton(
+                onPressed: () {
+                  widget.onChanged(controller.text);
+                  Navigator.of(context).pop();
+                },
+                child: Text(widget.positiveText ?? I18n.of(context).negative),
+              )
             ],
           );
         });

@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/misc/misc_network.dart';
+import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/utils/misc_util.dart';
 import 'package:flutter/material.dart';
 
@@ -112,23 +113,21 @@ class HostManagerPage extends StatelessWidget {
                     });
                   },
                 ),
-                TextButton(
-                    onPressed: () {
-                      saveHost(
-                              host: hostController.text.getHost(),
-                              ip: ipController.text,
-                              context: context)
-                          .then((value) {
-                        if (value) {
-                          Navigator.of(context).pop();
-                        }
-                      });
-                    },
-                    child: Text(I18n.of(context).confirm),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor),
-                    )),
+
+                DefaultButton(
+                  onPressed: () {
+                    saveHost(
+                        host: hostController.text.getHost(),
+                        ip: ipController.text,
+                        context: context)
+                        .then((value) {
+                      if (value) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  child: Text(I18n.of(context).confirm),
+                ),
               ],
             );
           });

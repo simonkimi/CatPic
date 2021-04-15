@@ -11,6 +11,10 @@
   "search": "搜索",
   "delete": "删除",
 
+  "yes": "是",
+  "no": "否",
+  "positive": "确认",
+  "negative": "取消",
   "add": "添加",
   "back": "返回",
   "not_set": "未指定",
@@ -48,7 +52,7 @@
   "source": "来源",
   "rating": "评级",
 
-  "connecting": "连接服务器中...",
+  "connecting": "连接中...",
   "tap_to_reload": "点击重新加载",
   "idle_loading": "上拉加载",
   "load_fail": "加载失败",

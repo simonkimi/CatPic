@@ -3,6 +3,7 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -180,7 +181,7 @@ class _ImageViewPageState extends State<ImageViewPage>
             const SizedBox(width: 10),
             Expanded(
               flex: 1,
-              child: TextButton(
+              child: DefaultButton(
                 onPressed: () async {
                   try {
                     downloadStore.createDownloadTask(
@@ -193,10 +194,6 @@ class _ImageViewPageState extends State<ImageViewPage>
                 child: const Icon(
                   Icons.download_rounded,
                   color: Colors.white,
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Theme.of(context).primaryColor),
                 ),
               ),
             ),
