@@ -7,6 +7,7 @@ import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
+import 'package:smart_select/src/model/chosen.dart';
 
 class SettingPage extends StatelessWidget {
   @override
@@ -82,7 +83,7 @@ class SettingPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         selectedValue: settingStore.previewQuality,
-        onChange: (value) {
+        onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreviewQuality(value.value!);
         },
         title: I18n.of(context).preview_quality,
@@ -97,7 +98,7 @@ class SettingPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         selectedValue: settingStore.displayQuality,
-        onChange: (value) {
+        onChange: (S2SingleSelected<int?> value) {
           settingStore.setDisplayQuality(value.value!);
         },
         title: I18n.of(context).sample_quality,
@@ -112,7 +113,7 @@ class SettingPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         selectedValue: settingStore.downloadQuality,
-        onChange: (value) {
+        onChange: (S2SingleSelected<int?> value) {
           settingStore.setDownloadQuality(value.value!);
         },
         title: I18n.of(context).download_quality,
@@ -141,7 +142,7 @@ class SettingPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         selectedValue: settingStore.previewRowNum,
-        onChange: (value) {
+        onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreviewRowNum(value.value!);
         },
         title: I18n.of(context).column_num,
