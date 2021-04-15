@@ -31,7 +31,7 @@ class ImageViewPage extends StatefulWidget {
 
 class _ImageViewPageState extends State<ImageViewPage>
     with TickerProviderStateMixin {
-  late Animation<double> _doubleClickAnimation;
+  Animation<double>? _doubleClickAnimation;
   late AnimationController _doubleClickAnimationController;
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
@@ -401,7 +401,7 @@ class _ImageViewPageState extends State<ImageViewPage>
   void _doubleTap(ExtendedImageGestureState state) {
     final Offset pointerDownPosition = state.pointerDownPosition!;
 
-    _doubleClickAnimation.removeListener(_doubleClickAnimationListener);
+    _doubleClickAnimation?.removeListener(_doubleClickAnimationListener);
     _doubleClickAnimationController.stop();
     _doubleClickAnimationController.reset();
 
@@ -414,12 +414,12 @@ class _ImageViewPageState extends State<ImageViewPage>
 
     _doubleClickAnimationListener = () {
       state.handleDoubleTap(
-          scale: _doubleClickAnimation.value,
+          scale: _doubleClickAnimation!.value,
           doubleTapPosition: pointerDownPosition);
     };
     _doubleClickAnimation = _doubleClickAnimationController
         .drive(Tween<double>(begin: begin, end: end));
-    _doubleClickAnimation.addListener(_doubleClickAnimationListener);
+    _doubleClickAnimation!.addListener(_doubleClickAnimationListener);
     _doubleClickAnimationController.forward();
   }
 
