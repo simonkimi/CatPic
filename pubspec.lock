@@ -409,12 +409,10 @@ packages:
   material_floating_search_bar:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: e57316c7c6521eea81fd97a5044ed3ea852b6ff2
-      url: "https://github.com/simonkimi/material_floating_search_bar.git"
-    source: git
-    version: "0.3.3"
+      name: material_floating_search_bar
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.4"
   meta:
     dependency: transitive
     description:

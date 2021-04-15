@@ -27,10 +27,7 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
 
   var postList = ObservableList<BooruPost>();
   var page = 0;
-
-  final searchBarController = FloatingSearchBarController();
   final refreshController = RefreshController(initialRefresh: true);
-  final suggestionList = ObservableList();
 
   Future<void> onRefresh() async {
     print('_onRefresh');
@@ -84,37 +81,6 @@ abstract class PostResultStoreBase with Store implements PostViewInterface {
     postList.clear();
   }
 
-  Future<void> onSearchTagChange([String? tag]) async {
-    tag = tag ?? searchBarController.query;
-    if (tag.isNotEmpty) {
-      // 推荐Tag
-      final lastTag = tag.split(' ').last;
-      final dao = DatabaseHelper().tagDao;
-      final list = await dao.getStart(mainStore.websiteEntity!.id, lastTag);
-      suggestionList.clear();
-      suggestionList.addAll(list.map((e) => SearchSuggestions(e.tag)));
-    } else {
-      // 历史搜索
-      final dao = DatabaseHelper().historyDao;
-      final list = await dao.getAll();
-      suggestionList.clear();
-      suggestionList.addAll(list
-          .where((e) => e.history.trim().isNotEmpty)
-          .map((e) => SearchSuggestions(e.history)));
-    }
-  }
-
-
-  Future<void> setSearchHistory(String tag) async {
-    if (tag.isEmpty) return;
-    final dao = DatabaseHelper().historyDao;
-    final history = await dao.get(tag);
-    if (history != null) {
-      await dao.updateHistory(history.copyWith(createTime: DateTime.now()));
-    } else {
-      dao.insert(HistoryTableCompanion.insert(history: tag));
-    }
-  }
 
   @override
   @action

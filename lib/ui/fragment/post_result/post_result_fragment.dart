@@ -4,7 +4,7 @@ import 'package:catpic/generated/l10n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
-import 'package:catpic/ui/components/search_bar.dart';
+import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -42,52 +42,12 @@ class _PostResultFragmentState extends State<PostResultFragment> {
   }
 
   Widget _buildSearchBar() {
-    return SearchBar(
-      controller: _store.searchBarController,
-      defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
-      onSubmitted: (value) async {
+    return TagSearchBar(
+      defaultHint: widget.searchText,
+      onSearch: (value) {
         _store.launchNewSearch(value.trim());
-        _store.setSearchHistory(value.trim());
       },
-      onFocusChanged: (isFocus) {
-        _store.onSearchTagChange();
-      },
-      actions: [
-        FloatingSearchBarAction(
-          showIfOpened: false,
-          child: CircularButton(
-            icon: const Icon(Icons.filter_alt_outlined),
-            onPressed: () {},
-          ),
-        ),
-        FloatingSearchBarAction.searchToClear(
-          showIfClosed: false,
-        ),
-      ],
-      body: buildWaterFlow(),
-      onQueryChanged: _store.onSearchTagChange,
-      candidateBuilder: _buildSuggestionList,
-    );
-  }
-
-  Widget _buildSuggestionList(
-      BuildContext context, Animation<double> transition) {
-    print('_buildSuggestionList');
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: _store.suggestionList.map((e) {
-          return ListTile(
-            title: Text(e.title),
-            onTap: () {
-              final newTag = _store.searchBarController.query.split(' ')
-                ..removeLast()
-                ..add(e.title);
-              _store.searchBarController.query = newTag.join(' ') + ' ';
-            },
-          );
-        }).toList(),
-      ),
+      body: _buildWaterFlow(),
     );
   }
 
@@ -258,7 +218,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     }
   }
 
-  Widget buildWaterFlow() {
+  Widget _buildWaterFlow() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return FloatingSearchBarScrollNotifier(
       child: SmartRefresher(

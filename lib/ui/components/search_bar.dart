@@ -100,4 +100,9 @@ class SearchSuggestions {
 
   final String title;
   final String? subTitle;
+
+  @override
+  String toString() {
+    return title;
+  }
 }
