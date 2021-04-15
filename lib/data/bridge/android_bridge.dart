@@ -15,9 +15,7 @@ Future<String> getSAFUri() async {
 
 Future<String> writeFile(Uint8List data, String fileName, String uri) async {
   try {
-    print('写入数据');
     const platform = MethodChannel(CHANNEL);
-    print('${data.length}, $fileName, $uri');
     return await platform.invokeMethod('save_image', {
       'data': data,
       'fileName': fileName,
