@@ -6,11 +6,11 @@ import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
-import 'package:catpic/utils/misc_util.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/adapter.dart';
 
 class DioBuilder {
-  static Dio build(WebsiteTableData websiteEntity) {
+  static Dio build(WebsiteTableData? websiteEntity) {
     final dio = Dio()
       ..options.connectTimeout = 1000 * 60
       ..options.headers = {
@@ -20,6 +20,7 @@ class DioBuilder {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'
       };
+    if (websiteEntity == null) return dio;
 
     final scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';

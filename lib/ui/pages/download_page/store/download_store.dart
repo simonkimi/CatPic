@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -34,15 +35,17 @@ class DownLoadTask {
 }
 
 abstract class DownloadStoreBase with Store {
-  var downloadingList = ObservableList<DownLoadTask>();
+  var downloadingList = <DownLoadTask>[];
+
+  late final Stream<List<DownLoadTask>> downloadProgressStream =
+      Stream.periodic(const Duration(seconds: 1))
+          .map((event) => downloadingList);
 
   final dao = DatabaseHelper().downloadDao;
 
   @action
   Future<void> createDownloadTask(BooruPost booruPost) async {
     final taskList = await dao.getAll();
-
-    print(taskList);
 
     if (taskList
         .where((e) => e.md5 == booruPost.md5 && e.postId == booruPost.id)

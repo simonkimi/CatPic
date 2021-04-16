@@ -2,7 +2,7 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
-import 'package:catpic/utils/misc_util.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class WebsiteManagerPage extends StatelessWidget {

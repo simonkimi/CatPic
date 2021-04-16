@@ -1,15 +1,20 @@
 import 'dart:convert';
 
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:catpic/utils/utils.dart';
 
 class DownloadManagerPage extends StatelessWidget {
+  final _store = DownloadStore();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,9 +28,7 @@ class DownloadManagerPage extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        I18n
-            .of(context)
-            .download_manager,
+        I18n.of(context).download_manager,
         style: const TextStyle(fontSize: 18),
       ),
       centerTitle: true,
@@ -42,32 +45,57 @@ class DownloadManagerPage extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context) {
-    return StreamBuilder<List<DownloadTableData>>(
-      stream: DatabaseHelper().downloadDao.getAllStream(),
+    // 能优化, 先放着, 能用就行
+    return FutureBuilder<List<WebsiteTableData>>(  // 方便由id获取WebsiteEntity, 以构造Dio
+      future: DatabaseHelper().websiteDao.getAll(),
       initialData: const [],
-      builder: (ctx, sn) {
-        return FutureBuilder<List<WebsiteTableData>>(
-          future: DatabaseHelper().websiteDao.getAll(),
-          initialData: null,
-          builder: (ctx, sn2) {
-            return ListView(
-              children: sn.data!
-                  .map((e) => _buildDownloadCard(context, sn2.data!, e))
-                  .toList(),
-            );
-          },
-        );
+      builder: (_, websiteList) {
+        return StreamBuilder<List<DownloadTableData>>(  // 获取下载历史数据库
+            stream: DatabaseHelper().downloadDao.getAllStream(),
+            initialData: const [],
+            builder: (_, downloadList) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    StreamBuilder<List<DownLoadTask>>(  // 获取下载列表, 此数据每秒更新一次
+                      stream: _store.downloadProgressStream,
+                      initialData: const [],
+                      builder: (_, downloadingTask) {
+                        final taskList = downloadingTask.data!;
+                        return Column(
+                          children: downloadList.data!
+                              .where((e) => e.status != DownloadStatus.FINISH)
+                              .map((e) {
+                            final task = taskList.firstOrNull(
+                                (element) => element.database.id == e.id);
+                            return _buildDownloadCard(
+                                context, websiteList.data!, e, task?.progress);
+                          }).toList(),
+                        );
+                      },
+                    ),
+                    Column(
+                      children: downloadList.data!
+                          .where((e) => e.status == DownloadStatus.FINISH)
+                          .map((e) => _buildDownloadCard(
+                              context, websiteList.data!, e, 1))
+                          .toList(),
+                    )
+                  ],
+                ),
+              );
+            });
       },
     );
   }
 
-  Widget _buildDownloadCard(BuildContext context,
-      List<WebsiteTableData> list, DownloadTableData data) {
-    Dio? dio;
-    final entities = list.where((element) => element.id == data.websiteId);
-    if (entities.isNotEmpty) {
-      dio = DioBuilder.build(entities.first);
-    }
+  Widget _buildDownloadCard(BuildContext context, List<WebsiteTableData> list,
+      DownloadTableData data, double? progress) {
+    final dio = DioBuilder.build(
+        list.firstOrNull((element) => element.id == data.websiteId));
+    final uri = Uri.parse(data.imgUrl);
+    final subtitle = '${uri.scheme}://${uri.host}/';
+
     return Container(
       height: 100,
       child: GestureDetector(
@@ -75,11 +103,10 @@ class DownloadManagerPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  ImageViewPage(
-                    dio: dio ?? Dio(),
-                    booruPost: BooruPost.fromJson(jsonDecode(data.booruJson)),
-                  ),
+              builder: (context) => ImageViewPage(
+                dio: dio,
+                booruPost: BooruPost.fromJson(jsonDecode(data.booruJson)),
+              ),
             ),
           );
         },
@@ -90,19 +117,29 @@ class DownloadManagerPage extends StatelessWidget {
               children: [
                 Container(
                   width: 60,
-                  child: dio != null
-                      ? buildCardImage(dio, data.previewUrl)
-                      : const SizedBox(),
+                  child: buildCardImage(dio, data.previewUrl),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(data.fileName),
-                      Text(Uri
-                          .parse(data.imgUrl)
-                          .host)
+                      Text(
+                        '# ${data.postId}',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                      ),
+                      const Expanded(child: SizedBox()),
+                      Text(subtitle,
+                          style: Theme.of(context).textTheme.subtitle2),
+                      const SizedBox(height: 5),
+                      Text(data.createTime.toString(),
+                          style: Theme.of(context).textTheme.subtitle2),
+                      const SizedBox(height: 5),
+                      if (progress != 1)
+                        LinearProgressIndicator(value: progress)
                     ],
                   ),
                 ),
@@ -134,9 +171,9 @@ class DownloadManagerPage extends StatelessWidget {
             height: 24,
             child: CircularProgressIndicator(
               value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                  ((progress.cumulativeBytesLoaded) != 0)
+                      ((progress.cumulativeBytesLoaded) != 0)
                   ? progress.cumulativeBytesLoaded /
-                  progress.expectedTotalBytes!
+                      progress.expectedTotalBytes!
                   : 0.0,
               strokeWidth: 2.5,
             ),

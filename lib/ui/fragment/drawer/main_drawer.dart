@@ -7,7 +7,7 @@ import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
-import 'package:catpic/utils/misc_util.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:catpic/utils/colors_util.dart';
+import 'package:catpic/utils/utils.dart';
 
-final baseTheme = ThemeData(
+final blueTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
   textTheme: const TextTheme(
     subtitle2: TextStyle(
