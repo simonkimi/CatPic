@@ -78,7 +78,7 @@ class SettingPage extends StatelessWidget {
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
-            leading: const Icon(Icons.image_outlined),
+            leading: const Icon(Icons.preview),
           );
         },
         modalType: S2ModalType.popupDialog,
@@ -133,6 +133,14 @@ class SettingPage extends StatelessWidget {
           settingStore.setUseCardWidget(value);
         },
       ),
+      SwitchListTile(
+        title: Text(I18n.of(context).display_info_bar),
+        secondary: const Icon(Icons.info_outline),
+        value: settingStore.showCardDetail,
+        onChanged: (value) {
+          settingStore.setShowCardDetail(value);
+        },
+      ),
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
@@ -148,14 +156,6 @@ class SettingPage extends StatelessWidget {
         title: I18n.of(context).column_num,
         choiceItems: List.generate(
             5, (index) => S2Choice(title: '${index + 2}', value: index + 2)),
-      ),
-      SwitchListTile(
-        title: Text(I18n.of(context).display_info_bar),
-        secondary: const Icon(Icons.info_outline),
-        value: settingStore.showCardDetail,
-        onChanged: (value) {
-          settingStore.setShowCardDetail(value);
-        },
       ),
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {

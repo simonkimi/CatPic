@@ -182,14 +182,7 @@ class _ImageViewPageState extends State<ImageViewPage>
             Expanded(
               flex: 1,
               child: DefaultButton(
-                onPressed: () async {
-                  try {
-                    downloadStore.createDownloadTask(widget.booruPost);
-                    BotToast.showText(text: '已经添加到下载列表');
-                  } on TaskExisted {
-                    BotToast.showText(text: '任务已存在');
-                  }
-                },
+                onPressed: _download,
                 child: const Icon(
                   Icons.download_rounded,
                   color: Colors.white,
@@ -200,6 +193,15 @@ class _ImageViewPageState extends State<ImageViewPage>
         ),
       );
     });
+  }
+
+  Future<void> _download() async {
+    try {
+      await downloadStore.createDownloadTask(widget.booruPost);
+      BotToast.showText(text: '已经添加到下载列表');
+    } on TaskExisted {
+      BotToast.showText(text: '任务已存在');
+    }
   }
 
   void showAsBottomSheet() async {
@@ -263,7 +265,7 @@ class _ImageViewPageState extends State<ImageViewPage>
                     Icons.save_alt,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: _download,
                 ),
               ],
             )

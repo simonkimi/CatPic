@@ -19,8 +19,20 @@ class AndroidDownloadPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).download),
+        title: Text(
+          I18n.of(context).download,
+          style: const TextStyle(fontSize: 18),
+        ),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            size: 18,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: SafeArea(
         child: buildDesc(context),

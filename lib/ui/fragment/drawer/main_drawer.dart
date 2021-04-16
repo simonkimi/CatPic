@@ -1,5 +1,8 @@
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/data/store/main/main_store.dart';
@@ -93,41 +96,60 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   List<Widget> buildMainMenu() {
+    List<SupportPage>? support;
+    if (mainStore.websiteEntity != null) {
+      support = getAdapter(mainStore.websiteEntity!).getSupportPage();
+    }
+
     return [
       Expanded(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: Text(I18n.of(context).home),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.local_fire_department),
-              title: Text(I18n.of(context).hot),
-              onTap: () {},
-            ),
-            // Expanded(child: null),
-            ListTile(
-              leading: const Icon(Icons.favorite),
-              title: Text(I18n.of(context).favourite),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: Text(I18n.of(context).history),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.download_rounded),
-              title: Text(I18n.of(context).download),
-              onTap: () {},
-            ),
+            if (support?.contains(SupportPage.POSTS) ?? false)
+              ListTile(
+                leading: const Icon(Icons.image),
+                title: Text(I18n.of(context).posts),
+                onTap: () {},
+              ),
+            if (support?.contains(SupportPage.POOLS) ?? false)
+              ListTile(
+                leading: const Icon(Icons.filter),
+                title: Text(I18n.of(context).pools),
+                onTap: () {},
+              ),
+            if (support?.contains(SupportPage.TAGS) ?? false)
+              ListTile(
+                leading: const Icon(Icons.tag),
+                title: Text(I18n.of(context).tag),
+                onTap: () {},
+              ),
+            if (support?.contains(SupportPage.ARTISTS) ?? false)
+              ListTile(
+                leading: const Icon(Icons.supervisor_account_sharp),
+                title: Text(I18n.of(context).artist),
+                onTap: () {},
+              ),
           ],
         ),
       ),
       const Divider(),
+      ListTile(
+        leading: const Icon(Icons.history),
+        title: Text(I18n.of(context).history),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: const Icon(Icons.download_rounded),
+        title: Text(I18n.of(context).download),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DownloadManagerPage()),
+          );
+        },
+      ),
       ListTile(
         leading: const Icon(Icons.settings),
         title: Text(I18n.of(context).setting),

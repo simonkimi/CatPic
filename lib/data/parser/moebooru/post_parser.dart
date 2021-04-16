@@ -32,7 +32,7 @@ class MoebooruPostParse {
     }).toList();
   }
 
-  static PostRating _getRating(String? name) {
+  static int _getRating(String? name) {
     switch (name) {
       case 's':
         return PostRating.SAFE;

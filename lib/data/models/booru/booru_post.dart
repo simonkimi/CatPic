@@ -1,15 +1,20 @@
 import 'package:catpic/i18n.dart';
 import 'package:flutter/material.dart';
 
-enum PostRating { SAFE, EXPLICIT, QUESTIONABLE }
+class PostRating {
+  static const SAFE = 0;
+  static const EXPLICIT = 1;
+  static const QUESTIONABLE = 2;
+}
 
-String getRatingText(BuildContext context, PostRating rating) {
+String getRatingText(BuildContext context, int rating) {
   switch (rating) {
     case PostRating.SAFE:
       return I18n.of(context).safe;
     case PostRating.EXPLICIT:
       return I18n.of(context).explicit;
     case PostRating.QUESTIONABLE:
+    default:
       return I18n.of(context).questionable;
   }
 }
@@ -36,6 +41,29 @@ class BooruPost {
     required this.score,
   });
 
+  factory BooruPost.fromJson(Map<String, dynamic> jsonRes) {
+    return BooruPost(
+      id: jsonRes['id'],
+      creatorId: jsonRes['creatorId'],
+      createTime: jsonRes['createTime'],
+      md5: jsonRes['md5'],
+      imgURL: jsonRes['imgURL'],
+      previewURL: jsonRes['previewURL'],
+      sampleURL: jsonRes['sampleURL'],
+      width: jsonRes['width'],
+      height: jsonRes['height'],
+      sampleWidth: jsonRes['sampleWidth'],
+      sampleHeight: jsonRes['sampleHeight'],
+      previewWidth: jsonRes['previewWidth'],
+      previewHeight: jsonRes['previewHeight'],
+      rating: jsonRes['rating'],
+      status: jsonRes['status'],
+      tags: jsonRes['tags'],
+      source: jsonRes['source'],
+      score: jsonRes['score'],
+    );
+  }
+
   final String id;
   final String creatorId;
   final String createTime;
@@ -52,9 +80,30 @@ class BooruPost {
   final int previewWidth;
   final int previewHeight;
 
-  final PostRating rating;
+  final int rating;
   final String status;
   final Map<String, List<String>> tags;
   final String source;
   final String score;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'creatorId': creatorId,
+        'createTime': createTime,
+        'md5': md5,
+        'imgURL': imgURL,
+        'previewURL': previewURL,
+        'sampleURL': sampleURL,
+        'width': width,
+        'height': height,
+        'sampleWidth': sampleWidth,
+        'sampleHeight': sampleHeight,
+        'previewWidth': previewWidth,
+        'previewHeight': previewHeight,
+        'rating': rating,
+        'status': status,
+        'tags': tags,
+        'source': source,
+        'score': score
+      };
 }

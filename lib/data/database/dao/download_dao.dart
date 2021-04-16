@@ -11,13 +11,20 @@ class DownloadDao extends DatabaseAccessor<AppDataBase>
 
   Future<List<DownloadTableData>> getAll() => select(downloadTable).get();
 
-  Stream<List<DownloadTableData>> getAllStream() => select(downloadTable).watch();
+  Stream<List<DownloadTableData>> getAllStream() =>
+      select(downloadTable).watch();
 
-  Future<List<DownloadTableData>> getPending() =>
-      (select(downloadTable)..where((tbl) => tbl.status.equals(DownloadStatus.PENDING))).get();
+  Future<List<DownloadTableData>> getPending() => (select(downloadTable)
+        ..where((tbl) => tbl.status.equals(DownloadStatus.PENDING)))
+      .get();
 
-  Future<void> replace(DownloadTableData data) => update(downloadTable).replace(data);
+  Future<void> replace(DownloadTableData data) =>
+      update(downloadTable).replace(data);
 
   Future<void> insert(DownloadTableCompanion data) =>
       into(downloadTable).insert(data);
+
+  Future<void> onWebsiteDelete(int id) =>
+      (update(downloadTable)..where((tbl) => tbl.websiteId.equals(id)))
+          .write(const DownloadTableCompanion(status: Value(DownloadStatus.UNREACHABLE)));
 }

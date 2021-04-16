@@ -28,4 +28,8 @@ class DownloadTable extends Table {
   IntColumn get quality => integer()();
 
   IntColumn get status => integer()();
+
+  TextColumn get booruJson => text()();
+  
+  DateTimeColumn get createTime => dateTime().clientDefault(() => DateTime.now())();
 }

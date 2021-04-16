@@ -25,7 +25,9 @@ class WebsiteManagerPage extends StatelessWidget {
             ));
       },
       child: const Icon(Icons.add),
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme
+          .of(context)
+          .primaryColor,
     );
   }
 
@@ -40,10 +42,14 @@ class WebsiteManagerPage extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).pop();
         },
-        tooltip: I18n.of(context).back,
+        tooltip: I18n
+            .of(context)
+            .back,
       ),
       title: Text(
-        I18n.of(context).website_manager,
+        I18n
+            .of(context)
+            .website_manager,
         style: const TextStyle(fontSize: 18),
       ),
     );
@@ -55,25 +61,25 @@ class WebsiteManagerPage extends StatelessWidget {
         builder: (context, s) {
           return ListView(
             children: s.data?.map((e) {
-                  final title = e.name;
-                  final scheme = getSchemeString(e.scheme);
-                  final subTitle = '$scheme://${e.host}/';
-                  ImageProvider? favIcon;
-                  if (e.favicon.isNotEmpty) {
-                    favIcon = MemoryImage(e.favicon);
-                  }
-                  return WebsiteItem(
-                    key: Key('website-$title'),
-                    title: Text(title),
-                    subtitle: Text(subTitle),
-                    leadingImage: favIcon,
-                    onDeletePress: () {
-                      final websiteDao = DatabaseHelper().websiteDao;
-                      websiteDao.remove(e);
-                    },
-                    onSettingPress: () {},
-                  );
-                }).toList() ??
+              final title = e.name;
+              final scheme = getSchemeString(e.scheme);
+              final subTitle = '$scheme://${e.host}/';
+              ImageProvider? favIcon;
+              if (e.favicon.isNotEmpty) {
+                favIcon = MemoryImage(e.favicon);
+              }
+              return WebsiteItem(
+                key: Key('website-$title'),
+                title: Text(title),
+                subtitle: Text(subTitle),
+                leadingImage: favIcon,
+                onDeletePress: () {
+                  DatabaseHelper().websiteDao.remove(e);
+                  DatabaseHelper().downloadDao.onWebsiteDelete(e.id);
+                },
+                onSettingPress: () {},
+              );
+            }).toList() ??
                 [],
           );
         });
