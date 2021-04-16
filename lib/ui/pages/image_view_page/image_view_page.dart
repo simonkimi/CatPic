@@ -4,6 +4,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/default_button.dart';
+import 'package:catpic/ui/components/null_hero.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/data/store/main/main_store.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -17,12 +18,12 @@ class ImageViewPage extends StatefulWidget {
   const ImageViewPage({
     Key? key,
     required this.booruPost,
-    required this.heroTag,
+    this.heroTag,
     required this.dio,
   }) : super(key: key);
 
   final BooruPost booruPost;
-  final String heroTag;
+  final String? heroTag;
   final Dio dio;
 
   @override
@@ -297,7 +298,7 @@ class _ImageViewPageState extends State<ImageViewPage>
         cachedKey: '$imageUrl${widget.booruPost.md5}',
         imageBuilder: (context, imgData) {
           return Center(
-            child: Hero(
+            child: NullableHero(
               tag: widget.heroTag,
               child: ExtendedImage(
                 width: double.infinity,
@@ -327,7 +328,9 @@ class _ImageViewPageState extends State<ImageViewPage>
         },
         errorBuilder: (context, err, reload) {
           return GestureDetector(
-            onTap: reload(),
+            onTap: () {
+              reload();
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: Column(

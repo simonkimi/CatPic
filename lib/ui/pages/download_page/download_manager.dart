@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
+import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +15,7 @@ class DownloadManagerPage extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context),
       body: SafeArea(
-        child: buildBody(),
+        child: buildBody(context),
       ),
     );
   }
@@ -19,7 +23,9 @@ class DownloadManagerPage extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(
-        I18n.of(context).download_manager,
+        I18n
+            .of(context)
+            .download_manager,
         style: const TextStyle(fontSize: 18),
       ),
       centerTitle: true,
@@ -35,7 +41,7 @@ class DownloadManagerPage extends StatelessWidget {
     );
   }
 
-  Widget buildBody() {
+  Widget buildBody(BuildContext context) {
     return StreamBuilder<List<DownloadTableData>>(
       stream: DatabaseHelper().downloadDao.getAllStream(),
       initialData: const [],
@@ -46,7 +52,7 @@ class DownloadManagerPage extends StatelessWidget {
           builder: (ctx, sn2) {
             return ListView(
               children: sn.data!
-                  .map((e) => _buildDownloadCard(sn2.data!, e))
+                  .map((e) => _buildDownloadCard(context, sn2.data!, e))
                   .toList(),
             );
           },
@@ -55,36 +61,54 @@ class DownloadManagerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDownloadCard(
+  Widget _buildDownloadCard(BuildContext context,
       List<WebsiteTableData> list, DownloadTableData data) {
     Dio? dio;
     final entities = list.where((element) => element.id == data.websiteId);
     if (entities.isNotEmpty) {
       dio = DioBuilder.build(entities.first);
     }
-
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        height: 100,
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              child: dio != null
-                  ? buildCardImage(dio, data.previewUrl)
-                  : const SizedBox(),
+    return Container(
+      height: 100,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ImageViewPage(
+                    dio: dio ?? Dio(),
+                    booruPost: BooruPost.fromJson(jsonDecode(data.booruJson)),
+                  ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          );
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Row(
               children: [
-                Text(data.fileName),
-                Text(Uri.parse(data.imgUrl).host)
+                Container(
+                  width: 60,
+                  child: dio != null
+                      ? buildCardImage(dio, data.previewUrl)
+                      : const SizedBox(),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(data.fileName),
+                      Text(Uri
+                          .parse(data.imgUrl)
+                          .host)
+                    ],
+                  ),
+                ),
               ],
-            )),
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -110,9 +134,9 @@ class DownloadManagerPage extends StatelessWidget {
             height: 24,
             child: CircularProgressIndicator(
               value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                      ((progress.cumulativeBytesLoaded) != 0)
+                  ((progress.cumulativeBytesLoaded) != 0)
                   ? progress.cumulativeBytesLoaded /
-                      progress.expectedTotalBytes!
+                  progress.expectedTotalBytes!
                   : 0.0,
               strokeWidth: 2.5,
             ),

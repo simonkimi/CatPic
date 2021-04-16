@@ -58,7 +58,12 @@ class BooruPost {
       previewHeight: jsonRes['previewHeight'],
       rating: jsonRes['rating'],
       status: jsonRes['status'],
-      tags: jsonRes['tags'],
+      tags: (jsonRes['tags'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry<String, List<String>>(
+          key,
+          (value as List<dynamic>).cast<String>(),
+        ),
+      ),
       source: jsonRes['source'],
       score: jsonRes['score'],
     );
