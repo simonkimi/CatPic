@@ -88,7 +88,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         dio: widget.adapter.dio,
         imgUrl: imageUrl,
         imageBuilder: (context, imgData) {
-          return GestureDetector(
+          return InkWell(
             onTap: loadDetail,
             child: Hero(
               tag: '${post.id}|${post.md5}',
@@ -100,7 +100,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
           );
         },
         loadingBuilder: (_, progress) {
-          return GestureDetector(
+          return InkWell(
             onTap: loadDetail,
             child: AspectRatio(
               aspectRatio: post.width / post.height,
