@@ -81,23 +81,26 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     }
 
     return PostPreviewCard(
-      key: Key('item${post.id}${post.md5}'),
+      key: ValueKey('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: CachedDioImage(
         dio: widget.adapter.dio,
         imgUrl: imageUrl,
         imageBuilder: (context, imgData) {
-          return InkWell(
+          return GestureDetector(
             onTap: loadDetail,
             child: Hero(
               tag: '${post.id}|${post.md5}',
-              child: Image(image: MemoryImage(imgData, scale: 0.1)),
+              child: AspectRatio(
+                aspectRatio: post.width / post.height,
+                child: Image(image: MemoryImage(imgData, scale: 0.1)),
+              ),
             ),
           );
         },
         loadingBuilder: (_, progress) {
-          return InkWell(
+          return GestureDetector(
             onTap: loadDetail,
             child: AspectRatio(
               aspectRatio: post.width / post.height,
