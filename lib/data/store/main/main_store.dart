@@ -88,5 +88,3 @@ abstract class MainStoreBase with Store {
     }
   }
 }
-
-final mainStore = MainStore();

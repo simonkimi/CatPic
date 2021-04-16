@@ -1,8 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/bridge/android_bridge.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
+import 'package:catpic/main.dart';
 
 class AndroidDownloadPage extends StatelessWidget {
   Future<void> getSafPath(BuildContext context) async {

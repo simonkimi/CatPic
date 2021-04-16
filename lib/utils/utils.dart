@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:catpic/data/database/entity/website.dart';
 
 extension IterableUtils<T> on Iterable<T> {
-  T? firstOrNull(bool test(T element)) {
-    for (final T element in this) {
+  T? get(bool test(T element)) {
+    for (final element in this) {
       if (test(element)) return element;
     }
     return null;

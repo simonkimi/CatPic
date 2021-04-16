@@ -6,7 +6,7 @@ import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
-import 'package:catpic/data/store/main/main_store.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -97,7 +97,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
           );
         },
         loadingBuilder: (_, progress) {
-          return GestureDetector(
+          return InkWell(
             onTap: loadDetail,
             child: AspectRatio(
               aspectRatio: post.width / post.height,
@@ -119,7 +119,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
           );
         },
         errorBuilder: (_, err, reload) {
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               reload();
             },

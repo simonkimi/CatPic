@@ -124,7 +124,7 @@ class HostManagerPage extends StatelessWidget {
                       }
                     });
                   },
-                  child: Text(I18n.of(context).confirm),
+                  child: Text(I18n.of(context).positive),
                 ),
               ],
             );

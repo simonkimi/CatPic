@@ -13,7 +13,7 @@ Future<String> getSAFUri() async {
   }
 }
 
-Future<String> writeFile(Uint8List data, String fileName, String uri) async {
+Future<String?> writeFile(Uint8List data, String fileName, String uri) async {
   try {
     const platform = MethodChannel(CHANNEL);
     return await platform.invokeMethod('save_image', {

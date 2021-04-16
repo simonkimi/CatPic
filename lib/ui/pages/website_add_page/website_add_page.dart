@@ -3,11 +3,11 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/misc_network.dart';
-import 'package:catpic/ui/components/setting/summary_tile.dart';
-import 'package:catpic/ui/components/setting/text_input_tile.dart';
-import 'package:catpic/data/store/main/main_store.dart';
-import 'package:catpic/utils/utils.dart';
+import 'package:catpic/main.dart';
+import 'package:catpic/ui/components/summary_tile.dart';
+import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:catpic/utils/utils.dart';
 
 class WebsiteAddPage extends StatefulWidget {
   static String routeName = 'WebsiteAddPage';
@@ -91,7 +91,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
               }
             });
           },
-          tooltip: I18n.of(context).confirm,
+          tooltip: I18n.of(context).positive,
         )
       ],
     );

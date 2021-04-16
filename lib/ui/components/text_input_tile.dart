@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../i18n.dart';
-import '../default_button.dart';
+import '../../i18n.dart';
+import 'default_button.dart';
 
 class TextInputTile extends StatefulWidget {
   const TextInputTile(

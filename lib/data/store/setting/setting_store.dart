@@ -3,8 +3,6 @@ import 'package:mobx/mobx.dart';
 
 part 'setting_store.g.dart';
 
-final settingStore = SettingStore();
-
 class SettingStore = SettingStoreBase with _$SettingStore;
 
 class ImageQuality {

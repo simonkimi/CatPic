@@ -5,16 +5,15 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/data/store/main/main_store.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
+import 'package:catpic/utils/utils.dart';
 
 part 'download_store.g.dart';
-
-final downloadStore = DownloadStore();
 
 class DownloadStore = DownloadStoreBase with _$DownloadStore;
 
@@ -36,11 +35,6 @@ class DownLoadTask {
 
 abstract class DownloadStoreBase with Store {
   var downloadingList = <DownLoadTask>[];
-
-  late final Stream<List<DownLoadTask>> downloadProgressStream =
-      Stream.periodic(const Duration(seconds: 1))
-          .map((event) => downloadingList);
-
   final dao = DatabaseHelper().downloadDao;
 
   @action
@@ -48,8 +42,8 @@ abstract class DownloadStoreBase with Store {
     final taskList = await dao.getAll();
 
     if (taskList
-        .where((e) => e.md5 == booruPost.md5 && e.postId == booruPost.id)
-        .isNotEmpty) {
+            .get((e) => e.md5 == booruPost.md5 && e.postId == booruPost.id) !=
+        null) {
       throw TaskExisted();
     }
 
@@ -66,52 +60,56 @@ abstract class DownloadStoreBase with Store {
       booruJson: jsonEncode(booruPost.toJson()),
     );
     await dao.insert(entity);
-    // await startDownload();
+    await startDownload();
   }
 
   @action
   Future<void> startDownload() async {
-    final pendingList = (await dao.getAll())
-        .where((e) => e.status == DownloadStatus.PENDING) // 取出数据库里等待中的
-        .where((e) => downloadingList
-            .where((element) => element.database.id == e.id) // 排除正在下载列表里的
-            .isEmpty);
+    await dao.startDownload();
+    final pendingList = (await dao.getUnfinished()) // 取出数据库里等待中的
+        .where((e) =>
+            downloadingList.get((element) => element.database.id == e.id) ==
+            null);
     for (final database in pendingList) {
-      final websiteDao = DatabaseHelper().websiteDao;
-      final websiteEntity = await websiteDao.getById(database.id);
-      if (websiteEntity != null) {
-        final dio = DioBuilder.build(websiteEntity);
-        String downloadUrl = '';
-        switch (settingStore.downloadQuality) {
-          case ImageQuality.sample:
-            downloadUrl = database.largerUrl;
-            break;
-          case ImageQuality.preview:
-            downloadUrl = database.previewUrl;
-            break;
-          case ImageQuality.raw:
-          default:
-            downloadUrl = database.imgUrl;
-            break;
-        }
-        downloadFile(database, dio, downloadUrl, database.fileName);
+      final websiteEntity =
+          await DatabaseHelper().websiteDao.getById(database.websiteId);
+      final dio = DioBuilder.build(websiteEntity);
+      String downloadUrl = '';
+      switch (settingStore.downloadQuality) {
+        case ImageQuality.sample:
+          downloadUrl = database.largerUrl;
+          break;
+        case ImageQuality.preview:
+          downloadUrl = database.previewUrl;
+          break;
+        case ImageQuality.raw:
+        default:
+          downloadUrl = database.imgUrl;
+          break;
       }
+      downloadFile(database, dio, downloadUrl, database.fileName);
     }
   }
 
   @action
   Future<void> downloadFile(
       DownloadTableData database, Dio dio, String url, String fileName) async {
+    print('开始下载 $fileName');
     final task = DownLoadTask(database);
     downloadingList.add(task);
-    final downloadPath = settingStore.downloadUri;
-    final rsp = await dio
-        .get<Uint8List>(url, options: Options(responseType: ResponseType.bytes),
-            onReceiveProgress: (count, total) {
-      task.progress = count / total;
-    });
-    await bridge.writeFile(rsp.data!, fileName, downloadPath);
+    try {
+      final downloadPath = settingStore.downloadUri;
+      final rsp = await dio.get<Uint8List>(url,
+          options: Options(responseType: ResponseType.bytes),
+          onReceiveProgress: (count, total) {
+        task.progress = count / total;
+      });
+      await bridge.writeFile(rsp.data!, fileName, downloadPath);
+      print('下载完成 $fileName');
+      await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
+    } catch (e) {
+      await dao.replace(task.database.copyWith(status: DownloadStatus.FAIL));
+    }
     downloadingList.remove(task);
-    await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
   }
 }

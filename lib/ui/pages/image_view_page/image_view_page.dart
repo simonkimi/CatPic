@@ -4,10 +4,10 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/default_button.dart';
-import 'package:catpic/ui/components/null_hero.dart';
-import 'package:catpic/ui/pages/download_page/store/download_store.dart';
-import 'package:catpic/data/store/main/main_store.dart';
+import 'package:catpic/ui/components/nullable_hero.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -199,9 +199,9 @@ class _ImageViewPageState extends State<ImageViewPage>
   Future<void> _download() async {
     try {
       await downloadStore.createDownloadTask(widget.booruPost);
-      BotToast.showText(text: '已经添加到下载列表');
+      BotToast.showText(text: I18n.of(context).download_start);
     } on TaskExisted {
-      BotToast.showText(text: '任务已存在');
+      BotToast.showText(text: I18n.of(context).download_exist);
     }
   }
 

@@ -1,5 +1,5 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/store/main/main_store.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';

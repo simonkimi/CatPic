@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:catpic/i18n.dart';
-import 'package:catpic/ui/components/setting/summary_tile.dart';
+import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:smart_select/src/model/chosen.dart';
+import 'package:catpic/main.dart';
 
 class SettingPage extends StatelessWidget {
   @override

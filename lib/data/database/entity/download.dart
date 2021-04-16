@@ -5,6 +5,7 @@ class DownloadStatus {
   static const PENDING = 0;
   static const FINISH = 1;
   static const UNREACHABLE = 2;
+  static const FAIL = 3;
 }
 
 

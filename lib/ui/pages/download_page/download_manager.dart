@@ -6,15 +6,13 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
-import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:catpic/main.dart';
 
 class DownloadManagerPage extends StatelessWidget {
-  final _store = DownloadStore();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,43 +44,40 @@ class DownloadManagerPage extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     // 能优化, 先放着, 能用就行
-    return FutureBuilder<List<WebsiteTableData>>(  // 方便由id获取WebsiteEntity, 以构造Dio
+    return FutureBuilder<List<WebsiteTableData>>(
+      // 方便由id获取WebsiteEntity, 以构造Dio
       future: DatabaseHelper().websiteDao.getAll(),
       initialData: const [],
       builder: (_, websiteList) {
-        return StreamBuilder<List<DownloadTableData>>(  // 获取下载历史数据库
+        return StreamBuilder<List<DownloadTableData>>(
+            // 获取下载历史数据库
             stream: DatabaseHelper().downloadDao.getAllStream(),
             initialData: const [],
             builder: (_, downloadList) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    StreamBuilder<List<DownLoadTask>>(  // 获取下载列表, 此数据每秒更新一次
-                      stream: _store.downloadProgressStream,
-                      initialData: const [],
-                      builder: (_, downloadingTask) {
-                        final taskList = downloadingTask.data!;
-                        return Column(
-                          children: downloadList.data!
-                              .where((e) => e.status != DownloadStatus.FINISH)
-                              .map((e) {
-                            final task = taskList.firstOrNull(
-                                (element) => element.database.id == e.id);
-                            return _buildDownloadCard(
-                                context, websiteList.data!, e, task?.progress);
-                          }).toList(),
-                        );
-                      },
-                    ),
-                    Column(
-                      children: downloadList.data!
+              return StreamBuilder(
+                // 获取下载列表, 此数据每2秒更新一次
+                stream: Stream.periodic(const Duration(seconds: 2)),
+                builder: (_, downloadingTask) {
+                  final taskList = downloadStore.downloadingList;
+                  return ListView(
+                    children: [
+                      ...downloadList.data!
+                          .where((e) =>
+                              e.status == DownloadStatus.PENDING ||
+                              e.status == DownloadStatus.FAIL)
+                          .map((e) {
+                        final task = taskList
+                            .get((element) => element.database.id == e.id);
+                        return _buildDownloadCard(
+                            context, websiteList.data!, e, task?.progress);
+                      }),
+                      ...downloadList.data!
                           .where((e) => e.status == DownloadStatus.FINISH)
                           .map((e) => _buildDownloadCard(
                               context, websiteList.data!, e, 1))
-                          .toList(),
-                    )
-                  ],
-                ),
+                    ],
+                  );
+                },
               );
             });
       },
@@ -91,10 +86,8 @@ class DownloadManagerPage extends StatelessWidget {
 
   Widget _buildDownloadCard(BuildContext context, List<WebsiteTableData> list,
       DownloadTableData data, double? progress) {
-    final dio = DioBuilder.build(
-        list.firstOrNull((element) => element.id == data.websiteId));
-    final uri = Uri.parse(data.imgUrl);
-    final subtitle = '${uri.scheme}://${uri.host}/';
+    final dio =
+        DioBuilder.build(list.get((element) => element.id == data.websiteId));
 
     return Container(
       height: 100,
@@ -111,6 +104,7 @@ class DownloadManagerPage extends StatelessWidget {
           );
         },
         child: Card(
+          key: ValueKey('DownloadCard${data.id}'),
           child: Padding(
             padding: const EdgeInsets.all(5),
             child: Row(
@@ -132,14 +126,23 @@ class DownloadManagerPage extends StatelessWidget {
                             fontSize: 16),
                       ),
                       const Expanded(child: SizedBox()),
-                      Text(subtitle,
-                          style: Theme.of(context).textTheme.subtitle2),
+                      Text(
+                        data.imgUrl,
+                        style: Theme.of(context).textTheme.subtitle2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: 5),
                       Text(data.createTime.toString(),
                           style: Theme.of(context).textTheme.subtitle2),
                       const SizedBox(height: 5),
-                      if (progress != 1)
-                        LinearProgressIndicator(value: progress)
+                      if (progress != 1 && data.status != DownloadStatus.FAIL)
+                        LinearProgressIndicator(value: progress),
+                      if (data.status == DownloadStatus.FAIL)
+                        LinearProgressIndicator(
+                          value: progress,
+                          valueColor: const AlwaysStoppedAnimation(Colors.red),
+                        )
                     ],
                   ),
                 ),
@@ -153,6 +156,7 @@ class DownloadManagerPage extends StatelessWidget {
 
   Widget buildCardImage(Dio dio, String url) {
     return CachedDioImage(
+      key: ValueKey('Preview$url'),
       imgUrl: url,
       imageBuilder: (context, imgData) {
         return SizedBox(
