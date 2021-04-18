@@ -23,8 +23,9 @@ class HostManagerPage extends StatelessWidget {
       initialData: const [],
       stream: database.hostDao.getAllStream(),
       builder: (context, s) {
+        print(s.data);
         return ListView(
-          children: s.data?.map((e) {
+          children: s.data!.map((e) {
                 return Dismissible(
                   key: ValueKey(e.id),
                   child: ListTile(
@@ -35,8 +36,7 @@ class HostManagerPage extends StatelessWidget {
                     DatabaseHelper().hostDao.remove(e);
                   },
                 );
-              }).toList() ??
-              [],
+              }).toList(),
         );
       },
     );
@@ -55,9 +55,15 @@ class HostManagerPage extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Text(I18n.of(context).host_manager),
+      title: Text(
+        I18n.of(context).host_manager,
+        style: const TextStyle(fontSize: 18),
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios),
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          size: 18,
+        ),
         onPressed: () {
           Navigator.of(context).pop();
         },

@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:dio/dio.dart';
+import 'package:catpic/utils/utils.dart';
 
 class HostInterceptor extends Interceptor {
   HostInterceptor(
@@ -19,15 +20,19 @@ class HostInterceptor extends Interceptor {
     if (hostList.isEmpty) {
       await updateHostLink();
     }
-    final hostTargetList = hostList.where((e) => e.host == uri.host);
-    if (hostTargetList.isNotEmpty) {
-      final hostTarget = await getHost(uri.host);
+    final hostTargetData = hostList.get((e) => e.host == uri.host);
+    var host = '';
 
-      if (hostTarget.isNotEmpty) {
-        options.path = uri.replace(host: hostTarget).toString();
-        if (directLink) {
-          options.headers['Host'] = uri.host;
-        }
+    if (hostTargetData != null) {
+      host = hostTargetData.host;
+    } else {
+      host = await getHost(uri.host);
+    }
+
+    if (host.isNotEmpty) {
+      options.path = uri.replace(host: host).toString();
+      if (directLink) {
+        options.headers['Host'] = uri.host;
       }
     }
 

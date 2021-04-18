@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
@@ -15,16 +17,20 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class ImageViewPage extends StatefulWidget {
-  const ImageViewPage({
-    Key? key,
-    required this.booruPost,
-    this.heroTag,
-    required this.dio,
-  }) : super(key: key);
+  const ImageViewPage(
+      {Key? key,
+      required this.booruPost,
+      this.heroTag,
+      required this.dio,
+      this.imageData,
+      this.favicon})
+      : super(key: key);
 
   final BooruPost booruPost;
   final String? heroTag;
   final Dio dio;
+  final Uint8List? favicon;
+  final Uint8List? imageData;
 
   @override
   _ImageViewPageState createState() => _ImageViewPageState();
@@ -63,10 +69,18 @@ class _ImageViewPageState extends State<ImageViewPage>
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    child: const Icon(Icons.person),
-                  ),
+                  leading: widget.favicon?.isNotEmpty ?? false
+                      ? CircleAvatar(
+                          child: ClipOval(
+                            child: Image(
+                                image: MemoryImage(widget.favicon!, scale: 0.1),
+                                fit: BoxFit.fill),
+                          ),
+                        )
+                      : CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: const Icon(Icons.person),
+                        ),
                   title: Text(
                     '#${widget.booruPost.creatorId}',
                     style: const TextStyle(color: Colors.white),
@@ -77,9 +91,7 @@ class _ImageViewPageState extends State<ImageViewPage>
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(

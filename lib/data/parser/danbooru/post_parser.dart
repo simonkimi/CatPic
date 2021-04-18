@@ -6,28 +6,28 @@ import 'post_model.dart';
 
 class DanbooruPostParse {
   static List<BooruPost> parse(String postJson) {
-    final List<Root> posts = (jsonDecode(postJson) as List<dynamic>).cast();
-
-    return posts.where((e) => e.id == null).map((e) {
+    final List<dynamic> posts = jsonDecode(postJson);
+    return posts.where((e) => e.id != null).map((e) {
+      final root = Root.fromJson(e);
       return BooruPost(
-        id: e.id!.toString(),
-        creatorId: e.uploaderId.toString(),
-        md5: e.md5!,
-        previewURL: e.previewFileUrl!,
-        sampleURL: e.largeFileUrl!,
-        imgURL: e.fileUrl!,
-        width: e.imageWidth,
-        height: e.imageHeight,
-        sampleWidth: e.imageWidth,
-        sampleHeight: e.imageHeight,
-        previewWidth: e.imageWidth,
-        previewHeight: e.imageHeight,
-        rating: _getRating(e.rating),
-        status: e.isStatusLocked ? 'active' : 'inactive',
+        id: root.id!.toString(),
+        creatorId: root.uploaderId.toString(),
+        md5: root.md5!,
+        previewURL: root.previewFileUrl!,
+        sampleURL: root.largeFileUrl!,
+        imgURL: root.fileUrl!,
+        width: root.imageWidth,
+        height: root.imageHeight,
+        sampleWidth: root.imageWidth,
+        sampleHeight: root.imageHeight,
+        previewWidth: root.imageWidth,
+        previewHeight: root.imageHeight,
+        rating: _getRating(root.rating),
+        status: root.isStatusLocked ? 'active' : 'inactive',
         tags: _parseTag(e),
-        source: e.source,
-        createTime: e.createdAt,
-        score: e.score.toString(),
+        source: root.source,
+        createTime: root.createdAt,
+        score: root.score.toString(),
       );
     }).toList();
   }

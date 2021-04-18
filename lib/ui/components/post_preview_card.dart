@@ -1,4 +1,6 @@
+import 'package:catpic/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class PostPreviewCard extends StatelessWidget {
   const PostPreviewCard(
@@ -13,21 +15,27 @@ class PostPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusDirectional.circular(10)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          body,
-          Text(title),
-          Text(
-            subTitle,
-            style: const TextStyle(color: Color(0xFF909399)),
-          )
-        ],
-      ),
-    );
+    return Observer(builder: (_) {
+      final child = settingStore.showCardDetail
+          ? Column(
+              children: [
+                body,
+                Text(title),
+                Text(
+                  subTitle,
+                  style: const TextStyle(color: Color(0xFF909399)),
+                )
+              ],
+            )
+          : body;
+      return settingStore.useCardWidget
+          ? Card(
+              margin: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusDirectional.circular(5)),
+              clipBehavior: Clip.antiAlias,
+              child: child)
+          : child;
+    });
   }
 }

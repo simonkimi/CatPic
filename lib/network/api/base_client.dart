@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/adapter/danbooru_adapter.dart';
 import 'package:catpic/data/adapter/gelbooru_adapter.dart';
@@ -35,7 +37,8 @@ class DioBuilder {
       ));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {
-        client.badCertificateCallback = (cert, host, port) => true;
+        return HttpClient()
+          ..badCertificateCallback = (cert, host, port) => true;
       };
     }
     return dio;

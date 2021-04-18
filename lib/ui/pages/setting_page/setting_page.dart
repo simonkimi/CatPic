@@ -4,6 +4,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/ui/pages/host_manager_page/host_manager_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
@@ -43,9 +44,25 @@ class SettingPage extends StatelessWidget {
       children: [
         ...buildDisplaySetting(context),
         ...buildQuality(context),
+        ...buildNetwork(context),
         if (Platform.isAndroid) ...buildAndroid(context),
       ],
     );
+  }
+
+  List<Widget> buildNetwork(BuildContext context) {
+    return [
+      const Divider(),
+      const SummaryTile('网络'),
+      ListTile(
+        title: Text('Host管理'),
+        leading: const Icon(Icons.home_sharp),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => HostManagerPage()));
+        },
+      )
+    ];
   }
 
   List<Widget> buildAndroid(BuildContext context) {

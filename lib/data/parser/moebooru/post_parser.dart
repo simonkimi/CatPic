@@ -4,9 +4,10 @@ import 'package:catpic/data/parser/moebooru/post_model.dart';
 
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {
-    final List<Root> posts = (jsonDecode(postJson) as List<dynamic>).cast();
+    final List<dynamic> posts = jsonDecode(postJson);
 
-    return posts.map((root) {
+    return posts.map((e) {
+      final root = Root.fromJson(e);
       return BooruPost(
         id: root.id.toString(),
         creatorId: root.creatorId.toString(),

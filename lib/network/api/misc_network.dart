@@ -6,24 +6,33 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 Future<String> getDoH(String url) async {
+  final dio = Dio()
+    ..options.connectTimeout = 10 * 1000
+    ..options.headers = {
+      'Accept': 'application/dns-json',
+    };
+  const dohList = [
+    'https://dns.google/resolve',
+    'https://cloudflare-dns.com/dns-query',
+  ];
+
   try {
-    final query = 'https://cloudflare-dns.com/dns-query?name=$url&type=A';
-    final dio = Dio()..options.connectTimeout = 10 * 1000;
-
-    final req = await dio.get<String>(query,
-        options: Options(headers: {'Accept': 'application/dns-json'}));
-
-    if (req.data != null) {
-      final dataJson = json.decode(req.data!);
-      for (final host in dataJson['Answer']) {
-        final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
-        if (reg.hasMatch(host['data'])) {
-          return host['data'];
+    for (final query in dohList) {
+      final req = await dio
+          .get<String>(query, queryParameters: {'name': url, 'type': 'A'});
+      if (req.data != null) {
+        final dataJson = json.decode(req.data!);
+        for (final host in dataJson['Answer']) {
+          final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
+          if (reg.hasMatch(host['data'])) {
+            return host['data'];
+          }
         }
       }
     }
     return '';
   } catch (e) {
+    print('DoH失败: $e');
     return '';
   }
 }

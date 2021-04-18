@@ -4,7 +4,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
-import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
+import 'package:catpic/ui/components/tag_search_bar.dart';
 import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -59,6 +59,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         context,
         MaterialPageRoute(
           builder: (context) => ImageViewPage(
+            favicon: mainStore.websiteEntity?.favicon,
             dio: getAdapter(mainStore.websiteEntity!).dio,
             booruPost: post,
             heroTag: '${post.id}|${post.md5}',

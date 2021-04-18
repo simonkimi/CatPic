@@ -24,6 +24,16 @@ void main() async {
   runApp(CatPicApp());
 }
 
+class AppNavigator {
+  factory AppNavigator() => _appNavigator;
+  AppNavigator._();
+  static final AppNavigator _appNavigator = AppNavigator._();
+  final GlobalKey<NavigatorState> _key = GlobalKey(debugLabel: 'navigate_key');
+  GlobalKey<NavigatorState> get key => _key;
+  BuildContext get context => _key.currentState!.context;
+}
+
+
 class CatPicApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,6 +47,7 @@ class CatPicApp extends StatelessWidget {
         RefreshLocalizations.delegate,
         AppLocalizations.delegate
       ],
+      navigatorKey: AppNavigator().key,
       home: SearchPage(),
       builder: BotToastInit(),
       supportedLocales: AppLocalizations.supportedLocales,

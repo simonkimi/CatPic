@@ -1,8 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:catpic/i18n.dart';
 
 part 'post_result_store.g.dart';
 
@@ -45,13 +47,13 @@ abstract class PostResultStoreBase with Store implements IPostView {
     } on DioError catch (e) {
       refreshController.loadFailed();
       refreshController.refreshFailed();
-      // BotToast.showText(text: '${I18n.of(context).network_error}:${e.message}');
+      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
       print(e.message);
     } catch (e) {
       print(e.toString());
       refreshController.loadFailed();
       refreshController.refreshFailed();
-      // BotToast.showText(text: e.toString());
+      BotToast.showText(text: e.toString());
       print(e.toString());
     }
   }
@@ -70,11 +72,11 @@ abstract class PostResultStoreBase with Store implements IPostView {
     } on DioError catch (e) {
       refreshController.loadFailed();
       print(e.message);
-      // BotToast.showText(text: '${I18n.of(context).network_error}:${e.message}');
+      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
     } catch (e) {
       print(e.toString());
       refreshController.loadFailed();
-      // BotToast.showText(text: e.toString());
+      BotToast.showText(text: e.toString());
     }
   }
 
