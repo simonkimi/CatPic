@@ -36,6 +36,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var downloadUri = ''; // 下载路径
 
+  @observable
+  var onlineTag = false;
+
   @action
   Future<void> init() async {
     final sp = SpUtil.getSp()!;
@@ -47,6 +50,13 @@ abstract class SettingStoreBase with Store {
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
     downloadQuality = sp.getInt('downloadQuality') ?? ImageQuality.raw;
+    onlineTag = sp.getBool('onlineTag') ?? false;
+  }
+
+  @action
+  void setOnlineTag(bool value) {
+    onlineTag = value;
+    SpUtil.putBool('onlineTag', value);
   }
 
   @action

@@ -30,7 +30,6 @@
 - [x] 下载功能
 
 # TODO List
-- [ ] 下载功能
 - [ ] Artist列表
 - [ ] Pool列表
 - [ ] Tag列表

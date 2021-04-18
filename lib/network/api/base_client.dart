@@ -1,4 +1,5 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/adapter/danbooru_adapter.dart';
 import 'package:catpic/data/adapter/gelbooru_adapter.dart';
 import 'package:catpic/data/adapter/moebooru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
@@ -54,7 +55,8 @@ BooruAdapter getAdapter(WebsiteTableData table) {
     return GelbooruAdapter(table);
   } else if (table.type == WebsiteType.MOEBOORU.index) {
     return MoebooruAdapter(table);
+  } else if (table.type == WebsiteType.DANBOORU.index) {
+    return DanbooruAdapter(table);
   }
-  // TODO(me): Danbooru Adapter
-  throw Exception('TODO Danbooru Adapter');
+  throw Exception('Unsupported');
 }

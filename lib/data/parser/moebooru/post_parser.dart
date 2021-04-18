@@ -4,30 +4,28 @@ import 'package:catpic/data/parser/moebooru/post_model.dart';
 
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {
-    final List<dynamic> posts = jsonDecode(postJson);
+    final List<Root> posts = (jsonDecode(postJson) as List<dynamic>).cast();
 
-    return posts.map((e) {
-      final root = Root.fromJson(e);
-
+    return posts.map((root) {
       return BooruPost(
         id: root.id.toString(),
         creatorId: root.creatorId.toString(),
-        md5: root.md5 ?? '',
-        previewURL: root.previewUrl ?? '',
-        sampleURL: root.sampleUrl ?? '',
-        imgURL: root.fileUrl ?? '',
-        width: root.width!,
-        height: root.height!,
-        sampleWidth: root.sampleWidth!,
-        sampleHeight: root.sampleHeight!,
-        previewWidth: root.previewWidth!,
-        previewHeight: root.previewHeight!,
+        md5: root.md5,
+        previewURL: root.previewUrl,
+        sampleURL: root.sampleUrl,
+        imgURL: root.fileUrl,
+        width: root.width,
+        height: root.height,
+        sampleWidth: root.sampleWidth,
+        sampleHeight: root.sampleHeight,
+        previewWidth: root.previewWidth,
+        previewHeight: root.previewHeight,
         rating: _getRating(root.rating),
-        status: root.status ?? '',
-        tags: {'_': root.tags?.split(' ') ?? []},
-        source: root.source ?? '',
+        status: root.status,
+        tags: {'_': root.tags.split(' ')},
+        source: root.source,
         score: root.score.toString(),
-        createTime: _parseTime(root.updatedAt ?? 0),
+        createTime: _parseTime(root.updatedAt),
       );
     }).toList();
   }
