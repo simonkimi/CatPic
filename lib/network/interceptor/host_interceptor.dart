@@ -1,11 +1,15 @@
+
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 
 class HostInterceptor extends Interceptor {
-  HostInterceptor(
-      {required this.directLink, required this.dio, required this.websiteId});
+  HostInterceptor({
+    required this.directLink,
+    required this.dio,
+    required this.websiteId,
+  });
 
   final Dio dio;
   final bool directLink;
@@ -20,22 +24,15 @@ class HostInterceptor extends Interceptor {
     if (hostList.isEmpty) {
       await updateHostLink();
     }
+
     final hostTargetData = hostList.get((e) => e.host == uri.host);
-    var host = '';
-
-    if (hostTargetData != null) {
-      host = hostTargetData.host;
-    } else {
-      host = await getHost(uri.host);
-    }
-
-    if (host.isNotEmpty) {
-      options.path = uri.replace(host: host).toString();
+    final ip = hostTargetData?.ip ?? await doh(uri.host);
+    if (ip.isNotEmpty) {
+      options.path = uri.replace(host: ip).toString();
       if (directLink) {
         options.headers['Host'] = uri.host;
       }
     }
-
     return handler.next(options);
   }
 
@@ -46,7 +43,7 @@ class HostInterceptor extends Interceptor {
     dio.unlock();
   }
 
-  Future<String> getHost(String host) async {
+  Future<String> doh(String host) async {
     dio.lock();
     final ip = await getDoH(host);
     if (ip.isNotEmpty) {
