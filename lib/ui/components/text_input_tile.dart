@@ -83,14 +83,14 @@ class _TextInputTileState extends State<TextInputTile> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(widget.negativeText ?? I18n.of(context).positive),
+                child: Text(widget.negativeText ?? I18n.of(context).negative),
               ),
               DefaultButton(
                 onPressed: () {
                   widget.onChanged(controller.text);
                   Navigator.of(context).pop();
                 },
-                child: Text(widget.positiveText ?? I18n.of(context).negative),
+                child: Text(widget.positiveText ?? I18n.of(context).positive),
               )
             ],
           );

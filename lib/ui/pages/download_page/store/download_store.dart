@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
@@ -18,6 +20,8 @@ part 'download_store.g.dart';
 class DownloadStore = DownloadStoreBase with _$DownloadStore;
 
 class TaskExisted implements Exception {}
+
+class DownloadPermissionDenied implements Exception {}
 
 class WebsiteNotExisted implements Exception {}
 
@@ -39,8 +43,11 @@ abstract class DownloadStoreBase with Store {
 
   @action
   Future<void> createDownloadTask(BooruPost booruPost) async {
-    final taskList = await dao.getAll();
+    if (Platform.isAndroid && settingStore.downloadUri.isEmpty) {
+      throw DownloadPermissionDenied();
+    }
 
+    final taskList = await dao.getAll();
     if (taskList
             .get((e) => e.md5 == booruPost.md5 && e.postId == booruPost.id) !=
         null) {

@@ -7,6 +7,7 @@ import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class HostManagerPage extends StatelessWidget {
+  static const route = 'HostManagerPage';
   final database = DatabaseHelper();
 
   @override

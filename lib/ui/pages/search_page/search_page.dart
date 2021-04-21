@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
-import 'package:catpic/ui/fragment/empty_website/empty_website_fragment.dart';
-import 'package:catpic/ui/fragment/post_result/post_result_fragment.dart';
+import 'package:catpic/ui/fragment/empty_website/empty_website.dart';
+import 'package:catpic/ui/fragment/post_result/post_result.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,10 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(),
-      body: searchBody,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 1),
+        child: searchBody,
+      ),
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
@@ -214,6 +215,8 @@ class _ImageViewPageState extends State<ImageViewPage>
       BotToast.showText(text: I18n.of(context).download_start);
     } on TaskExisted {
       BotToast.showText(text: I18n.of(context).download_exist);
+    } on DownloadPermissionDenied {
+      Navigator.pushNamed(context, AndroidDownloadPage.route);
     }
   }
 

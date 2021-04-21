@@ -25,15 +25,16 @@ class GalleryParser {
     final comments = parseComment(document);
 
     return GalleryModel(
-        tags: tags,
-        favorited: favcount,
-        fileSize: fileSize,
-        previewImages: previewImages,
-        maxPageIndex: maxPageIndex,
-        comments: comments,
-        // TODO parent, visible
-        parent: '',
-        visible: '');
+      tags: tags,
+      favorited: favcount,
+      fileSize: fileSize,
+      previewImages: previewImages,
+      maxPageIndex: maxPageIndex,
+      comments: comments,
+      // TODO parent, visible
+      parent: '',
+      visible: '',
+    );
   }
 
   List<TagModels> parseTags(Element e) {

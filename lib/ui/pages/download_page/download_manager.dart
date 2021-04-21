@@ -13,6 +13,8 @@ import 'package:catpic/utils/utils.dart';
 import 'package:catpic/main.dart';
 
 class DownloadManagerPage extends StatelessWidget {
+  static const route = 'DownloadManagerPage';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

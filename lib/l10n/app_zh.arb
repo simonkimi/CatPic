@@ -36,6 +36,7 @@
   "direct_link_desc": "突破SNI封锁",
   "trusted_host_auto_failed": "获取主机地址失败",
 
+  "network": "网络",
   "no_website": "还没有网站, 快去添加一个!",
   "host_manager": "主机管理",
   "host_empty": "主机不能为空",

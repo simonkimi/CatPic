@@ -12,6 +12,7 @@ import 'package:smart_select/src/model/chosen.dart';
 import 'package:catpic/main.dart';
 
 class SettingPage extends StatelessWidget {
+  static const route = 'SettingPage';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,9 +54,9 @@ class SettingPage extends StatelessWidget {
   List<Widget> buildNetwork(BuildContext context) {
     return [
       const Divider(),
-      const SummaryTile('网络'),
+      SummaryTile(I18n.of(context).network),
       ListTile(
-        title: Text('Host管理'),
+        title: Text(I18n.of(context).host_manager),
         leading: const Icon(Icons.home_sharp),
         onTap: () {
           Navigator.push(

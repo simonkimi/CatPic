@@ -6,6 +6,7 @@ import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class WebsiteManagerPage extends StatelessWidget {
+  static const route = 'WebsiteManagerPage';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
