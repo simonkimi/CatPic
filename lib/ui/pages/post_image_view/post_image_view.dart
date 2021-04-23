@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
@@ -7,6 +8,8 @@ import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
+import 'package:catpic/ui/pages/download_page/android_download.dart';
+import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/ui/pages/post_image_view/store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -195,18 +198,15 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Future<void> _download() async {
-    // try {
-    //   await downloadStore.createDownloadTask(booruPost);
-    //   BotToast.showText(text: I18n
-    //       .of(context)
-    //       .download_start);
-    // } on TaskExisted {
-    //   BotToast.showText(text: I18n
-    //       .of(context)
-    //       .download_exist);
-    // } on DownloadPermissionDenied {
-    //   Navigator.pushNamed(context, AndroidDownloadPage.route);
-    // }
+    try {
+      final booruPost = postList[index];
+      await downloadStore.createDownloadTask(booruPost);
+      BotToast.showText(text: I18n.g.download_start);
+    } on TaskExisted {
+      BotToast.showText(text: I18n.g.download_exist);
+    } on DownloadPermissionDenied {
+      Navigator.pushNamed(I18n.context, AndroidDownloadPage.route);
+    }
   }
 
   void showAsBottomSheet(BuildContext context, PostImageViewStore store) async {
