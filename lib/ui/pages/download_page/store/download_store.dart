@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
@@ -111,6 +113,8 @@ abstract class DownloadStoreBase with Store {
         task.progress = count / total;
       });
       await bridge.writeFile(rsp.data!, fileName, downloadPath);
+      BotToast.showText(
+          text: I18n.g.download_finish.replaceAll('{filename}', ' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
     } catch (e) {

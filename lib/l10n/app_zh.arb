@@ -35,6 +35,7 @@
   "direct_link": "开启直连",
   "direct_link_desc": "突破SNI封锁",
   "trusted_host_auto_failed": "获取主机地址失败",
+  "click_again_to_exit": "再按一次退出",
 
   "network": "网络",
   "no_website": "还没有网站, 快去添加一个!",
@@ -92,5 +93,6 @@
   "saf_desc4": "步骤3: 选择一个您喜欢的路径, 或者新建一个文件夹",
   "saf_desc5": "步骤4: 点击确认授权访问此文件夹",
   "download_start": "开始下载了...",
-  "download_exist": "任务已存在"
+  "download_exist": "任务已存在",
+  "download_finish": "下载{filename}完成"
 }
