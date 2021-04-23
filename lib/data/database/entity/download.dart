@@ -1,13 +1,11 @@
 import 'package:moor/moor.dart';
 
-
 class DownloadStatus {
   static const PENDING = 0;
   static const FINISH = 1;
   static const UNREACHABLE = 2;
   static const FAIL = 3;
 }
-
 
 class DownloadTable extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -31,6 +29,7 @@ class DownloadTable extends Table {
   IntColumn get status => integer()();
 
   TextColumn get booruJson => text()();
-  
-  DateTimeColumn get createTime => dateTime().clientDefault(() => DateTime.now())();
+
+  DateTimeColumn get createTime =>
+      dateTime().clientDefault(() => DateTime.now())();
 }

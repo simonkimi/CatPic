@@ -21,7 +21,10 @@ class GalleryModel {
 }
 
 class TagModels {
-  TagModels({required this.key, required this.value});
+  TagModels({
+    required this.key,
+    required this.value,
+  });
 
   final String key;
   final List<String> value;

@@ -1,4 +1,6 @@
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:dio/dio.dart';
 
 import '../base_client.dart';
 
@@ -9,8 +11,11 @@ class DanbooruClient extends BaseClient {
   /// [limit] How many posts you want to retrieve. There is a default limit of 100 posts per request.
   /// [pid] The page number.
   /// [tags] The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.
-  Future<String> postsList(
-      {required int limit, required int page, required String tags}) async {
+  Future<String> postsList({
+    required int limit,
+    required int page,
+    required String tags,
+  }) async {
     final baseUri = Uri.parse('posts.json');
     final uri = baseUri.replace(queryParameters: {
       ...baseUri.queryParameters,
@@ -27,13 +32,18 @@ class DanbooruClient extends BaseClient {
   /// [name] The exact name of the tag.
   /// [page] The page number.
   Future<String> tagsList(
-      {required int limit, required String name, required int page}) async {
-    final uri = Uri(path: 'tag.json', queryParameters: {
+      {required int limit,
+      required String name,
+      required int page,
+      Order order = Order.COUNT,
+      CancelToken? cancelToken}) async {
+    final uri = Uri(path: 'tag.json', queryParameters: <String, String>{
       'search[name_normalize]': name,
       'limit': limit.toString(),
+      'order': order.string
     });
 
-    return (await dio.getUri<String>(uri)).data!;
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
   /// 获取评论

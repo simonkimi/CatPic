@@ -1,6 +1,5 @@
 import 'package:moor/moor.dart';
 
-
 class TagTable extends Table {
   IntColumn get website => integer()();
 

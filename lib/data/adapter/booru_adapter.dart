@@ -2,8 +2,18 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:dio/dio.dart';
 
+enum SupportPage {
+  POSTS,
+  POOLS,
+  ARTISTS,
+  TAGS,
+}
 
-enum SupportPage { POSTS, POOLS, ARTISTS, TAGS }
+enum Order {
+  NAME,
+  COUNT,
+  Date,
+}
 
 abstract class BooruAdapter {
   List<SupportPage> getSupportPage();
@@ -18,8 +28,21 @@ abstract class BooruAdapter {
     required String name,
     required int page,
     required int limit,
+    CancelToken? cancelToken,
   });
 
   Dio get dio;
 }
 
+extension OrderUtil on Order {
+  String get string {
+    switch (this) {
+      case Order.NAME:
+        return 'name';
+      case Order.COUNT:
+        return 'count';
+      case Order.Date:
+        return 'date';
+    }
+  }
+}

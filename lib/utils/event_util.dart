@@ -12,5 +12,4 @@ class EventBusUtil {
   EventBus get bus => _eventBus;
 }
 
-
 class EventSiteChange {}

@@ -1,4 +1,6 @@
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:dio/dio.dart';
 
 import '../base_client.dart';
 
@@ -25,15 +27,19 @@ class GelbooruClient extends BaseClient {
   /// 获取tag详细信息
   /// [limit] How many tags you want to retrieve. There is a default limit of 100 per request.
   /// [names] Separated by spaces, get multiple results to tags you specify if it exists. (schoolgirl moon cat)
-  Future<String> tagsList({required int limit, required String names}) async {
+  Future<String> tagsList(
+      {required int limit,
+      required String names,
+      Order order = Order.COUNT,
+      CancelToken? cancelToken}) async {
     final baseUri = Uri.parse('index.php?page=dapi&s=tag&q=index');
-    final uri = baseUri.replace(queryParameters: {
+    final uri = baseUri.replace(queryParameters: <String, String>{
       ...baseUri.queryParameters,
-      'names': names,
-      'limit': limit.toString()
+      'name_pattern': names + '%',
+      'limit': limit.toString(),
+      'order': order.string
     });
-
-    return (await dio.getUri<String>(uri)).data ?? '';
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data ?? '';
   }
 
   /// 获取评论列表

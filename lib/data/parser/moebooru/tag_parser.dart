@@ -7,11 +7,10 @@ class MoebooruTagParse {
 
     return json.map((e) {
       return BooruTag(
-        id: e['id'].toString(),
-        name: e['name'],
-        count: e['count'],
-        type: _getBooruTagType(e['type'].toString())
-      );
+          id: e['id'].toString(),
+          name: e['name'],
+          count: e['count'],
+          type: _getBooruTagType(e['type'].toString()));
     }).toList();
   }
 

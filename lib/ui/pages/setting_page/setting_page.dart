@@ -13,6 +13,7 @@ import 'package:catpic/main.dart';
 
 class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,6 +195,17 @@ class SettingPage extends StatelessWidget {
           return S2Choice(title: len.toString(), value: len);
         }),
       ),
+      SwitchListTile(
+        title: Text(I18n.of(context).auto_complete),
+        subtitle: Text(settingStore.autoCompleteUseNetwork
+            ? I18n.of(context).auto_complete_online
+            : I18n.of(context).auto_complete_local),
+        secondary: const Icon(Icons.tag),
+        value: settingStore.autoCompleteUseNetwork,
+        onChanged: (value) {
+          settingStore.setAutoCompleteUseNetwork(value);
+        },
+      )
     ];
   }
 }

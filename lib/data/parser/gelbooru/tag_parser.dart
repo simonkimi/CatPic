@@ -4,15 +4,16 @@ import 'package:xml/xml.dart';
 class GelbooruTagParse {
   static List<BooruTag> parse(String tagXml) {
     final root = XmlDocument.parse(tagXml);
-    final nodes = root.firstChild?.children;
-    if (nodes == null) return [];
-    return nodes.where((e) => e.nodeType == XmlNodeType.ELEMENT).map((e) {
-      return BooruTag(
-          id: e.getAttributeNode('id')?.value ?? '',
-          count: int.tryParse(e.getAttributeNode('count')?.value ?? '') ?? 0,
-          name: e.getAttributeNode('name')?.value ?? '',
-          type: _getBooruTagType(e.getAttributeNode('type')?.value));
-    }).toList();
+    final nodes = root.getElement('tags')?.children;
+    return nodes?.where((e) => e.nodeType == XmlNodeType.ELEMENT).map((e) {
+          return BooruTag(
+              id: e.getAttributeNode('id')?.value ?? '',
+              count:
+                  int.tryParse(e.getAttributeNode('count')?.value ?? '') ?? 0,
+              name: e.getAttributeNode('name')?.value ?? '',
+              type: _getBooruTagType(e.getAttributeNode('type')?.value));
+        }).toList() ??
+        [];
   }
 
   static BooruTagType _getBooruTagType(String? type) {

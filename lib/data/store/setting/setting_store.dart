@@ -39,6 +39,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var onlineTag = false;
 
+  @observable
+  var autoCompleteUseNetwork = true;
+
   @action
   Future<void> init() async {
     final sp = SpUtil.getSp()!;
@@ -51,6 +54,13 @@ abstract class SettingStoreBase with Store {
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
     downloadQuality = sp.getInt('downloadQuality') ?? ImageQuality.raw;
     onlineTag = sp.getBool('onlineTag') ?? false;
+    autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? false;
+  }
+
+  @action
+  void setAutoCompleteUseNetwork(bool value) {
+    autoCompleteUseNetwork = value;
+    SpUtil.putBool('autoCompleteUseNetwork', value);
   }
 
   @action

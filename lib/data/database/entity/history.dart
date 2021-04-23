@@ -1,6 +1,5 @@
 import 'package:moor/moor.dart';
 
-
 class HistoryTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 

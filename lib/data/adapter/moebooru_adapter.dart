@@ -4,6 +4,7 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -31,9 +32,18 @@ class MoebooruAdapter implements BooruAdapter {
   }
 
   @override
-  Future<List<BooruTag>> tagList(
-      {required String name, required int page, required int limit}) async {
-    final str = await client.tagsList(name: name, page: page, limit: limit);
+  Future<List<BooruTag>> tagList({
+    required String name,
+    required int page,
+    required int limit,
+    CancelToken? cancelToken,
+  }) async {
+    final str = await client.tagsList(
+      name: name,
+      page: page,
+      limit: limit,
+      cancelToken: cancelToken,
+    );
     return await compute(MoebooruTagParse.parse, str);
   }
 

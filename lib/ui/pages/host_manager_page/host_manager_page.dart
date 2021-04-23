@@ -27,17 +27,17 @@ class HostManagerPage extends StatelessWidget {
         print(s.data);
         return ListView(
           children: s.data!.map((e) {
-                return Dismissible(
-                  key: ValueKey(e.id),
-                  child: ListTile(
-                    title: Text(e.host),
-                    subtitle: Text(e.ip),
-                  ),
-                  onDismissed: (_) {
-                    DatabaseHelper().hostDao.remove(e);
-                  },
-                );
-              }).toList(),
+            return Dismissible(
+              key: ValueKey(e.id),
+              child: ListTile(
+                title: Text(e.host),
+                subtitle: Text(e.ip),
+              ),
+              onDismissed: (_) {
+                DatabaseHelper().hostDao.remove(e);
+              },
+            );
+          }).toList(),
         );
       },
     );

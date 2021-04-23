@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 
 class WebsiteAddPage extends StatefulWidget {
-  static const route = 'DownloadManagerPage';
+  static const route = 'WebsiteAddPage';
 
   @override
   _WebsiteAddPageState createState() => _WebsiteAddPageState();

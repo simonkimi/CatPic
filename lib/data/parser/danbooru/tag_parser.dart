@@ -5,12 +5,14 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 class DanbooruTagParser {
   static List<BooruTag> parse(String tagJson) {
     final List<dynamic> tags = jsonDecode(tagJson);
-    return tags.map((e) => BooruTag(
-      id: e['id'],
-      name: e['name'],
-      type: _getBooruTagType(e['category']),
-      count: e['post_count'],
-    )).toList();
+    return tags
+        .map((e) => BooruTag(
+              id: e['id'],
+              name: e['name'],
+              type: _getBooruTagType(e['category']),
+              count: e['post_count'],
+            ))
+        .toList();
   }
 
   static BooruTagType _getBooruTagType(int? type) {

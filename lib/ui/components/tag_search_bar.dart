@@ -1,17 +1,21 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/search_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class TagSearchBar extends StatefulWidget {
-  const TagSearchBar(
-      {Key? key,
-      this.searchText = 'CatPic',
-      required this.onSearch,
-      this.body,
-      this.defaultHint})
-      : super(key: key);
+  const TagSearchBar({
+    Key? key,
+    this.searchText = 'CatPic',
+    required this.onSearch,
+    this.body,
+    this.defaultHint,
+  }) : super(key: key);
 
   final ValueChanged<String> onSearch;
   final String searchText;
@@ -24,7 +28,10 @@ class TagSearchBar extends StatefulWidget {
 
 class _TagSearchBarState extends State<TagSearchBar> {
   final searchBarController = FloatingSearchBarController();
-  var suggestionList = <SearchSuggestions>[];
+  var suggestionList = <SearchSuggestion>[];
+  var loadingProgress = false;
+
+  CancelToken? cancelToken;
 
   @override
   void initState() {
@@ -35,6 +42,7 @@ class _TagSearchBarState extends State<TagSearchBar> {
   @override
   Widget build(BuildContext context) {
     return SearchBar(
+      progress: loadingProgress,
       controller: searchBarController,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       onSubmitted: (value) async {
@@ -58,6 +66,9 @@ class _TagSearchBarState extends State<TagSearchBar> {
       ],
       body: widget.body,
       onQueryChanged: _onSearchTagChange,
+      debounceDelay: settingStore.autoCompleteUseNetwork
+          ? const Duration(seconds: 2)
+          : const Duration(seconds: 1),
       candidateBuilder: (ctx, _) {
         return Card(
           child: Column(
@@ -65,6 +76,22 @@ class _TagSearchBarState extends State<TagSearchBar> {
             children: suggestionList.map((e) {
               return ListTile(
                 title: Text(e.title),
+                subtitle: e.subTitle != null
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              e.subTitle!,
+                              style: TextStyle(color: e.color),
+                            ),
+                          ),
+                          Text(
+                            e.count.toString(),
+                            style: Theme.of(context).textTheme.subtitle2,
+                          )
+                        ],
+                      )
+                    : null,
                 onTap: () {
                   final newTag = searchBarController.query.split(' ')
                     ..removeLast()
@@ -79,15 +106,53 @@ class _TagSearchBarState extends State<TagSearchBar> {
     );
   }
 
+  Future<List<SearchSuggestion>> _getTagSuggestions(String tag) async {
+    if (settingStore.autoCompleteUseNetwork) {
+      try {
+        cancelToken?.cancel();
+        cancelToken = CancelToken();
+        setState(() {
+          loadingProgress = true;
+        });
+        final adapter = getAdapter(mainStore.websiteEntity!);
+        final onlineTag = await adapter.tagList(
+          name: tag,
+          page: 1,
+          limit: 100,
+          cancelToken: cancelToken,
+        );
+        setState(() {
+          loadingProgress = false;
+        });
+        return onlineTag
+            .map((e) => SearchSuggestion(
+                  e.name,
+                  subTitle: e.type.string,
+                  count: e.count,
+                  color: e.type.color,
+                ))
+            .toList();
+      } on DioError catch (e) {
+        if (!CancelToken.isCancel(e)) {
+          BotToast.showText(text: e.toString());
+        }
+      }
+      return [];
+    } else {
+      final dao = DatabaseHelper().tagDao;
+      final list = await dao.getStart(mainStore.websiteEntity!.id, tag);
+      return list.map((e) => SearchSuggestion(e.tag)).toList();
+    }
+  }
+
   Future<void> _onSearchTagChange([String? tag]) async {
     tag = tag ?? searchBarController.query;
     if (tag.isNotEmpty) {
       // 推荐Tag
       final lastTag = tag.split(' ').last;
-      final dao = DatabaseHelper().tagDao;
-      final list = await dao.getStart(mainStore.websiteEntity!.id, lastTag);
+      final list = await _getTagSuggestions(lastTag);
       setState(() {
-        suggestionList = list.map((e) => SearchSuggestions(e.tag)).toList();
+        suggestionList = list;
       });
     } else {
       // 历史搜索
@@ -96,7 +161,7 @@ class _TagSearchBarState extends State<TagSearchBar> {
       setState(() {
         suggestionList = list
             .where((e) => e.history.trim().isNotEmpty)
-            .map((e) => SearchSuggestions(e.history))
+            .map((e) => SearchSuggestion(e.history))
             .toList();
       });
     }

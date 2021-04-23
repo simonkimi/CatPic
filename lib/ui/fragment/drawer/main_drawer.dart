@@ -145,8 +145,7 @@ class _MainDrawerState extends State<MainDrawer> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => DownloadManagerPage()),
+            MaterialPageRoute(builder: (context) => DownloadManagerPage()),
           );
         },
       ),

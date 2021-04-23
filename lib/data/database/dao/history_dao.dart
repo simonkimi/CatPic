@@ -12,10 +12,12 @@ class HistoryDao extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
   Future<List<HistoryTableData>> getAll() => select(historyTable).get();
 
   Future<HistoryTableData?> get(String history) =>
-      (select(historyTable)..where((tbl) => tbl.history.equals(history))).getSingleOrNull();
+      (select(historyTable)..where((tbl) => tbl.history.equals(history)))
+          .getSingleOrNull();
 
   Future<void> updateHistory(HistoryTableData data) =>
       update(historyTable).replace(data);
 
-  Future<void> insert(HistoryTableCompanion data) => into(historyTable).insert(data);
+  Future<void> insert(HistoryTableCompanion data) =>
+      into(historyTable).insert(data);
 }

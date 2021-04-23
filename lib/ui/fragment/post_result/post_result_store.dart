@@ -20,7 +20,6 @@ abstract class IPostView {
   Future<void> loadNextPage();
 }
 
-
 abstract class PostResultStoreBase with Store implements IPostView {
   PostResultStoreBase({
     required this.searchText,
@@ -86,7 +85,6 @@ abstract class PostResultStoreBase with Store implements IPostView {
     page = 0;
     postList.clear();
   }
-
 
   @override
   @action

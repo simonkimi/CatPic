@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';

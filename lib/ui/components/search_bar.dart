@@ -9,10 +9,11 @@ class SearchBar extends StatefulWidget {
     this.defaultHint,
     this.onSubmitted,
     this.onQueryChanged,
-    this.debounceDelay,
+    this.debounceDelay = const Duration(milliseconds: 100),
     required this.candidateBuilder,
     this.body,
     this.onFocusChanged,
+    this.progress,
   }) : super(key: key);
 
   final OnQueryChangedCallback? onSubmitted;
@@ -24,8 +25,9 @@ class SearchBar extends StatefulWidget {
 
   final FloatingSearchBarController? controller;
   final String? defaultHint;
-  final Duration? debounceDelay;
+  final Duration debounceDelay;
   final OnFocusChangedCallback? onFocusChanged;
+  final dynamic progress;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -60,6 +62,7 @@ class _SearchBarState extends State<SearchBar> {
       openAxisAlignment: 0.0,
       openWidth: isPortrait ? 600 : 500,
       debounceDelay: const Duration(milliseconds: 100),
+      progress: widget.progress,
       body: widget.body,
       onQueryChanged: (query) {
         if (widget.onQueryChanged != null) {
@@ -95,11 +98,13 @@ class _SearchBarState extends State<SearchBar> {
   }
 }
 
-class SearchSuggestions {
-  SearchSuggestions(this.title, [this.subTitle]);
+class SearchSuggestion {
+  SearchSuggestion(this.title, {this.subTitle, this.count, this.color});
 
   final String title;
   final String? subTitle;
+  final int? count;
+  final Color? color;
 
   @override
   String toString() {

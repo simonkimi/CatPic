@@ -1,4 +1,6 @@
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:dio/dio.dart';
 
 import '../base_client.dart';
 
@@ -25,13 +27,18 @@ class MoebooruClient extends BaseClient {
   /// [name] The exact name of the tag.
   /// [page] The page number.
   Future<String> tagsList(
-      {required int limit, required String name, required int page}) async {
-    final uri = Uri(path: 'tag.json', queryParameters: {
+      {required int limit,
+      required String name,
+      required int page,
+      Order order = Order.COUNT,
+      CancelToken? cancelToken}) async {
+    final uri = Uri(path: 'tag.json', queryParameters: <String, String>{
       'name': name,
       'limit': limit.toString(),
+      'order': order.string
     });
 
-    return (await dio.getUri<String>(uri)).data!;
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
   /// 获取评论列表

@@ -1,6 +1,5 @@
 import 'package:moor/moor.dart';
 
-
 class HostTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 

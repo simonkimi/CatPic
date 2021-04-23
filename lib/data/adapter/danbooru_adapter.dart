@@ -25,16 +25,34 @@ class DanbooruAdapter implements BooruAdapter {
 
   @override
   Future<List<BooruPost>> postList(
-      {required String tags, required int page, required int limit}) async {
-    final str = await client.postsList(tags: tags, limit: limit, page: page);
+      {required String tags,
+      required int page,
+      required int limit,
+      Order order = Order.COUNT}) async {
+    final str = await client.postsList(
+      tags: tags,
+      limit: limit,
+      page: page,
+    );
 
     return await compute(DanbooruPostParse.parse, str);
   }
 
   @override
-  Future<List<BooruTag>> tagList(
-      {required String name, required int page, required int limit}) async {
-    final str = await client.tagsList(limit: limit, name: name, page: page);
+  Future<List<BooruTag>> tagList({
+    required String name,
+    required int page,
+    required int limit,
+    Order order = Order.COUNT,
+    CancelToken? cancelToken,
+  }) async {
+    final str = await client.tagsList(
+      limit: limit,
+      name: name,
+      page: page,
+      order: order,
+      cancelToken: cancelToken,
+    );
     return await compute(DanbooruTagParser.parse, str);
   }
 
