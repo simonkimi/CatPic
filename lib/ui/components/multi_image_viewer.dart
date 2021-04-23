@@ -19,14 +19,14 @@ class ImageBase {
 }
 
 class MultiImageViewer extends StatefulWidget {
-  const MultiImageViewer(
-      {Key? key,
-      this.onScale,
-      required this.images,
-      required this.index,
-      required this.dio,
-      this.onIndexChange})
-      : super(key: key);
+  const MultiImageViewer({
+    Key? key,
+    this.onScale,
+    required this.images,
+    required this.index,
+    required this.dio,
+    this.onIndexChange,
+  }) : super(key: key);
 
   final Dio dio;
   final List<ImageBase> images;
@@ -134,6 +134,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                 );
               case LoadState.completed:
                 return NullableHero(
+                  tag: imageBase.heroTag,
                   child: ExtendedRawImage(
                     image: state.extendedImageInfo?.image,
                   ),

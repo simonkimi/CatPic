@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/ui/components/booru_image.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/post_image_view/store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,8 @@ class PostImageViewPage extends StatelessWidget {
     );
   }
 
-  Widget _sheetBuilder(BuildContext context, SheetState state, PostImageViewStore store) {
+  Widget _sheetBuilder(
+      BuildContext context, SheetState state, PostImageViewStore store) {
     return Observer(builder: (_) {
       final booruPost = postList[store.index];
       return Container(
@@ -56,16 +57,16 @@ class PostImageViewPage extends StatelessWidget {
                   child: ListTile(
                     leading: favicon?.isNotEmpty ?? false
                         ? CircleAvatar(
-                      child: ClipOval(
-                        child: Image(
-                            image: MemoryImage(favicon!, scale: 0.1),
-                            fit: BoxFit.fill),
-                      ),
-                    )
+                            child: ClipOval(
+                              child: Image(
+                                  image: MemoryImage(favicon!, scale: 0.1),
+                                  fit: BoxFit.fill),
+                            ),
+                          )
                         : CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: const Icon(Icons.person),
-                    ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: const Icon(Icons.person),
+                          ),
                     title: Text(
                       '#${booruPost.creatorId}',
                       style: const TextStyle(color: Colors.white),
@@ -112,7 +113,7 @@ class PostImageViewPage extends StatelessWidget {
                 Wrap(
                   spacing: 3,
                   children:
-                  booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
+                      booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
                     return FilterChip(
                       key: ValueKey(e),
                       shape: RoundedRectangleBorder(
@@ -281,22 +282,29 @@ class PostImageViewPage extends StatelessWidget {
           imgUrl = e.imgURL;
           break;
       }
-      return ImageBase(imgUrl: imgUrl, cachedKey: imgUrl);
+      return ImageBase(
+        imgUrl: imgUrl,
+        cachedKey: imgUrl,
+        heroTag: '${e.id}|${e.md5}',
+      );
     }).toList();
 
-    return MultiImageViewer(
-      dio: dio,
-      index: index,
-      images: imageBase,
-      onScale: (result) {
-        if (store.bottomBarVis != result) {
-          store.setBottomBarVis(result);
-        }
-      },
-      onIndexChange: (value) {
-        store.setIndex(value);
-        _writeTag(value);
-      },
+    return Container(
+      color: Colors.black,
+      child: MultiImageViewer(
+        dio: dio,
+        index: index,
+        images: imageBase,
+        onScale: (result) {
+          if (store.bottomBarVis != result) {
+            store.setBottomBarVis(result);
+          }
+        },
+        onIndexChange: (value) {
+          store.setIndex(value);
+          _writeTag(value);
+        },
+      ),
     );
   }
 

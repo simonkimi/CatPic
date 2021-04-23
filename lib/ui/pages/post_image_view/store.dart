@@ -4,7 +4,6 @@ part 'store.g.dart';
 
 class PostImageViewStore = PostImageViewStoreBase with _$PostImageViewStore;
 
-
 abstract class PostImageViewStoreBase with Store {
   PostImageViewStoreBase(this.index);
 
@@ -13,7 +12,6 @@ abstract class PostImageViewStoreBase with Store {
 
   @observable
   int index;
-
 
   @action
   void setBottomBarVis(bool value) => bottomBarVis = value;
