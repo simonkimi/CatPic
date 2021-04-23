@@ -5,9 +5,9 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/tag_search_bar.dart';
-import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -58,11 +58,11 @@ class _PostResultFragmentState extends State<PostResultFragment> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ImageViewPage(
+          builder: (context) => PostImageViewPage(
             favicon: mainStore.websiteEntity?.favicon,
             dio: getAdapter(mainStore.websiteEntity!).dio,
-            booruPost: post,
-            heroTag: '${post.id}|${post.md5}',
+            postList: _store.postList,
+            index: index,
           ),
         ),
       );

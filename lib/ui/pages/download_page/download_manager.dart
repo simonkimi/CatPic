@@ -6,7 +6,7 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/cached_image.dart';
-import 'package:catpic/ui/pages/image_view_page/image_view_page.dart';
+import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
@@ -98,9 +98,10 @@ class DownloadManagerPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ImageViewPage(
+              builder: (context) => PostImageViewPage(
                 dio: dio,
-                booruPost: BooruPost.fromJson(jsonDecode(data.booruJson)),
+                index: 1,
+                postList: [BooruPost.fromJson(jsonDecode(data.booruJson))],
               ),
             ),
           );

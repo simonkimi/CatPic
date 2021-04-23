@@ -82,8 +82,8 @@
   "per_page_limit": "每页限制",
   "display_info_bar": "显示信息栏",
   "auto_complete": "在线自动补全",
-  "auto_complete_local": "将使用本地数据库进行自动补全",
-  "auto_complete_online": "将使用网站数据库进行自动补全",
+  "auto_complete_local": "将使用本地数据库",
+  "auto_complete_online": "将使用网站数据库",
 
   "download_uri": "下载路径",
   "download_manager": "下载管理",
