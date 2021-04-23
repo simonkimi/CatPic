@@ -135,9 +135,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
               case LoadState.completed:
                 return NullableHero(
                   tag: imageBase.heroTag,
-                  child: ExtendedRawImage(
-                    image: state.extendedImageInfo?.image,
-                  ),
+                  child: state.completedWidget,
                 );
               case LoadState.failed:
                 return GestureDetector(
