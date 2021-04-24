@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
+class SearchBarTmpController {
+  SearchBarTmpController();
+
+  SearchBarState? _state;
+
+  String get tmp => _state?._searchTmp ?? '';
+
+  void search() => _state?.search();
+
+  set tmp(String value) {
+    _state?.setTmp(value);
+  }
+}
+
 class SearchBar extends StatefulWidget {
-  const SearchBar({
-    Key? key,
-    this.actions,
-    this.controller,
-    this.defaultHint,
-    this.onSubmitted,
-    this.onQueryChanged,
-    this.debounceDelay = const Duration(milliseconds: 100),
-    required this.candidateBuilder,
-    this.body,
-    this.onFocusChanged,
-    this.progress,
-    this.showTmp = false,
-  }) : super(key: key);
+  const SearchBar(
+      {Key? key,
+      this.actions,
+      this.controller,
+      this.defaultHint,
+      this.onSubmitted,
+      this.onQueryChanged,
+      this.debounceDelay = const Duration(milliseconds: 100),
+      required this.candidateBuilder,
+      this.body,
+      this.onFocusChanged,
+      this.progress,
+      this.showTmp = false,
+      this.tmpController})
+      : super(key: key);
 
   final OnQueryChangedCallback? onSubmitted;
   final OnQueryChangedCallback? onQueryChanged;
@@ -25,6 +40,7 @@ class SearchBar extends StatefulWidget {
   final Widget? body;
 
   final FloatingSearchBarController? controller;
+  final SearchBarTmpController? tmpController;
   final String? defaultHint;
   final Duration debounceDelay;
   final OnFocusChangedCallback? onFocusChanged;
@@ -32,10 +48,10 @@ class SearchBar extends StatefulWidget {
   final bool showTmp;
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  SearchBarState createState() => SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class SearchBarState extends State<SearchBar> {
   var _searchText = '';
   var _searchTmp = '';
   late FloatingSearchBarController controller;
@@ -44,8 +60,23 @@ class _SearchBarState extends State<SearchBar> {
   @override
   void initState() {
     super.initState();
+    widget.tmpController?._state = this;
     controller = widget.controller ?? FloatingSearchBarController();
     defaultHint = widget.defaultHint ?? 'CatPic';
+  }
+
+  void setTmp(String value) {
+    setState(() {
+      _searchTmp = value;
+    });
+  }
+
+  void search() {
+    controller.close();
+    widget.onSubmitted?.call(_searchTmp);
+    setState(() {
+      _searchText = _searchTmp;
+    });
   }
 
   @override

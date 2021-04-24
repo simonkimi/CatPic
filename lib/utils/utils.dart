@@ -19,6 +19,11 @@ extension ListHelper<T> on List<T> {
   T random() {
     return this[Random().nextInt(length)];
   }
+
+  List<T> addAsSet(Iterable<T> other) {
+    addAll(other.where((e) => !contains(e)));
+    return this;
+  }
 }
 
 extension AnimationControllerHelper on AnimationController {

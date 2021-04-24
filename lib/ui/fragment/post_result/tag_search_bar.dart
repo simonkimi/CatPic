@@ -9,7 +9,7 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:catpic/utils/utils.dart';
 
-import '../../i18n.dart';
+import '../../../i18n.dart';
 
 class TagSearchBar extends StatefulWidget {
   const TagSearchBar({
@@ -21,6 +21,7 @@ class TagSearchBar extends StatefulWidget {
     this.onTextChange,
     this.controller,
     this.onFilterDisplay,
+    this.tmpController,
   }) : super(key: key);
 
   final ValueChanged<String> onSearch;
@@ -29,6 +30,7 @@ class TagSearchBar extends StatefulWidget {
   final Widget? body;
   final String? defaultHint;
   final FloatingSearchBarController? controller;
+  final SearchBarTmpController? tmpController;
 
   final ValueChanged<bool>? onFilterDisplay;
 
@@ -80,12 +82,13 @@ class _TagSearchBarState extends State<TagSearchBar>
     }
   }
 
-  void backToSearch() {
+  void backToSearch([Function? callBack]) {
     setState(() {
       filterDisplaySwitch = false;
     });
     actionController.reverse();
     widget.onFilterDisplay?.call(false);
+    callBack?.call();
   }
 
   @override
@@ -111,13 +114,17 @@ class _TagSearchBarState extends State<TagSearchBar>
       child: SearchBar(
         progress: loadingProgress,
         controller: searchBarController,
+        tmpController: widget.tmpController,
         defaultHint:
             widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
         showTmp: filterDisplaySwitch,
         onSubmitted: (value) async {
-          backToSearch();
-          widget.onSearch(value.trim());
-          _setSearchHistory(value.trim());
+          backToSearch(() {
+            WidgetsBinding.instance!.addPostFrameCallback((_) {
+              widget.onSearch(value.trim());
+              _setSearchHistory(value.trim());
+            });
+          });
         },
         onFocusChanged: (isFocus) {
           _onSearchTagChange();
@@ -229,6 +236,12 @@ class _TagSearchBarState extends State<TagSearchBar>
     if (tag.isNotEmpty) {
       // 推荐Tag
       final lastTag = tag.split(' ').last;
+      if (lastTag.isEmpty) {
+        setState(() {
+          suggestionList = [];
+        });
+        return;
+      }
       final list = await _getTagSuggestions(lastTag);
       setState(() {
         suggestionList = list;

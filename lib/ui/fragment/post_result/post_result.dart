@@ -1,11 +1,13 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/ui/components/tag_search_bar.dart';
+import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/post_result/post_filter.dart';
 import 'package:catpic/ui/fragment/post_result/post_waterflow.dart';
 import 'package:catpic/ui/fragment/post_result/store/filter_store.dart';
 import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+
+import 'tag_search_bar.dart';
 
 class PostResultFragment extends StatefulWidget {
   const PostResultFragment({
@@ -27,12 +29,11 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     adapter: widget.adapter,
   );
 
-  late final FloatingSearchBarController controller =
-      FloatingSearchBarController();
+  late final  controller = FloatingSearchBarController();
+  late final tmpController = SearchBarTmpController();
 
   late final filterStore = FilterStore(controller.query);
 
-  bool showFilter = false;
   var filterDisplaySwitch = false;
 
   @override
@@ -40,6 +41,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     return TagSearchBar(
       defaultHint: widget.searchText,
       controller: controller,
+      tmpController: tmpController,
       onSearch: (value) {
         print('onSearch $value');
         _store.launchNewSearch(value.trim());
@@ -64,6 +66,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         child: filterDisplaySwitch
             ? PostFilter(
                 controller: controller,
+                tmpController: tmpController,
                 store: filterStore,
               )
             : PostWaterFlow(
