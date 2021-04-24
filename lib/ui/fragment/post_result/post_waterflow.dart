@@ -226,10 +226,8 @@ class PostWaterFlow extends StatelessWidget {
         ]);
       case LoadStatus.noMore:
         return buildRow([
-          const Icon(Icons.vertical_align_bottom),
-          const SizedBox(
-            width: 10,
-          ),
+          const Icon(Icons.flag),
+          const SizedBox(width: 10),
           Text(
             I18n.of(context).no_more_text,
             style: const TextStyle(color: Colors.black),

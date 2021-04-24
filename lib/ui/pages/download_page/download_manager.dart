@@ -75,6 +75,8 @@ class DownloadManagerPage extends StatelessWidget {
                       }),
                       ...downloadList.data!
                           .where((e) => e.status == DownloadStatus.FINISH)
+                          .toList()
+                          .reversed
                           .map((e) => _buildDownloadCard(
                               context, websiteList.data!, e, 1))
                     ],
