@@ -84,6 +84,7 @@
   "auto_complete": "在线自动补全",
   "auto_complete_local": "将使用本地数据库",
   "auto_complete_online": "将使用网站数据库",
+  "save_model": "安全模式",
 
   "download_uri": "下载路径",
   "download_manager": "下载管理",

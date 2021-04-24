@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/main.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -93,8 +94,14 @@ abstract class PostResultStoreBase with Store implements IPostView {
   @override
   @action
   Future<void> loadNextPage() async {
-    final list =
-        await adapter.postList(tags: searchText, page: page, limit: 50);
+    var list = await adapter.postList(
+      tags: searchText,
+      page: page,
+      limit: 50,
+    );
+    if (settingStore.saveModel) {
+      list = list.where((e) => e.rating == PostRating.SAFE).toList();
+    }
     if (list.isEmpty) {
       throw NoMorePage();
     }

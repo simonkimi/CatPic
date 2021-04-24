@@ -54,7 +54,9 @@ class _SearchBarState extends State<SearchBar> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
-      hint: widget.showTmp ? _searchTmp : _searchText.isEmpty ? defaultHint : _searchText,
+      hint: widget.showTmp
+          ? (_searchTmp.isEmpty ? defaultHint : _searchTmp)
+          : (_searchText.isEmpty ? defaultHint : _searchText),
       controller: controller,
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: const Duration(milliseconds: 300),

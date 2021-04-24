@@ -17,22 +17,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          I18n.of(context).setting,
-          style: const TextStyle(fontSize: 18),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 18,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: buildAppBar(context),
       body: SafeArea(
         child: Observer(
           builder: (context) => buildBody(context),
@@ -205,7 +190,34 @@ class SettingPage extends StatelessWidget {
         onChanged: (value) {
           settingStore.setAutoCompleteUseNetwork(value);
         },
-      )
+      ),
+      SwitchListTile(
+        title: Text(I18n.of(context).save_model),
+        secondary: const Icon(Icons.block),
+        value: settingStore.saveModel,
+        onChanged: (value) {
+          settingStore.setSaveModel(value);
+        },
+      ),
     ];
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: Text(
+        I18n.of(context).setting,
+        style: const TextStyle(fontSize: 18),
+      ),
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          size: 18,
+        ),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 }
