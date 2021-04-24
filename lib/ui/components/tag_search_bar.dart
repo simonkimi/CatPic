@@ -63,7 +63,8 @@ class _TagSearchBarState extends State<TagSearchBar>
     } else if (searchBarController.isOpen) {
       searchBarController.close();
     } else {
-      if (!filterDisplaySwitch) {  // 当前为搜索页面
+      if (!filterDisplaySwitch) {
+        // 当前为搜索页面
         setState(() {
           filterDisplaySwitch = true;
         });
@@ -108,7 +109,6 @@ class _TagSearchBarState extends State<TagSearchBar>
             ),
           ),
         ),
-        // FloatingSearchBarAction.searchToClear()
       ],
       body: widget.body,
       onQueryChanged: (value) {

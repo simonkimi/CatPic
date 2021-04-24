@@ -237,6 +237,23 @@ class PostImageViewPage extends StatelessWidget {
             children: [
               Row(
                 children: [
+                  const SizedBox(width: 10),
+                  const Icon(
+                    Icons.image,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 5),
+                  Observer(
+                    builder: (_) => Text(
+                      '${store.index + 1}/${postList.length}',
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
                   IconButton(
                     iconSize: 16,
                     icon: const Icon(
@@ -247,10 +264,6 @@ class PostImageViewPage extends StatelessWidget {
                       showAsBottomSheet(_, store);
                     },
                   ),
-                ],
-              ),
-              Row(
-                children: [
                   IconButton(
                     iconSize: 16,
                     icon: const Icon(

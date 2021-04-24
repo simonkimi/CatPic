@@ -22,23 +22,16 @@ class PostResultFragment extends StatefulWidget {
 }
 
 class _PostResultFragmentState extends State<PostResultFragment> {
-  late final PostResultStore _store;
-  late final FloatingSearchBarController controller;
-  late bool showFilter = false;
-  late var filterDisplaySwitch = false;
+  late final PostResultStore _store = PostResultStore(
+    searchText: widget.searchText,
+    adapter: widget.adapter,
+  );
 
-  @override
-  void initState() {
-    super.initState();
-    print('PostResultFragment initState');
-    _store = PostResultStore(
-      searchText: widget.searchText,
-      adapter: widget.adapter,
-    );
-    showFilter = false;
-    filterDisplaySwitch = false;
-    controller = FloatingSearchBarController();
-  }
+  late final FloatingSearchBarController controller =
+      FloatingSearchBarController();
+
+  bool showFilter = false;
+  var filterDisplaySwitch = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +51,10 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, animation) => ScaleTransition(
           scale: animation,
-          child: child,
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
         ),
         child: filterDisplaySwitch
             ? PostFilter(

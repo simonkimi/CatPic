@@ -13,7 +13,7 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
     required this.cachedKey,
     required this.url,
     required this.dio,
-    this.cachedImg = false,
+    this.cachedImg = true,
     this.scale = 1.0,
   });
 
@@ -28,7 +28,6 @@ class CachedDioImageProvider extends ImageProvider<CachedDioImageProvider> {
       CachedDioImageProvider key, DecoderCallback decode) {
     final StreamController<ImageChunkEvent> chunkEvents =
         StreamController<ImageChunkEvent>();
-    // chunkEvents.stream.listen((event) {print(event);});
     return MultiFrameImageStreamCompleter(
       chunkEvents: chunkEvents.stream,
       codec: _loadAsync(key, decode, chunkEvents),
