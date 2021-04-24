@@ -14,6 +14,7 @@ class SearchBar extends StatefulWidget {
     this.body,
     this.onFocusChanged,
     this.progress,
+    this.showTmp = false,
   }) : super(key: key);
 
   final OnQueryChangedCallback? onSubmitted;
@@ -28,6 +29,7 @@ class SearchBar extends StatefulWidget {
   final Duration debounceDelay;
   final OnFocusChangedCallback? onFocusChanged;
   final dynamic progress;
+  final bool showTmp;
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -52,7 +54,7 @@ class _SearchBarState extends State<SearchBar> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
-      hint: _searchText.isEmpty ? defaultHint : _searchText,
+      hint: widget.showTmp ? _searchTmp : _searchText.isEmpty ? defaultHint : _searchText,
       controller: controller,
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: const Duration(milliseconds: 300),
@@ -65,10 +67,8 @@ class _SearchBarState extends State<SearchBar> {
       progress: widget.progress,
       body: widget.body,
       onQueryChanged: (query) {
-        if (widget.onQueryChanged != null) {
-          widget.onQueryChanged!(query);
-        }
         if (controller.isOpen) {
+          widget.onQueryChanged?.call(query);
           setState(() {
             _searchTmp = query;
           });
@@ -76,17 +76,13 @@ class _SearchBarState extends State<SearchBar> {
       },
       onSubmitted: (query) {
         controller.close();
-        if (widget.onSubmitted != null) {
-          widget.onSubmitted!(query);
-        }
+        widget.onSubmitted?.call(query);
         setState(() {
           _searchText = query;
         });
       },
       onFocusChanged: (isFocused) {
-        if (widget.onFocusChanged != null) {
-          widget.onFocusChanged!(isFocused);
-        }
+        widget.onFocusChanged?.call(isFocused);
         if (isFocused) {
           controller.query = _searchTmp;
         }

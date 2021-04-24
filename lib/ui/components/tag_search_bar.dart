@@ -75,13 +75,17 @@ class _TagSearchBarState extends State<TagSearchBar>
         actionController.forward();
         widget.onFilterDisplay?.call(true);
       } else {
-        setState(() {
-          filterDisplaySwitch = false;
-        });
-        actionController.reverse();
-        widget.onFilterDisplay?.call(false);
+        backToSearch();
       }
     }
+  }
+
+  void backToSearch() {
+    setState(() {
+      filterDisplaySwitch = false;
+    });
+    actionController.reverse();
+    widget.onFilterDisplay?.call(false);
   }
 
   @override
@@ -93,11 +97,7 @@ class _TagSearchBarState extends State<TagSearchBar>
           return false;
         }
         if (filterDisplaySwitch) {
-          setState(() {
-            filterDisplaySwitch = false;
-          });
-          actionController.reverse();
-          widget.onFilterDisplay?.call(false);
+          backToSearch();
           return false;
         }
         final nowTime = DateTime.now();
@@ -113,7 +113,9 @@ class _TagSearchBarState extends State<TagSearchBar>
         controller: searchBarController,
         defaultHint:
             widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
+        showTmp: filterDisplaySwitch,
         onSubmitted: (value) async {
+          backToSearch();
           widget.onSearch(value.trim());
           _setSearchHistory(value.trim());
         },

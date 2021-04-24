@@ -2,10 +2,10 @@ import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/tag_search_bar.dart';
 import 'package:catpic/ui/fragment/post_result/post_filter.dart';
 import 'package:catpic/ui/fragment/post_result/post_waterflow.dart';
+import 'package:catpic/ui/fragment/post_result/store/filter_store.dart';
+import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-
-import 'post_result_store.dart';
 
 class PostResultFragment extends StatefulWidget {
   const PostResultFragment({
@@ -30,6 +30,8 @@ class _PostResultFragmentState extends State<PostResultFragment> {
   late final FloatingSearchBarController controller =
       FloatingSearchBarController();
 
+  late final filterStore = FilterStore(controller.query);
+
   bool showFilter = false;
   var filterDisplaySwitch = false;
 
@@ -47,6 +49,9 @@ class _PostResultFragmentState extends State<PostResultFragment> {
           filterDisplaySwitch = value;
         });
       },
+      onTextChange: (value) {
+        filterStore.setSearchText(value);
+      },
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, animation) => ScaleTransition(
@@ -59,6 +64,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
         child: filterDisplaySwitch
             ? PostFilter(
                 controller: controller,
+                store: filterStore,
               )
             : PostWaterFlow(
                 store: _store,

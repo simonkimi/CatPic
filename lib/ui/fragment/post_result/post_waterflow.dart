@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
-import 'package:catpic/ui/fragment/post_result/post_result_store.dart';
+import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:catpic/utils/cached_dio_image_provider.dart';
 import 'package:dio/dio.dart';
