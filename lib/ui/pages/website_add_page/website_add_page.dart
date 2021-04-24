@@ -8,6 +8,8 @@ import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:smart_select/smart_select.dart';
+import 'package:smart_select/src/model/chosen.dart';
 
 class WebsiteAddPage extends StatefulWidget {
   static const route = 'WebsiteAddPage';
@@ -145,27 +147,27 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           });
         },
       ),
-      PopupMenuButton(
-        itemBuilder: (context) => [
-          PopupMenuItem(
-              child: const Text('EHentai'), value: WebsiteType.EHENTAI.index),
-          PopupMenuItem(
-              child: const Text('Gelbooru'), value: WebsiteType.GELBOORU.index),
-          PopupMenuItem(
-              child: const Text('Moebooru'), value: WebsiteType.MOEBOORU.index),
-          PopupMenuItem(
-              child: const Text('Danbooru'), value: WebsiteType.DANBOORU.index),
-        ],
-        child: ListTile(
-          title: Text(I18n.of(context).site_type),
-          subtitle: Text(websiteTypeName[websiteType]!),
-          leading: const Icon(Icons.search),
-        ),
-        onSelected: (int value) {
+
+      SmartSelect<int>.single(
+        tileBuilder: (context, S2SingleState<int?> state) {
+          return S2Tile.fromState(
+            state,
+            leading: const Icon(Icons.search),
+          );
+        },
+        modalType: S2ModalType.popupDialog,
+        selectedValue: WebsiteType.GELBOORU.index,
+        onChange: (S2SingleSelected<int?> value) {
           setState(() {
-            websiteType = value;
+            websiteType = value.value!;
           });
         },
+        title: I18n.of(context).site_type,
+        choiceItems: [
+          S2Choice(value: WebsiteType.GELBOORU.index, title: 'Gelbooru'),
+          S2Choice(value: WebsiteType.MOEBOORU.index, title: 'Moebooru'),
+          S2Choice(value: WebsiteType.DANBOORU.index, title: 'Danbooru'),
+        ],
       ),
     ];
   }
