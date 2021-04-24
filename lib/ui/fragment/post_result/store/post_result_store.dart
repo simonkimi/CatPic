@@ -26,7 +26,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
     required this.searchText,
     required this.adapter,
   }) {
-    refresh();
+    onRefresh();
   }
 
   final BooruAdapter adapter;
@@ -34,13 +34,18 @@ abstract class PostResultStoreBase with Store implements IPostView {
   @override
   String searchText;
 
+  @observable
+  bool isLoading = false;
+
   var postList = ObservableList<BooruPost>();
   var page = 0;
   final refreshController = RefreshController();
 
   Future<void> onRefresh() async {
     print('onRefresh');
+    if (isLoading) return;
     try {
+      isLoading = true;
       await refresh();
       refreshController.loadComplete();
       refreshController.refreshCompleted();
@@ -59,6 +64,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
       BotToast.showText(text: e.toString());
       print(e.toString());
     }
+    isLoading = false;
   }
 
   Future<void> onLoadMore() async {
@@ -99,11 +105,11 @@ abstract class PostResultStoreBase with Store implements IPostView {
       page: page,
       limit: 50,
     );
-    if (settingStore.saveModel) {
-      list = list.where((e) => e.rating == PostRating.SAFE).toList();
-    }
     if (list.isEmpty) {
       throw NoMorePage();
+    }
+    if (settingStore.saveModel) {
+      list = list.where((e) => e.rating == PostRating.SAFE).toList();
     }
     postList.addAll(list);
     page += 1;

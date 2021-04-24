@@ -119,16 +119,17 @@ class FFConvert {
 }
 
 class Log {
-  static void i(
-      [dynamic p1,
-      dynamic p2,
-      dynamic p3,
-      dynamic p4,
-      dynamic p5,
-      dynamic p6,
-      dynamic p7,
-      dynamic p8,
-      dynamic p9]) {
+  static void i([
+    dynamic p1,
+    dynamic p2,
+    dynamic p3,
+    dynamic p4,
+    dynamic p5,
+    dynamic p6,
+    dynamic p7,
+    dynamic p8,
+    dynamic p9,
+  ]) {
     print([p1, p2, p3, p4, p5, p6, p7, p8, p9]
         .where((e) => e != null)
         .map((e) => e.toString())

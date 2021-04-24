@@ -9,7 +9,11 @@ part 'history_dao.g.dart';
 class HistoryDao extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
   HistoryDao(attachedDatabase) : super(attachedDatabase);
 
-  Future<List<HistoryTableData>> getAll() => select(historyTable).get();
+  Future<List<HistoryTableData>> getAll() => (select(historyTable)
+        ..orderBy([
+          (u) => OrderingTerm(expression: u.createTime, mode: OrderingMode.desc)
+        ]))
+      .get();
 
   Future<HistoryTableData?> get(String history) =>
       (select(historyTable)..where((tbl) => tbl.history.equals(history)))

@@ -17,14 +17,23 @@ import 'package:catpic/main.dart';
 import 'package:catpic/i18n.dart';
 
 class PostWaterFlow extends StatelessWidget {
-  const PostWaterFlow({Key? key, required this.store, required this.dio})
-      : super(key: key);
+  const PostWaterFlow({
+    Key? key,
+    required this.store,
+    required this.dio,
+  }) : super(key: key);
 
   final PostResultStore store;
   final Dio dio;
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (store.isLoading) {
+        store.refreshController.requestRefresh();
+      }
+    });
+
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Observer(builder: (_) {
       return FloatingSearchBarScrollNotifier(
@@ -96,7 +105,7 @@ class PostWaterFlow extends StatelessWidget {
           url: imageUrl,
           cachedKey: imageUrl,
           cachedImg: true,
-          scale: 0.5
+          scale: 0.3,
         ),
         handleLoadingProgress: true,
         enableLoadState: true,
