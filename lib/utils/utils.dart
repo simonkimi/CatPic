@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' hide log;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,12 @@ extension IterableUtils<T> on Iterable<T> {
       if (test(e)) return e;
     }
     return null;
+  }
+}
+
+extension ListHelper<T> on List<T> {
+  T random() {
+    return this[Random().nextInt(length)];
   }
 }
 
