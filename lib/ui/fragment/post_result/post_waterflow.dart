@@ -96,6 +96,7 @@ class PostWaterFlow extends StatelessWidget {
           url: imageUrl,
           cachedKey: imageUrl,
           cachedImg: true,
+          scale: 0.5
         ),
         handleLoadingProgress: true,
         enableLoadState: true,

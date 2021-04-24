@@ -24,7 +24,7 @@ extension AnimationControllerHelper on AnimationController {
   }
 }
 
-extension ColorExtension on Color {
+extension ColorHelper on Color {
   MaterialColor get swatch => Colors.primaries.firstWhere(
         (Color c) => c.value == value,
         orElse: () => _swatch,
