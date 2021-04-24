@@ -9,6 +9,8 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:catpic/utils/utils.dart';
 
+import '../../i18n.dart';
+
 class TagSearchBar extends StatefulWidget {
   const TagSearchBar({
     Key? key,
@@ -51,6 +53,8 @@ class _TagSearchBarState extends State<TagSearchBar>
   late final Animation<double> actionAnimation =
       Tween<double>(begin: 0.0, end: 0.375).animate(actionController);
 
+  var lastClickBack = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -82,76 +86,100 @@ class _TagSearchBarState extends State<TagSearchBar>
 
   @override
   Widget build(BuildContext context) {
-    return SearchBar(
-      progress: loadingProgress,
-      controller: searchBarController,
-      defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
-      onSubmitted: (value) async {
-        widget.onSearch(value.trim());
-        _setSearchHistory(value.trim());
-      },
-      onFocusChanged: (isFocus) {
-        _onSearchTagChange();
-        if (!filterDisplaySwitch) {
-          actionController.play(isFocus);
+    return WillPopScope(
+      onWillPop: () async {
+        if (searchBarController.isOpen) {
+          searchBarController.close();
+          return false;
         }
+        if (filterDisplaySwitch) {
+          setState(() {
+            filterDisplaySwitch = false;
+          });
+          actionController.reverse();
+          widget.onFilterDisplay?.call(false);
+          return false;
+        }
+        final nowTime = DateTime.now();
+        if (nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
+          BotToast.showText(text: I18n.g.click_again_to_exit);
+          lastClickBack = nowTime;
+          return false;
+        }
+        return true;
       },
-      actions: [
-        FloatingSearchBarAction(
-          showIfOpened: true,
-          showIfClosed: true,
-          child: RotationTransition(
-            alignment: Alignment.center,
-            turns: actionAnimation,
-            child: CircularButton(
-              icon: const Icon(Icons.add),
-              onPressed: onActionPress,
+      child: SearchBar(
+        progress: loadingProgress,
+        controller: searchBarController,
+        defaultHint:
+            widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
+        onSubmitted: (value) async {
+          widget.onSearch(value.trim());
+          _setSearchHistory(value.trim());
+        },
+        onFocusChanged: (isFocus) {
+          _onSearchTagChange();
+          if (!filterDisplaySwitch) {
+            actionController.play(isFocus);
+          }
+        },
+        actions: [
+          FloatingSearchBarAction(
+            showIfOpened: true,
+            showIfClosed: true,
+            child: RotationTransition(
+              alignment: Alignment.center,
+              turns: actionAnimation,
+              child: CircularButton(
+                icon: const Icon(Icons.add),
+                onPressed: onActionPress,
+              ),
             ),
           ),
-        ),
-      ],
-      body: widget.body,
-      onQueryChanged: (value) {
-        _onSearchTagChange(value);
-        widget.onTextChange?.call(value);
-      },
-      debounceDelay: settingStore.autoCompleteUseNetwork
-          ? const Duration(seconds: 2)
-          : const Duration(seconds: 1),
-      candidateBuilder: (ctx, _) {
-        return Card(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: suggestionList.map((e) {
-              return ListTile(
-                title: Text(e.title),
-                subtitle: e.subTitle != null
-                    ? Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              e.subTitle!,
-                              style: TextStyle(color: e.color),
+        ],
+        body: widget.body,
+        onQueryChanged: (value) {
+          _onSearchTagChange(value);
+          widget.onTextChange?.call(value);
+        },
+        debounceDelay: settingStore.autoCompleteUseNetwork
+            ? const Duration(seconds: 2)
+            : const Duration(seconds: 1),
+        candidateBuilder: (ctx, _) {
+          return Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: suggestionList.map((e) {
+                return ListTile(
+                  title: Text(e.title),
+                  subtitle: e.subTitle != null
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                e.subTitle!,
+                                style: TextStyle(color: e.color),
+                              ),
                             ),
-                          ),
-                          Text(
-                            e.count.toString(),
-                            style: Theme.of(context).textTheme.subtitle2,
-                          )
-                        ],
-                      )
-                    : null,
-                onTap: () {
-                  final newTag = searchBarController.query.split(' ')
-                    ..removeLast()
-                    ..add(e.title);
-                  searchBarController.query = newTag.join(' ') + ' ';
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
+                            Text(
+                              e.count.toString(),
+                              style: Theme.of(context).textTheme.subtitle2,
+                            )
+                          ],
+                        )
+                      : null,
+                  onTap: () {
+                    final newTag = searchBarController.query.split(' ')
+                      ..removeLast()
+                      ..add(e.title);
+                    searchBarController.query = newTag.join(' ') + ' ';
+                  },
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
     );
   }
 

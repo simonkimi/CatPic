@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website.dart';
@@ -22,7 +20,6 @@ class _SearchPageState extends State<SearchPage> {
   late SearchType searchType;
   late Widget searchBody;
   late StreamSubscription<EventSiteChange> _eventSiteChangeListener;
-  DateTime lastClickBack = DateTime.now();
 
   @override
   void initState() {
@@ -45,23 +42,12 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Scaffold(
-        drawer: MainDrawer(),
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 1),
-          child: searchBody,
-        ),
+    return Scaffold(
+      drawer: MainDrawer(),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 1),
+        child: searchBody,
       ),
-      onWillPop: () {
-        final nowTime = DateTime.now();
-        if (nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
-          BotToast.showText(text: I18n.g.click_again_to_exit);
-          lastClickBack = nowTime;
-          return Future.value(false);
-        }
-        return Future.value(true);
-      },
     );
   }
 
