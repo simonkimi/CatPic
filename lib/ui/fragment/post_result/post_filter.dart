@@ -50,7 +50,6 @@ class _PostFilterState extends State<PostFilter> {
           ),
           selectedColor: Theme.of(context).primaryColor,
           onSelected: (v) {
-            print(v);
             if (v) {
               if (nowList.isNotEmpty && e.contains(nowList.last)) {
                 nowList

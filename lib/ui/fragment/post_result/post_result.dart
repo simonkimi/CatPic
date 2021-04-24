@@ -29,7 +29,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
     adapter: widget.adapter,
   );
 
-  late final  controller = FloatingSearchBarController();
+  late final controller = FloatingSearchBarController();
   late final tmpController = SearchBarTmpController();
 
   late final filterStore = FilterStore(controller.query);

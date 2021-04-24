@@ -147,7 +147,6 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           });
         },
       ),
-
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
