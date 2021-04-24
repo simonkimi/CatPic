@@ -50,7 +50,9 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   void initState() {
     super.initState();
     _doubleClickAnimationController = AnimationController(
-        duration: const Duration(milliseconds: 150), vsync: this);
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
   }
 
   @override
@@ -64,6 +66,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
       onPageChanged: widget.onIndexChange,
+      itemCount: widget.images.length,
       itemBuilder: (context, index) {
         final imageBase = widget.images[index];
 

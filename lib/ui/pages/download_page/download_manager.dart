@@ -90,8 +90,9 @@ class DownloadManagerPage extends StatelessWidget {
 
   Widget _buildDownloadCard(BuildContext context, List<WebsiteTableData> list,
       DownloadTableData data, double? progress) {
-    final dio =
-        DioBuilder.build(list.get((element) => element.id == data.websiteId));
+    final dio = DioBuilder.build(
+      list.get((e) => e.id == data.websiteId),
+    );
 
     return Container(
       height: 100,
@@ -102,8 +103,10 @@ class DownloadManagerPage extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => PostImageViewPage(
                 dio: dio,
-                index: 1,
-                postList: [BooruPost.fromJson(jsonDecode(data.booruJson))],
+                index: 0,
+                postList: [
+                  BooruPost.fromJson(jsonDecode(data.booruJson)),
+                ],
               ),
             ),
           );
