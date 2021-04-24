@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:catpic/utils/utils.dart';
 
 class TagSearchBar extends StatefulWidget {
   const TagSearchBar({
@@ -15,28 +16,67 @@ class TagSearchBar extends StatefulWidget {
     required this.onSearch,
     this.body,
     this.defaultHint,
+    this.onTextChange,
+    this.controller,
+    this.onFilterDisplay,
   }) : super(key: key);
 
   final ValueChanged<String> onSearch;
+  final ValueChanged<String>? onTextChange;
   final String searchText;
   final Widget? body;
   final String? defaultHint;
+  final FloatingSearchBarController? controller;
+
+  final ValueChanged<bool>? onFilterDisplay;
 
   @override
   _TagSearchBarState createState() => _TagSearchBarState();
 }
 
-class _TagSearchBarState extends State<TagSearchBar> {
-  final searchBarController = FloatingSearchBarController();
+class _TagSearchBarState extends State<TagSearchBar>
+    with TickerProviderStateMixin {
+  late final FloatingSearchBarController searchBarController =
+      widget.controller ?? FloatingSearchBarController();
   var suggestionList = <SearchSuggestion>[];
   var loadingProgress = false;
-
   CancelToken? cancelToken;
+
+  var filterDisplaySwitch = false;
+
+  late final actionController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 200),
+  );
+  late final Animation<double> actionAnimation =
+      Tween<double>(begin: 0.0, end: 0.375).animate(actionController);
 
   @override
   void initState() {
     super.initState();
     _onSearchTagChange();
+  }
+
+  void onActionPress() {
+    if (searchBarController.query.isNotEmpty) {
+      searchBarController.clear();
+    } else if (searchBarController.isOpen) {
+      searchBarController.close();
+    } else {
+      if (!filterDisplaySwitch) {  // 当前为搜索页面
+        setState(() {
+          filterDisplaySwitch = true;
+        });
+        actionController.forward();
+        widget.onFilterDisplay?.call(true);
+      } else {
+        setState(() {
+          filterDisplaySwitch = false;
+        });
+        actionController.reverse();
+        widget.onFilterDisplay?.call(false);
+      }
+    }
   }
 
   @override
@@ -51,21 +91,30 @@ class _TagSearchBarState extends State<TagSearchBar> {
       },
       onFocusChanged: (isFocus) {
         _onSearchTagChange();
+        if (!filterDisplaySwitch) {
+          actionController.play(isFocus);
+        }
       },
       actions: [
         FloatingSearchBarAction(
-          showIfOpened: false,
-          child: CircularButton(
-            icon: const Icon(Icons.filter_alt_outlined),
-            onPressed: () {},
+          showIfOpened: true,
+          showIfClosed: true,
+          child: RotationTransition(
+            alignment: Alignment.center,
+            turns: actionAnimation,
+            child: CircularButton(
+              icon: const Icon(Icons.add),
+              onPressed: onActionPress,
+            ),
           ),
         ),
-        FloatingSearchBarAction.searchToClear(
-          showIfClosed: false,
-        ),
+        // FloatingSearchBarAction.searchToClear()
       ],
       body: widget.body,
-      onQueryChanged: _onSearchTagChange,
+      onQueryChanged: (value) {
+        _onSearchTagChange(value);
+        widget.onTextChange?.call(value);
+      },
       debounceDelay: settingStore.autoCompleteUseNetwork
           ? const Duration(seconds: 2)
           : const Duration(seconds: 1),

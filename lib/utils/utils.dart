@@ -14,6 +14,16 @@ extension IterableUtils<T> on Iterable<T> {
   }
 }
 
+extension AnimationControllerHelper on AnimationController {
+  void play(bool isForward) {
+    if (isForward) {
+      forward();
+    } else {
+      reverse();
+    }
+  }
+}
+
 extension ColorExtension on Color {
   MaterialColor get swatch => Colors.primaries.firstWhere(
         (Color c) => c.value == value,

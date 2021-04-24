@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class WebsiteManagerPage extends StatelessWidget {
   static const route = 'WebsiteManagerPage';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,29 +54,29 @@ class WebsiteManagerPage extends StatelessWidget {
   Widget _buildWebsiteList() {
     return StreamBuilder<List<WebsiteTableData>>(
         stream: DatabaseHelper().websiteDao.getAllStream(),
+        initialData: const [],
         builder: (context, s) {
           return ListView(
-            children: s.data?.map((e) {
-                  final title = e.name;
-                  final scheme = getSchemeString(e.scheme);
-                  final subTitle = '$scheme://${e.host}/';
-                  ImageProvider? favIcon;
-                  if (e.favicon.isNotEmpty) {
-                    favIcon = MemoryImage(e.favicon);
-                  }
-                  return WebsiteItem(
-                    key: Key('website-$title'),
-                    title: Text(title),
-                    subtitle: Text(subTitle),
-                    leadingImage: favIcon,
-                    onDeletePress: () {
-                      DatabaseHelper().websiteDao.remove(e);
-                      DatabaseHelper().downloadDao.onWebsiteDelete(e.id);
-                    },
-                    onSettingPress: () {},
-                  );
-                }).toList() ??
-                [],
+            children: s.data!.map((e) {
+              final title = e.name;
+              final scheme = getSchemeString(e.scheme);
+              final subTitle = '$scheme://${e.host}/';
+              ImageProvider? favIcon;
+              if (e.favicon.isNotEmpty) {
+                favIcon = MemoryImage(e.favicon);
+              }
+              return WebsiteItem(
+                key: Key('website-$title'),
+                title: Text(title),
+                subtitle: Text(subTitle),
+                leadingImage: favIcon,
+                onDeletePress: () {
+                  DatabaseHelper().websiteDao.remove(e);
+                  DatabaseHelper().downloadDao.onWebsiteDelete(e.id);
+                },
+                onSettingPress: () {},
+              );
+            }).toList(),
           );
         });
   }

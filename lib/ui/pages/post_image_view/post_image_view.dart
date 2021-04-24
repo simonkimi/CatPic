@@ -71,7 +71,7 @@ class PostImageViewPage extends StatelessWidget {
                             child: const Icon(Icons.person),
                           ),
                     title: Text(
-                      '#${booruPost.creatorId}',
+                      '#${booruPost.id}',
                       style: const TextStyle(color: Colors.white),
                     ),
                     subtitle: Text(

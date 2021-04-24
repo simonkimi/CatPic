@@ -134,7 +134,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                 );
               case LoadState.completed:
                 return NullableHero(
-                  tag: imageBase.heroTag,
+                  // tag: imageBase.heroTag,
                   child: state.completedWidget,
                 );
               case LoadState.failed:

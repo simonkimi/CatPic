@@ -1,20 +1,21 @@
 class PreViewModel {
-  PreViewModel(
-      {required this.gid,
-      required this.gtoken,
-      required this.title,
-      required this.tag,
-      required this.uploader,
-      required this.uploadTime,
-      required this.pages,
-      required this.stars,
-      required this.targetUrl,
-      required this.previewImg,
-      required this.language,
-      required this.keyTags,
-      required this.previewHeight,
-      required this.previewWidth,
-      this.titleJpn});
+  PreViewModel({
+    required this.gid,
+    required this.gtoken,
+    required this.title,
+    required this.tag,
+    required this.uploader,
+    required this.uploadTime,
+    required this.pages,
+    required this.stars,
+    required this.targetUrl,
+    required this.previewImg,
+    required this.language,
+    required this.keyTags,
+    required this.previewHeight,
+    required this.previewWidth,
+    this.titleJpn,
+  });
 
   final String title;
   final String tag;

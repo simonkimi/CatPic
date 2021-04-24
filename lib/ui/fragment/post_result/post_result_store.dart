@@ -24,7 +24,9 @@ abstract class PostResultStoreBase with Store implements IPostView {
   PostResultStoreBase({
     required this.searchText,
     required this.adapter,
-  });
+  }) {
+    refresh();
+  }
 
   final BooruAdapter adapter;
 
@@ -33,9 +35,10 @@ abstract class PostResultStoreBase with Store implements IPostView {
 
   var postList = ObservableList<BooruPost>();
   var page = 0;
-  final refreshController = RefreshController(initialRefresh: true);
+  final refreshController = RefreshController();
 
   Future<void> onRefresh() async {
+    print('onRefresh');
     try {
       await refresh();
       refreshController.loadComplete();
@@ -80,6 +83,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
   }
 
   Future<void> launchNewSearch(String tag) async {
+    print('launchNewSearch $tag');
     await refreshController.requestRefresh();
     searchText = tag;
     page = 0;
@@ -100,6 +104,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
   }
 
   Future<void> refresh() async {
+    print('refresh');
     postList.clear();
     page = 0;
     await loadNextPage();
