@@ -76,7 +76,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   void onPageIndexChange(int index) {
     widget.onIndexChange?.call(index);
     final int preloadNum = settingStore.preloadingNumber;
-    imageProviders.sublist(index).take(preloadNum).forEach((e) {
+    imageProviders.sublist(index + 1).take(preloadNum).forEach((e) {
       e.resolve(const ImageConfiguration());
     });
   }
