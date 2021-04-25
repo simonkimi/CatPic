@@ -37,9 +37,16 @@ class _PostResultFragmentState extends State<PostResultFragment> {
   var filterDisplaySwitch = false;
 
   @override
+  void initState() {
+    super.initState();
+    print(widget.searchText);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TagSearchBar(
       defaultHint: widget.searchText,
+      searchText: widget.searchText,
       controller: controller,
       tmpController: tmpController,
       onSearch: (value) {

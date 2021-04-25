@@ -60,6 +60,18 @@
   "character": "角色",
   "metadata": "元数据",
 
+  "copy": "复制",
+  "collection": "收藏",
+  "copy_finish": "已复制 {tag}",
+  "@copy_finish": {
+    "placeholders": {
+      "tag": {
+        "type": "String",
+        "example": "tagme"
+      }
+    }
+  },
+
   "connecting": "连接中...",
   "tap_to_reload": "点击重新加载",
   "idle_loading": "上拉加载",

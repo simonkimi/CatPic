@@ -16,6 +16,8 @@ abstract class MainStoreBase with Store {
   @observable
   WebsiteTableData? websiteEntity;
 
+  int searchPageCount = 0;
+
   @action
   Future<void> init() async {
     // 初始化数据

@@ -55,7 +55,7 @@ class CatPicApp extends StatelessWidget {
         AppLocalizations.delegate
       ],
       navigatorKey: AppNavigator().key,
-      home: SearchPage(),
+      home: const SearchPage(),
       builder: BotToastInit(),
       supportedLocales: AppLocalizations.supportedLocales,
       routes: {

@@ -211,7 +211,7 @@ class _MainDrawerState extends State<MainDrawer> {
     await mainStore.setWebsiteWithoutNotification(entity);
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => SearchPage()),
+      MaterialPageRoute(builder: (context) => const SearchPage()),
       (route) => false,
     );
   }

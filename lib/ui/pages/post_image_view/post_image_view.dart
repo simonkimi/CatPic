@@ -11,9 +11,12 @@ import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
 import 'package:catpic/ui/pages/post_image_view/store.dart';
+import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:catpic/ui/components/custom_popup_menu.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class PostImageViewPage extends StatelessWidget {
@@ -49,96 +52,185 @@ class PostImageViewPage extends StatelessWidget {
       return Container(
         child: Material(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  ),
-                  child: ListTile(
-                    leading: favicon?.isNotEmpty ?? false
-                        ? CircleAvatar(
-                            child: ClipOval(
-                              child: Image(
-                                  image: MemoryImage(favicon!, scale: 0.1),
-                                  fit: BoxFit.fill),
-                            ),
-                          )
-                        : CircleAvatar(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: const Icon(Icons.person),
-                          ),
-                    title: Text(
-                      '#${booruPost.id}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    subtitle: Text(
-                      booruPost.createTime,
-                      style: const TextStyle(color: Color(0xFFEEEEEE)),
-                    ),
-                  ),
-                ),
+                buildPopupHeader(context, booruPost),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${I18n.of(context).resolution}: ${booruPost.width} x ${booruPost.height}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'ID: ${booruPost.id}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${I18n.of(context).rating}: ${getRatingText(context, booruPost.rating)}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        '${I18n.of(context).score}: ${booruPost.score}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                    ),
-                  ],
-                ),
-                Wrap(
-                  spacing: 3,
-                  children:
-                      booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
-                    return FilterChip(
-                      key: ValueKey(e),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      label: Text(
-                        e,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      backgroundColor: Theme.of(context).primaryColor,
-                      onSelected: (v) {},
-                    );
-                  }).toList(),
-                )
+                ...buildPopupInfo(context, booruPost),
+                buildPopupTag(booruPost, context),
               ],
             ),
           ),
         ),
       );
     });
+  }
+
+  Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
+    return StatefulBuilder(builder: (context, setState) {
+      return Wrap(
+        spacing: 3,
+        children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
+          return CustomPopupMenu(
+            arrowColor: Colors.black87,
+            child: Chip(
+              key: ValueKey(e),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              label: Text(
+                e,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+            menuBuilder: (closeMenu) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.black87,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      buildMenuPopupMenu(
+                        icon: Icons.copy,
+                        text: I18n.of(context).copy,
+                        onTap: () {
+                          closeMenu();
+                          Clipboard.setData(ClipboardData(text: e));
+                          BotToast.showText(
+                              text: I18n.of(context).copy_finish(e));
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      buildMenuPopupMenu(
+                          icon: Icons.search,
+                          text: I18n.of(context).search,
+                          onTap: () {
+                            closeMenu();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => SearchPage(searchText: e),
+                              ),
+                            );
+                          }),
+                      // const SizedBox(width: 10),
+                      // buildMenuPopupMenu(
+                      //     icon: Icons.star,
+                      //     text: I18n.of(context).collection,
+                      //     onTap: () {
+                      //       closeMenu();
+                      //     }),
+                    ],
+                  ),
+                ),
+              );
+            },
+            pressType: PressType.singleClick,
+          );
+        }).toList(),
+      );
+    });
+  }
+
+  List<Row> buildPopupInfo(BuildContext context, BooruPost booruPost) {
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${I18n.of(context).resolution}: ${booruPost.width} x ${booruPost.height}',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              'ID: ${booruPost.id}',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${I18n.of(context).rating}: ${getRatingText(context, booruPost.rating)}',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              '${I18n.of(context).score}: ${booruPost.score}',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+        ],
+      )
+    ];
+  }
+
+  Container buildPopupHeader(BuildContext context, BooruPost booruPost) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).accentColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
+      child: ListTile(
+        leading: favicon?.isNotEmpty ?? false
+            ? CircleAvatar(
+                child: ClipOval(
+                  child: Image(
+                      image: MemoryImage(favicon!, scale: 0.1),
+                      fit: BoxFit.fill),
+                ),
+              )
+            : CircleAvatar(
+                backgroundColor: Theme.of(context).primaryColor,
+                child: const Icon(Icons.person),
+              ),
+        title: Text(
+          '#${booruPost.id}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        subtitle: Text(
+          booruPost.createTime,
+          style: const TextStyle(color: Color(0xFFEEEEEE)),
+        ),
+      ),
+    );
+  }
+
+  Widget buildMenuPopupMenu({
+    GestureTapCallback? onTap,
+    required IconData icon,
+    required String text,
+  }) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: Colors.white,
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 2),
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _sheetFootBuilder(BuildContext context, SheetState state) {

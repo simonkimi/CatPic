@@ -108,7 +108,8 @@ class _TagSearchBarState extends State<TagSearchBar>
             return false;
           }
           final nowTime = DateTime.now();
-          if (nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
+          if (mainStore.searchPageCount <= 1 &&
+              nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
             BotToast.showText(text: I18n.g.click_again_to_exit);
             lastClickBack = nowTime;
             return false;
@@ -122,83 +123,82 @@ class _TagSearchBarState extends State<TagSearchBar>
 
   SearchBar buildSearchBar(BuildContext context) {
     return SearchBar(
-        progress: loadingProgress,
-        controller: searchBarController,
-        tmpController: widget.tmpController,
-        defaultHint:
-            widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
-        showTmp: filterDisplaySwitch,
-        onSubmitted: (value) async {
-          backToSearch(() {
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
-              widget.onSearch(value.trim());
-              _setSearchHistory(value.trim());
-            });
+      progress: loadingProgress,
+      controller: searchBarController,
+      tmpController: widget.tmpController,
+      defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
+      showTmp: filterDisplaySwitch,
+      onSubmitted: (value) async {
+        backToSearch(() {
+          WidgetsBinding.instance!.addPostFrameCallback((_) {
+            widget.onSearch(value.trim());
+            _setSearchHistory(value.trim());
           });
-        },
-        onFocusChanged: (isFocus) {
-          _onSearchTagChange();
-          if (!filterDisplaySwitch) {
-            actionController.play(isFocus);
-          }
-        },
-        actions: [
-          FloatingSearchBarAction(
-            showIfOpened: true,
-            showIfClosed: true,
-            child: RotationTransition(
-              alignment: Alignment.center,
-              turns: actionAnimation,
-              child: CircularButton(
-                icon: const Icon(Icons.add),
-                onPressed: onActionPress,
-              ),
+        });
+      },
+      onFocusChanged: (isFocus) {
+        _onSearchTagChange();
+        if (!filterDisplaySwitch) {
+          actionController.play(isFocus);
+        }
+      },
+      actions: [
+        FloatingSearchBarAction(
+          showIfOpened: true,
+          showIfClosed: true,
+          child: RotationTransition(
+            alignment: Alignment.center,
+            turns: actionAnimation,
+            child: CircularButton(
+              icon: const Icon(Icons.add),
+              onPressed: onActionPress,
             ),
           ),
-        ],
-        body: widget.body,
-        onQueryChanged: (value) {
-          _onSearchTagChange(value);
-          widget.onTextChange?.call(value);
-        },
-        debounceDelay: settingStore.autoCompleteUseNetwork
-            ? const Duration(seconds: 2)
-            : const Duration(seconds: 1),
-        candidateBuilder: (ctx, _) {
-          return Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: suggestionList.map((e) {
-                return ListTile(
-                  title: Text(e.title),
-                  subtitle: e.subTitle != null
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                e.subTitle!,
-                                style: TextStyle(color: e.color),
-                              ),
+        ),
+      ],
+      body: widget.body,
+      onQueryChanged: (value) {
+        _onSearchTagChange(value);
+        widget.onTextChange?.call(value);
+      },
+      debounceDelay: settingStore.autoCompleteUseNetwork
+          ? const Duration(seconds: 2)
+          : const Duration(seconds: 1),
+      candidateBuilder: (ctx, _) {
+        return Card(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: suggestionList.map((e) {
+              return ListTile(
+                title: Text(e.title),
+                subtitle: e.subTitle != null
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              e.subTitle!,
+                              style: TextStyle(color: e.color),
                             ),
-                            Text(
-                              e.count.toString(),
-                              style: Theme.of(context).textTheme.subtitle2,
-                            )
-                          ],
-                        )
-                      : null,
-                  onTap: () {
-                    final newTag = searchBarController.query.split(' ')
-                      ..removeLast()
-                      ..add(e.title);
-                    searchBarController.query = newTag.join(' ') + ' ';
-                  },
-                );
-              }).toList(),
-            ),
-          );
-        },
-      );
+                          ),
+                          Text(
+                            e.count.toString(),
+                            style: Theme.of(context).textTheme.subtitle2,
+                          )
+                        ],
+                      )
+                    : null,
+                onTap: () {
+                  final newTag = searchBarController.query.split(' ')
+                    ..removeLast()
+                    ..add(e.title);
+                  searchBarController.query = newTag.join(' ') + ' ';
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
   }
 
   Future<List<SearchSuggestion>> _getTagSuggestions(String tag) async {

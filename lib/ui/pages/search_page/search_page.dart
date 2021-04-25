@@ -11,32 +11,39 @@ import 'package:flutter/material.dart';
 enum SearchType { POST, POOL, ARTIST }
 
 class SearchPage extends StatefulWidget {
+  const SearchPage({
+    Key? key,
+    this.searchText = '',
+    this.searchType = SearchType.POST,
+  }) : super(key: key);
+  final String searchText;
+  final SearchType searchType;
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  late String searchText;
-  late SearchType searchType;
-  late Widget searchBody;
-  late StreamSubscription<EventSiteChange> _eventSiteChangeListener;
+  late final searchText = widget.searchText;
+  late final searchType = widget.searchType;
+  late var searchBody = buildSearchBody(searchText, searchType);
+  late final StreamSubscription<EventSiteChange> _eventSiteChangeListener =
+      EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+    changeSearchBody(searchText, searchType);
+  });
 
   @override
   void initState() {
     super.initState();
-    searchText = '';
-    searchType = SearchType.POST;
-    searchBody = buildSearchBody(searchText, searchType);
-
-    _eventSiteChangeListener =
-        EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-      changeSearchBody(searchText, searchType);
-    });
+    mainStore.searchPageCount += 1;
+    print('SearchPageCount: ${mainStore.searchPageCount}');
   }
 
   @override
   void dispose() {
     super.dispose();
+    mainStore.searchPageCount -= 1;
+    print('SearchPageCount: ${mainStore.searchPageCount}');
     _eventSiteChangeListener.cancel();
   }
 
