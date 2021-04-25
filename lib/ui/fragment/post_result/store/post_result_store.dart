@@ -37,7 +37,16 @@ abstract class PostResultStoreBase with Store implements IPostView {
   @observable
   bool isLoading = false;
 
-  var postList = ObservableList<BooruPost>();
+  final _postList = ObservableList<BooruPost>();
+
+  @computed
+  List<BooruPost> get postList {
+    if (settingStore.saveModel) {
+      return _postList.where((e) => e.rating == PostRating.SAFE).toList();
+    }
+    return _postList;
+  }
+
   var page = 0;
   final refreshController = RefreshController();
 
@@ -94,7 +103,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
     await refreshController.requestRefresh();
     searchText = tag;
     page = 0;
-    postList.clear();
+    _postList.clear();
   }
 
   @override
@@ -108,17 +117,14 @@ abstract class PostResultStoreBase with Store implements IPostView {
     if (list.isEmpty) {
       throw NoMorePage();
     }
-    if (settingStore.saveModel) {
-      list = list.where((e) => e.rating == PostRating.SAFE).toList();
-    }
-    postList.addAll(list);
+    _postList.addAll(list);
     page += 1;
-    print('postList loadNextPage ${postList.length}');
+    print('postList loadNextPage ${_postList.length}');
   }
 
   Future<void> refresh() async {
     print('refresh');
-    postList.clear();
+    _postList.clear();
     page = 0;
     await loadNextPage();
   }

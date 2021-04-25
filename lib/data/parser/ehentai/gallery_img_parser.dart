@@ -24,14 +24,15 @@ class GalleryImgParser {
     final rawImgUrl = rawMeta[3];
 
     return GalleryImgModel(
-        height: height,
-        width: width,
-        imgSize: imgSize,
-        imgUrl: imgUrl,
-        rawHeight: rawImgHeight,
-        rawImgSize: rawImgSize,
-        rawImgUrl: rawImgUrl,
-        rawWidth: rawImgWidth);
+      height: height,
+      width: width,
+      imgSize: imgSize,
+      imgUrl: imgUrl,
+      rawHeight: rawImgHeight,
+      rawImgSize: rawImgSize,
+      rawImgUrl: rawImgUrl,
+      rawWidth: rawImgWidth,
+    );
   }
 
   List<String> parseWidthHeightSize(Element element) {
