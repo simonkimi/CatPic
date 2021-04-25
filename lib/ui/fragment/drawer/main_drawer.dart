@@ -137,12 +137,15 @@ class _MainDrawerState extends State<MainDrawer> {
       ListTile(
         leading: const Icon(Icons.history),
         title: Text(I18n.of(context).history),
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).pop();
+        },
       ),
       ListTile(
         leading: const Icon(Icons.download_rounded),
         title: Text(I18n.of(context).download),
         onTap: () {
+          Navigator.of(context).pop();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => DownloadManagerPage()),
@@ -153,6 +156,7 @@ class _MainDrawerState extends State<MainDrawer> {
         leading: const Icon(Icons.settings),
         title: Text(I18n.of(context).setting),
         onTap: () {
+          Navigator.of(context).pop();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => SettingPage()),

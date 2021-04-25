@@ -93,25 +93,35 @@ class _TagSearchBarState extends State<TagSearchBar>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (searchBarController.isOpen) {
-          searchBarController.close();
-          return false;
-        }
-        if (filterDisplaySwitch) {
-          backToSearch();
-          return false;
-        }
-        final nowTime = DateTime.now();
-        if (nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
-          BotToast.showText(text: I18n.g.click_again_to_exit);
-          lastClickBack = nowTime;
-          return false;
-        }
-        return true;
-      },
-      child: SearchBar(
+    return Builder(builder: (context) {
+      return WillPopScope(
+        onWillPop: () async {
+          if (Scaffold.of(context).isDrawerOpen) {
+            return true;
+          }
+          if (searchBarController.isOpen) {
+            searchBarController.close();
+            return false;
+          }
+          if (filterDisplaySwitch) {
+            backToSearch();
+            return false;
+          }
+          final nowTime = DateTime.now();
+          if (nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
+            BotToast.showText(text: I18n.g.click_again_to_exit);
+            lastClickBack = nowTime;
+            return false;
+          }
+          return true;
+        },
+        child: buildSearchBar(context),
+      );
+    });
+  }
+
+  SearchBar buildSearchBar(BuildContext context) {
+    return SearchBar(
         progress: loadingProgress,
         controller: searchBarController,
         tmpController: widget.tmpController,
@@ -188,8 +198,7 @@ class _TagSearchBarState extends State<TagSearchBar>
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Future<List<SearchSuggestion>> _getTagSuggestions(String tag) async {
