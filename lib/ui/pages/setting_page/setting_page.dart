@@ -130,6 +130,7 @@ class SettingPage extends StatelessWidget {
   List<Widget> buildDisplaySetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).display),
+      // 卡片布局
       SwitchListTile(
         title: Text(I18n.of(context).card_layout),
         secondary: const Icon(Icons.apps),
@@ -138,6 +139,7 @@ class SettingPage extends StatelessWidget {
           settingStore.setUseCardWidget(value);
         },
       ),
+      // 显示信息栏
       SwitchListTile(
         title: Text(I18n.of(context).display_info_bar),
         secondary: const Icon(Icons.info_outline),
@@ -146,6 +148,7 @@ class SettingPage extends StatelessWidget {
           settingStore.setShowCardDetail(value);
         },
       ),
+      // 列数
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
@@ -162,6 +165,7 @@ class SettingPage extends StatelessWidget {
         choiceItems: List.generate(
             5, (index) => S2Choice(title: '${index + 2}', value: index + 2)),
       ),
+      // 加载数量
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
@@ -171,14 +175,31 @@ class SettingPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         selectedValue: settingStore.eachPageItem,
-        onChange: (value) {
+        onChange: (S2SingleSelected<int?> value) {
           settingStore.setEachPageItem(value.value!);
         },
         title: I18n.of(context).per_page_limit,
-        choiceItems: List.generate(7, (index) {
-          final len = (index + 2) * 10;
-          return S2Choice(title: len.toString(), value: len);
-        }),
+        choiceItems: [20, 50, 100, 200]
+            .map((e) => S2Choice(title: e.toString(), value: e))
+            .toList(),
+      ),
+      // 预加载
+      SmartSelect<int>.single(
+        tileBuilder: (context, S2SingleState<int?> state) {
+          return S2Tile.fromState(
+            state,
+            leading: const Icon(Icons.autorenew_sharp),
+          );
+        },
+        modalType: S2ModalType.popupDialog,
+        selectedValue: settingStore.preloadingNumber,
+        onChange: (S2SingleSelected<int?> value) {
+          settingStore.setPreloadingNumber(value.value!);
+        },
+        title: I18n.of(context).preload,
+        choiceItems: [0, 1, 3, 5, 7, 9, 11, 13, 15, 17]
+            .map((e) => S2Choice(title: e.toString(), value: e))
+            .toList(),
       ),
       SwitchListTile(
         title: Text(I18n.of(context).auto_complete),

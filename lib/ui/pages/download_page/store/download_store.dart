@@ -113,9 +113,7 @@ abstract class DownloadStoreBase with Store {
         task.progress = count / total;
       });
       await bridge.writeFile(rsp.data!, fileName, downloadPath);
-      BotToast.showText(
-          text: I18n.g.download_finish
-              .replaceAll('{filename}', ' # ${database.postId} '));
+      BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
     } catch (e) {

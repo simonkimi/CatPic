@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../i18n.dart';
 import 'default_button.dart';
 
 class TextInputTile extends StatefulWidget {
-  const TextInputTile(
-      {Key? key,
-      this.title,
-      this.subtitle,
-      this.leading,
-      required this.onChanged,
-      this.dialogTitle,
-      this.hintText,
-      this.labelText,
-      this.defaultValue,
-      this.positiveText,
-      this.negativeText})
-      : super(key: key);
+  const TextInputTile({
+    Key? key,
+    this.title,
+    this.subtitle,
+    this.leading,
+    required this.onChanged,
+    this.dialogTitle,
+    this.hintText,
+    this.labelText,
+    this.defaultValue,
+    this.positiveText,
+    this.negativeText,
+    this.inputFormatters,
+    this.keyboardType,
+  }) : super(key: key);
 
   final Widget? title;
   final Widget? subtitle;
@@ -31,6 +34,9 @@ class TextInputTile extends StatefulWidget {
 
   final String? positiveText;
   final String? negativeText;
+
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   @override
   _TextInputTileState createState() => _TextInputTileState();
@@ -74,6 +80,8 @@ class _TextInputTileState extends State<TextInputTile> {
                       hintText: widget.hintText,
                       labelText: widget.labelText,
                     ),
+                    inputFormatters: widget.inputFormatters,
+                    keyboardType: widget.keyboardType,
                   )
                 ],
               ),

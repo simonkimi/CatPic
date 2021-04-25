@@ -1,3 +1,4 @@
+import 'package:catpic/main.dart';
 import 'package:catpic/utils/cached_dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
@@ -41,18 +42,29 @@ class MultiImageViewer extends StatefulWidget {
 class _MultiImageViewerState extends State<MultiImageViewer>
     with TickerProviderStateMixin {
   Animation<double>? _doubleClickAnimation;
-  late AnimationController _doubleClickAnimationController;
+  late final AnimationController _doubleClickAnimationController =
+      AnimationController(
+    duration: const Duration(milliseconds: 150),
+    vsync: this,
+  );
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
   late final pageController = PageController(initialPage: widget.index);
+  late final List<CachedDioImageProvider> imageProviders = widget.images
+      .map((e) => CachedDioImageProvider(
+            dio: widget.dio,
+            cachedKey: e.cachedKey,
+            url: e.imgUrl,
+            cachedImg: true,
+          ))
+      .toList();
 
   @override
   void initState() {
     super.initState();
-    _doubleClickAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      onPageIndexChange(widget.index);
+    });
   }
 
   @override
@@ -61,22 +73,24 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     _doubleClickAnimationController.dispose();
   }
 
+  void onPageIndexChange(int index) {
+    widget.onIndexChange?.call(index);
+    final int preloadNum = settingStore.preloadingNumber;
+    imageProviders.sublist(index).take(preloadNum).forEach((e) {
+      e.resolve(const ImageConfiguration());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
-      onPageChanged: widget.onIndexChange,
-      itemCount: widget.images.length,
+      onPageChanged: onPageIndexChange,
+      itemCount: imageProviders.length,
       itemBuilder: (context, index) {
-        final imageBase = widget.images[index];
-
+        final imageProvider = imageProviders[index];
         return ExtendedImage(
-          image: CachedDioImageProvider(
-            dio: widget.dio,
-            cachedKey: imageBase.cachedKey,
-            url: imageBase.imgUrl,
-            cachedImg: true,
-          ),
+          image: imageProvider,
           enableLoadState: true,
           handleLoadingProgress: true,
           mode: ExtendedImageMode.gesture,

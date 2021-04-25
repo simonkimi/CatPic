@@ -109,7 +109,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
   @override
   @action
   Future<void> loadNextPage() async {
-    var list = await adapter.postList(
+    final list = await adapter.postList(
       tags: searchText,
       page: page,
       limit: 50,

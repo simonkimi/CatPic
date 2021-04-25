@@ -56,7 +56,7 @@
   "rating": "评级",
 
   "general": "标签",
-  "copyright": "版权",
+  "copyright": "原作",
   "character": "角色",
   "metadata": "元数据",
 
@@ -85,6 +85,7 @@
   "auto_complete_local": "将使用本地数据库",
   "auto_complete_online": "将使用网站数据库",
   "save_model": "安全模式",
+  "preload": "预加载",
 
   "download_uri": "下载路径",
   "download_manager": "下载管理",
@@ -95,5 +96,13 @@
   "saf_desc5": "步骤4: 点击确认授权访问此文件夹",
   "download_start": "开始下载了...",
   "download_exist": "任务已存在",
-  "download_finish": "下载{filename}完成"
+  "download_finish": "下载{filename}完成",
+  "@download_finish": {
+    "placeholders": {
+      "filename": {
+        "type": "String",
+        "example": " #0 "
+      }
+    }
+  }
 }

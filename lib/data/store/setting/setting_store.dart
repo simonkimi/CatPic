@@ -45,6 +45,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var saveModel = true;
 
+  @observable
+  var preloadingNumber = 3;
+
   @action
   Future<void> init() async {
     final sp = SpUtil.getSp()!;
@@ -56,9 +59,16 @@ abstract class SettingStoreBase with Store {
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
     downloadQuality = sp.getInt('downloadQuality') ?? ImageQuality.raw;
+    preloadingNumber = sp.getInt('preloadingNumber') ?? 3;
     onlineTag = sp.getBool('onlineTag') ?? false;
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
+  }
+
+  @action
+  void setPreloadingNumber(int value) {
+    preloadingNumber = value;
+    SpUtil.putInt('preloadingNumber', value);
   }
 
   @action
