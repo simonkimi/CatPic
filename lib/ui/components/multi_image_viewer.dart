@@ -89,7 +89,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
               speed: 1.0,
               inertialSpeed: 100.0,
               initialScale: 1.0,
-              inPageView: false,
+              inPageView: true,
               initialAlignment: InitialAlignment.center,
               gestureDetailsIsChanged: (ge) {
                 widget.onScale?.call((ge?.totalScale ?? 0.0) < 1.2);
