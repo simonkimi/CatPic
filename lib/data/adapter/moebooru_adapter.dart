@@ -21,7 +21,12 @@ class MoebooruAdapter implements BooruAdapter {
 
   @override
   List<SupportPage> getSupportPage() {
-    return [SupportPage.POSTS, SupportPage.TAGS];
+    return [
+      SupportPage.POSTS,
+      SupportPage.TAGS,
+      SupportPage.ARTISTS,
+      SupportPage.POOLS,
+    ];
   }
 
   @override
