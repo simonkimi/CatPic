@@ -24,7 +24,5 @@ abstract class PoolResultStoreBase extends ILoadMore<BooruPool> with Store {
   Future<void> onRefresh() async {}
 
   @override
-  Future<void> onLoadMore() async {
-
-  }
+  Future<void> onLoadMore() async {}
 }

@@ -71,7 +71,7 @@ abstract class SettingStoreBase with Store {
     saveModel = sp.getBool('saveModel') ?? true;
     dioCacheOptions = CacheOptions(
       store: FileCacheStore(
-        p.join((await getApplicationDocumentsDirectory()).path, 'caches'),
+        p.join((await getApplicationSupportDirectory()).path, 'caches'),
       ),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],

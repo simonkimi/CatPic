@@ -1,7 +1,6 @@
 import 'package:mobx/mobx.dart';
 
 abstract class ILoadMore<T> {
-
   ILoadMore(this.searchText);
 
   String searchText;
