@@ -87,6 +87,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.previewQuality,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreviewQuality(value.value!);
@@ -102,6 +103,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.displayQuality,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setDisplayQuality(value.value!);
@@ -117,6 +119,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.downloadQuality,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setDownloadQuality(value.value!);
@@ -157,6 +160,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.previewRowNum,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreviewRowNum(value.value!);
@@ -174,6 +178,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.eachPageItem,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setEachPageItem(value.value!);
@@ -192,6 +197,7 @@ class SettingPage extends StatelessWidget {
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: settingStore.preloadingNumber,
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreloadingNumber(value.value!);

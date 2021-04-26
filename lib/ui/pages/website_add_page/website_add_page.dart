@@ -155,6 +155,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           );
         },
         modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: WebsiteType.GELBOORU.index,
         onChange: (S2SingleSelected<int?> value) {
           setState(() {
