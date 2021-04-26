@@ -124,7 +124,8 @@ class PostWaterFlow extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: post.width / post.height,
                   child: Container(
-                    color: Colors.primaries[index % 5][50],
+                    color: Colors.primaries[index % Colors.primaries.length]
+                        [50],
                     child: Center(
                       child: SizedBox(
                         width: 24,
