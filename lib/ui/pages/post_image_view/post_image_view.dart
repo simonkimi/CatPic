@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catpic/ui/components/custom_popup_menu.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostImageViewPage extends StatelessWidget {
   const PostImageViewPage({
@@ -245,59 +246,61 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget _sheetFootBuilder(BuildContext context, SheetState state) {
-    return StatefulBuilder(builder: (context, setLocalState) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              flex: 1,
-              child: OutlinedButton(
-                onPressed: () {},
-                child: Icon(
-                  Icons.message_outlined,
-                  color: Theme.of(context).primaryColor,
-                ),
+    final post = postList[index];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            flex: 1,
+            child: OutlinedButton(
+              onPressed: () {},
+              child: Icon(
+                Icons.message_outlined,
+                color: Theme.of(context).primaryColor,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 1,
-              child: OutlinedButton(
-                onPressed: () {},
-                child: Icon(
-                  Icons.favorite_outline,
-                  color: Theme.of(context).primaryColor,
-                ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: OutlinedButton(
+              onPressed: () {},
+              child: Icon(
+                Icons.favorite_outline,
+                color: Theme.of(context).primaryColor,
               ),
             ),
-            const SizedBox(width: 10),
+          ),
+          if (post.source.isNotEmpty) const SizedBox(width: 10),
+          if (post.source.isNotEmpty)
             Expanded(
               flex: 1,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await launch(postList[index].source);
+                },
                 child: Icon(
                   Icons.location_on_outlined,
                   color: Theme.of(context).primaryColor,
                 ),
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 1,
-              child: DefaultButton(
-                onPressed: _download,
-                child: const Icon(
-                  Icons.download_rounded,
-                  color: Colors.white,
-                ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: DefaultButton(
+              onPressed: _download,
+              child: const Icon(
+                Icons.download_rounded,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
-      );
-    });
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _download() async {
