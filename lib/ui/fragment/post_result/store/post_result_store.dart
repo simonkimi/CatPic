@@ -65,13 +65,12 @@ abstract class PostResultStoreBase with Store implements IPostView {
       refreshController.loadFailed();
       refreshController.refreshFailed();
       BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
-      print(e.message);
+      print('onRefresh ${e.message}');
     } catch (e) {
-      print(e.toString());
+      print('onRefresh ${e.toString()}');
       refreshController.loadFailed();
       refreshController.refreshFailed();
       BotToast.showText(text: e.toString());
-      print(e.toString());
     }
     isLoading = false;
   }
@@ -89,10 +88,10 @@ abstract class PostResultStoreBase with Store implements IPostView {
       refreshController.loadNoData();
     } on DioError catch (e) {
       refreshController.loadFailed();
-      print(e.message);
+      print('onLoadMore ${e.message}');
       BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
     } catch (e) {
-      print(e.toString());
+      print('onLoadMore ${e.toString()}');
       refreshController.loadFailed();
       BotToast.showText(text: e.toString());
     }

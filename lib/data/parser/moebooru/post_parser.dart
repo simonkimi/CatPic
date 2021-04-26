@@ -26,7 +26,7 @@ class MoebooruPostParse {
         tags: {'_': root.tags.split(' ')},
         source: root.source,
         score: root.score.toString(),
-        createTime: _parseTime(root.updatedAt),
+        createTime: _parseTime(root.updatedAt ?? 0),
       );
     }).toList();
   }

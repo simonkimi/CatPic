@@ -16,7 +16,6 @@ class Root {
     required this.score,
     required this.md5,
     required this.fileSize,
-    required this.fileExt,
     required this.fileUrl,
     required this.isShownInIndex,
     required this.previewUrl,
@@ -78,7 +77,7 @@ class Root {
       id: asT<int>(jsonRes['id'])!,
       tags: asT<String>(jsonRes['tags'])!,
       createdAt: asT<int>(jsonRes['created_at'])!,
-      updatedAt: asT<int>(jsonRes['updated_at'])!,
+      updatedAt: asT<int>(jsonRes['updated_at']),
       creatorId: asT<int>(jsonRes['creator_id'])!,
       approverId: asT<Object?>(jsonRes['approver_id']),
       author: asT<String>(jsonRes['author'])!,
@@ -87,7 +86,6 @@ class Root {
       score: asT<int>(jsonRes['score'])!,
       md5: asT<String>(jsonRes['md5'])!,
       fileSize: asT<int>(jsonRes['file_size'])!,
-      fileExt: asT<String>(jsonRes['file_ext'])!,
       fileUrl: asT<String>(jsonRes['file_url'])!,
       isShownInIndex: asT<bool>(jsonRes['is_shown_in_index'])!,
       previewUrl: asT<String>(jsonRes['preview_url'])!,
@@ -104,11 +102,11 @@ class Root {
       jpegHeight: asT<int>(jsonRes['jpeg_height'])!,
       jpegFileSize: asT<int>(jsonRes['jpeg_file_size'])!,
       rating: asT<String>(jsonRes['rating'])!,
-      isRatingLocked: asT<bool>(jsonRes['is_rating_locked'])!,
+      isRatingLocked: asT<bool>(jsonRes['is_rating_locked']),
       hasChildren: asT<bool>(jsonRes['has_children'])!,
       parentId: asT<int?>(jsonRes['parent_id']),
       status: asT<String>(jsonRes['status'])!,
-      isPending: asT<bool>(jsonRes['is_pending'])!,
+      isPending: asT<bool>(jsonRes['is_pending']),
       width: asT<int>(jsonRes['width'])!,
       height: asT<int>(jsonRes['height'])!,
       isHeld: asT<bool>(jsonRes['is_held'])!,
@@ -116,9 +114,9 @@ class Root {
       framesPending: framesPending!,
       framesString: asT<String>(jsonRes['frames_string'])!,
       frames: frames!,
-      isNoteLocked: asT<bool>(jsonRes['is_note_locked'])!,
-      lastNotedAt: asT<int>(jsonRes['last_noted_at'])!,
-      lastCommentedAt: asT<int>(jsonRes['last_commented_at'])!,
+      isNoteLocked: asT<bool>(jsonRes['is_note_locked']),
+      lastNotedAt: asT<int>(jsonRes['last_noted_at']),
+      lastCommentedAt: asT<int>(jsonRes['last_commented_at']),
       flagDetail: jsonRes['flag_detail'] == null
           ? null
           : FlagDetail.fromJson(
@@ -129,7 +127,7 @@ class Root {
   int id;
   String tags;
   int createdAt;
-  int updatedAt;
+  int? updatedAt;
   int creatorId;
   Object? approverId;
   String author;
@@ -138,7 +136,6 @@ class Root {
   int score;
   String md5;
   int fileSize;
-  String fileExt;
   String fileUrl;
   bool isShownInIndex;
   String previewUrl;
@@ -155,11 +152,11 @@ class Root {
   int jpegHeight;
   int jpegFileSize;
   String rating;
-  bool isRatingLocked;
+  bool? isRatingLocked;
   bool hasChildren;
   int? parentId;
   String status;
-  bool isPending;
+  bool? isPending;
   int width;
   int height;
   bool isHeld;
@@ -167,9 +164,9 @@ class Root {
   List<Object> framesPending;
   String framesString;
   List<Object> frames;
-  bool isNoteLocked;
-  int lastNotedAt;
-  int lastCommentedAt;
+  bool? isNoteLocked;
+  int? lastNotedAt;
+  int? lastCommentedAt;
   FlagDetail? flagDetail;
 
   @override
@@ -190,7 +187,6 @@ class Root {
         'score': score,
         'md5': md5,
         'file_size': fileSize,
-        'file_ext': fileExt,
         'file_url': fileUrl,
         'is_shown_in_index': isShownInIndex,
         'preview_url': previewUrl,

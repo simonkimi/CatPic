@@ -22,7 +22,7 @@ Future<String?> writeFile(Uint8List data, String fileName, String uri) async {
       'uri': uri,
     });
   } on PlatformException catch (e) {
-    print(e);
+    print('PlatformException ${e.toString()}');
     return '';
   }
 }
