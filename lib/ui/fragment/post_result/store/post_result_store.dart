@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/main.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
@@ -13,43 +14,31 @@ class PostResultStore = PostResultStoreBase with _$PostResultStore;
 
 class NoMorePage implements Exception {}
 
-abstract class IPostView {
-  IPostView(this.searchText);
-
-  final String searchText;
-
-  Future<void> loadNextPage();
-}
-
-abstract class PostResultStoreBase with Store implements IPostView {
+abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   PostResultStoreBase({
-    required this.searchText,
+    String searchText = '',
     required this.adapter,
-  }) {
+  }) : super(searchText) {
     onRefresh();
   }
 
   final BooruAdapter adapter;
 
-  @override
-  String searchText;
-
   @observable
   bool isLoading = false;
-
-  final _postList = ObservableList<BooruPost>();
 
   @computed
   List<BooruPost> get postList {
     if (settingStore.saveModel) {
-      return _postList.where((e) => e.rating == PostRating.SAFE).toList();
+      return list.where((e) => e.rating == PostRating.SAFE).toList();
     }
-    return _postList;
+    return list;
   }
 
   var page = 0;
   final refreshController = RefreshController();
 
+  @override
   Future<void> onRefresh() async {
     print('onRefresh');
     if (isLoading) return;
@@ -75,6 +64,7 @@ abstract class PostResultStoreBase with Store implements IPostView {
     isLoading = false;
   }
 
+  @override
   Future<void> onLoadMore() async {
     print('_onLoadMore');
     if (refreshController.isRefresh) {
@@ -102,10 +92,9 @@ abstract class PostResultStoreBase with Store implements IPostView {
     await refreshController.requestRefresh();
     searchText = tag;
     page = 0;
-    _postList.clear();
+    list.clear();
   }
 
-  @override
   @action
   Future<void> loadNextPage() async {
     final list = await adapter.postList(
@@ -116,14 +105,14 @@ abstract class PostResultStoreBase with Store implements IPostView {
     if (list.isEmpty) {
       throw NoMorePage();
     }
-    _postList.addAll(list);
+    list.addAll(list);
     page += 1;
-    print('postList loadNextPage ${_postList.length}');
+    print('postList loadNextPage ${list.length}');
   }
 
   Future<void> refresh() async {
     print('refresh');
-    _postList.clear();
+    list.clear();
     page = 0;
     await loadNextPage();
   }
