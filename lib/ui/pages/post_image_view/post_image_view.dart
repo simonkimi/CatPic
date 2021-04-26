@@ -49,7 +49,10 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget _sheetBuilder(
-      BuildContext context, SheetState state, PostImageViewStore store) {
+    BuildContext context,
+    SheetState state,
+    PostImageViewStore store,
+  ) {
     return Observer(builder: (_) {
       final booruPost = postList[store.index];
       return Container(
@@ -71,58 +74,60 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
-    return StatefulBuilder(builder: (context, setState) {
-      return Wrap(
-        spacing: 3,
-        children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
-          return CustomPopupMenu(
-            arrowColor: Colors.black87,
-            child: Chip(
-              key: ValueKey(e),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              label: Text(
-                e,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
+    return Wrap(
+      spacing: 3,
+      children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
+        return CustomPopupMenu(
+          arrowColor: Colors.black87,
+          child: Chip(
+            key: ValueKey(e),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            label: Text(
+              e,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
               ),
-              backgroundColor: Theme.of(context).primaryColor,
             ),
-            menuBuilder: (closeMenu) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Container(
-                  padding: const EdgeInsets.all(15),
-                  color: Colors.black87,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      buildMenuPopupMenu(
-                        icon: Icons.copy,
-                        text: I18n.of(context).copy,
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+          menuBuilder: (closeMenu) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                color: Colors.black87,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildMenuPopupMenu(
+                      icon: Icons.copy,
+                      text: I18n.of(context).copy,
+                      onTap: () {
+                        closeMenu();
+                        Clipboard.setData(ClipboardData(text: e));
+                        BotToast.showText(
+                            text: I18n.of(context).copy_finish(e));
+                      },
+                    ),
+                    const SizedBox(width: 15),
+                    buildMenuPopupMenu(
+                        icon: Icons.search,
+                        text: I18n.of(context).search,
                         onTap: () {
                           closeMenu();
-                          Clipboard.setData(ClipboardData(text: e));
-                          BotToast.showText(
-                              text: I18n.of(context).copy_finish(e));
-                        },
-                      ),
-                      const SizedBox(width: 15),
-                      buildMenuPopupMenu(
-                          icon: Icons.search,
-                          text: I18n.of(context).search,
-                          onTap: () {
-                            closeMenu();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    SearchPage(searchText: e.trim() + ' '),
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SearchPage(
+                                searchText: e.trim() + ' ',
                               ),
-                            );
-                          }),
-                      const SizedBox(width: 15),
+                            ),
+                          );
+                        }),
+                    if (onAddTag != null) const SizedBox(width: 15),
+                    if (onAddTag != null)
                       buildMenuPopupMenu(
                         icon: Icons.add,
                         text: I18n.of(context).add,
@@ -132,16 +137,15 @@ class PostImageViewPage extends StatelessWidget {
                           BotToast.showText(text: I18n.of(context).add_to_tmp);
                         },
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              );
-            },
-            pressType: PressType.singleClick,
-          );
-        }).toList(),
-      );
-    });
+              ),
+            );
+          },
+          pressType: PressType.singleClick,
+        );
+      }).toList(),
+    );
   }
 
   List<Row> buildPopupInfo(BuildContext context, BooruPost booruPost) {
