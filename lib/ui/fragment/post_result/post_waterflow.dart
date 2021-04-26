@@ -12,8 +12,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-import 'package:catpic/utils/utils.dart';
-
 import 'package:catpic/main.dart';
 import 'package:catpic/i18n.dart';
 
@@ -126,7 +124,7 @@ class PostWaterFlow extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: post.width / post.height,
                   child: Container(
-                    color: Colors.primaries.random()[50],
+                    color: Colors.primaries[index % 5][50],
                     child: Center(
                       child: SizedBox(
                         width: 24,
