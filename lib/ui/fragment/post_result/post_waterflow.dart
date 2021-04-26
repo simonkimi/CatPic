@@ -22,9 +22,11 @@ class PostWaterFlow extends StatelessWidget {
     Key? key,
     required this.store,
     required this.dio,
+    required this.onAddTag,
   }) : super(key: key);
 
   final PostResultStore store;
+  final ValueChanged<String> onAddTag;
   final Dio dio;
 
   @override
@@ -77,6 +79,7 @@ class PostWaterFlow extends StatelessWidget {
             favicon: mainStore.websiteEntity?.favicon,
             dio: getAdapter(mainStore.websiteEntity!).dio,
             postList: store.postList,
+            onAddTag: onAddTag,
             index: index,
           ),
         ),

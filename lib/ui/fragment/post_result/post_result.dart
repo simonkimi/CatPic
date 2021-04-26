@@ -79,6 +79,9 @@ class _PostResultFragmentState extends State<PostResultFragment> {
             : PostWaterFlow(
                 store: _store,
                 dio: widget.adapter.dio,
+                onAddTag: (value) {
+                  tmpController.tmp = tmpController.tmp.trim() + ' $value ';
+                },
               ),
       ),
     );

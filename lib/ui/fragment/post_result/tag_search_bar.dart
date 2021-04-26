@@ -126,6 +126,7 @@ class _TagSearchBarState extends State<TagSearchBar>
       progress: loadingProgress,
       controller: searchBarController,
       tmpController: widget.tmpController,
+      searchText: widget.searchText,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       showTmp: filterDisplaySwitch,
       onSubmitted: (value) async {

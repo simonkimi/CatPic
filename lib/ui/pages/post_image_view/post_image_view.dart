@@ -25,6 +25,7 @@ class PostImageViewPage extends StatelessWidget {
     required this.dio,
     required this.index,
     required this.postList,
+    this.onAddTag,
     this.favicon,
   }) : super(key: key);
 
@@ -32,6 +33,8 @@ class PostImageViewPage extends StatelessWidget {
   final Uint8List? favicon;
   final int index;
   final List<BooruPost> postList;
+
+  final ValueChanged<String>? onAddTag;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +94,7 @@ class PostImageViewPage extends StatelessWidget {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(15),
                   color: Colors.black87,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -106,7 +109,7 @@ class PostImageViewPage extends StatelessWidget {
                               text: I18n.of(context).copy_finish(e));
                         },
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 15),
                       buildMenuPopupMenu(
                           icon: Icons.search,
                           text: I18n.of(context).search,
@@ -114,17 +117,21 @@ class PostImageViewPage extends StatelessWidget {
                             closeMenu();
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => SearchPage(searchText: e),
+                                builder: (_) =>
+                                    SearchPage(searchText: e.trim() + ' '),
                               ),
                             );
                           }),
-                      // const SizedBox(width: 10),
-                      // buildMenuPopupMenu(
-                      //     icon: Icons.star,
-                      //     text: I18n.of(context).collection,
-                      //     onTap: () {
-                      //       closeMenu();
-                      //     }),
+                      const SizedBox(width: 15),
+                      buildMenuPopupMenu(
+                        icon: Icons.add,
+                        text: I18n.of(context).add,
+                        onTap: () {
+                          closeMenu();
+                          onAddTag?.call(e.trim());
+                          BotToast.showText(text: I18n.of(context).add_to_tmp);
+                        },
+                      ),
                     ],
                   ),
                 ),

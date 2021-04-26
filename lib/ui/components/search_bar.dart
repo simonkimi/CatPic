@@ -16,21 +16,22 @@ class SearchBarTmpController {
 }
 
 class SearchBar extends StatefulWidget {
-  const SearchBar(
-      {Key? key,
-      this.actions,
-      this.controller,
-      this.defaultHint,
-      this.onSubmitted,
-      this.onQueryChanged,
-      this.debounceDelay = const Duration(milliseconds: 100),
-      required this.candidateBuilder,
-      this.body,
-      this.onFocusChanged,
-      this.progress,
-      this.showTmp = false,
-      this.tmpController})
-      : super(key: key);
+  const SearchBar({
+    Key? key,
+    this.actions,
+    this.controller,
+    this.defaultHint,
+    this.onSubmitted,
+    this.onQueryChanged,
+    this.searchText,
+    this.debounceDelay = const Duration(milliseconds: 100),
+    required this.candidateBuilder,
+    this.body,
+    this.onFocusChanged,
+    this.progress,
+    this.showTmp = false,
+    this.tmpController,
+  }) : super(key: key);
 
   final OnQueryChangedCallback? onSubmitted;
   final OnQueryChangedCallback? onQueryChanged;
@@ -42,6 +43,7 @@ class SearchBar extends StatefulWidget {
   final FloatingSearchBarController? controller;
   final SearchBarTmpController? tmpController;
   final String? defaultHint;
+  final String? searchText;
   final Duration debounceDelay;
   final OnFocusChangedCallback? onFocusChanged;
   final dynamic progress;
@@ -52,8 +54,8 @@ class SearchBar extends StatefulWidget {
 }
 
 class SearchBarState extends State<SearchBar> {
-  var _searchText = '';
-  var _searchTmp = '';
+  late var _searchText = widget.searchText ?? '';
+  late var _searchTmp = widget.searchText ?? '';
   late FloatingSearchBarController controller;
   late String defaultHint;
 

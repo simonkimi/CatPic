@@ -71,6 +71,7 @@
       }
     }
   },
+  "add_to_tmp": "已添加至候选",
 
   "connecting": "连接中...",
   "tap_to_reload": "点击重新加载",
