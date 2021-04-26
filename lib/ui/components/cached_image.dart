@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import '../../main.dart';
 
 typedef ImageWidgetBuilder = Widget Function(
   BuildContext context,
@@ -21,9 +23,7 @@ class CachedDioImage extends StatefulWidget {
   const CachedDioImage({
     Key? key,
     this.dio,
-    this.cachedKey,
     this.duration,
-    this.useCached = true,
     required this.imgUrl,
     required this.imageBuilder,
     required this.loadingBuilder,
@@ -33,11 +33,9 @@ class CachedDioImage extends StatefulWidget {
   final ImageWidgetBuilder imageBuilder;
   final LoadingWidgetBuilder loadingBuilder;
   final ErrorBuilder errorBuilder;
-  final String? cachedKey;
   final String imgUrl;
   final Dio? dio;
   final Duration? duration;
-  final bool useCached;
 
   @override
   _CachedDioImageState createState() => _CachedDioImageState();
@@ -50,7 +48,6 @@ class _CachedDioImageState extends State<CachedDioImage> {
   late int receivedSize;
   late Uint8List data;
   late LoadingType loadingType;
-  late String cachedKey;
 
   final cancelToken = CancelToken();
 
@@ -61,7 +58,6 @@ class _CachedDioImageState extends State<CachedDioImage> {
     totalSize = 0;
     receivedSize = 0;
     loadingType = LoadingType.LOADING;
-    cachedKey = widget.cachedKey ?? widget.imgUrl;
     fetchData();
   }
 
@@ -103,20 +99,12 @@ class _CachedDioImageState extends State<CachedDioImage> {
 
   Future<void> fetchData() async {
     try {
-      if (widget.useCached) {
-        final cached = await getCached();
-        if (cached != null) {
-          setState(() {
-            data = cached;
-            loadingType = LoadingType.DONE;
-          });
-          return;
-        }
-      }
-
       final rsp = await _dio.get<Uint8List>(widget.imgUrl,
           cancelToken: cancelToken,
-          options: Options(responseType: ResponseType.bytes),
+          options: settingStore.dioCacheOptions
+              .copyWith(policy: CachePolicy.request)
+              .toOptions()
+              .copyWith(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {
         if (mounted) {
           setState(() {
@@ -129,7 +117,6 @@ class _CachedDioImageState extends State<CachedDioImage> {
       if (mounted) {
         setState(() {
           data = rsp.data!;
-          setCached(data);
           loadingType = LoadingType.DONE;
         });
       }
@@ -141,19 +128,5 @@ class _CachedDioImageState extends State<CachedDioImage> {
         });
       }
     }
-  }
-
-  Future<Uint8List?> getCached() async {
-    final cachedManager = DefaultCacheManager();
-    final fileInfo = await cachedManager.getFileFromCache(cachedKey);
-    if (fileInfo != null) {
-      return await fileInfo.file.readAsBytes();
-    }
-    return null;
-  }
-
-  Future<void> setCached(Uint8List imageBytes) async {
-    final cachedManager = DefaultCacheManager();
-    await cachedManager.putFile(cachedKey, imageBytes);
   }
 }

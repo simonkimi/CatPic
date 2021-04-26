@@ -4,7 +4,7 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:catpic/utils/cached_dio_image_provider.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -102,11 +102,9 @@ class PostWaterFlow extends StatelessWidget {
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: ExtendedImage(
-        image: CachedDioImageProvider(
+        image: DioImageProvider(
           dio: dio,
           url: imageUrl,
-          cachedKey: imageUrl,
-          cachedImg: true,
           scale: 0.3,
         ),
         handleLoadingProgress: true,

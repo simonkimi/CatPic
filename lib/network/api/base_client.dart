@@ -6,11 +6,13 @@ import 'package:catpic/data/adapter/gelbooru_adapter.dart';
 import 'package:catpic/data/adapter/moebooru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:dio/adapter.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class DioBuilder {
   static Dio build(WebsiteTableData? websiteEntity) {
@@ -28,7 +30,9 @@ class DioBuilder {
     final scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';
     dio.transformer = EncodeTransformer();
-    // dio.interceptors.add(LoggerInterceptor());
+    dio.interceptors.add(
+      DioCacheInterceptor(options: settingStore.dioCacheOptions),
+    );
     if (websiteEntity.useDoH) {
       dio.interceptors.add(HostInterceptor(
         dio: dio,

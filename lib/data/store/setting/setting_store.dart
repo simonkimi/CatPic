@@ -1,5 +1,9 @@
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
+import 'package:dio_cache_interceptor/src/store/file_cache_store.dart';
+import 'package:path/path.dart' as p;
 
 part 'setting_store.g.dart';
 
@@ -48,6 +52,8 @@ abstract class SettingStoreBase with Store {
   @observable
   var preloadingNumber = 3;
 
+  late CacheOptions dioCacheOptions;
+
   @action
   Future<void> init() async {
     final sp = SpUtil.getSp()!;
@@ -63,6 +69,15 @@ abstract class SettingStoreBase with Store {
     onlineTag = sp.getBool('onlineTag') ?? false;
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
+    dioCacheOptions = CacheOptions(
+      store: FileCacheStore(
+        p.join((await getApplicationDocumentsDirectory()).path, 'caches'),
+      ),
+      policy: CachePolicy.noCache,
+      hitCacheOnErrorExcept: [401, 403],
+      priority: CachePriority.normal,
+      maxStale: const Duration(days: 7),
+    );
   }
 
   @action

@@ -30,9 +30,9 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   @computed
   List<BooruPost> get postList {
     if (settingStore.saveModel) {
-      return list.where((e) => e.rating == PostRating.SAFE).toList();
+      return observableList.where((e) => e.rating == PostRating.SAFE).toList();
     }
-    return list;
+    return observableList;
   }
 
   var page = 0;
@@ -92,7 +92,7 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
     await refreshController.requestRefresh();
     searchText = tag;
     page = 0;
-    list.clear();
+    observableList.clear();
   }
 
   @action
@@ -105,14 +105,14 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
     if (list.isEmpty) {
       throw NoMorePage();
     }
-    list.addAll(list);
+    observableList.addAll(list);
     page += 1;
     print('postList loadNextPage ${list.length}');
   }
 
   Future<void> refresh() async {
     print('refresh');
-    list.clear();
+    observableList.clear();
     page = 0;
     await loadNextPage();
   }

@@ -1,5 +1,5 @@
 import 'package:catpic/main.dart';
-import 'package:catpic/utils/cached_dio_image_provider.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -50,12 +50,10 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
   late final pageController = PageController(initialPage: widget.index);
-  late final List<CachedDioImageProvider> imageProviders = widget.images
-      .map((e) => CachedDioImageProvider(
+  late final List<DioImageProvider> imageProviders = widget.images
+      .map((e) => DioImageProvider(
             dio: widget.dio,
-            cachedKey: e.cachedKey,
             url: e.imgUrl,
-            cachedImg: true,
           ))
       .toList();
 

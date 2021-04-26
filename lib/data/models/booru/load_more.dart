@@ -10,5 +10,5 @@ abstract class ILoadMore<T> {
 
   Future<void> onRefresh();
 
-  final list = ObservableList<T>();
+  final observableList = ObservableList<T>();
 }
