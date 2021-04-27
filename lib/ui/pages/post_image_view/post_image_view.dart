@@ -343,7 +343,16 @@ class PostImageViewPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const SizedBox(width: 10),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    onPressed: () {
+                      Navigator.of(I18n.context).pop();
+                    },
+                  ),
                   const Icon(
                     Icons.image,
                     size: 16,

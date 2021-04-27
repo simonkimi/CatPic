@@ -20,7 +20,12 @@ part 'database.g.dart';
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dbFolder = await getApplicationSupportDirectory();
+    late Directory dbFolder;
+    if (Platform.isWindows) {
+      dbFolder = await getApplicationSupportDirectory();
+    } else {
+      dbFolder = await getApplicationDocumentsDirectory();
+    }
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
     return VmDatabase(file);
   });

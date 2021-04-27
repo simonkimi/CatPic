@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sp_util/sp_util.dart';
@@ -56,6 +58,12 @@ abstract class SettingStoreBase with Store {
 
   @action
   Future<void> init() async {
+    late Directory dbFolder;
+    if (Platform.isWindows) {
+      dbFolder = await getApplicationSupportDirectory();
+    } else {
+      dbFolder = await getApplicationDocumentsDirectory();
+    }
     final sp = SpUtil.getSp()!;
     useCardWidget = sp.getBool('useCardWidget') ?? true;
     showCardDetail = sp.getBool('showCardDetail') ?? true;
@@ -71,12 +79,12 @@ abstract class SettingStoreBase with Store {
     saveModel = sp.getBool('saveModel') ?? true;
     dioCacheOptions = CacheOptions(
       store: FileCacheStore(
-        p.join((await getApplicationSupportDirectory()).path, 'caches'),
+        p.join(dbFolder.path, 'caches'),
       ),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],
       priority: CachePriority.normal,
-      maxStale: const Duration(days: 7),
+      maxStale: const Duration(days: 30),
     );
   }
 
