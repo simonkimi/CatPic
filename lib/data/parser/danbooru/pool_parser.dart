@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/parser/danbooru/post_parser.dart';
@@ -7,8 +9,14 @@ import 'package:flutter/foundation.dart';
 
 import 'pool_model.dart';
 
-class DanbooruPoolParser extends BooruPool {
-  DanbooruPoolParser({
+class DanbooruPoolParser {
+  static DanbooruPool parser(String data) {
+    return DanbooruPool.fromRoot(Root.fromJson(jsonDecode(data)));
+  }
+}
+
+class DanbooruPool extends BooruPool {
+  DanbooruPool({
     required String id,
     required String name,
     required String createAt,
@@ -22,13 +30,14 @@ class DanbooruPoolParser extends BooruPool {
             description: description,
             postCount: postCount);
 
-  factory DanbooruPoolParser.fromRoot(Root root) => DanbooruPoolParser(
-      id: root.id.toString(),
-      postCount: root.postCount,
-      description: root.description,
-      createAt: root.createdAt,
-      name: root.name,
-      postIndex: root.postIds);
+  factory DanbooruPool.fromRoot(Root root) => DanbooruPool(
+        id: root.id.toString(),
+        postCount: root.postCount,
+        description: root.description,
+        createAt: root.createdAt,
+        name: root.name,
+        postIndex: root.postIds,
+      );
 
   final List<int> postIndex;
 
