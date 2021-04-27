@@ -51,7 +51,7 @@ class _PostResultFragmentState extends State<PostResultFragment> {
       tmpController: tmpController,
       onSearch: (value) {
         print('onSearch $value');
-        _store.launchNewSearch(value.trim());
+        _store.onNewSearch(value.trim());
       },
       onFilterDisplay: (value) {
         setState(() {
