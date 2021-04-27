@@ -6,21 +6,16 @@ import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:flutter/foundation.dart';
+
 import 'pool_model.dart';
 
 class MoebooruPoolParser {
   static List<MoebooruPool> parse(String jsonStr) {
     final List<dynamic> json = jsonDecode(jsonStr);
-    return json.map((e) {
-      final root = PoolList.fromJson(e);
-      return MoebooruPool(
-        id: root.id.toString(),
-        name: root.name,
-        createAt: root.createdAt,
-        description: root.description,
-        postCount: root.postCount,
-      );
-    }).toList();
+
+    return json
+        .map((e) => MoebooruPool.fromRoot(PoolList.fromJson(e)))
+        .toList();
   }
 
   static List<BooruPost> parseSingle(String jsonStr) {

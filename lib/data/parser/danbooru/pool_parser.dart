@@ -10,8 +10,12 @@ import 'package:flutter/foundation.dart';
 import 'pool_model.dart';
 
 class DanbooruPoolParser {
-  static DanbooruPool parser(String data) {
-    return DanbooruPool.fromRoot(PoolList.fromJson(jsonDecode(data)));
+  static List<DanbooruPool> parser(String jsonStr) {
+    final List<dynamic> json = jsonDecode(jsonStr);
+
+    return json
+        .map((e) => DanbooruPool.fromRoot(PoolList.fromJson(e)))
+        .toList();
   }
 }
 
