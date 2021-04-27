@@ -8,27 +8,7 @@ class DanbooruPostParse {
   static List<BooruPost> parse(String postJson) {
     final List<dynamic> posts = jsonDecode(postJson);
     return posts.where((e) => e.id != null).map((e) {
-      final root = Root.fromJson(e);
-      return BooruPost(
-        id: root.id!.toString(),
-        creatorId: root.uploaderId.toString(),
-        md5: root.md5!,
-        previewURL: root.previewFileUrl!,
-        sampleURL: root.largeFileUrl!,
-        imgURL: root.fileUrl!,
-        width: root.imageWidth,
-        height: root.imageHeight,
-        sampleWidth: root.imageWidth,
-        sampleHeight: root.imageHeight,
-        previewWidth: root.imageWidth,
-        previewHeight: root.imageHeight,
-        rating: _getRating(root.rating),
-        status: root.isStatusLocked ? 'active' : 'inactive',
-        tags: _parseTag(e),
-        source: root.source,
-        createTime: root.createdAt,
-        score: root.score.toString(),
-      );
+      return parseSingle(e);
     }).toList();
   }
 
@@ -52,5 +32,34 @@ class DanbooruPostParse {
     result['character'] = json.tagStringCharacter.split(' ');
     result['meta'] = json.tagStringMeta.split(' ');
     return result;
+  }
+
+  static BooruPost parseSingle(dynamic postJson) {
+    late Root root;
+    if (postJson is String) {
+      root = Root.fromJson(jsonDecode(postJson));
+    } else if (postJson is Map) {
+      root = Root.fromJson(postJson.cast());
+    }
+    return BooruPost(
+      id: root.id!.toString(),
+      creatorId: root.uploaderId.toString(),
+      md5: root.md5!,
+      previewURL: root.previewFileUrl!,
+      sampleURL: root.largeFileUrl!,
+      imgURL: root.fileUrl!,
+      width: root.imageWidth,
+      height: root.imageHeight,
+      sampleWidth: root.imageWidth,
+      sampleHeight: root.imageHeight,
+      previewWidth: root.imageWidth,
+      previewHeight: root.imageHeight,
+      rating: _getRating(root.rating),
+      status: root.isStatusLocked ? 'active' : 'inactive',
+      tags: _parseTag(root),
+      source: root.source,
+      createTime: root.createdAt,
+      score: root.score.toString(),
+    );
   }
 }

@@ -11,8 +11,11 @@ class MoebooruClient extends BaseClient {
   /// [limit] How many posts you want to retrieve. There is a hard limit of 100
   /// [page] The page number.
   /// [tags] The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.
-  Future<String> postsList(
-      {required int limit, required int page, required String tags}) async {
+  Future<String> postsList({
+    required int limit,
+    required int page,
+    required String tags,
+  }) async {
     final uri = Uri(path: 'post.json', queryParameters: {
       'limit': limit.toString(),
       'page': page.toString(),
@@ -26,12 +29,13 @@ class MoebooruClient extends BaseClient {
   /// [limit] How many tags to retrieve. Setting this to 0 will return every tag.
   /// [name] The exact name of the tag.
   /// [page] The page number.
-  Future<String> tagsList(
-      {required int limit,
-      required String name,
-      required int page,
-      Order order = Order.COUNT,
-      CancelToken? cancelToken}) async {
+  Future<String> tagsList({
+    required int limit,
+    required String name,
+    required int page,
+    Order order = Order.COUNT,
+    CancelToken? cancelToken,
+  }) async {
     final uri = Uri(path: 'tag.json', queryParameters: <String, String>{
       'name': name,
       'limit': limit.toString(),

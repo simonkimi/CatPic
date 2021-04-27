@@ -27,6 +27,10 @@ class DanbooruClient extends BaseClient {
     return (await dio.getUri<String>(uri)).data ?? '';
   }
 
+  Future<String> postSingle(int id) async {
+    return (await dio.get('posts/$id.json')).data;
+  }
+
   /// 获取tag详细信息
   /// [limit] How many tags to retrieve. Setting this to 0 will return every tag.
   /// [name] The exact name of the tag.
