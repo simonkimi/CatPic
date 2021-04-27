@@ -12,9 +12,7 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   PostResultStoreBase({
     String searchText = '',
     required this.adapter,
-  }) : super(searchText) {
-    onRefresh();
-  }
+  }) : super(searchText);
 
   final BooruAdapter adapter;
 

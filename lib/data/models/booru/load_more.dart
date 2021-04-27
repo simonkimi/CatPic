@@ -8,7 +8,9 @@ import '../../../i18n.dart';
 class NoMorePage implements Exception {}
 
 abstract class ILoadMore<T> {
-  ILoadMore(this.searchText);
+  ILoadMore(this.searchText) {
+    onRefresh();
+  }
 
   String searchText;
   final observableList = ObservableList<T>();

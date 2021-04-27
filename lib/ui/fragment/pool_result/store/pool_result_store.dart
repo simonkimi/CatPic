@@ -11,9 +11,7 @@ abstract class PoolResultStoreBase extends ILoadMore<BooruPool> with Store {
   PoolResultStoreBase({
     String searchText = '',
     required this.adapter,
-  }) : super(searchText) {
-    onRefresh();
-  }
+  }) : super(searchText);
 
   final BooruAdapter adapter;
 
