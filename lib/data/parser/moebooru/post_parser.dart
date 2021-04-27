@@ -21,17 +21,17 @@ class MoebooruPostParse {
         sampleHeight: root.sampleHeight,
         previewWidth: root.previewWidth,
         previewHeight: root.previewHeight,
-        rating: _getRating(root.rating),
+        rating: getRating(root.rating),
         status: root.status,
         tags: {'_': root.tags.split(' ')},
         source: root.source,
         score: root.score.toString(),
-        createTime: _parseTime(root.updatedAt ?? 0),
+        createTime: parseTime(root.updatedAt ?? 0),
       );
     }).toList();
   }
 
-  static int _getRating(String? name) {
+  static int getRating(String? name) {
     switch (name) {
       case 's':
         return PostRating.SAFE;
@@ -43,7 +43,7 @@ class MoebooruPostParse {
     return PostRating.QUESTIONABLE;
   }
 
-  static String _parseTime(int timeStamp) {
+  static String parseTime(int timeStamp) {
     return DateTime.fromMicrosecondsSinceEpoch(timeStamp * 1000).toString();
   }
 }

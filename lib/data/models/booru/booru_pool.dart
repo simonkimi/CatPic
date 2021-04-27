@@ -17,4 +17,6 @@ abstract class BooruPool {
   final int postCount;
 
   Future<BooruPost> fromIndex(BaseClient client, int index);
+
+  Future<void> getPosts(BaseClient client);
 }

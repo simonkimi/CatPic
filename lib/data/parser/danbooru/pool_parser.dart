@@ -11,7 +11,7 @@ import 'pool_model.dart';
 
 class DanbooruPoolParser {
   static DanbooruPool parser(String data) {
-    return DanbooruPool.fromRoot(Root.fromJson(jsonDecode(data)));
+    return DanbooruPool.fromRoot(PoolList.fromJson(jsonDecode(data)));
   }
 }
 
@@ -22,7 +22,7 @@ class DanbooruPool extends BooruPool {
     required String createAt,
     required String description,
     required int postCount,
-    required this.postIndex,
+    required this.posts,
   }) : super(
             id: id,
             name: name,
@@ -30,21 +30,26 @@ class DanbooruPool extends BooruPool {
             description: description,
             postCount: postCount);
 
-  factory DanbooruPool.fromRoot(Root root) => DanbooruPool(
+  factory DanbooruPool.fromRoot(PoolList root) => DanbooruPool(
         id: root.id.toString(),
         postCount: root.postCount,
         description: root.description,
         createAt: root.createdAt,
         name: root.name,
-        postIndex: root.postIds,
+        posts: root.postIds,
       );
 
-  final List<int> postIndex;
+  final List<int> posts;
 
   @override
   Future<BooruPost> fromIndex(BaseClient client, int index) async {
-    final postId = postIndex[index];
+    final postId = posts[index];
     final postJson = await (client as DanbooruClient).postSingle(postId);
     return await compute(DanbooruPostParse.parseSingle, postJson);
+  }
+
+  @override
+  Future<void> getPosts(BaseClient client) async {
+    return;
   }
 }

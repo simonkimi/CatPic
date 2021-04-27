@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:catpic/utils/utils.dart';
 
-
-class Root {
-  Root({
+class PoolList {
+  PoolList({
     required this.id,
     required this.name,
     required this.createdAt,
@@ -16,7 +15,7 @@ class Root {
     required this.postCount,
   });
 
-  factory Root.fromJson(Map<String, dynamic> jsonRes) {
+  factory PoolList.fromJson(Map<String, dynamic> jsonRes) {
     final List<int>? postIds = jsonRes['post_ids'] is List ? <int>[] : null;
     if (postIds != null) {
       for (final dynamic item in jsonRes['post_ids']!) {
@@ -25,7 +24,7 @@ class Root {
         }
       }
     }
-    return Root(
+    return PoolList(
       id: asT<int>(jsonRes['id'])!,
       name: asT<String>(jsonRes['name'])!,
       createdAt: asT<String>(jsonRes['created_at'])!,
@@ -68,6 +67,6 @@ class Root {
         'post_count': postCount,
       };
 
-  Root clone() =>
-      Root.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
+  PoolList clone() => PoolList.fromJson(
+      asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
 }

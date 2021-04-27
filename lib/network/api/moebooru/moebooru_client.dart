@@ -62,6 +62,11 @@ class MoebooruClient extends BaseClient {
     return (await dio.getUri<String>(uri)).data!;
   }
 
+  Future<String> poolSingle(String id) async {
+    final uri = Uri(path: 'pool/show.json', queryParameters: {'id': id});
+    return (await dio.getUri<String>(uri)).data!;
+  }
+
   /// 获取图集详细内容
   /// [id] The pool id number.
   /// [page] The page.
