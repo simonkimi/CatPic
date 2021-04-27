@@ -5,9 +5,10 @@ import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
-import 'package:catpic/ui/components/cached_image.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/main.dart';
@@ -163,37 +164,33 @@ class DownloadManagerPage extends StatelessWidget {
   }
 
   Widget buildCardImage(Dio dio, String url) {
-    return CachedDioImage(
-      key: ValueKey('Preview$url'),
-      imgUrl: url,
-      imageBuilder: (context, imgData) {
-        return SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Image(
-            image: MemoryImage(imgData, scale: 0.1),
-            fit: BoxFit.cover,
-          ),
-        );
-      },
-      loadingBuilder: (_, progress) {
-        return Center(
-          child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              value: ((progress.expectedTotalBytes ?? 0) != 0) &&
-                      ((progress.cumulativeBytesLoaded) != 0)
-                  ? progress.cumulativeBytesLoaded /
-                      progress.expectedTotalBytes!
-                  : 0.0,
-              strokeWidth: 2.5,
-            ),
-          ),
-        );
-      },
-      errorBuilder: (_, err, reload) {
-        return const Icon(Icons.error);
+    return ExtendedImage(
+      image: DioImageProvider(url: url, dio: dio),
+      handleLoadingProgress: true,
+      enableLoadState: true,
+      loadStateChanged: (state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            var progress = state.loadingProgress?.expectedTotalBytes != null
+                ? state.loadingProgress!.cumulativeBytesLoaded /
+                    state.loadingProgress!.expectedTotalBytes!
+                : 0.0;
+            progress = progress.isFinite ? progress : 0;
+            return Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 2.5,
+                ),
+              ),
+            );
+          case LoadState.completed:
+            return null;
+          case LoadState.failed:
+            return const Icon(Icons.error);
+        }
       },
     );
   }

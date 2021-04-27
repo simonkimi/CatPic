@@ -12,11 +12,11 @@ import 'package:flutter/painting.dart';
 class DioImageProvider extends ImageProvider<DioImageProvider> {
   DioImageProvider({
     required this.url,
-    required this.dio,
+    this.dio,
     this.scale = 1.0,
   });
 
-  final Dio dio;
+  final Dio? dio;
   final String url;
   final double scale;
 
@@ -45,7 +45,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    final rsp = await dio.get<List<int>>(url,
+    final rsp = await (dio ?? Dio()).get<List<int>>(url,
         options: settingStore.dioCacheOptions
             .copyWith(policy: CachePolicy.request)
             .toOptions()
