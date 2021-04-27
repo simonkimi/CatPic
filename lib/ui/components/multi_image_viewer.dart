@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../i18n.dart';
+import 'package:catpic/i18n.dart';
 import 'nullable_hero.dart';
 
 class ImageBase {

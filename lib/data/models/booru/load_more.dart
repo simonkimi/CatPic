@@ -10,4 +10,8 @@ abstract class ILoadMore<T> {
   Future<void> onRefresh();
 
   final observableList = ObservableList<T>();
+
+  var page = 0;
 }
+
+class NoMorePage implements Exception {}

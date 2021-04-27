@@ -12,8 +12,6 @@ part 'post_result_store.g.dart';
 
 class PostResultStore = PostResultStoreBase with _$PostResultStore;
 
-class NoMorePage implements Exception {}
-
 abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   PostResultStoreBase({
     String searchText = '',
@@ -35,7 +33,6 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
     return observableList;
   }
 
-  var page = 0;
   final refreshController = RefreshController();
 
   @override
