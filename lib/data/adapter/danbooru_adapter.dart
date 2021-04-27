@@ -1,6 +1,8 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/parser/danbooru/pool_parser.dart';
 import 'package:catpic/data/parser/danbooru/post_parser.dart';
 import 'package:catpic/data/parser/danbooru/tag_parser.dart';
 import 'package:catpic/network/api/danbooru/danbooru_client.dart';
@@ -20,7 +22,7 @@ class DanbooruAdapter implements BooruAdapter {
 
   @override
   List<SupportPage> getSupportPage() {
-    return [SupportPage.POSTS, SupportPage.TAGS];
+    return [SupportPage.POSTS, SupportPage.TAGS, SupportPage.POOLS];
   }
 
   @override
@@ -54,6 +56,20 @@ class DanbooruAdapter implements BooruAdapter {
       cancelToken: cancelToken,
     );
     return await compute(DanbooruTagParser.parse, str);
+  }
+
+  @override
+  Future<List<BooruPool>> poolList({
+    required String name,
+    required int page,
+    CancelToken? cancelToken,
+  }) async {
+    final str = await client.poolList(
+      name: name,
+      page: page,
+      cancelToken: cancelToken,
+    );
+    return await compute(DanbooruPoolParser.parse, str);
   }
 
   @override

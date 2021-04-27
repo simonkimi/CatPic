@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/gelbooru/post_parser.dart';
@@ -53,4 +54,12 @@ class GelbooruAdapter implements BooruAdapter {
 
   @override
   Dio get dio => client.dio;
+
+  @override
+  Future<List<BooruPool>> poolList({
+    required String name,
+    required int page,
+  }) {
+    throw UnsupportedError('Gelbooru not support Pool!');
+  }
 }

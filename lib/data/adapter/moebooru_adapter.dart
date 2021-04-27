@@ -1,6 +1,8 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/parser/moebooru/pool_parser.dart';
 import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
@@ -54,4 +56,18 @@ class MoebooruAdapter implements BooruAdapter {
 
   @override
   Dio get dio => client.dio;
+
+  @override
+  Future<List<BooruPool>> poolList({
+    required String name,
+    required int page,
+    CancelToken? cancelToken,
+  }) async {
+    final str = await client.poolList(
+      query: name,
+      page: page,
+      cancelToken: cancelToken,
+    );
+    return await compute(MoebooruPoolParser.parse, str);
+  }
 }

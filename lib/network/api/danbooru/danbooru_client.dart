@@ -60,12 +60,16 @@ class DanbooruClient extends BaseClient {
   /// 获取图集列表
   /// [query] The title.
   /// [page] The page.
-  Future<String> poolList({required String name, required int page}) async {
+  Future<String> poolList({
+    required String name,
+    required int page,
+    CancelToken? cancelToken,
+  }) async {
     final uri = Uri(path: 'pool.json', queryParameters: {
       'search[name_matches]': name,
       'page': page.toString()
     });
-    return (await dio.getUri<String>(uri)).data!;
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
   /// 画师列表

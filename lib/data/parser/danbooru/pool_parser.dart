@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'pool_model.dart';
 
 class DanbooruPoolParser {
-  static List<DanbooruPool> parser(String jsonStr) {
+  static List<DanbooruPool> parse(String jsonStr) {
     final List<dynamic> json = jsonDecode(jsonStr);
 
     return json

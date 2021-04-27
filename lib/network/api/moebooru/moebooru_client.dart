@@ -55,11 +55,15 @@ class MoebooruClient extends BaseClient {
   /// 获取图集列表
   /// [query] The title.
   /// [page] The page.
-  Future<String> poolList({required String query, required int page}) async {
+  Future<String> poolList({
+    required String query,
+    required int page,
+    CancelToken? cancelToken,
+  }) async {
     final uri = Uri(
         path: 'pool.json',
         queryParameters: {'query': query, 'page': page.toString()});
-    return (await dio.getUri<String>(uri)).data!;
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
   Future<String> poolSingle(String id) async {
