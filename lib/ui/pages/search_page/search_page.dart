@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website.dart';
+import 'package:catpic/ui/fragment/pool_result/pool_result.dart';
 import 'package:catpic/ui/fragment/post_result/post_result.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/utils/event_util.dart';
@@ -75,7 +76,11 @@ class _SearchPageState extends State<SearchPage> {
             adapter: getAdapter(mainStore.websiteEntity!),
           );
         case SearchType.POOL:
-          throw Exception('TODO POOL');
+          return PoolResultFragment(
+            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            searchText: tag,
+            adapter: getAdapter(mainStore.websiteEntity!),
+          );
         case SearchType.ARTIST:
           throw Exception('TODO ARTIST');
       }

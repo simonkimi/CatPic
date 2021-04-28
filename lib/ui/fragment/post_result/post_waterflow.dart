@@ -3,6 +3,7 @@ import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
+import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:dio/dio.dart';
@@ -41,7 +42,7 @@ class PostWaterFlow extends StatelessWidget {
           enablePullUp: true,
           enablePullDown: true,
           footer: CustomFooter(
-            builder: _buildFooter,
+            builder: buildFooter,
           ),
           controller: store.refreshController,
           header: MaterialClassicHeader(
@@ -163,78 +164,5 @@ class PostWaterFlow extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Widget _buildFooter(BuildContext context, LoadStatus? status) {
-    Widget buildRow(List<Widget> children) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: children,
-        ),
-      );
-    }
-
-    switch (status ?? LoadStatus.loading) {
-      case LoadStatus.idle:
-        return buildRow([
-          const Icon(Icons.arrow_upward),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            I18n.of(context).idle_loading,
-            style: const TextStyle(color: Colors.black),
-          ),
-        ]);
-      case LoadStatus.canLoading:
-        return buildRow([
-          const Icon(Icons.arrow_downward),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            I18n.of(context).can_load_text,
-            style: const TextStyle(color: Colors.black),
-          )
-        ]);
-      case LoadStatus.loading:
-        return buildRow([
-          const SizedBox(
-            width: 25,
-            height: 25,
-            child: CircularProgressIndicator(strokeWidth: 2.5),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            I18n.of(context).loading_text,
-            style: const TextStyle(color: Colors.black),
-          )
-        ]);
-      case LoadStatus.noMore:
-        return buildRow([
-          const Icon(Icons.flag),
-          const SizedBox(width: 10),
-          Text(
-            I18n.of(context).no_more_text,
-            style: const TextStyle(color: Colors.black),
-          )
-        ]);
-      case LoadStatus.failed:
-        return buildRow([
-          const Icon(Icons.sms_failed),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            I18n.of(context).load_fail,
-            style: const TextStyle(color: Colors.black),
-          )
-        ]);
-    }
   }
 }

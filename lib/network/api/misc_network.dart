@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 Future<String> getDoH(String url) async {
   final dio = Dio()
-    ..options.connectTimeout = 10 * 1000
+    ..options.connectTimeout = 60 * 1000
     ..options.headers = {
       'Accept': 'application/dns-json',
     };

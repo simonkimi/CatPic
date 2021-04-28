@@ -22,8 +22,8 @@ final settingStore = SettingStore();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SpUtil.getInstance();
-  await mainStore.init();
   await settingStore.init();
+  await mainStore.init();
   downloadStore.startDownload();
   runApp(CatPicApp());
 }

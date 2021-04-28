@@ -77,7 +77,9 @@ class MoebooruPool extends BooruPool {
 
   @override
   Future<void> getPosts(BaseClient client) async {
-    final json = await (client as MoebooruClient).poolSingle(id);
-    posts = await compute(MoebooruPoolParser.parseSingle, json);
+    if (posts.length != postCount) {
+      final json = await (client as MoebooruClient).poolSingle(id);
+      posts = await compute(MoebooruPoolParser.parseSingle, json);
+    }
   }
 }

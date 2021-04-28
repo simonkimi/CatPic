@@ -18,6 +18,7 @@ class GelbooruAdapter implements BooruAdapter {
 
   final WebsiteTableData websiteEntity;
 
+  @override
   late GelbooruClient client;
 
   @override

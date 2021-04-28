@@ -18,6 +18,7 @@ class DanbooruAdapter implements BooruAdapter {
 
   final WebsiteTableData websiteEntity;
 
+  @override
   late DanbooruClient client;
 
   @override

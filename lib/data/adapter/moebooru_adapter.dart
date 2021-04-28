@@ -19,6 +19,7 @@ class MoebooruAdapter implements BooruAdapter {
 
   final WebsiteTableData websiteEntity;
 
+  @override
   late MoebooruClient client;
 
   @override

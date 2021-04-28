@@ -90,7 +90,7 @@ class _DioImageState extends State<DioImage> {
           _loadingType = LoadingType.DONE;
         });
       }
-    } on DioError catch(e) {
+    } on DioError catch (e) {
       if (mounted && !CancelToken.isCancel(e)) {
         setState(() {
           _loadingType = LoadingType.ERROR;
@@ -98,6 +98,7 @@ class _DioImageState extends State<DioImage> {
         });
       }
     } catch (e) {
+      print(e);
       if (mounted) {
         setState(() {
           _loadingType = LoadingType.ERROR;

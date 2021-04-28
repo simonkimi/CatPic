@@ -110,13 +110,25 @@ class _MainDrawerState extends State<MainDrawer> {
               ListTile(
                 leading: const Icon(Icons.image),
                 title: Text(I18n.of(context).posts),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const SearchPage()),
+                      (route) => false);
+                },
               ),
             if (support?.contains(SupportPage.POOLS) ?? false)
               ListTile(
                 leading: const Icon(Icons.filter),
                 title: Text(I18n.of(context).pools),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const SearchPage(
+                                searchType: SearchType.POOL,
+                              )),
+                      (route) => false);
+                },
               ),
             if (support?.contains(SupportPage.TAGS) ?? false)
               ListTile(

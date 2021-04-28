@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/search_bar.dart';
@@ -259,7 +260,9 @@ class _TagSearchBarState extends State<TagSearchBar>
     } else {
       // 历史搜索
       final dao = DatabaseHelper().historyDao;
-      final list = await dao.getAll();
+      final list = (await dao.getAll())
+          .where((e) => e.type == HistoryType.POST)
+          .toList();
       setState(() {
         suggestionList = list
             .where((e) => e.history.trim().isNotEmpty)
@@ -276,7 +279,10 @@ class _TagSearchBarState extends State<TagSearchBar>
     if (history != null) {
       await dao.updateHistory(history.copyWith(createTime: DateTime.now()));
     } else {
-      dao.insert(HistoryTableCompanion.insert(history: tag));
+      dao.insert(HistoryTableCompanion.insert(
+        history: tag,
+        type: HistoryType.POST,
+      ));
     }
   }
 }

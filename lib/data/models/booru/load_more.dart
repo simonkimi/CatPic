@@ -12,7 +12,7 @@ abstract class ILoadMore<T> {
     onRefresh();
   }
 
-  String searchText;
+  String searchText = '';
   final observableList = ObservableList<T>();
   final refreshController = RefreshController();
   var page = 0;
@@ -27,9 +27,9 @@ abstract class ILoadMore<T> {
     if (list.isEmpty) {
       throw NoMorePage();
     }
-    observableList.addAll(list);
     page += 1;
-    print('postList loadNextPage ${list.length}');
+    observableList.addAll(list);
+    print('loadNextPage ${list.length}');
   }
 
   Future<void> onRefresh() async {
@@ -61,7 +61,7 @@ abstract class ILoadMore<T> {
   }
 
   Future<void> onLoadMore() async {
-    print('_onLoadMore');
+    print('onLoadMore current page: $page');
     if (refreshController.isRefresh) {
       refreshController.loadComplete();
       return;

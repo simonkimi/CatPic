@@ -1,6 +1,7 @@
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
 enum SupportPage {
@@ -38,6 +39,8 @@ abstract class BooruAdapter {
   });
 
   Dio get dio;
+
+  BaseClient get client;
 }
 
 extension OrderUtil on Order {
