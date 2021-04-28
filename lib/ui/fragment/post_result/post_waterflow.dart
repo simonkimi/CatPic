@@ -1,12 +1,11 @@
 import 'dart:ui' as ui;
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -101,74 +100,66 @@ class PostWaterFlow extends StatelessWidget {
       key: ValueKey('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
-      body: ExtendedImage(
-        image: DioImageProvider(
-          dio: dio,
-          url: imageUrl,
-          scale: 0.3,
-        ),
-        handleLoadingProgress: true,
-        enableLoadState: true,
-        loadStateChanged: (state) {
-          switch (state.extendedImageLoadState) {
-            case LoadState.loading:
-              var progress = state.loadingProgress?.expectedTotalBytes != null
-                  ? state.loadingProgress!.cumulativeBytesLoaded /
-                      state.loadingProgress!.expectedTotalBytes!
-                  : 0.0;
-              progress = progress.isFinite ? progress : 0;
-              return InkWell(
-                onTap: loadDetail,
-                child: AspectRatio(
-                  aspectRatio: post.width / post.height,
-                  child: Container(
-                    color: Colors.primaries[index % Colors.primaries.length]
-                        [50],
-                    child: Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          value: progress,
-                          strokeWidth: 2.5,
-                        ),
-                      ),
+      body: DioImage(
+        imageUrl: imageUrl,
+        dio: dio,
+        imageBuilder: (context, imgData) {
+          return InkWell(
+            key: ValueKey('loaded${post.id}'),
+            onTap: loadDetail,
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Image(image: MemoryImage(imgData, scale: 0.1)),
+            ),
+          );
+        },
+        loadingBuilder: (context, progress) {
+          return InkWell(
+            key: ValueKey('loading${post.id}'),
+            onTap: loadDetail,
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Container(
+                color: Colors.primaries[index % Colors.primaries.length][50],
+                child: Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      value: (progress.expectedTotalBytes == null ||
+                              progress.expectedTotalBytes == 0)
+                          ? 0
+                          : progress.cumulativeBytesLoaded /
+                              progress.expectedTotalBytes!,
+                      strokeWidth: 2.5,
                     ),
                   ),
                 ),
-              );
-            case LoadState.completed:
-              return InkWell(
-                onTap: loadDetail,
-                child: Hero(
-                  tag: '${post.id}|${post.md5}',
-                  child: AspectRatio(
-                    aspectRatio: post.width / post.height,
-                    child: state.completedWidget,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, reload) {
+          return InkWell(
+            key: ValueKey('error${post.id}'),
+            onTap: () {
+              reload();
+            },
+            child: AspectRatio(
+              aspectRatio: post.width / post.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error),
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-              );
-            case LoadState.failed:
-              return InkWell(
-                onTap: () {
-                  state.reLoadImage();
-                },
-                child: AspectRatio(
-                  aspectRatio: post.width / post.height,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(I18n.g.tap_to_reload),
-                    ],
-                  ),
-                ),
-              );
-          }
+                  Text(I18n.of(context).tap_to_reload),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
