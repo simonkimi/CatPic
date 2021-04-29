@@ -28,11 +28,12 @@ class DanbooruPool extends BooruPool {
     required int postCount,
     required this.posts,
   }) : super(
-            id: id,
-            name: name,
-            createAt: createAt,
-            description: description,
-            postCount: postCount);
+          id: id,
+          name: name,
+          createAt: createAt,
+          description: description,
+          postCount: postCount,
+        );
 
   factory DanbooruPool.fromRoot(PoolList root) => DanbooruPool(
         id: root.id.toString(),
@@ -44,12 +45,18 @@ class DanbooruPool extends BooruPool {
       );
 
   final List<int> posts;
+  late final List<BooruPost?> postList = List.filled(postCount, null);
 
   @override
   Future<BooruPost> fromIndex(BaseClient client, int index) async {
+    if (postList[index] != null) {
+      return postList[index]!;
+    }
     final postId = posts[index];
     final postJson = await (client as DanbooruClient).postSingle(postId);
-    return await compute(DanbooruPostParse.parseSingle, postJson);
+    final booruPost = await compute(DanbooruPostParse.parseSingle, postJson);
+    postList[index] = booruPost;
+    return booruPost;
   }
 
   @override
