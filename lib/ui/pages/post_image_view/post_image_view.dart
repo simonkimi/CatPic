@@ -397,24 +397,16 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget buildImg(PostImageViewStore store) {
-    final imageBase = postList.map((e) {
-      late String imgUrl;
+    final List<String> imageUrls = postList.map((e) {
       switch (settingStore.displayQuality) {
         case ImageQuality.preview:
-          imgUrl = e.previewURL;
-          break;
-        case ImageQuality.sample:
-          imgUrl = e.sampleURL;
-          break;
+          return e.previewURL;
         case ImageQuality.raw:
-          imgUrl = e.imgURL;
-          break;
+          return e.imgURL;
+        case ImageQuality.sample:
+        default:
+          return e.sampleURL;
       }
-      return ImageBase(
-        imgUrl: imgUrl,
-        cachedKey: imgUrl,
-        heroTag: '${e.id}|${e.md5}',
-      );
     }).toList();
 
     return Container(
@@ -422,7 +414,8 @@ class PostImageViewPage extends StatelessWidget {
       child: MultiImageViewer(
         dio: dio,
         index: index,
-        images: imageBase,
+        itemCount: postList.length,
+        itemBuilder: (index) => Future.value(imageUrls[index]),
         onScale: (result) {
           if (store.bottomBarVis != result) {
             store.setBottomBarVis(result);

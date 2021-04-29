@@ -9,16 +9,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
+typedef UrlBuilder = Future<String> Function();
+
 class DioImageProvider extends ImageProvider<DioImageProvider> {
   DioImageProvider({
-    required this.url,
+    this.url,
     this.dio,
     this.scale = 1.0,
-  });
+    this.urlBuilder,
+  }) : assert(urlBuilder != null || url != null);
 
   final Dio? dio;
-  final String url;
+  final String? url;
   final double scale;
+  final UrlBuilder? urlBuilder;
 
   @override
   ImageStreamCompleter load(DioImageProvider key, DecoderCallback decode) {
@@ -45,7 +49,14 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    final rsp = await (dio ?? Dio()).get<List<int>>(url,
+    late String imageUrl;
+
+    if (url != null)
+      imageUrl = url!;
+    else
+      imageUrl = await urlBuilder!();
+
+    final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
         options: settingStore.dioCacheOptions
             .copyWith(policy: CachePolicy.request)
             .toOptions()

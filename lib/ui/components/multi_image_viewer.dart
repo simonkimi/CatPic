@@ -7,33 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:catpic/i18n.dart';
 import 'nullable_hero.dart';
 
-class ImageBase {
-  const ImageBase({
-    required this.imgUrl,
-    required this.cachedKey,
-    this.heroTag,
-  });
-
-  final String imgUrl;
-  final String cachedKey;
-  final String? heroTag;
-}
+typedef ItemBuilder = Future<String> Function(int index);
 
 class MultiImageViewer extends StatefulWidget {
   const MultiImageViewer({
     Key? key,
     this.onScale,
-    required this.images,
     required this.index,
     required this.dio,
     this.onIndexChange,
+    required this.itemBuilder,
+    required this.itemCount,
   }) : super(key: key);
 
   final Dio dio;
-  final List<ImageBase> images;
   final int index;
   final ValueChanged<bool>? onScale;
   final ValueChanged<int>? onIndexChange;
+  final ItemBuilder itemBuilder;
+  final int itemCount;
 
   @override
   _MultiImageViewerState createState() => _MultiImageViewerState();
@@ -50,16 +42,18 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
   late final pageController = PageController(initialPage: widget.index);
-  late final List<DioImageProvider> imageProviders = widget.images
-      .map((e) => DioImageProvider(
-            dio: widget.dio,
-            url: e.imgUrl,
-          ))
-      .toList();
+  late final List<DioImageProvider> imageProviders;
 
   @override
   void initState() {
     super.initState();
+    imageProviders = List.generate(
+        widget.itemCount,
+        (index) => DioImageProvider(
+              dio: widget.dio,
+              urlBuilder: () => widget.itemBuilder(index),
+            ));
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       onPageIndexChange(widget.index);
     });
