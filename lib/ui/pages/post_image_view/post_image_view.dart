@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/default_button.dart';
@@ -10,7 +9,7 @@ import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
-import 'package:catpic/ui/pages/post_image_view/store.dart';
+import 'file:///F:/android/project/catpic/lib/ui/pages/post_image_view/store/store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,58 +19,73 @@ import 'package:catpic/ui/components/custom_popup_menu.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+typedef ItemBuilder = Future<BooruPost> Function(int index);
+
 class PostImageViewPage extends StatelessWidget {
-  const PostImageViewPage({
+  PostImageViewPage({
     Key? key,
     required this.dio,
     required this.index,
-    required this.postList,
     this.onAddTag,
     this.favicon,
-  }) : super(key: key);
+    required this.itemBuilder,
+    required this.itemCount,
+  })   : store = PostImageViewStore(
+          currentIndex: index,
+          itemBuilder: itemBuilder,
+          itemCount: itemCount,
+        ),
+        super(key: key);
 
   final Dio dio;
   final Uint8List? favicon;
   final int index;
-  final List<BooruPost> postList;
+  final ItemBuilder itemBuilder;
+  final int itemCount;
+  final PostImageViewStore store;
 
   final ValueChanged<String>? onAddTag;
 
   @override
   Widget build(BuildContext context) {
-    final store = PostImageViewStore(index);
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      body: Observer(builder: (_) => buildImg(store)),
-      bottomNavigationBar: buildBottomBar(store),
+      body: buildImg(),
+      bottomNavigationBar: buildBottomBar(),
       extendBody: true,
     );
   }
 
-  Widget _sheetBuilder(
-    BuildContext context,
-    SheetState state,
-    PostImageViewStore store,
-  ) {
-    return Observer(builder: (_) {
-      final booruPost = postList[store.index];
-      return Container(
-        child: Material(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                buildPopupHeader(context, booruPost),
-                const SizedBox(height: 10),
-                ...buildPopupInfo(context, booruPost),
-                buildPopupTag(booruPost, context),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
+  Widget buildImg() {
+    return Container(
+      color: Colors.black,
+      child: MultiImageViewer(
+        dio: dio,
+        index: index,
+        itemCount: itemCount,
+        itemBuilder: (index) async {
+          final item = await itemBuilder(index);
+          switch (settingStore.displayQuality) {
+            case ImageQuality.preview:
+              return item.previewURL;
+            case ImageQuality.raw:
+              return item.imgURL;
+            case ImageQuality.sample:
+            default:
+              return item.sampleURL;
+          }
+        },
+        onScale: (result) {
+          if (store.bottomBarVis != result) {
+            store.setBottomBarVis(result);
+          }
+        },
+        onIndexChange: (value) async {
+          store.setIndex(value);
+        },
+      ),
+    );
   }
 
   Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
@@ -245,67 +259,8 @@ class PostImageViewPage extends StatelessWidget {
     );
   }
 
-  Widget _sheetFootBuilder(BuildContext context, SheetState state) {
-    final post = postList[index];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Expanded(
-            flex: 1,
-            child: OutlinedButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.message_outlined,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: OutlinedButton(
-              onPressed: () {},
-              child: Icon(
-                Icons.favorite_outline,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          if (post.source.isNotEmpty) const SizedBox(width: 10),
-          if (post.source.isNotEmpty)
-            Expanded(
-              flex: 1,
-              child: OutlinedButton(
-                onPressed: () async {
-                  await launch(postList[index].source);
-                },
-                child: Icon(
-                  Icons.location_on_outlined,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: DefaultButton(
-              onPressed: _download,
-              child: const Icon(
-                Icons.download_rounded,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _download() async {
+  Future<void> _download(BooruPost booruPost) async {
     try {
-      final booruPost = postList[index];
       await downloadStore.createDownloadTask(booruPost);
       BotToast.showText(text: I18n.g.download_start);
     } on TaskExisted {
@@ -315,7 +270,7 @@ class PostImageViewPage extends StatelessWidget {
     }
   }
 
-  void showAsBottomSheet(BuildContext context, PostImageViewStore store) async {
+  void showAsBottomSheet(BuildContext context, BooruPost booruPost) async {
     await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
@@ -325,121 +280,170 @@ class PostImageViewPage extends StatelessWidget {
           snappings: [0.4, 0.7, 1.0],
           positioning: SnapPositioning.relativeToAvailableSpace,
         ),
-        builder: (context, state) => _sheetBuilder(context, state, store),
-        footerBuilder: _sheetFootBuilder,
-      );
-    });
-  }
-
-  Widget buildBottomBar(PostImageViewStore store) {
-    return Observer(builder: (_) {
-      return BottomAppBar(
-        color: Colors.transparent,
-        child: Visibility(
-          visible: store.bottomBarVis,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    onPressed: () {
-                      Navigator.of(I18n.context).pop();
-                    },
-                  ),
-                  const Icon(
-                    Icons.image,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 5),
-                  Observer(
-                    builder: (_) => Text(
-                      '${store.index + 1}/${postList.length}',
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ),
-                ],
+        builder: (context, state) {
+          return Container(
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    buildPopupHeader(context, booruPost),
+                    const SizedBox(height: 10),
+                    ...buildPopupInfo(context, booruPost),
+                    buildPopupTag(booruPost, context),
+                  ],
+                ),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    iconSize: 16,
-                    icon: const Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
+            ),
+          );
+        },
+        footerBuilder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    child: Icon(
+                      Icons.message_outlined,
+                      color: Theme.of(context).primaryColor,
                     ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    child: Icon(
+                      Icons.favorite_outline,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+                if (booruPost.source.isNotEmpty) const SizedBox(width: 10),
+                if (booruPost.source.isNotEmpty)
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        await launch(booruPost.source);
+                      },
+                      child: Icon(
+                        Icons.location_on_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: DefaultButton(
                     onPressed: () {
-                      showAsBottomSheet(_, store);
+                      _download(booruPost);
                     },
-                  ),
-                  IconButton(
-                    iconSize: 16,
-                    icon: const Icon(
-                      Icons.save_alt,
+                    child: const Icon(
+                      Icons.download_rounded,
                       color: Colors.white,
                     ),
-                    onPressed: _download,
                   ),
-                ],
-              )
-            ],
-          ),
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       );
     });
   }
 
-  Widget buildImg(PostImageViewStore store) {
-    final List<String> imageUrls = postList.map((e) {
-      switch (settingStore.displayQuality) {
-        case ImageQuality.preview:
-          return e.previewURL;
-        case ImageQuality.raw:
-          return e.imgURL;
-        case ImageQuality.sample:
-        default:
-          return e.sampleURL;
-      }
-    }).toList();
-
-    return Container(
-      color: Colors.black,
-      child: MultiImageViewer(
-        dio: dio,
-        index: index,
-        itemCount: postList.length,
-        itemBuilder: (index) => Future.value(imageUrls[index]),
-        onScale: (result) {
-          if (store.bottomBarVis != result) {
-            store.setBottomBarVis(result);
-          }
-        },
-        onIndexChange: (value) {
-          store.setIndex(value);
-          _writeTag(value);
+  Widget buildBottomBar() {
+    return BottomAppBar(
+      color: Colors.transparent,
+      child: Observer(
+        builder: (context) {
+          return Visibility(
+            visible: store.bottomBarVis,
+            child: store.loadedBooruPost == null
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                            strokeWidth: 2.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            onPressed: () {
+                              Navigator.of(I18n.context).pop();
+                            },
+                          ),
+                          const Icon(
+                            Icons.image,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 5),
+                          Observer(
+                            builder: (_) => Text(
+                              '${store.currentIndex + 1}/$itemCount',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            iconSize: 16,
+                            icon: const Icon(
+                              Icons.info_outline,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              showAsBottomSheet(
+                                  context, store.loadedBooruPost!);
+                            },
+                          ),
+                          IconButton(
+                            iconSize: 16,
+                            icon: const Icon(
+                              Icons.save_alt,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              _download(store.loadedBooruPost!);
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+          );
         },
       ),
     );
-  }
-
-  Future<void> _writeTag(int index) async {
-    final dao = DatabaseHelper().tagDao;
-    for (final tags in postList[index].tags.values) {
-      for (final tagStr in tags) {
-        if (tagStr.isNotEmpty) {
-          await dao.insert(TagTableCompanion.insert(
-            website: mainStore.websiteEntity!.id,
-            tag: tagStr,
-          ));
-        }
-      }
-    }
   }
 }

@@ -5,8 +5,8 @@ import 'package:catpic/ui/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
-import '../../../i18n.dart';
-import '../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 class PoolSearchBar extends StatefulWidget {
   const PoolSearchBar({

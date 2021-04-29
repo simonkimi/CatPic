@@ -2,8 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import '../../../i18n.dart';
+import 'package:catpic/i18n.dart';
 
 class NoMorePage implements Exception {}
 

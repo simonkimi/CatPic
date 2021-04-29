@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../i18n.dart';
+import 'package:catpic/i18n.dart';
 
 Widget buildFooter(BuildContext context, LoadStatus? status) {
   Widget buildRow(List<Widget> children) {
