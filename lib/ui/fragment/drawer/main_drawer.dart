@@ -202,42 +202,45 @@ class _MainDrawerState extends State<MainDrawer> {
       final scheme = getSchemeString(mainStore.websiteEntity!.scheme);
       subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
     }
-    return UserAccountsDrawerHeader(
-      accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
-      accountEmail: Text(subTitle),
-      currentAccountPicture: CircleAvatar(
-        backgroundImage:
-            mainStore.websiteIcon != null && mainStore.websiteIcon!.isNotEmpty
-                ? MemoryImage(mainStore.websiteIcon!)
-                : null,
-        backgroundColor: Colors.white,
-      ),
-      onDetailsPressed: () {
-        setState(() {
-          showWebsiteList = !showWebsiteList;
-        });
-      },
-      otherAccountsPictures: mainStore.websiteList
-          .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
-          .map((element) {
-        return Builder(
-            builder: (ctx) => InkWell(
-                onTap: () {
-                  pushNewWebsite(ctx, element);
-                },
-                child: CircleAvatar(
-                  backgroundImage: element.favicon.isNotEmpty
-                      ? MemoryImage(element.favicon)
-                      : null,
-                  backgroundColor: Colors.white,
-                )));
-      }).toList(),
-    );
+    return Observer(builder: (_) {
+      return UserAccountsDrawerHeader(
+        accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
+        accountEmail: Text(subTitle),
+        currentAccountPicture: CircleAvatar(
+          backgroundImage:
+              mainStore.websiteIcon != null && mainStore.websiteIcon!.isNotEmpty
+                  ? MemoryImage(mainStore.websiteIcon!)
+                  : null,
+          backgroundColor: Colors.white,
+        ),
+        onDetailsPressed: () {
+          setState(() {
+            showWebsiteList = !showWebsiteList;
+          });
+        },
+        otherAccountsPictures: mainStore.websiteList
+            .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
+            .map((element) {
+          return Builder(
+              builder: (ctx) => InkWell(
+                  onTap: () {
+                    pushNewWebsite(ctx, element);
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: element.favicon.isNotEmpty
+                        ? MemoryImage(element.favicon)
+                        : null,
+                    backgroundColor: Colors.white,
+                  )));
+        }).toList(),
+      );
+    });
   }
 
   Future<void> pushNewWebsite(
       BuildContext context, WebsiteTableData entity) async {
-    await mainStore.setWebsiteWithoutNotification(entity);
+    Navigator.of(context).pop();
+    await mainStore.setWebsite(entity);
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const SearchPage()),
