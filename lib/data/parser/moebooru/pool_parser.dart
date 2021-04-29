@@ -6,6 +6,7 @@ import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:synchronized/synchronized.dart';
 
 import 'pool_model.dart';
 
@@ -54,11 +55,12 @@ class MoebooruPool extends BooruPool {
     required String description,
     required int postCount,
   }) : super(
-            id: id,
-            name: name,
-            createAt: createAt,
-            description: description,
-            postCount: postCount);
+          id: id,
+          name: name,
+          createAt: createAt,
+          description: description,
+          postCount: postCount,
+        );
 
   factory MoebooruPool.fromRoot(PoolList root) => MoebooruPool(
         id: root.id.toString(),
@@ -70,16 +72,20 @@ class MoebooruPool extends BooruPool {
 
   List<BooruPost> posts = [];
 
+  final getPostLock = Lock();
+
   @override
   Future<BooruPost> fromIndex(BaseClient client, int index) async {
     return posts[index];
   }
 
   @override
-  Future<void> getPosts(BaseClient client) async {
-    if (posts.length != postCount) {
-      final json = await (client as MoebooruClient).poolSingle(id);
-      posts = await compute(MoebooruPoolParser.parseSingle, json);
-    }
+  Future<void> fetchPosts(BaseClient client) async {
+    await getPostLock.synchronized(() async {
+      if (posts.length != postCount) {
+        final json = await (client as MoebooruClient).poolSingle(id);
+        posts = await compute(MoebooruPoolParser.parseSingle, json);
+      }
+    });
   }
 }

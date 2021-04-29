@@ -38,7 +38,7 @@ class _PoolPreviewImageState extends State<PoolPreviewImage> {
 
   Future<void> loadPoolImage() async {
     try {
-      await widget.pool.getPosts(widget.client);
+      await widget.pool.fetchPosts(widget.client);
       poolPost = await widget.pool.fromIndex(widget.client, 0);
       if (mounted)
         setState(() {

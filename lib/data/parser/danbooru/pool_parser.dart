@@ -1,11 +1,11 @@
 import 'dart:convert';
-
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/parser/danbooru/post_parser.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/danbooru/danbooru_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:synchronized/synchronized.dart';
 
 import 'pool_model.dart';
 
@@ -45,22 +45,25 @@ class DanbooruPool extends BooruPool {
       );
 
   final List<int> posts;
+
   late final List<BooruPost?> postList = List.filled(postCount, null);
+  late final List<Lock?> postLock = List.filled(postCount, null);
 
   @override
   Future<BooruPost> fromIndex(BaseClient client, int index) async {
-    if (postList[index] != null) {
-      return postList[index]!;
-    }
-    final postId = posts[index];
-    final postJson = await (client as DanbooruClient).postSingle(postId);
-    final booruPost = await compute(DanbooruPostParse.parseSingle, postJson);
-    postList[index] = booruPost;
-    return booruPost;
+    if (postList[index] != null) return postList[index]!;
+
+    return await (postLock[index] ??= Lock()).synchronized(() async {
+      final postId = posts[index];
+      final postJson = await (client as DanbooruClient).postSingle(postId);
+      final booruPost = await compute(DanbooruPostParse.parseSingle, postJson);
+      postList[index] = booruPost;
+      return booruPost;
+    });
   }
 
   @override
-  Future<void> getPosts(BaseClient client) async {
+  Future<void> fetchPosts(BaseClient client) async {
     return;
   }
 }

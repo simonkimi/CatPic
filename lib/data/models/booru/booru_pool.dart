@@ -18,5 +18,5 @@ abstract class BooruPool {
 
   Future<BooruPost> fromIndex(BaseClient client, int index);
 
-  Future<void> getPosts(BaseClient client);
+  Future<void> fetchPosts(BaseClient client);
 }
