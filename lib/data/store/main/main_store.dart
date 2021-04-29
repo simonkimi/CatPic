@@ -4,6 +4,7 @@ import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
+import 'package:catpic/utils/utils.dart';
 
 part 'main_store.g.dart';
 
@@ -16,6 +17,9 @@ abstract class MainStoreBase with Store {
   @observable
   WebsiteTableData? websiteEntity;
 
+  @observable
+  Uint8List? websiteIcon;
+
   int searchPageCount = 0;
 
   @action
@@ -25,10 +29,11 @@ abstract class MainStoreBase with Store {
     websiteList = await websiteDao.getAll();
     final lastWebsite = SpUtil.getInt('last_website') ?? -1;
 
-    final availList = websiteList.where((v) => v.id == lastWebsite);
-    if (availList.isNotEmpty) {
-      websiteEntity = availList.toList()[0];
-      if (websiteEntity == null && websiteList.isNotEmpty) {
+    final oldWebsite = websiteList.get((v) => v.id == lastWebsite);
+    if (oldWebsite != null) {
+      setWebsite(oldWebsite);
+    } else {
+      if (websiteList.isNotEmpty) {
         setWebsite(websiteList[0]);
       }
     }
@@ -60,7 +65,9 @@ abstract class MainStoreBase with Store {
   @action
   Future<void> setWebsite(WebsiteTableData? entity) async {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
+      print('setWebsite ${entity?.name}');
       websiteEntity = entity;
+      websiteIcon = entity?.favicon;
       EventBusUtil().bus.fire(EventSiteChange());
       SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
     }
@@ -85,6 +92,9 @@ abstract class MainStoreBase with Store {
         if (websiteEntity?.id == entity.id) {
           websiteEntity = entity;
         }
+      }
+      if (websiteEntity?.id == entityId) {
+        websiteIcon = favicon;
       }
       await updateList();
     }

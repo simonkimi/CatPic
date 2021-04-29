@@ -9,7 +9,12 @@ import 'package:catpic/main.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
-enum SearchType { POST, POOL, ARTIST }
+enum SearchType {
+  POST,
+  POOL,
+  ARTIST,
+  TAGS,
+}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({
@@ -28,15 +33,16 @@ class _SearchPageState extends State<SearchPage> {
   late final searchText = widget.searchText;
   late final searchType = widget.searchType;
   late var searchBody = buildSearchBody(searchText, searchType);
-  late final StreamSubscription<EventSiteChange> _eventSiteChangeListener =
-      EventBusUtil().bus.on<EventSiteChange>().listen((event) {
-    changeSearchBody(searchText, searchType);
-  });
+  late final StreamSubscription<EventSiteChange> _eventSiteChangeListener;
 
   @override
   void initState() {
     super.initState();
     mainStore.searchPageCount += 1;
+    _eventSiteChangeListener =
+        EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      changeSearchBody(searchText, searchType);
+    });
     print('SearchPageCount: ${mainStore.searchPageCount}');
   }
 
@@ -51,7 +57,10 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MainDrawer(),
+      drawer: MainDrawer(
+        type: searchType,
+        onSearchChange: (newType) => newType != searchType,
+      ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 1),
         child: searchBody,

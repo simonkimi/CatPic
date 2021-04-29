@@ -10,7 +10,17 @@ import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+typedef SearchChange = bool Function(SearchType);
+
 class MainDrawer extends StatefulWidget {
+  const MainDrawer({
+    Key? key,
+    this.onSearchChange,
+    this.type,
+  }) : super(key: key);
+  final SearchChange? onSearchChange;
+  final SearchType? type;
+
   @override
   _MainDrawerState createState() => _MainDrawerState();
 }
@@ -110,24 +120,32 @@ class _MainDrawerState extends State<MainDrawer> {
               ListTile(
                 leading: const Icon(Icons.image),
                 title: Text(I18n.of(context).posts),
+                selected: widget.type == SearchType.POST,
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const SearchPage()),
-                      (route) => false);
+                  if (widget.onSearchChange?.call(SearchType.POST) ?? true)
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const SearchPage()),
+                        (route) => false);
+                  else
+                    Navigator.of(context).pop();
                 },
               ),
             if (support?.contains(SupportPage.POOLS) ?? false)
               ListTile(
                 leading: const Icon(Icons.filter),
                 title: Text(I18n.of(context).pools),
+                selected: widget.type == SearchType.POOL,
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const SearchPage(
-                                searchType: SearchType.POOL,
-                              )),
-                      (route) => false);
+                  if (widget.onSearchChange?.call(SearchType.POOL) ?? true)
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const SearchPage(
+                                  searchType: SearchType.POOL,
+                                )),
+                        (route) => false);
+                  else
+                    Navigator.of(context).pop();
                 },
               ),
             if (support?.contains(SupportPage.TAGS) ?? false)
@@ -180,19 +198,18 @@ class _MainDrawerState extends State<MainDrawer> {
 
   Widget buildUserAccountsDrawerHeader() {
     var subTitle = I18n.of(context).no_website;
-    ImageProvider? favicon;
     if (mainStore.websiteEntity != null) {
       final scheme = getSchemeString(mainStore.websiteEntity!.scheme);
       subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
-      if (mainStore.websiteEntity!.favicon.isNotEmpty) {
-        favicon = MemoryImage(mainStore.websiteEntity!.favicon);
-      }
     }
     return UserAccountsDrawerHeader(
       accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
       accountEmail: Text(subTitle),
       currentAccountPicture: CircleAvatar(
-        backgroundImage: favicon,
+        backgroundImage:
+            mainStore.websiteIcon != null && mainStore.websiteIcon!.isNotEmpty
+                ? MemoryImage(mainStore.websiteIcon!)
+                : null,
         backgroundColor: Colors.white,
       ),
       onDetailsPressed: () {

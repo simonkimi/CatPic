@@ -238,8 +238,8 @@ mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
       directLink: directLink,
     );
     final id = await websiteDao.insert(entity);
-
     final table = await websiteDao.getById(id);
+    mainStore.updateList();
     // 获取封面图片
     getFavicon(table!).then((favicon) {
       mainStore.setWebsiteFavicon(id, favicon);
