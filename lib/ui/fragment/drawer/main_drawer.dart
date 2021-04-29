@@ -1,7 +1,6 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
@@ -98,7 +97,8 @@ class _MainDrawerState extends State<MainDrawer> {
   List<Widget> buildMainMenu() {
     List<SupportPage>? support;
     if (mainStore.websiteEntity != null) {
-      support = getAdapter(mainStore.websiteEntity!).getSupportPage();
+      support =
+          BooruAdapter.fromWebsite(mainStore.websiteEntity!).getSupportPage();
     }
 
     return [

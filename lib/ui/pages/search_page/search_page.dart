@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
 import 'package:catpic/ui/fragment/empty_website/empty_website.dart';
 import 'package:catpic/ui/fragment/pool_result/pool_result.dart';
@@ -73,13 +73,13 @@ class _SearchPageState extends State<SearchPage> {
           return PostResultFragment(
             key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
             searchText: tag,
-            adapter: getAdapter(mainStore.websiteEntity!),
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );
         case SearchType.POOL:
           return PoolResultFragment(
             key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
             searchText: tag,
-            adapter: getAdapter(mainStore.websiteEntity!),
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );
         case SearchType.ARTIST:
           throw Exception('TODO ARTIST');

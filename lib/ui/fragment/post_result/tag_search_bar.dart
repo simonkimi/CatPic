@@ -1,8 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/main.dart';
-import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +211,7 @@ class _TagSearchBarState extends State<TagSearchBar>
         setState(() {
           loadingProgress = true;
         });
-        final adapter = getAdapter(mainStore.websiteEntity!);
+        final adapter = BooruAdapter.fromWebsite(mainStore.websiteEntity!);
         final onlineTag = await adapter.tagList(
           name: tag,
           page: 1,
