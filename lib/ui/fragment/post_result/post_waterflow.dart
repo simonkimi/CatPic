@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 import 'package:catpic/data/adapter/booru_adapter.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
@@ -84,25 +83,12 @@ class PostWaterFlow extends StatelessWidget {
       );
     };
 
-    late String imageUrl;
-    switch (settingStore.previewQuality) {
-      case ImageQuality.preview:
-        imageUrl = post.previewURL;
-        break;
-      case ImageQuality.sample:
-        imageUrl = post.sampleURL;
-        break;
-      case ImageQuality.raw:
-        imageUrl = post.imgURL;
-        break;
-    }
-
     return PostPreviewCard(
       key: ValueKey('item${post.id}${post.md5}'),
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: DioImage(
-        imageUrl: imageUrl,
+        imageUrl: post.getPreviewImg(),
         dio: dio,
         imageBuilder: (context, imgData) {
           return InkWell(

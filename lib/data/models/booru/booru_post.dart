@@ -1,5 +1,8 @@
+import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:flutter/material.dart';
+
+import '../../../main.dart';
 
 class PostRating {
   static const SAFE = 0;
@@ -111,4 +114,40 @@ class BooruPost {
         'source': source,
         'score': score
       };
+
+  String getPreviewImg() {
+    switch (settingStore.previewQuality) {
+      case ImageQuality.preview:
+        return previewURL;
+      case ImageQuality.sample:
+        return sampleURL;
+      case ImageQuality.raw:
+      default:
+        return imgURL;
+    }
+  }
+
+  String getDisplayImg() {
+    switch (settingStore.displayQuality) {
+      case ImageQuality.preview:
+        return previewURL;
+      case ImageQuality.sample:
+        return sampleURL;
+      case ImageQuality.raw:
+      default:
+        return imgURL;
+    }
+  }
+
+  String getDownloadImg() {
+    switch (settingStore.downloadQuality) {
+      case ImageQuality.preview:
+        return previewURL;
+      case ImageQuality.sample:
+        return sampleURL;
+      case ImageQuality.raw:
+      default:
+        return imgURL;
+    }
+  }
 }

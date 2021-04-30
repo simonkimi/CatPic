@@ -1,7 +1,8 @@
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/fragment/pool_result/pool_preview.dart';
 import 'package:catpic/ui/fragment/pool_result/pool_search_bar.dart';
 import 'package:catpic/ui/fragment/pool_result/store/pool_result_store.dart';
 import 'package:flutter/material.dart';
@@ -78,10 +79,29 @@ class PoolResultFragment extends StatelessWidget {
           children: [
             Container(
               width: 60,
-              child: PoolPreviewImage(
-                client: adapter.client,
-                pool: pool,
-                index: index,
+              child: DioImage(
+                dio: adapter.dio,
+                imageUrlBuilder: () async {
+                  await pool.fetchPosts(adapter.client);
+                  return (await pool.fromIndex(adapter.client, 0))
+                      .getPreviewImg();
+                },
+                errorBuilder:
+                    (BuildContext context, Object? err, Function reload) {
+                  return const Center(
+                    child: Icon(Icons.info),
+                  );
+                },
+                loadingBuilder:
+                    (BuildContext context, ImageChunkEvent chunkEvent) {
+                  return Container(
+                    color: Colors.primaries[index % Colors.primaries.length]
+                        [50],
+                  );
+                },
+                imageBuilder: (BuildContext context, Uint8List imgData) {
+                  return Image(image: MemoryImage(imgData));
+                },
               ),
             ),
             const SizedBox(width: 10),
