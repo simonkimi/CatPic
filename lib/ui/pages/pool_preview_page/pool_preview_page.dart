@@ -3,7 +3,6 @@ import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/i18n.dart';
