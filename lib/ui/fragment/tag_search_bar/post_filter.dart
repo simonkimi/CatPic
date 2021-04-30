@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-import 'package:catpic/ui/fragment/post_result/store/filter_store.dart';
+import 'package:catpic/ui/fragment/tag_search_bar/store/filter_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';

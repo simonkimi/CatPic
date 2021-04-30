@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/drawer/main_drawer.dart';
-import 'package:catpic/ui/fragment/empty_website/empty_website.dart';
-import 'package:catpic/ui/fragment/pool_result/pool_result.dart';
-import 'package:catpic/ui/fragment/post_result/post_result.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
+
+import 'package:catpic/main.dart';
+import 'fragment/empty_website/empty_website.dart';
+import 'fragment/pool_result/pool_result.dart';
+import 'fragment/post_result/post_result.dart';
 
 enum SearchType {
   POST,
   POOL,
   ARTIST,
   TAGS,
-  POOL_POST,
 }
 
 class SearchPage extends StatefulWidget {
@@ -87,12 +87,6 @@ class _SearchPageState extends State<SearchPage> {
           );
         case SearchType.POOL:
           return PoolResultFragment(
-            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
-            searchText: tag,
-            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
-          );
-        case SearchType.POOL_POST:
-          return PostResultFragment(
             key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
             searchText: tag,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),

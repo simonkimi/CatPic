@@ -5,11 +5,10 @@ import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/main.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
-import 'file:///F:/android/project/catpic/lib/ui/pages/post_image_view/store/store.dart';
+import 'package:catpic/ui/pages/post_image_view/store/store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -22,17 +21,17 @@ import 'package:url_launcher/url_launcher.dart';
 typedef ItemBuilder = Future<BooruPost> Function(int index);
 
 class PostImageViewPage extends StatelessWidget {
-  PostImageViewPage({
+  PostImageViewPage.builder({
     Key? key,
     required this.dio,
     required this.index,
     this.onAddTag,
     this.favicon,
-    required this.itemBuilder,
+    required this.futureItemBuilder,
     required this.itemCount,
   })   : store = PostImageViewStore(
           currentIndex: index,
-          itemBuilder: itemBuilder,
+          itemBuilder: futureItemBuilder,
           itemCount: itemCount,
         ),
         super(key: key);
@@ -44,7 +43,7 @@ class PostImageViewPage extends StatelessWidget {
     this.onAddTag,
     this.favicon,
     required List<BooruPost> postList,
-  })   : itemBuilder = ((index) => Future.value(postList[index])),
+  })   : futureItemBuilder = ((index) => Future.value(postList[index])),
         itemCount = postList.length,
         store = PostImageViewStore(
           currentIndex: index,
@@ -56,7 +55,7 @@ class PostImageViewPage extends StatelessWidget {
   final Dio dio;
   final Uint8List? favicon;
   final int index;
-  final ItemBuilder itemBuilder;
+  final ItemBuilder futureItemBuilder;
   final int itemCount;
   final PostImageViewStore store;
 
@@ -80,17 +79,8 @@ class PostImageViewPage extends StatelessWidget {
         dio: dio,
         index: index,
         itemCount: itemCount,
-        itemBuilder: (index) async {
-          final item = await itemBuilder(index);
-          switch (settingStore.displayQuality) {
-            case ImageQuality.preview:
-              return item.previewURL;
-            case ImageQuality.raw:
-              return item.imgURL;
-            case ImageQuality.sample:
-            default:
-              return item.sampleURL;
-          }
+        futureItemBuilder: (index) async {
+          return (await futureItemBuilder(index)).getPreviewImg();
         },
         onScale: (result) {
           if (store.bottomBarVis != result) {

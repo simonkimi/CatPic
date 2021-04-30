@@ -16,7 +16,7 @@ class MultiImageViewer extends StatefulWidget {
     required this.index,
     required this.dio,
     this.onIndexChange,
-    required this.itemBuilder,
+    required this.futureItemBuilder,
     required this.itemCount,
   }) : super(key: key);
 
@@ -24,7 +24,7 @@ class MultiImageViewer extends StatefulWidget {
   final int index;
   final ValueChanged<bool>? onScale;
   final ValueChanged<int>? onIndexChange;
-  final ItemBuilder itemBuilder;
+  final ItemBuilder futureItemBuilder;
   final int itemCount;
 
   @override
@@ -51,7 +51,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
         widget.itemCount,
         (index) => DioImageProvider(
               dio: widget.dio,
-              urlBuilder: () => widget.itemBuilder(index),
+              urlBuilder: () => widget.futureItemBuilder(index),
             ));
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {

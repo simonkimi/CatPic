@@ -1,10 +1,9 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
-import 'package:catpic/ui/fragment/post_result/post_waterflow.dart';
-import 'package:catpic/ui/fragment/post_result/store/post_result_store.dart';
+import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
+import 'package:catpic/ui/pages/search_page/fragment/post_result/post_waterflow.dart';
+import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
 import 'package:flutter/material.dart';
-
-import 'tag_search_bar.dart';
 
 class PostResultFragment extends StatelessWidget {
   PostResultFragment({
