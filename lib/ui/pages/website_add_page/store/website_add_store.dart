@@ -4,8 +4,8 @@ import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../i18n.dart';
-import '../../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 part 'website_add_store.g.dart';
 

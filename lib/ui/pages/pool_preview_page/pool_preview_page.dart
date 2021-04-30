@@ -6,8 +6,8 @@ import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../i18n.dart';
-import '../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 class PoolPreviewPage extends StatelessWidget {
   const PoolPreviewPage({
