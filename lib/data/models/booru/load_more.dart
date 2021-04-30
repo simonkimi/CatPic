@@ -49,7 +49,7 @@ abstract class ILoadMore<T> {
       refreshController.loadFailed();
       refreshController.refreshFailed();
       BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
-      print('onRefresh ${e.message}');
+      print('onRefresh ${e.message} ${e.requestOptions.path}');
     } catch (e) {
       print('onRefresh ${e.toString()}');
       refreshController.loadFailed();

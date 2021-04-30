@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/pages/pool_preview_page/pool_preview_page.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/pool_search_bar.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
 import 'package:flutter/material.dart';
@@ -73,74 +74,95 @@ class PoolResultFragment extends StatelessWidget {
     final pool = _store.observableList[index];
     return Card(
       key: ValueKey('Pool${pool.id}'),
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              child: DioImage(
-                dio: adapter.dio,
-                imageUrlBuilder: () async {
-                  await pool.fetchPosts(adapter.client);
-                  return (await pool.fromIndex(adapter.client, 0))
-                      .getPreviewImg();
-                },
-                errorBuilder:
-                    (BuildContext context, Object? err, Function reload) {
-                  return const Center(
-                    child: Icon(Icons.info),
-                  );
-                },
-                loadingBuilder:
-                    (BuildContext context, ImageChunkEvent chunkEvent) {
-                  return Container(
-                    color: Colors.primaries[index % Colors.primaries.length]
-                        [50],
-                  );
-                },
-                imageBuilder: (BuildContext context, Uint8List imgData) {
-                  return Image(image: MemoryImage(imgData));
-                },
-              ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => PoolPreviewPage(
+              booruPool: pool,
+              adapter: adapter,
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pool.name,
-                    style: const TextStyle(fontSize: 14),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const Expanded(child: SizedBox()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        '${pool.postCount}P',
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                            fontWeight: FontWeight.normal, fontSize: 13),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        pool.createAt,
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                            fontWeight: FontWeight.normal, fontSize: 13),
-                      )
-                    ],
-                  )
-                ],
+          ));
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Container(
+                width: 60,
+                child: DioImage(
+                  dio: adapter.dio,
+                  imageUrlBuilder: () async {
+                    await pool.fetchPosts(adapter.client);
+                    return (await pool.fromIndex(adapter.client, 0))
+                        .getPreviewImg();
+                  },
+                  errorBuilder:
+                      (BuildContext context, Object? err, Function reload) {
+                    return InkWell(
+                      onTap: () {
+                        reload();
+                      },
+                      child: const Center(
+                        child: Icon(Icons.info),
+                      ),
+                    );
+                  },
+                  loadingBuilder:
+                      (BuildContext context, ImageChunkEvent chunkEvent) {
+                    return Container(
+                      color: Colors.primaries[index % Colors.primaries.length]
+                          [50],
+                    );
+                  },
+                  imageBuilder: (BuildContext context, Uint8List imgData) {
+                    return Image(image: MemoryImage(imgData));
+                  },
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pool.name,
+                      style: const TextStyle(fontSize: 14),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Expanded(child: SizedBox()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${pool.postCount}P',
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2!
+                              .copyWith(
+                                  fontWeight: FontWeight.normal, fontSize: 13),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          pool.createAt,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2!
+                              .copyWith(
+                                  fontWeight: FontWeight.normal, fontSize: 13),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

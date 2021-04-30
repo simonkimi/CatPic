@@ -14,10 +14,15 @@ typedef ImageWidgetBuilder = Widget Function(
 typedef UrlBuilder = Future<String> Function();
 
 typedef LoadingWidgetBuilder = Widget Function(
-    BuildContext context, ImageChunkEvent chunkEvent);
+  BuildContext context,
+  ImageChunkEvent chunkEvent,
+);
 
 typedef ErrorBuilder = Widget Function(
-    BuildContext context, Object? err, Function reload);
+  BuildContext context,
+  Object? err,
+  Function reload,
+);
 
 class DioImage extends StatefulWidget {
   const DioImage({
@@ -26,10 +31,10 @@ class DioImage extends StatefulWidget {
     this.imageUrl,
     this.imageUrlBuilder,
     this.duration,
-    required this.imageBuilder,
-    required this.loadingBuilder,
-    required this.errorBuilder,
-  })   : assert(imageUrl != null || imageUrlBuilder != null),
+    this.imageBuilder,
+    this.loadingBuilder,
+    this.errorBuilder,
+  })  : assert(imageUrl != null || imageUrlBuilder != null),
         super(key: key);
 
   final Dio? dio;
@@ -38,9 +43,9 @@ class DioImage extends StatefulWidget {
 
   final Duration? duration;
 
-  final ImageWidgetBuilder imageBuilder;
-  final LoadingWidgetBuilder loadingBuilder;
-  final ErrorBuilder errorBuilder;
+  final ImageWidgetBuilder? imageBuilder;
+  final LoadingWidgetBuilder? loadingBuilder;
+  final ErrorBuilder? errorBuilder;
 
   @override
   _DioImageState createState() => _DioImageState();
@@ -53,6 +58,39 @@ enum LoadingType {
 }
 
 class _DioImageState extends State<DioImage> {
+  late final ErrorBuilder errorBuilder = widget.errorBuilder ??
+      (context, err, reload) {
+        return InkWell(
+          onTap: () {
+            reload();
+          },
+          child: const Center(
+            child: Icon(Icons.info),
+          ),
+        );
+      };
+
+  late final LoadingWidgetBuilder loadingBuilder = widget.loadingBuilder ??
+      (context, chunkEvent) {
+        return Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              value: (chunkEvent.expectedTotalBytes == null ||
+                      chunkEvent.expectedTotalBytes == 0)
+                  ? 0
+                  : chunkEvent.cumulativeBytesLoaded /
+                      chunkEvent.expectedTotalBytes!,
+              strokeWidth: 2.5,
+            ),
+          ),
+        );
+      };
+
+  late final ImageWidgetBuilder imageBuilder = widget.imageBuilder ??
+      (context, imgData) => Image(image: MemoryImage(imgData));
+
   late final Dio dio = widget.dio ?? Dio();
   var _loadingType = LoadingType.LOADING;
 
@@ -117,11 +155,13 @@ class _DioImageState extends State<DioImage> {
 
   Widget buildBody(BuildContext context) {
     if (_loadingType == LoadingType.DONE) {
-      return widget.imageBuilder(context, imageData!);
+      return InkWell(
+        child: imageBuilder(context, imageData!),
+      );
     } else if (_loadingType == LoadingType.LOADING) {
-      return widget.loadingBuilder(context, chunkEvent);
+      return loadingBuilder(context, chunkEvent);
     } else {
-      return widget.errorBuilder(context, err, fetchData);
+      return errorBuilder(context, err, fetchData);
     }
   }
 

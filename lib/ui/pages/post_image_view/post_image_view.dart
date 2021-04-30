@@ -80,7 +80,7 @@ class PostImageViewPage extends StatelessWidget {
         index: index,
         itemCount: itemCount,
         futureItemBuilder: (index) async {
-          return (await futureItemBuilder(index)).getPreviewImg();
+          return (await futureItemBuilder(index)).getDisplayImg();
         },
         onScale: (result) {
           if (store.bottomBarVis != result) {

@@ -29,7 +29,7 @@ abstract class WebsiteAddStoreBase with Store {
   void setName(String value) => websiteName = value;
 
   @action
-  void setHost(String value) => websiteName = value;
+  void setHost(String value) => websiteHost = value;
 
   @action
   void setScheme(int value) => scheme = value;
