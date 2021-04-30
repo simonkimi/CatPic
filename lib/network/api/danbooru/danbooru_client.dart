@@ -1,6 +1,7 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
+import 'package:catpic/utils/utils.dart';
 
 import '../base_client.dart';
 
@@ -17,12 +18,13 @@ class DanbooruClient extends BaseClient {
     required String tags,
   }) async {
     final baseUri = Uri.parse('posts.json');
-    final uri = baseUri.replace(queryParameters: {
+    final uri = baseUri.replace(
+        queryParameters: {
       ...baseUri.queryParameters,
       'limit': limit.toString(),
       'page': page.toString(),
       'tags': tags
-    });
+    }.trim);
 
     return (await dio.getUri<String>(uri)).data ?? '';
   }
@@ -41,11 +43,13 @@ class DanbooruClient extends BaseClient {
       required int page,
       Order order = Order.COUNT,
       CancelToken? cancelToken}) async {
-    final uri = Uri(path: 'tag.json', queryParameters: <String, String>{
-      'search[name_normalize]': name,
-      'limit': limit.toString(),
-      'order': order.string
-    });
+    final uri = Uri(
+        path: 'tag.json',
+        queryParameters: <String, String>{
+          'search[name_normalize]': name,
+          'limit': limit.toString(),
+          'order': order.string
+        }.trim);
 
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
@@ -65,10 +69,10 @@ class DanbooruClient extends BaseClient {
     required int page,
     CancelToken? cancelToken,
   }) async {
-    final uri = Uri(path: 'pool.json', queryParameters: {
-      'search[name_matches]': name,
-      'page': page.toString()
-    });
+    final uri = Uri(
+        path: 'pools.json',
+        queryParameters:
+            {'search[name_matches]': name, 'page': page.toString()}.trim);
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
@@ -76,10 +80,10 @@ class DanbooruClient extends BaseClient {
   /// [name] The name (or a fragment of the name) of the artist.
   /// [id] The page number.
   Future<String> artistList({required String name, required int page}) async {
-    final uri = Uri(path: 'artists.json', queryParameters: {
-      'search[any_name_matches]': name,
-      'page': page.toString()
-    });
+    final uri = Uri(
+        path: 'artists.json',
+        queryParameters:
+            {'search[any_name_matches]': name, 'page': page.toString()}.trim);
     return (await dio.getUri(uri)).data;
   }
 }

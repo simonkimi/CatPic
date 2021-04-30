@@ -7,7 +7,7 @@ import 'post_model.dart';
 class DanbooruPostParse {
   static List<BooruPost> parse(String postJson) {
     final List<dynamic> posts = jsonDecode(postJson);
-    return posts.where((e) => e.id != null).map((e) {
+    return posts.where((e) => e['id'] != null).map((e) {
       return parseSingle(e);
     }).toList();
   }

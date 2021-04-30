@@ -1,7 +1,7 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
-
+import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class MoebooruClient extends BaseClient {
@@ -16,11 +16,13 @@ class MoebooruClient extends BaseClient {
     required int page,
     required String tags,
   }) async {
-    final uri = Uri(path: 'post.json', queryParameters: {
-      'limit': limit.toString(),
-      'page': (page + 1).toString(),
-      'tags': tags
-    });
+    final uri = Uri(
+        path: 'post.json',
+        queryParameters: {
+          'limit': limit.toString(),
+          'page': (page + 1).toString(),
+          'tags': tags
+        }.trim);
 
     return (await dio.getUri<String>(uri)).data!;
   }
@@ -36,11 +38,13 @@ class MoebooruClient extends BaseClient {
     Order order = Order.COUNT,
     CancelToken? cancelToken,
   }) async {
-    final uri = Uri(path: 'tag.json', queryParameters: <String, String>{
-      'name': name,
-      'limit': limit.toString(),
-      'order': order.string
-    });
+    final uri = Uri(
+        path: 'tag.json',
+        queryParameters: <String, String>{
+          'name': name,
+          'limit': limit.toString(),
+          'order': order.string
+        }.trim);
 
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
@@ -62,7 +66,7 @@ class MoebooruClient extends BaseClient {
   }) async {
     final uri = Uri(
       path: 'pool.json',
-      queryParameters: {'query': query, 'page': (page + 1).toString()},
+      queryParameters: {'query': query, 'page': (page + 1).toString()}.trim,
     );
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
@@ -78,7 +82,7 @@ class MoebooruClient extends BaseClient {
   Future<String> postShow(int id, int page) async {
     final uri = Uri(
         path: 'pool/show.json',
-        queryParameters: {'id': id.toString(), 'page': page.toString()});
+        queryParameters: {'id': id.toString(), 'page': page.toString()}.trim);
     return (await dio.getUri(uri)).data;
   }
 
@@ -88,7 +92,7 @@ class MoebooruClient extends BaseClient {
   Future<String> artistList({required String name, required int page}) async {
     final uri = Uri(
         path: 'artist.json',
-        queryParameters: {'name': name, 'page': page.toString()});
+        queryParameters: {'name': name, 'page': page.toString()}.trim);
     return (await dio.getUri(uri)).data;
   }
 }

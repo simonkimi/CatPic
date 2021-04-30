@@ -1,7 +1,7 @@
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
-
+import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class GelbooruClient extends BaseClient {
@@ -14,12 +14,13 @@ class GelbooruClient extends BaseClient {
   Future<String> postsList(
       {required int limit, required int pid, required String tags}) async {
     final baseUri = Uri.parse('index.php?page=dapi&s=post&q=index');
-    final uri = baseUri.replace(queryParameters: {
+    final uri = baseUri.replace(
+        queryParameters: {
       ...baseUri.queryParameters,
       'limit': limit.toString(),
       'pid': pid.toString(),
       'tags': tags
-    });
+    }.trim);
 
     return (await dio.getUri<String>(uri)).data ?? '';
   }
@@ -33,12 +34,13 @@ class GelbooruClient extends BaseClient {
       Order order = Order.COUNT,
       CancelToken? cancelToken}) async {
     final baseUri = Uri.parse('index.php?page=dapi&s=tag&q=index');
-    final uri = baseUri.replace(queryParameters: <String, String>{
+    final uri = baseUri.replace(
+        queryParameters: <String, String>{
       ...baseUri.queryParameters,
       'name_pattern': names + '%',
       'limit': limit.toString(),
       'order': order.string
-    });
+    }.trim);
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data ?? '';
   }
 
@@ -46,11 +48,11 @@ class GelbooruClient extends BaseClient {
   /// [postId] The id number of the comment to retrieve.
   Future<String> commentsList(String postId) async {
     final baseUri = Uri.parse('index.php?page=dapi&s=comment&q=index');
-    final uri = baseUri.replace(queryParameters: {
+    final uri = baseUri.replace(
+        queryParameters: {
       ...baseUri.queryParameters,
       'post_id': postId,
-    });
-
+    }.trim);
     return (await dio.getUri<String>(uri)).data ?? '';
   }
 }

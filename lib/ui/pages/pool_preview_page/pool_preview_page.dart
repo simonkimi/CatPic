@@ -4,9 +4,9 @@ import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:flutter/material.dart';
-
-import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+
+import '../../../i18n.dart';
 
 class PoolPreviewPage extends StatelessWidget {
   const PoolPreviewPage({
@@ -14,6 +14,7 @@ class PoolPreviewPage extends StatelessWidget {
     required this.booruPool,
     required this.adapter,
   }) : super(key: key);
+
   final BooruPool booruPool;
   final BooruAdapter adapter;
 
@@ -41,6 +42,7 @@ class PoolPreviewPage extends StatelessWidget {
           return CustomScrollView(
             slivers: [
               SliverAppBar(
+                title: Text(booruPool.name.replaceAll('', '\u{200B}')),
                 leading: IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios,
@@ -99,17 +101,20 @@ class PoolPreviewPage extends StatelessWidget {
             loadingBuilder: (context, chunkEvent) {
               return InkWell(
                 onTap: onCardTap,
-                child: Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      value: (chunkEvent.expectedTotalBytes == null ||
-                              chunkEvent.expectedTotalBytes == 0)
-                          ? 0
-                          : chunkEvent.cumulativeBytesLoaded /
-                              chunkEvent.expectedTotalBytes!,
-                      strokeWidth: 2.5,
+                child: Container(
+                  color: Colors.primaries[index % Colors.primaries.length][50],
+                  child: Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        value: (chunkEvent.expectedTotalBytes == null ||
+                                chunkEvent.expectedTotalBytes == 0)
+                            ? 0
+                            : chunkEvent.cumulativeBytesLoaded /
+                                chunkEvent.expectedTotalBytes!,
+                        strokeWidth: 2.5,
+                      ),
                     ),
                   ),
                 ),

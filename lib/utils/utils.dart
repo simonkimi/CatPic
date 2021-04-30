@@ -79,6 +79,13 @@ extension StringHelper on String {
   int toInt() => int.tryParse(this) ?? 0;
 }
 
+extension MapHelper<K, V> on Map<K, V> {
+  Map<K, V> get trim {
+    return Map.fromEntries(
+        entries.where((element) => element.value.toString().isNotEmpty));
+  }
+}
+
 void tryCatch(Function? f) {
   try {
     f?.call();
