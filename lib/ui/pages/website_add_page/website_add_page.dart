@@ -1,61 +1,40 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/network/api/misc_network.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
+import 'package:catpic/ui/pages/website_add_page/store/website_add_store.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:smart_select/src/model/chosen.dart';
 
-class WebsiteAddPage extends StatefulWidget {
+class WebsiteAddPage extends StatelessWidget {
   static const route = 'WebsiteAddPage';
-
-  @override
-  _WebsiteAddPageState createState() => _WebsiteAddPageState();
-}
-
-class _WebsiteAddPageState extends State<WebsiteAddPage>
-    with _WebsiteAddPageMixin {
-  @override
-  void initState() {
-    super.initState();
-    debugPrint('WebsiteAddPage initState');
-    websiteName = '';
-    websiteHost = '';
-    scheme = WebsiteScheme.HTTPS.index;
-    websiteType = WebsiteType.GELBOORU.index;
-    useDoH = false;
-    directLink = false;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    debugPrint('WebsiteAddPage dispose');
-  }
+  final store = WebsiteAddStore();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: buildBody(),
+      body: buildBody(context),
     );
   }
 
-  SafeArea buildBody() {
+  SafeArea buildBody(BuildContext context) {
     return SafeArea(
-      child: ListView(
-        children: [
-          ...buildBasicSetting(),
-          const Divider(),
-          ...buildWebsiteSetting(),
-          const Divider(),
-          ...buildAdvanceSetting(),
-        ],
+      child: Observer(
+        builder: (_) {
+          return ListView(
+            children: [
+              ...buildBasicSetting(context),
+              const Divider(),
+              ...buildWebsiteSetting(context),
+              const Divider(),
+              ...buildAdvanceSetting(context),
+            ],
+          );
+        },
       ),
     );
   }
@@ -87,7 +66,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
           ),
           onPressed: () {
             // 保存网站后返回并且刷新页面
-            saveWebsite().then((result) {
+            store.saveWebsite().then((result) {
               if (result) {
                 Navigator.pop(context);
               }
@@ -100,51 +79,51 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   }
 
   /// 构建基础设置
-  List<Widget> buildBasicSetting() {
+  List<Widget> buildBasicSetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).basic_settings),
       TextInputTile(
-        defaultValue: websiteName,
+        defaultValue: store.websiteName,
         title: Text(I18n.of(context).website_nickname),
-        subtitle:
-            Text(websiteName.isEmpty ? I18n.of(context).not_set : websiteName),
+        subtitle: Text(store.websiteName.isEmpty
+            ? I18n.of(context).not_set
+            : store.websiteName),
         leading: const SizedBox(),
         onChanged: (value) {
-          setState(() {
-            websiteName = value;
-          });
+          store.setName(value);
         },
       ),
     ];
   }
 
   /// 构建网络设置
-  List<Widget> buildWebsiteSetting() {
+  List<Widget> buildWebsiteSetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).website_settings),
       TextInputTile(
         title: Text(I18n.of(context).host),
-        subtitle:
-            Text(websiteHost.isEmpty ? I18n.of(context).not_set : websiteHost),
+        subtitle: Text(store.websiteHost.isEmpty
+            ? I18n.of(context).not_set
+            : store.websiteHost),
         leading: const Icon(Icons.home),
         hintText: 'example.org',
-        defaultValue: websiteHost,
+        defaultValue: store.websiteHost,
         onChanged: (value) {
-          setState(() {
-            websiteHost = value.getHost();
-          });
+          store.setHost(value.getHost());
         },
       ),
       SwitchListTile(
         title: Text(I18n.of(context).scheme),
         subtitle: Text(I18n.of(context).scheme_https),
         secondary: const Icon(Icons.http),
-        value: scheme == WebsiteScheme.HTTPS.index,
+        value: store.scheme == WebsiteScheme.HTTPS.index,
         onChanged: (value) {
-          setState(() {
-            scheme =
-                value ? WebsiteScheme.HTTPS.index : WebsiteScheme.HTTP.index;
-          });
+          store.setScheme(
+              value ? WebsiteScheme.HTTPS.index : WebsiteScheme.HTTP.index);
+          if (!value) {
+            store.setDirectLink(false);
+            store.setUseDoH(false);
+          }
         },
       ),
       SmartSelect<int>.single(
@@ -158,9 +137,7 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
         modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
         selectedValue: WebsiteType.GELBOORU.index,
         onChange: (S2SingleSelected<int?> value) {
-          setState(() {
-            websiteType = value.value!;
-          });
+          store.setWebsiteType(value.value!);
         },
         title: I18n.of(context).site_type,
         choiceItems: [
@@ -173,77 +150,35 @@ class _WebsiteAddPageState extends State<WebsiteAddPage>
   }
 
   /// 构建高级设置
-  List<Widget> buildAdvanceSetting() {
+  List<Widget> buildAdvanceSetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).advanced_settings),
       SwitchListTile(
         title: Text(I18n.of(context).use_doh),
         subtitle: Text(I18n.of(context).use_doh_desc),
-        value: useDoH,
+        value: store.useDoH,
         secondary: const Icon(Icons.list_alt),
         onChanged: (value) {
-          setState(() {
-            useDoH = value;
-          });
+          store.setUseDoH(value);
+          if (!value) {
+            store.setDirectLink(false);
+          }
         },
       ),
       SwitchListTile(
         title: Text(I18n.of(context).direct_link),
         subtitle: Text(I18n.of(context).direct_link_desc),
         secondary: const Icon(Icons.airplanemode_active_rounded),
-        value: directLink,
+        value: store.directLink,
         onChanged: (value) {
-          setState(() {
-            setState(() {
-              if (value) {
-                directLink = true;
-                useDoH = true;
-              } else {
-                directLink = false;
-              }
-            });
-          });
+          if (value) {
+            store.setDirectLink(true);
+            store.setUseDoH(true);
+          } else {
+            store.setDirectLink(false);
+          }
         },
       ),
     ];
-  }
-}
-
-mixin _WebsiteAddPageMixin<T extends StatefulWidget> on State<T> {
-  late String websiteName;
-  late String websiteHost;
-  late int scheme;
-  late int websiteType;
-  late bool directLink;
-  late bool useDoH;
-
-  /// 保存网站
-  Future<bool> saveWebsite() async {
-    if (websiteHost.isEmpty) {
-      BotToast.showText(text: I18n.of(context).host_empty);
-      return false;
-    }
-    if (websiteName.isEmpty) {
-      websiteName = websiteHost;
-    }
-
-    // 保存网站
-    final websiteDao = DatabaseHelper().websiteDao;
-    final entity = WebsiteTableCompanion.insert(
-      host: websiteHost,
-      name: websiteName,
-      scheme: scheme,
-      useDoH: useDoH,
-      type: websiteType,
-      directLink: directLink,
-    );
-    final id = await websiteDao.insert(entity);
-    final table = await websiteDao.getById(id);
-    mainStore.updateList();
-    // 获取封面图片
-    getFavicon(table!).then((favicon) {
-      mainStore.setWebsiteFavicon(id, favicon);
-    });
-    return true;
   }
 }

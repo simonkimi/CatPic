@@ -91,4 +91,11 @@ abstract class MainStoreBase with Store {
       await updateList();
     }
   }
+
+  @action
+  Future<void> deleteWebsite(WebsiteTableData entity) async {
+    DatabaseHelper().websiteDao.remove(entity);
+    DatabaseHelper().downloadDao.onWebsiteDelete(entity.id);
+    updateList();
+  }
 }
