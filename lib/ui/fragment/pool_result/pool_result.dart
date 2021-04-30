@@ -9,27 +9,22 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class PoolResultFragment extends StatefulWidget {
-  const PoolResultFragment({
+class PoolResultFragment extends StatelessWidget {
+  PoolResultFragment({
     Key? key,
     this.searchText = '',
     required this.adapter,
-  }) : super(key: key);
+  })   : _store = PoolResultStore(
+          searchText: searchText,
+          adapter: adapter,
+        ),
+        super(key: key);
 
   final String searchText;
   final BooruAdapter adapter;
 
-  @override
-  _PoolResultFragmentState createState() => _PoolResultFragmentState();
-}
-
-class _PoolResultFragmentState extends State<PoolResultFragment> {
-  late final controller = FloatingSearchBarController();
-
-  late final _store = PoolResultStore(
-    searchText: widget.searchText,
-    adapter: widget.adapter,
-  );
+  final controller = FloatingSearchBarController();
+  final PoolResultStore _store;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +79,7 @@ class _PoolResultFragmentState extends State<PoolResultFragment> {
             Container(
               width: 60,
               child: PoolPreviewImage(
-                client: widget.adapter.client,
+                client: adapter.client,
                 pool: pool,
                 index: index,
               ),

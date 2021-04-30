@@ -4,6 +4,8 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/search_bar.dart';
+import 'package:catpic/ui/fragment/post_result/post_filter.dart';
+import 'package:catpic/ui/fragment/post_result/store/filter_store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
@@ -21,7 +23,6 @@ class TagSearchBar extends StatefulWidget {
     this.defaultHint,
     this.onTextChange,
     this.controller,
-    this.onFilterDisplay,
     this.tmpController,
   }) : super(key: key);
 
@@ -33,8 +34,6 @@ class TagSearchBar extends StatefulWidget {
   final FloatingSearchBarController? controller;
   final SearchBarTmpController? tmpController;
 
-  final ValueChanged<bool>? onFilterDisplay;
-
   @override
   _TagSearchBarState createState() => _TagSearchBarState();
 }
@@ -43,19 +42,24 @@ class _TagSearchBarState extends State<TagSearchBar>
     with TickerProviderStateMixin {
   late final FloatingSearchBarController searchBarController =
       widget.controller ?? FloatingSearchBarController();
-  var suggestionList = <SearchSuggestion>[];
-  var loadingProgress = false;
-  CancelToken? cancelToken;
 
-  var filterDisplaySwitch = false;
+  late SearchBarTmpController tmpController =
+      widget.tmpController ?? SearchBarTmpController();
 
   late final actionController = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 200),
   );
+
   late final Animation<double> actionAnimation =
       Tween<double>(begin: 0.0, end: 0.375).animate(actionController);
 
+  late final filterStore = FilterStore(searchBarController.query);
+
+  var suggestionList = <SearchSuggestion>[];
+  var loadingProgress = false;
+  CancelToken? cancelToken;
+  var filterDisplaySwitch = false;
   var lastClickBack = DateTime.now();
 
   @override
@@ -76,7 +80,6 @@ class _TagSearchBarState extends State<TagSearchBar>
           filterDisplaySwitch = true;
         });
         actionController.forward();
-        widget.onFilterDisplay?.call(true);
       } else {
         backToSearch();
       }
@@ -88,7 +91,6 @@ class _TagSearchBarState extends State<TagSearchBar>
       filterDisplaySwitch = false;
     });
     actionController.reverse();
-    widget.onFilterDisplay?.call(false);
     callBack?.call();
   }
 
@@ -158,7 +160,23 @@ class _TagSearchBarState extends State<TagSearchBar>
           ),
         ),
       ],
-      body: widget.body,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) => ScaleTransition(
+          scale: animation,
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        ),
+        child: filterDisplaySwitch
+            ? PostFilter(
+                controller: searchBarController,
+                tmpController: tmpController,
+                store: filterStore,
+              )
+            : widget.body,
+      ),
       onQueryChanged: (value) {
         _onSearchTagChange(value);
         widget.onTextChange?.call(value);

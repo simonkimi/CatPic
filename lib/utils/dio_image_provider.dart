@@ -49,12 +49,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    late String imageUrl;
-
-    if (url != null)
-      imageUrl = url!;
-    else
-      imageUrl = await urlBuilder!();
+    final imageUrl = url ?? await urlBuilder!();
 
     final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
         options: settingStore.dioCacheOptions

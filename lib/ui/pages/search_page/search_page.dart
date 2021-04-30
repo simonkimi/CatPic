@@ -14,6 +14,7 @@ enum SearchType {
   POOL,
   ARTIST,
   TAGS,
+  POOL_POST,
 }
 
 class SearchPage extends StatefulWidget {
@@ -86,6 +87,12 @@ class _SearchPageState extends State<SearchPage> {
           );
         case SearchType.POOL:
           return PoolResultFragment(
+            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            searchText: tag,
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
+          );
+        case SearchType.POOL_POST:
+          return PostResultFragment(
             key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
             searchText: tag,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),

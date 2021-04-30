@@ -102,12 +102,10 @@ class DownloadManagerPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PostImageViewPage(
+              builder: (context) => PostImageViewPage.count(
                 dio: dio,
                 index: 0,
-                itemCount: 1,
-                itemBuilder: (_) => Future.value(
-                    BooruPost.fromJson(jsonDecode(data.booruJson))),
+                postList: [BooruPost.fromJson(jsonDecode(data.booruJson))],
               ),
             ),
           );

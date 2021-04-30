@@ -11,6 +11,8 @@ typedef ImageWidgetBuilder = Widget Function(
   Uint8List imgData,
 );
 
+typedef UrlBuilder = Future<String> Function();
+
 typedef LoadingWidgetBuilder = Widget Function(
     BuildContext context, ImageChunkEvent chunkEvent);
 
@@ -21,15 +23,19 @@ class DioImage extends StatefulWidget {
   const DioImage({
     Key? key,
     this.dio,
-    required this.imageUrl,
+    this.imageUrl,
+    this.imageUrlBuilder,
     this.duration,
     required this.imageBuilder,
     required this.loadingBuilder,
     required this.errorBuilder,
-  }) : super(key: key);
+  })   : assert(imageUrl != null || imageUrlBuilder != null),
+        super(key: key);
 
   final Dio? dio;
-  final String imageUrl;
+  final String? imageUrl;
+  final UrlBuilder? imageUrlBuilder;
+
   final Duration? duration;
 
   final ImageWidgetBuilder imageBuilder;
@@ -70,7 +76,8 @@ class _DioImageState extends State<DioImage> {
           expectedTotalBytes: null, cumulativeBytesLoaded: 0);
     });
     try {
-      final rsp = await dio.get<List<int>>(widget.imageUrl,
+      final rsp = await dio.get<List<int>>(
+          widget.imageUrl ?? await widget.imageUrlBuilder!(),
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
               .copyWith(policy: CachePolicy.request)

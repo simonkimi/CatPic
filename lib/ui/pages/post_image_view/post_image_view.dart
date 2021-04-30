@@ -37,6 +37,22 @@ class PostImageViewPage extends StatelessWidget {
         ),
         super(key: key);
 
+  PostImageViewPage.count({
+    Key? key,
+    required this.dio,
+    required this.index,
+    this.onAddTag,
+    this.favicon,
+    required List<BooruPost> postList,
+  })   : itemBuilder = ((index) => Future.value(postList[index])),
+        itemCount = postList.length,
+        store = PostImageViewStore(
+          currentIndex: index,
+          itemBuilder: (index) => Future.value(postList[index]),
+          itemCount: postList.length,
+        ),
+        super(key: key);
+
   final Dio dio;
   final Uint8List? favicon;
   final int index;
