@@ -80,6 +80,23 @@ class _MultiImageViewerState extends State<MultiImageViewer>
 
   @override
   Widget build(BuildContext context) {
+    print('onTapUp');
+    final onTapUp = (TapUpDetails details) {
+      final totalW = MediaQuery.of(context).size.width;
+      final left = totalW / 3;
+      final right = left * 2;
+      final tap = details.globalPosition.dx;
+      if (left < tap && tap < right) {
+        widget.onCenterTap?.call();
+      } else if (tap < left) {
+        pageController.previousPage(
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      } else {
+        pageController.nextPage(
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      }
+    };
+
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
       onPageChanged: onPageIndexChange,
@@ -87,23 +104,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
       itemBuilder: (context, index) {
         final imageProvider = imageProviders[index];
         return GestureDetector(
-          onTapUp: (TapUpDetails details) {
-            final totalW = MediaQuery.of(context).size.width;
-            final left = totalW / 3;
-            final right = left * 2;
-            final tap = details.globalPosition.dx;
-            if (left < tap && tap < right) {
-              widget.onCenterTap?.call();
-            } else if (tap < left) {
-              pageController.previousPage(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut);
-            } else {
-              pageController.nextPage(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut);
-            }
-          },
+          onTapUp: onTapUp,
           child: ExtendedImage(
             key: UniqueKey(),
             image: imageProvider,
@@ -130,6 +131,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                   return Container(
                     width: double.infinity,
                     height: double.infinity,
+                    color: Colors.transparent,
                     child: Builder(
                       builder: (context) {
                         var progress =
@@ -168,12 +170,11 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                     child: state.completedWidget,
                   );
                 case LoadState.failed:
-                  return GestureDetector(
-                    onTap: () {
-                      state.reLoadImage();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.transparent,
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
