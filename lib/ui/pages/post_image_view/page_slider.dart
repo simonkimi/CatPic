@@ -53,7 +53,9 @@ class PageSliderState extends State<PageSlider> {
           ),
           Expanded(
             child: Slider(
-              onChangeEnd: widget.onChange,
+              onChangeEnd: (value) {
+                widget.onChange?.call(value - 1);
+              },
               value: value.toDouble(),
               max: widget.count.toDouble(),
               divisions: widget.count,
