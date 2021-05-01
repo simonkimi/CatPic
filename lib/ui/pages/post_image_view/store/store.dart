@@ -24,16 +24,10 @@ abstract class PostImageViewStoreBase with Store {
   final int itemCount;
 
   @observable
-  bool bottomBarVis = true;
-
-  @observable
   int currentIndex;
 
   @observable
   BooruPost? loadedBooruPost;
-
-  @action
-  void setBottomBarVis(bool value) => bottomBarVis = value;
 
   @observable
   var infoBarDisplay = false;

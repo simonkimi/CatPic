@@ -434,99 +434,95 @@ class PostImageViewPage extends HookWidget {
       color: Colors.transparent,
       child: Observer(
         builder: (context) {
-          return Visibility(
-            visible: store.bottomBarVis,
-            child: store.loadedBooruPost == null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.white),
-                            strokeWidth: 2.5,
-                          ),
+          return store.loadedBooruPost == null
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                          strokeWidth: 2.5,
                         ),
                       ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            onPressed: () {
-                              Navigator.of(I18n.context).pop();
-                            },
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                            size: 16,
                           ),
-                          InkWell(
-                            onTap: () {
-                              store.setPageBarDisplay(true);
-                              store.setInfoBarDisplay(false);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.image,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Observer(
-                                    builder: (_) {
-                                      return Text(
-                                        '${store.currentIndex + 1}/$itemCount',
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 14),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
+                          onPressed: () {
+                            Navigator.of(I18n.context).pop();
+                          },
+                        ),
+                        InkWell(
+                          onTap: () {
+                            store.setPageBarDisplay(true);
+                            store.setInfoBarDisplay(false);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.image,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 5),
+                                Observer(
+                                  builder: (_) {
+                                    return Text(
+                                      '${store.currentIndex + 1}/$itemCount',
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 14),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            iconSize: 16,
-                            icon: const Icon(
-                              Icons.info_outline,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              showAsBottomSheet(
-                                  context, store.loadedBooruPost!);
-                            },
                           ),
-                          IconButton(
-                            iconSize: 16,
-                            icon: const Icon(
-                              Icons.save_alt,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              _download(store.loadedBooruPost!);
-                            },
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          iconSize: 16,
+                          icon: const Icon(
+                            Icons.info_outline,
+                            color: Colors.white,
                           ),
-                        ],
-                      )
-                    ],
-                  ),
-          );
+                          onPressed: () {
+                            showAsBottomSheet(context, store.loadedBooruPost!);
+                          },
+                        ),
+                        IconButton(
+                          iconSize: 16,
+                          icon: const Icon(
+                            Icons.save_alt,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            _download(store.loadedBooruPost!);
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                );
         },
       ),
     );
