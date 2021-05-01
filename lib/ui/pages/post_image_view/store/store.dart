@@ -48,7 +48,7 @@ abstract class PostImageViewStoreBase with Store {
   @action
   Future<void> setIndex(int value) async {
     currentIndex = value;
-    pageSliderController.setValue(value + 1);
+    pageSliderController.setValue(value);
     loadedBooruPost = await itemBuilder(value);
     final dao = DatabaseHelper().tagDao;
     for (final tags in loadedBooruPost!.tags.values) {

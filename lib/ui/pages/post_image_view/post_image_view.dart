@@ -415,15 +415,18 @@ class PostImageViewPage extends HookWidget {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 20),
-          child: PageSlider(
-            value: store.currentIndex + 1,
-            count: itemCount,
-            controller: store.pageSliderController,
-            onChange: (double value) {
-              store.setIndex(value.toInt());
-              pageController.jumpToPage(value.toInt());
-            },
-          ),
+          child: Observer(builder: (_) {
+            print('currentIndex: ${store.currentIndex}');
+            return PageSlider(
+              value: store.currentIndex + 1,
+              count: itemCount,
+              controller: store.pageSliderController,
+              onChange: (int value) {
+                store.setIndex(value - 1);
+                pageController.jumpToPage(value - 1);
+              },
+            );
+          }),
         ),
       ),
     );

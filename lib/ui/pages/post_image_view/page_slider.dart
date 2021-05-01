@@ -19,7 +19,7 @@ class PageSlider extends StatefulWidget {
 
   final int count;
   final int value;
-  final ValueChanged<double>? onChange;
+  final ValueChanged<int>? onChange;
   final PageSliderController? controller;
 
   @override
@@ -36,6 +36,7 @@ class PageSliderState extends State<PageSlider> {
   }
 
   void setPage(int newValue) {
+    print('setPage $newValue');
     setState(() {
       value = newValue;
     });
@@ -48,17 +49,19 @@ class PageSliderState extends State<PageSlider> {
       child: Row(
         children: [
           Text(
-            value.toString(),
+            value.toInt().toString(),
             style: const TextStyle(color: Colors.grey),
           ),
           Expanded(
             child: Slider(
               onChangeEnd: (value) {
-                widget.onChange?.call(value - 1);
+                print('end: $value');
+                widget.onChange?.call(value.toInt());
               },
               value: value.toDouble(),
               max: widget.count.toDouble(),
-              divisions: widget.count,
+              min: 1.0,
+              divisions: widget.count - 1,
               onChanged: (v) {
                 setState(() {
                   value = v.toInt();
