@@ -18,6 +18,8 @@ abstract class PostImageViewStoreBase with Store {
     required this.itemCount,
   });
 
+  final PageSliderController pageSliderController = PageSliderController();
+
   final ItemBuilder itemBuilder;
   final int itemCount;
 
@@ -33,7 +35,21 @@ abstract class PostImageViewStoreBase with Store {
   @action
   void setBottomBarVis(bool value) => bottomBarVis = value;
 
-  final PageSliderController pageSliderController = PageSliderController();
+  @observable
+  var infoBarDisplay = false;
+
+  @observable
+  var pageBarDisplay = false;
+
+  @action
+  void setInfoBarDisplay(bool value) {
+    infoBarDisplay = value;
+  }
+
+  @action
+  void setPageBarDisplay(bool value) {
+    pageBarDisplay = value;
+  }
 
   @action
   Future<void> setIndex(int value) async {

@@ -14,14 +14,16 @@ import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catpic/ui/components/custom_popup_menu.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:catpic/utils/utils.dart';
 
 typedef ItemBuilder = Future<BooruPost> Function(int index);
 
-class PostImageViewPage extends StatelessWidget {
+class PostImageViewPage extends HookWidget {
   PostImageViewPage.builder({
     Key? key,
     required this.dio,
@@ -61,9 +63,7 @@ class PostImageViewPage extends StatelessWidget {
   final ItemBuilder futureItemBuilder;
   final int itemCount;
   final PostImageViewStore store;
-
   final ValueChanged<String>? onAddTag;
-
   final PageController pageController;
 
   @override
@@ -88,13 +88,15 @@ class PostImageViewPage extends StatelessWidget {
         futureItemBuilder: (index) async {
           return (await futureItemBuilder(index)).getDisplayImg();
         },
-        onScale: (result) {
-          if (store.bottomBarVis != result) {
-            store.setBottomBarVis(result);
-          }
-        },
         onIndexChange: (value) async {
           store.setIndex(value);
+        },
+        onCenterTap: () {
+          if (store.pageBarDisplay) {
+            store.setPageBarDisplay(false);
+            return;
+          }
+          store.setInfoBarDisplay(!store.infoBarDisplay);
         },
       ),
     );
@@ -372,7 +374,37 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget buildBottomBar() {
-    return buildBottomPageBar();
+    final infoController =
+        useAnimationController(duration: const Duration(milliseconds: 200))
+          ..animateTo(1);
+    final infoHideAni =
+        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 1))
+            .animate(infoController);
+
+    final pageController =
+        useAnimationController(duration: const Duration(milliseconds: 200))
+          ..animateTo(1);
+    final pageHideAni =
+        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 1))
+            .animate(pageController);
+
+    return Observer(builder: (_) {
+      infoController.byValue(store.infoBarDisplay);
+      pageController.byValue(store.pageBarDisplay);
+
+      return Stack(
+        children: [
+          SlideTransition(
+            position: infoHideAni,
+            child: buildBottomInfoBar(),
+          ),
+          SlideTransition(
+            position: pageHideAni,
+            child: buildBottomPageBar(),
+          ),
+        ],
+      );
+    });
   }
 
   Widget buildBottomPageBar() {
@@ -397,7 +429,7 @@ class PostImageViewPage extends StatelessWidget {
     );
   }
 
-  BottomAppBar buildBottomInfoBar() {
+  Widget buildBottomInfoBar() {
     return BottomAppBar(
       color: Colors.transparent,
       child: Observer(
@@ -437,19 +469,34 @@ class PostImageViewPage extends StatelessWidget {
                               Navigator.of(I18n.context).pop();
                             },
                           ),
-                          const Icon(
-                            Icons.image,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 5),
-                          Observer(
-                            builder: (_) => Text(
-                              '${store.currentIndex + 1}/$itemCount',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 14),
+                          InkWell(
+                            onTap: () {
+                              store.setPageBarDisplay(true);
+                              store.setInfoBarDisplay(false);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.image,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Observer(
+                                    builder: (_) {
+                                      return Text(
+                                        '${store.currentIndex + 1}/$itemCount',
+                                        style: const TextStyle(
+                                            color: Colors.white, fontSize: 14),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          )
                         ],
                       ),
                       Row(

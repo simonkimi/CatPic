@@ -26,16 +26,6 @@ extension ListHelper<T> on List<T> {
   }
 }
 
-extension AnimationControllerHelper on AnimationController {
-  void play(bool isForward) {
-    if (isForward) {
-      forward();
-    } else {
-      reverse();
-    }
-  }
-}
-
 extension ColorHelper on Color {
   MaterialColor get swatch => Colors.primaries.firstWhere(
         (Color c) => c.value == value,
@@ -84,6 +74,25 @@ extension MapHelper<K, V> on Map<K, V> {
     return Map.fromEntries(
         entries.where((element) => element.value.toString().isNotEmpty));
   }
+}
+
+extension AnimationControllerHelper on AnimationController {
+  void byValue(bool display) {
+    if (display && atEnd) reverse();
+    if (!display && atStart) forward();
+  }
+
+  void play(bool isForward) {
+    if (isForward) {
+      forward();
+    } else {
+      reverse();
+    }
+  }
+
+  bool get atStart => value == 0.0;
+
+  bool get atEnd => value == 1.0;
 }
 
 void tryCatch(Function? f) {

@@ -12,22 +12,22 @@ typedef ItemBuilder = Future<String> Function(int index);
 class MultiImageViewer extends StatefulWidget {
   const MultiImageViewer({
     Key? key,
-    this.onScale,
     required this.index,
     required this.dio,
     this.onIndexChange,
     required this.futureItemBuilder,
     required this.itemCount,
     this.pageController,
+    this.onCenterTap,
   }) : super(key: key);
 
   final Dio dio;
   final int index;
-  final ValueChanged<bool>? onScale;
   final ValueChanged<int>? onIndexChange;
   final ItemBuilder futureItemBuilder;
   final int itemCount;
   final PageController? pageController;
+  final VoidCallback? onCenterTap;
 
   @override
   _MultiImageViewerState createState() => _MultiImageViewerState();
@@ -86,100 +86,116 @@ class _MultiImageViewerState extends State<MultiImageViewer>
       itemCount: imageProviders.length,
       itemBuilder: (context, index) {
         final imageProvider = imageProviders[index];
-        return ExtendedImage(
-          key: UniqueKey(),
-          image: imageProvider,
-          enableLoadState: true,
-          handleLoadingProgress: true,
-          mode: ExtendedImageMode.gesture,
-          initGestureConfigHandler: (state) {
-            return GestureConfig(
-              minScale: 0.9,
-              animationMinScale: 0.7,
-              maxScale: 5.0,
-              animationMaxScale: 5.0,
-              speed: 1.0,
-              inertialSpeed: 100.0,
-              initialScale: 1.0,
-              inPageView: true,
-              initialAlignment: InitialAlignment.center,
-              gestureDetailsIsChanged: (ge) {
-                widget.onScale?.call((ge?.totalScale ?? 0.0) < 1.2);
-              },
-            );
+        return GestureDetector(
+          onTapUp: (TapUpDetails details) {
+            final totalW = MediaQuery.of(context).size.width;
+            final left = totalW / 3;
+            final right = left * 2;
+            final tap = details.globalPosition.dx;
+            if (left < tap && tap < right) {
+              widget.onCenterTap?.call();
+            } else if (tap < left) {
+              pageController.previousPage(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut);
+            } else {
+              pageController.nextPage(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut);
+            }
           },
-          onDoubleTap: _doubleTap,
-          loadStateChanged: (state) {
-            switch (state.extendedImageLoadState) {
-              case LoadState.loading:
-                return Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Builder(
-                    builder: (context) {
-                      var progress =
-                          state.loadingProgress?.expectedTotalBytes != null
-                              ? state.loadingProgress!.cumulativeBytesLoaded /
-                                  state.loadingProgress!.expectedTotalBytes!
-                              : 0.0;
-                      progress = progress.isFinite ? progress : 0;
-                      return Column(
+          child: ExtendedImage(
+            key: UniqueKey(),
+            image: imageProvider,
+            enableLoadState: true,
+            handleLoadingProgress: true,
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: (state) {
+              return GestureConfig(
+                minScale: 0.9,
+                animationMinScale: 0.7,
+                maxScale: 5.0,
+                animationMaxScale: 5.0,
+                speed: 1.0,
+                inertialSpeed: 100.0,
+                initialScale: 1.0,
+                inPageView: true,
+                initialAlignment: InitialAlignment.center,
+              );
+            },
+            onDoubleTap: _doubleTap,
+            loadStateChanged: (state) {
+              switch (state.extendedImageLoadState) {
+                case LoadState.loading:
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Builder(
+                      builder: (context) {
+                        var progress =
+                            state.loadingProgress?.expectedTotalBytes != null
+                                ? state.loadingProgress!.cumulativeBytesLoaded /
+                                    state.loadingProgress!.expectedTotalBytes!
+                                : 0.0;
+                        progress = progress.isFinite ? progress : 0;
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                                value: progress == 0 ? null : progress),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            if (progress == 0)
+                              Text(
+                                I18n.of(context).connecting,
+                                style: const TextStyle(color: Colors.white),
+                              )
+                            else
+                              Text(
+                                '${(progress * 100).toStringAsFixed(2)}%',
+                                style: const TextStyle(color: Colors.white),
+                              )
+                          ],
+                        );
+                      },
+                    ),
+                  );
+                case LoadState.completed:
+                  return NullableHero(
+                    // tag: imageBase.heroTag,
+                    child: state.completedWidget,
+                  );
+                case LoadState.failed:
+                  return GestureDetector(
+                    onTap: () {
+                      state.reLoadImage();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                              value: progress == 0 ? null : progress),
+                          const Icon(
+                            Icons.error,
+                            color: Colors.white,
+                          ),
                           const SizedBox(
                             height: 20,
                           ),
-                          if (progress == 0)
-                            Text(
-                              I18n.of(context).connecting,
-                              style: const TextStyle(color: Colors.white),
-                            )
-                          else
-                            Text(
-                              '${(progress * 100).toStringAsFixed(2)}%',
-                              style: const TextStyle(color: Colors.white),
-                            )
+                          Text(
+                            state.lastException.toString(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ],
-                      );
-                    },
-                  ),
-                );
-              case LoadState.completed:
-                return NullableHero(
-                  // tag: imageBase.heroTag,
-                  child: state.completedWidget,
-                );
-              case LoadState.failed:
-                return GestureDetector(
-                  onTap: () {
-                    state.reLoadImage();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          state.lastException.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                );
-            }
-          },
+                  );
+              }
+            },
+          ),
         );
       },
     );
