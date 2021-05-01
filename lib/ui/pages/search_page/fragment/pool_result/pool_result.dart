@@ -42,26 +42,29 @@ class PoolResultFragment extends StatelessWidget {
       },
       body: Observer(
         builder: (_) {
-          return FloatingSearchBarScrollNotifier(
-            child: SmartRefresher(
-              enablePullUp: true,
-              enablePullDown: true,
-              footer: CustomFooter(
-                builder: buildFooter,
-              ),
-              controller: _store.refreshController,
-              header: MaterialClassicHeader(
-                distance: barHeight + 70,
-                height: barHeight + 80,
-              ),
-              onRefresh: _store.onRefresh,
-              onLoading: _store.onLoadMore,
-              child: ListView.builder(
-                padding:
-                    EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-                itemCount: _store.observableList.length,
-                itemBuilder: _itemBuilder,
-                itemExtent: 100.0,
+          return Scrollbar(
+            showTrackOnHover: true,
+            child: FloatingSearchBarScrollNotifier(
+              child: SmartRefresher(
+                enablePullUp: true,
+                enablePullDown: true,
+                footer: CustomFooter(
+                  builder: buildFooter,
+                ),
+                controller: _store.refreshController,
+                header: MaterialClassicHeader(
+                  distance: barHeight + 70,
+                  height: barHeight + 80,
+                ),
+                onRefresh: _store.onRefresh,
+                onLoading: _store.onLoadMore,
+                child: ListView.builder(
+                  padding:
+                      EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
+                  itemCount: _store.observableList.length,
+                  itemBuilder: _itemBuilder,
+                  itemExtent: 100.0,
+                ),
               ),
             ),
           );

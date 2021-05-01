@@ -36,6 +36,7 @@ dependencies:
   material_floating_search_bar: ^0.3.4
   dio_cache_interceptor: ^2.2.0
   synchronized: ^3.0.0
+  flutter_hooks: ^0.16.0
 
 
   pull_to_refresh:

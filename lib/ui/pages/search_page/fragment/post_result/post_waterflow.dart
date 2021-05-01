@@ -36,29 +36,33 @@ class PostWaterFlow extends StatelessWidget {
 
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Observer(builder: (_) {
-      return FloatingSearchBarScrollNotifier(
-        child: SmartRefresher(
-          enablePullUp: true,
-          enablePullDown: true,
-          footer: CustomFooter(
-            builder: buildFooter,
-          ),
-          controller: store.refreshController,
-          header: MaterialClassicHeader(
-            distance: barHeight + 70,
-            height: barHeight + 80,
-          ),
-          onRefresh: store.onRefresh,
-          onLoading: store.onLoadMore,
-          child: WaterfallFlow.builder(
-            padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
-            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount: settingStore.previewRowNum,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
+      return Scrollbar(
+        showTrackOnHover: true,
+        child: FloatingSearchBarScrollNotifier(
+          child: SmartRefresher(
+            enablePullUp: true,
+            enablePullDown: true,
+            footer: CustomFooter(
+              builder: buildFooter,
             ),
-            itemCount: store.postList.length,
-            itemBuilder: _itemBuilder,
+            controller: store.refreshController,
+            header: MaterialClassicHeader(
+              distance: barHeight + 70,
+              height: barHeight + 80,
+            ),
+            onRefresh: store.onRefresh,
+            onLoading: store.onLoadMore,
+            child: WaterfallFlow.builder(
+              padding:
+                  EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
+              gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                crossAxisCount: settingStore.previewRowNum,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+              ),
+              itemCount: store.postList.length,
+              itemBuilder: _itemBuilder,
+            ),
           ),
         ),
       );

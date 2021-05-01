@@ -39,23 +39,26 @@ class PoolPreviewPage extends StatelessWidget {
               itemExtent: 100.0,
             );
 
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                title: Text(booruPool.name.replaceAll('', '\u{200B}')),
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    size: 18,
+          return Scrollbar(
+            showTrackOnHover: true,
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  title: Text(booruPool.name.replaceAll('', '\u{200B}')),
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      size: 18,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    tooltip: I18n.of(context).back,
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  tooltip: I18n.of(context).back,
                 ),
-              ),
-              child,
-            ],
+                child,
+              ],
+            ),
           );
         },
       ),

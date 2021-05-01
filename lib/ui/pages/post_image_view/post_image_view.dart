@@ -8,6 +8,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/store/download_store.dart';
+import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
 import 'package:catpic/ui/pages/post_image_view/store/store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:dio/dio.dart';
@@ -34,6 +35,7 @@ class PostImageViewPage extends StatelessWidget {
           itemBuilder: futureItemBuilder,
           itemCount: itemCount,
         ),
+        pageController = PageController(initialPage: index),
         super(key: key);
 
   PostImageViewPage.count({
@@ -50,6 +52,7 @@ class PostImageViewPage extends StatelessWidget {
           itemBuilder: (index) => Future.value(postList[index]),
           itemCount: postList.length,
         ),
+        pageController = PageController(initialPage: index),
         super(key: key);
 
   final Dio dio;
@@ -60,6 +63,8 @@ class PostImageViewPage extends StatelessWidget {
   final PostImageViewStore store;
 
   final ValueChanged<String>? onAddTag;
+
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +84,7 @@ class PostImageViewPage extends StatelessWidget {
         dio: dio,
         index: index,
         itemCount: itemCount,
+        pageController: pageController,
         futureItemBuilder: (index) async {
           return (await futureItemBuilder(index)).getDisplayImg();
         },
@@ -366,6 +372,32 @@ class PostImageViewPage extends StatelessWidget {
   }
 
   Widget buildBottomBar() {
+    return buildBottomPageBar();
+  }
+
+  Widget buildBottomPageBar() {
+    return BottomAppBar(
+      elevation: 0,
+      color: Colors.black54,
+      child: SizedBox(
+        height: 60,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20, top: 20),
+          child: PageSlider(
+            value: store.currentIndex + 1,
+            count: itemCount,
+            controller: store.pageSliderController,
+            onChange: (double value) {
+              store.setIndex(value.toInt());
+              pageController.jumpToPage(value.toInt());
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  BottomAppBar buildBottomInfoBar() {
     return BottomAppBar(
       color: Colors.transparent,
       child: Observer(

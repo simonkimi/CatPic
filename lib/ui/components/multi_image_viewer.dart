@@ -18,6 +18,7 @@ class MultiImageViewer extends StatefulWidget {
     this.onIndexChange,
     required this.futureItemBuilder,
     required this.itemCount,
+    this.pageController,
   }) : super(key: key);
 
   final Dio dio;
@@ -26,6 +27,7 @@ class MultiImageViewer extends StatefulWidget {
   final ValueChanged<int>? onIndexChange;
   final ItemBuilder futureItemBuilder;
   final int itemCount;
+  final PageController? pageController;
 
   @override
   _MultiImageViewerState createState() => _MultiImageViewerState();
@@ -34,14 +36,10 @@ class MultiImageViewer extends StatefulWidget {
 class _MultiImageViewerState extends State<MultiImageViewer>
     with TickerProviderStateMixin {
   Animation<double>? _doubleClickAnimation;
-  late final AnimationController _doubleClickAnimationController =
-      AnimationController(
-    duration: const Duration(milliseconds: 150),
-    vsync: this,
-  );
+  late final AnimationController _doubleClickAnimationController;
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
-  late final pageController = PageController(initialPage: widget.index);
+  late final PageController pageController;
   late final List<DioImageProvider> imageProviders;
 
   @override
@@ -53,6 +51,13 @@ class _MultiImageViewerState extends State<MultiImageViewer>
               dio: widget.dio,
               urlBuilder: () => widget.futureItemBuilder(index),
             ));
+    pageController =
+        widget.pageController ?? PageController(initialPage: widget.index);
+
+    _doubleClickAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       onPageIndexChange(widget.index);
@@ -82,6 +87,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
       itemBuilder: (context, index) {
         final imageProvider = imageProviders[index];
         return ExtendedImage(
+          key: UniqueKey(),
           image: imageProvider,
           enableLoadState: true,
           handleLoadingProgress: true,
