@@ -12,6 +12,7 @@ class SearchBarTmpController {
 
   set tmp(String value) {
     _state?.setTmp(value);
+    _state?.onQueryChanged(value);
   }
 }
 
@@ -79,6 +80,10 @@ class SearchBarState extends State<SearchBar> {
     setState(() {
       _searchText = _searchTmp;
     });
+  }
+
+  void onQueryChanged(String value) {
+    widget.onQueryChanged?.call(value);
   }
 
   @override

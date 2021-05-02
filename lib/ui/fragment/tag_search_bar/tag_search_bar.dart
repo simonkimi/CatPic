@@ -179,6 +179,7 @@ class _TagSearchBarState extends State<TagSearchBar>
       ),
       onQueryChanged: (value) {
         _onSearchTagChange(value);
+        filterStore.setSearchText(value);
         widget.onTextChange?.call(value);
       },
       debounceDelay: settingStore.autoCompleteUseNetwork
