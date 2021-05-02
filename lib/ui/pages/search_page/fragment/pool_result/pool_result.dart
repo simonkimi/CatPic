@@ -31,7 +31,7 @@ class PoolResultFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (_store.isLoading) {
+      if (_store.lock.locked) {
         _store.refreshController.requestRefresh();
       }
     });

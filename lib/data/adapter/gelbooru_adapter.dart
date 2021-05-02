@@ -31,8 +31,10 @@ class GelbooruAdapter implements BooruAdapter {
     required String tags,
     required int page,
     required int limit,
+    CancelToken? cancelToken,
   }) async {
-    final str = await client.postsList(tags: tags, limit: limit, pid: page);
+    final str = await client.postsList(
+        tags: tags, limit: limit, pid: page, cancelToken: cancelToken);
     return await compute(GelbooruPostParser.parse, str);
   }
 

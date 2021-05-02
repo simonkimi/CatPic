@@ -16,6 +16,7 @@ class DanbooruClient extends BaseClient {
     required int limit,
     required int page,
     required String tags,
+    CancelToken? cancelToken,
   }) async {
     final baseUri = Uri.parse('posts.json');
     final uri = baseUri.replace(
@@ -26,7 +27,7 @@ class DanbooruClient extends BaseClient {
       'tags': tags
     }.trim);
 
-    return (await dio.getUri<String>(uri)).data ?? '';
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data ?? '';
   }
 
   Future<String> postSingle(int id) async {

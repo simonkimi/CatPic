@@ -29,7 +29,7 @@ class PostWaterFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (store.isLoading) {
+      if (store.lock.locked) {
         store.refreshController.requestRefresh();
       }
     });

@@ -26,7 +26,7 @@ class MoebooruPostParse {
         tags: {'_': root.tags.split(' ')},
         source: root.source,
         score: root.score.toString(),
-        createTime: parseTime(root.updatedAt ?? 0),
+        createTime: parseTime(root.updatedAt ?? root.createdAt),
       );
     }).toList();
   }
@@ -38,12 +38,12 @@ class MoebooruPostParse {
       case 'e':
         return PostRating.EXPLICIT;
       case 'q':
+      default:
         return PostRating.QUESTIONABLE;
     }
-    return PostRating.QUESTIONABLE;
   }
 
   static String parseTime(int timeStamp) {
-    return DateTime.fromMicrosecondsSinceEpoch(timeStamp * 1000).toString();
+    return DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000).toString();
   }
 }

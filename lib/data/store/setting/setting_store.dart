@@ -56,14 +56,10 @@ abstract class SettingStoreBase with Store {
 
   late CacheOptions dioCacheOptions;
 
+  var cacheDir = '';
+
   @action
   Future<void> init() async {
-    late Directory dbFolder;
-    if (Platform.isWindows) {
-      dbFolder = await getApplicationSupportDirectory();
-    } else {
-      dbFolder = await getApplicationDocumentsDirectory();
-    }
     final sp = SpUtil.getSp()!;
     useCardWidget = sp.getBool('useCardWidget') ?? true;
     showCardDetail = sp.getBool('showCardDetail') ?? true;
@@ -77,15 +73,28 @@ abstract class SettingStoreBase with Store {
     onlineTag = sp.getBool('onlineTag') ?? false;
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
+
+    cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
+
     dioCacheOptions = CacheOptions(
-      store: FileCacheStore(
-        p.join(dbFolder.path, 'caches'),
-      ),
+      store: FileCacheStore(cacheDir),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],
       priority: CachePriority.normal,
       maxStale: const Duration(days: 30),
     );
+  }
+
+  Future<String> getCacheDir() async {
+    final path = p.join(
+        (Platform.isWindows
+                ? await getApplicationSupportDirectory()
+                : await getApplicationDocumentsDirectory())
+            .path,
+        'cache');
+    final sp = SpUtil.getSp()!;
+    sp.setString(cacheDir, path);
+    return path;
   }
 
   @action

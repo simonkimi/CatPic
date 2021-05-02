@@ -15,6 +15,7 @@ class MoebooruClient extends BaseClient {
     required int limit,
     required int page,
     required String tags,
+    CancelToken? cancelToken,
   }) async {
     final uri = Uri(
         path: 'post.json',
@@ -24,7 +25,7 @@ class MoebooruClient extends BaseClient {
           'tags': tags
         }.trim);
 
-    return (await dio.getUri<String>(uri)).data!;
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 
   /// 获取tag详细信息

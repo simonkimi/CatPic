@@ -33,9 +33,14 @@ class MoebooruAdapter implements BooruAdapter {
   }
 
   @override
-  Future<List<BooruPost>> postList(
-      {required String tags, required int page, required int limit}) async {
-    final str = await client.postsList(tags: tags, limit: limit, page: page);
+  Future<List<BooruPost>> postList({
+    required String tags,
+    required int page,
+    required int limit,
+    CancelToken? cancelToken,
+  }) async {
+    final str = await client.postsList(
+        tags: tags, limit: limit, page: page, cancelToken: cancelToken);
     return await compute(MoebooruPostParse.parse, str);
   }
 

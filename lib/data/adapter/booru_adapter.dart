@@ -41,6 +41,7 @@ abstract class BooruAdapter {
     required String tags,
     required int page,
     required int limit,
+    CancelToken? cancelToken,
   });
 
   Future<List<BooruTag>> tagList({

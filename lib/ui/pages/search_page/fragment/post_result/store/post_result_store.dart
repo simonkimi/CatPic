@@ -28,7 +28,8 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   Future<List<BooruPost>> onLoadNextPage() => adapter.postList(
         tags: searchText,
         page: page,
-        limit: 50,
+        limit: settingStore.eachPageItem,
+        cancelToken: cancelToken,
       );
 
   @override

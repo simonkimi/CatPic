@@ -12,7 +12,10 @@ class GelbooruClient extends BaseClient {
   /// [pid] The page number.
   /// [tags] The tags to search for. Any tag combination that works on the web site will work here. This includes all the meta-tags.
   Future<String> postsList(
-      {required int limit, required int pid, required String tags}) async {
+      {required int limit,
+      required int pid,
+      required String tags,
+      CancelToken? cancelToken}) async {
     final baseUri = Uri.parse('index.php?page=dapi&s=post&q=index');
     final uri = baseUri.replace(
         queryParameters: {
@@ -22,7 +25,7 @@ class GelbooruClient extends BaseClient {
       'tags': tags
     }.trim);
 
-    return (await dio.getUri<String>(uri)).data ?? '';
+    return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data ?? '';
   }
 
   /// 获取tag详细信息

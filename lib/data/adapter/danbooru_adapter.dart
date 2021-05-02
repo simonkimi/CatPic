@@ -31,12 +31,10 @@ class DanbooruAdapter implements BooruAdapter {
       {required String tags,
       required int page,
       required int limit,
+      CancelToken? cancelToken,
       Order order = Order.COUNT}) async {
     final str = await client.postsList(
-      tags: tags,
-      limit: limit,
-      page: page,
-    );
+        tags: tags, limit: limit, page: page, cancelToken: cancelToken);
 
     return await compute(DanbooruPostParse.parse, str);
   }
