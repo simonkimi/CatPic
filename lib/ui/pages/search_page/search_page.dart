@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/artist_result.dart';
+import 'package:catpic/ui/pages/search_page/fragment/tag_result/tag_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
@@ -79,22 +80,29 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget buildSearchBody(String tag, SearchType type) {
     if (mainStore.websiteEntity != null) {
+      final key = ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag');
       switch (searchType) {
         case SearchType.POST:
           return PostResultFragment(
-            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            key: key,
             searchText: tag,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );
         case SearchType.POOL:
           return PoolResultFragment(
-            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            key: key,
             searchText: tag,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );
         case SearchType.ARTIST:
           return ArtistResultFragment(
-            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            key: key,
+            searchText: tag,
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
+          );
+        case SearchType.TAGS:
+          return TagResultFragment(
+            key: key,
             searchText: tag,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );

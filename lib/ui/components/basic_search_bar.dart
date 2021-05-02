@@ -48,7 +48,7 @@ class _BasicSearchBarState extends State<BasicSearchBar> {
         }
         final nowTime = DateTime.now();
         if (mainStore.searchPageCount <= 1 &&
-            nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
+            nowTime.difference(lastClickBack) > const Duration(seconds: 2)) {
           BotToast.showText(text: I18n.of(context).click_again_to_exit);
           lastClickBack = nowTime;
           return false;

@@ -112,7 +112,7 @@ class _TagSearchBarState extends State<TagSearchBar>
           }
           final nowTime = DateTime.now();
           if (mainStore.searchPageCount <= 1 &&
-              nowTime.difference(lastClickBack) > const Duration(seconds: 1)) {
+              nowTime.difference(lastClickBack) > const Duration(seconds: 2)) {
             BotToast.showText(text: I18n.g.click_again_to_exit);
             lastClickBack = nowTime;
             return false;

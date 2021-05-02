@@ -152,7 +152,17 @@ class _MainDrawerState extends State<MainDrawer> {
               ListTile(
                 leading: const Icon(Icons.tag),
                 title: Text(I18n.of(context).tag),
-                onTap: () {},
+                onTap: () {
+                  if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const SearchPage(
+                                  searchType: SearchType.TAGS,
+                                )),
+                        (route) => false);
+                  else
+                    Navigator.of(context).pop();
+                },
               ),
             if (support?.contains(SupportPage.ARTISTS) ?? false)
               ListTile(
