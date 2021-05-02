@@ -54,7 +54,7 @@ class _TagSearchBarState extends State<TagSearchBar>
   late final Animation<double> actionAnimation =
       Tween<double>(begin: 0.0, end: 0.375).animate(actionController);
 
-  late final filterStore = FilterStore(searchBarController.query);
+  late final filterStore = FilterStore(widget.searchText);
 
   var suggestionList = <SearchSuggestion>[];
   var loadingProgress = false;
