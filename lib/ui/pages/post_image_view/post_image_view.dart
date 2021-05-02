@@ -416,7 +416,6 @@ class PostImageViewPage extends HookWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20, top: 20),
           child: Observer(builder: (_) {
-            print('currentIndex: ${store.currentIndex}');
             return PageSlider(
               value: store.currentIndex + 1,
               count: itemCount,

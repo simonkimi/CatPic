@@ -1,10 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/main.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:catpic/i18n.dart';
-
-class NoMorePage implements Exception {}
 
 abstract class ILoadMore<T> {
   ILoadMore(this.searchText) {
@@ -23,11 +22,13 @@ abstract class ILoadMore<T> {
 
   Future<void> loadNextPage() async {
     final list = await onLoadNextPage();
-    if (list.isEmpty) {
-      throw NoMorePage();
-    }
     page += 1;
     observableList.addAll(list);
+    refreshController.loadComplete();
+    refreshController.refreshCompleted();
+    if (list.length < settingStore.eachPageItem) {
+      refreshController.loadNoData();
+    }
     print('loadNextPage ${list.length}');
   }
 
@@ -40,11 +41,6 @@ abstract class ILoadMore<T> {
       page = 0;
       await loadNextPage();
       await onDataChange();
-      refreshController.loadComplete();
-      refreshController.refreshCompleted();
-    } on NoMorePage {
-      refreshController.loadNoData();
-      refreshController.refreshCompleted();
     } on DioError catch (e) {
       refreshController.loadFailed();
       refreshController.refreshFailed();
@@ -69,8 +65,6 @@ abstract class ILoadMore<T> {
       await loadNextPage();
       await onDataChange();
       refreshController.loadComplete();
-    } on NoMorePage {
-      refreshController.loadNoData();
     } on DioError catch (e) {
       refreshController.loadFailed();
       print('onLoadMore ${e.message}');

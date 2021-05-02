@@ -36,7 +36,6 @@ class PageSliderState extends State<PageSlider> {
   }
 
   void setPage(int newValue) {
-    print('setPage $newValue');
     setState(() {
       value = newValue;
     });
