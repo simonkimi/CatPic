@@ -1,5 +1,4 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/main.dart';
 import 'package:dio/dio.dart' hide Lock;
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -23,6 +22,8 @@ abstract class ILoadMore<T> {
 
   Future<void> onDataChange();
 
+  int? get pageItemCount;
+
   Future<void> loadNextPage() async {
     await lock.synchronized(() async {
       final list = await onLoadNextPage();
@@ -30,9 +31,8 @@ abstract class ILoadMore<T> {
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
-      if (list.length < settingStore.eachPageItem) {
+      if (list.isEmpty || (list.length < (pageItemCount ?? 9999999)))
         refreshController.loadNoData();
-      }
       print('loadNextPage ${page - 1} ${list.length}');
     });
   }

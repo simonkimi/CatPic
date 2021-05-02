@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -8,25 +7,27 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 
-class PoolSearchBar extends StatefulWidget {
-  const PoolSearchBar({
+class BasicSearchBar extends StatefulWidget {
+  const BasicSearchBar({
     Key? key,
     this.body,
     required this.onSearch,
     this.controller,
     this.searchText = 'CatPic',
+    required this.historyType,
   }) : super(key: key);
 
   final Widget? body;
   final String searchText;
   final ValueChanged<String> onSearch;
   final FloatingSearchBarController? controller;
+  final int historyType;
 
   @override
-  _PoolSearchBarState createState() => _PoolSearchBarState();
+  _BasicSearchBarState createState() => _BasicSearchBarState();
 }
 
-class _PoolSearchBarState extends State<PoolSearchBar> {
+class _BasicSearchBarState extends State<BasicSearchBar> {
   late final FloatingSearchBarController searchBarController =
       widget.controller ?? FloatingSearchBarController();
   var suggestionList = <SearchSuggestion>[];
@@ -109,7 +110,8 @@ class _PoolSearchBarState extends State<PoolSearchBar> {
 
   Future<void> _onSearchTagChange([String? tag]) async {
     final dao = DatabaseHelper().historyDao;
-    final list = (await dao.getAll()).where((e) => e.type == HistoryType.POOL);
+    final list =
+        (await dao.getAll()).where((e) => e.type == widget.historyType);
     setState(() {
       suggestionList = list
           .where((e) => e.history.trim().isNotEmpty)
@@ -127,7 +129,7 @@ class _PoolSearchBarState extends State<PoolSearchBar> {
     } else {
       dao.insert(HistoryTableCompanion.insert(
         history: tag,
-        type: HistoryType.POOL,
+        type: widget.historyType,
       ));
     }
   }

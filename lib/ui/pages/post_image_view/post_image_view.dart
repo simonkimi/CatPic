@@ -7,7 +7,7 @@ import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
-import 'package:catpic/ui/pages/download_page/store/download_store.dart';
+import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
 import 'package:catpic/ui/pages/post_image_view/store/store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
@@ -317,17 +317,17 @@ class PostImageViewPage extends HookWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.message_outlined,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
+                // Expanded(
+                //   flex: 1,
+                //   child: OutlinedButton(
+                //     onPressed: () {},
+                //     child: Icon(
+                //       Icons.message_outlined,
+                //       color: Theme.of(context).primaryColor,
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(width: 10),
                 Expanded(
                   flex: 1,
                   child: OutlinedButton(

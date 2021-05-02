@@ -1,7 +1,9 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/parser/danbooru/artist_parser.dart';
 import 'package:catpic/data/parser/danbooru/pool_parser.dart';
 import 'package:catpic/data/parser/danbooru/post_parser.dart';
 import 'package:catpic/data/parser/danbooru/tag_parser.dart';
@@ -73,4 +75,16 @@ class DanbooruAdapter implements BooruAdapter {
 
   @override
   Dio get dio => client.dio;
+
+  @override
+  Future<List<BooruArtist>> artistList({
+    required String name,
+    required int page,
+  }) async {
+    final str = await client.artistList(
+      name: name,
+      page: page,
+    );
+    return await compute(DanbooruArtistParser.parse, str);
+  }
 }

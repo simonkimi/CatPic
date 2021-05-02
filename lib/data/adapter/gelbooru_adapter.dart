@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
@@ -64,5 +65,13 @@ class GelbooruAdapter implements BooruAdapter {
     required int page,
   }) {
     throw UnsupportedError('Gelbooru not support Pool!');
+  }
+
+  @override
+  Future<List<BooruArtist>> artistList({
+    required String name,
+    required int page,
+  }) {
+    throw UnsupportedError('Gelbooru not support Artist!');
   }
 }

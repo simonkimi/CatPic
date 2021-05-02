@@ -1,9 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/data/database/entity/history.dart';
+import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/search_page/fragment/pool_result/pool_search_bar.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,8 @@ class PoolResultFragment extends StatelessWidget {
       }
     });
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
-    return PoolSearchBar(
+    return BasicSearchBar(
+      historyType: HistoryType.POOL,
       onSearch: (value) {
         _store.onNewSearch(value.trim());
       },

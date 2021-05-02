@@ -22,6 +22,9 @@ abstract class PoolResultStoreBase extends ILoadMore<BooruPool> with Store {
       );
 
   @override
+  int? get pageItemCount => null;
+
+  @override
   @action
   Future<void> onDataChange() async {}
 }

@@ -1,7 +1,9 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/parser/moebooru/artist_parser.dart';
 import 'package:catpic/data/parser/moebooru/pool_parser.dart';
 import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
@@ -75,5 +77,17 @@ class MoebooruAdapter implements BooruAdapter {
       cancelToken: cancelToken,
     );
     return await compute(MoebooruPoolParser.parse, str);
+  }
+
+  @override
+  Future<List<BooruArtist>> artistList({
+    required String name,
+    required int page,
+  }) async {
+    final str = await client.artistList(
+      name: name,
+      page: page,
+    );
+    return await compute(MoebooruArtistParse.parse, str);
   }
 }

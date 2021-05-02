@@ -33,6 +33,9 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
       );
 
   @override
+  int get pageItemCount => settingStore.eachPageItem;
+
+  @override
   @action
   Future<void> onDataChange() async {}
 }

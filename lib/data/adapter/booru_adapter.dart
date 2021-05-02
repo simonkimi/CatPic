@@ -1,5 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
+import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
@@ -52,6 +53,11 @@ abstract class BooruAdapter {
   });
 
   Future<List<BooruPool>> poolList({
+    required String name,
+    required int page,
+  });
+
+  Future<List<BooruArtist>> artistList({
     required String name,
     required int page,
   });
