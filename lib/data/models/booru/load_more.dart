@@ -31,7 +31,7 @@ abstract class ILoadMore<T> {
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
-      if (list.isEmpty || (list.length < (pageItemCount ?? 9999999)))
+      if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
         refreshController.loadNoData();
       print('loadNextPage ${page - 1} ${list.length}');
     });

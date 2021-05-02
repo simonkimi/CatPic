@@ -8,7 +8,11 @@ class DanbooruArtistParser {
 
     return artists
         .map((e) => Root.fromJson(e))
-        .map((e) => BooruArtist(name: e.name, extra: e.otherNames))
+        .map((e) => BooruArtist(
+              name: e.name,
+              urls: e.urls,
+              id: e.id.toString(),
+            ))
         .toList();
   }
 }

@@ -8,7 +8,11 @@ class MoebooruArtistParse {
 
     return artists
         .map((e) => Root.fromJson(e))
-        .map((e) => BooruArtist(name: e.name, extra: e.urls))
+        .map((e) => BooruArtist(
+              name: e.name,
+              urls: e.urls,
+              id: e.id.toString(),
+            ))
         .toList();
   }
 }

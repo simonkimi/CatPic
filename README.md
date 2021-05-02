@@ -29,9 +29,9 @@
 - [x] 选择图片质量
 - [x] 下载功能
 - [x] Pool列表
+- [x] Artist列表
 
 # TODO List
-- [ ] Artist列表
 - [ ] Tag列表
 - [ ] 查看评论
 - [ ] 收藏功能

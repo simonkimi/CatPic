@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
+import 'package:catpic/ui/pages/search_page/fragment/artist_result/artist_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
@@ -92,7 +93,11 @@ class _SearchPageState extends State<SearchPage> {
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
           );
         case SearchType.ARTIST:
-          throw Exception('TODO ARTIST');
+          return ArtistResultFragment(
+            key: ValueKey('${mainStore.websiteEntity!.host}${type.index}$tag'),
+            searchText: tag,
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
+          );
       }
     }
     return EmptyWebsiteFragment();

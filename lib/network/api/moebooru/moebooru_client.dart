@@ -92,8 +92,9 @@ class MoebooruClient extends BaseClient {
   /// [id] The page number.
   Future<String> artistList({required String name, required int page}) async {
     final uri = Uri(
-        path: 'artist.json',
-        queryParameters: {'name': name, 'page': page.toString()}.trim);
-    return (await dio.getUri(uri)).data;
+      path: 'artist.json',
+      queryParameters: {'name': name, 'page': page.toString()}.trim,
+    );
+    return (await dio.getUri<String>(uri)).data!;
   }
 }

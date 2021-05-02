@@ -1,9 +1,11 @@
 class BooruArtist {
   BooruArtist({
+    required this.id,
     required this.name,
-    required this.extra,
+    required this.urls,
   });
 
+  final String id;
   final String name;
-  final List<String> extra;
+  final List<String> urls;
 }

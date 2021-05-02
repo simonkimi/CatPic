@@ -5,8 +5,11 @@ import 'package:catpic/utils/utils.dart';
 class Root {
   Root({
     required this.id,
-    required this.createdAt,
+    required this.artistId,
     required this.name,
+    required this.updaterId,
+    required this.urls,
+    required this.createdAt,
     required this.updatedAt,
     required this.isDeleted,
     required this.groupName,
@@ -15,6 +18,17 @@ class Root {
   });
 
   factory Root.fromJson(Map<String, dynamic> jsonRes) {
+    final List<String>? urls = jsonRes['urls'] is List ? <String>[] : null;
+    if (urls != null) {
+      for (final dynamic item in jsonRes['urls']!) {
+        if (item != null) {
+          tryCatch(() {
+            urls.add(asT<String>(item)!);
+          });
+        }
+      }
+    }
+
     final List<String>? otherNames =
         jsonRes['other_names'] is List ? <String>[] : null;
     if (otherNames != null) {
@@ -28,8 +42,11 @@ class Root {
     }
     return Root(
       id: asT<int>(jsonRes['id'])!,
-      createdAt: asT<String>(jsonRes['created_at'])!,
+      artistId: asT<int>(jsonRes['artist_id'])!,
       name: asT<String>(jsonRes['name'])!,
+      updaterId: asT<int>(jsonRes['updater_id'])!,
+      urls: urls!,
+      createdAt: asT<String>(jsonRes['created_at'])!,
       updatedAt: asT<String>(jsonRes['updated_at'])!,
       isDeleted: asT<bool>(jsonRes['is_deleted'])!,
       groupName: asT<String>(jsonRes['group_name'])!,
@@ -39,8 +56,11 @@ class Root {
   }
 
   int id;
-  String createdAt;
+  int artistId;
   String name;
+  int updaterId;
+  List<String> urls;
+  String createdAt;
   String updatedAt;
   bool isDeleted;
   String groupName;
@@ -54,8 +74,11 @@ class Root {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'created_at': createdAt,
+        'artist_id': artistId,
         'name': name,
+        'updater_id': updaterId,
+        'urls': urls,
+        'created_at': createdAt,
         'updated_at': updatedAt,
         'is_deleted': isDeleted,
         'group_name': groupName,

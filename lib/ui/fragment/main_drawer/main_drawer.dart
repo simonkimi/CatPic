@@ -158,7 +158,17 @@ class _MainDrawerState extends State<MainDrawer> {
               ListTile(
                 leading: const Icon(Icons.supervisor_account_sharp),
                 title: Text(I18n.of(context).artist),
-                onTap: () {},
+                onTap: () {
+                  if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const SearchPage(
+                                  searchType: SearchType.ARTIST,
+                                )),
+                        (route) => false);
+                  else
+                    Navigator.of(context).pop();
+                },
               ),
           ],
         ),
