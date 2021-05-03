@@ -22,35 +22,37 @@ class LoadingWidget extends StatelessWidget {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : GestureDetector(
-                  onTap: store.onRefresh,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          child: SvgPicture.asset(
-                            'assets/svg/empty.svg',
-                            color: Theme.of(context).primaryColor,
-                          ),
+              : store.observableList.isEmpty
+                  ? GestureDetector(
+                      onTap: store.onRefresh,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              child: SvgPicture.asset(
+                                'assets/svg/empty.svg',
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              I18n.of(context).search_empty,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            )
+                          ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          I18n.of(context).search_empty,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+                    )
+                  : const SizedBox(),
         );
       },
     );
