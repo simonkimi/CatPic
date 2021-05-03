@@ -19,6 +19,10 @@ abstract class ArtistResultStoreBase extends ILoadMore<BooruArtist> with Store {
   int? get pageItemCount => null;
 
   @override
+  @observable
+  bool isLoading = false;
+
+  @override
   Future<List<BooruArtist>> onLoadNextPage() =>
       adapter.artistList(name: searchText, page: page);
 

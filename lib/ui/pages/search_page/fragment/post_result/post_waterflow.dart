@@ -4,11 +4,11 @@ import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
+import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -31,49 +31,12 @@ class PostWaterFlow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
       return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        child:
-            store.observableList.isEmpty ? buildLoading(context) : buildList(),
+        duration: const Duration(milliseconds: 300),
+        child: store.observableList.isEmpty
+            ? LoadingWidget(store: store)
+            : buildList(),
       );
     });
-  }
-
-  Widget buildLoading(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      child: store.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : GestureDetector(
-              onTap: store.onRefresh,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      child: SvgPicture.asset(
-                        'assets/svg/empty.svg',
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      I18n.of(context).search_empty,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor),
-                    )
-                  ],
-                ),
-              ),
-            ),
-    );
   }
 
   Widget buildList() {
@@ -110,8 +73,8 @@ class PostWaterFlow extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
+    if (index >= store.postList.length) return const SizedBox();
     final post = store.postList[index];
-
     final loadDetail = () {
       Navigator.push(
         context,

@@ -2,8 +2,7 @@ import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:mobx/mobx.dart';
-
-import '../../../../../../main.dart';
+import 'package:catpic/main.dart';
 
 part 'tag_result_store.g.dart';
 
@@ -19,6 +18,10 @@ abstract class TagResultStoreBase extends ILoadMore<BooruTag> with Store {
 
   @override
   int? get pageItemCount => settingStore.eachPageItem;
+
+  @override
+  @observable
+  bool isLoading = false;
 
   @override
   Future<List<BooruTag>> onLoadNextPage() => adapter.tagList(

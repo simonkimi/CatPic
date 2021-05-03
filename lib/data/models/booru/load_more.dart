@@ -38,7 +38,6 @@ abstract class ILoadMore<T> {
         refreshController.loadNoData();
       print('loadNextPage ${page - 1} ${list.length}');
     });
-    isLoading = false;
   }
 
   Future<void> onRefresh() async {
@@ -59,6 +58,8 @@ abstract class ILoadMore<T> {
       refreshController.loadFailed();
       refreshController.refreshFailed();
       BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -81,6 +82,8 @@ abstract class ILoadMore<T> {
       print('onLoadMore ${e.toString()}');
       refreshController.loadFailed();
       BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -90,7 +93,7 @@ abstract class ILoadMore<T> {
     searchText = tag;
     page = 0;
     observableList.clear();
-    await refreshController.requestRefresh();
+    await onRefresh();
     await onDataChange();
   }
 }

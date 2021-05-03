@@ -5,6 +5,7 @@ import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,6 @@ class PoolResultFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (_store.lock.locked) {
-        _store.refreshController.requestRefresh();
-      }
-    });
-    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return BasicSearchBar(
       historyType: HistoryType.POOL,
       onSearch: (value) {
@@ -44,33 +39,41 @@ class PoolResultFragment extends StatelessWidget {
       },
       body: Observer(
         builder: (_) {
-          return Scrollbar(
-            showTrackOnHover: true,
-            child: FloatingSearchBarScrollNotifier(
-              child: SmartRefresher(
-                enablePullUp: true,
-                enablePullDown: true,
-                footer: CustomFooter(
-                  builder: buildFooter,
-                ),
-                controller: _store.refreshController,
-                header: MaterialClassicHeader(
-                  distance: barHeight + 70,
-                  height: barHeight + 80,
-                ),
-                onRefresh: _store.onRefresh,
-                onLoading: _store.onLoadMore,
-                child: ListView.builder(
-                  padding:
-                      EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-                  itemCount: _store.observableList.length,
-                  itemBuilder: _itemBuilder,
-                  itemExtent: 100.0,
-                ),
-              ),
-            ),
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child:
+                _store.isLoading ? LoadingWidget(store: _store) : buildList(),
           );
         },
+      ),
+    );
+  }
+
+  Scrollbar buildList() {
+    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
+    return Scrollbar(
+      showTrackOnHover: true,
+      child: FloatingSearchBarScrollNotifier(
+        child: SmartRefresher(
+          enablePullUp: true,
+          enablePullDown: true,
+          footer: CustomFooter(
+            builder: buildFooter,
+          ),
+          controller: _store.refreshController,
+          header: MaterialClassicHeader(
+            distance: barHeight + 70,
+            height: barHeight + 80,
+          ),
+          onRefresh: _store.onRefresh,
+          onLoading: _store.onLoadMore,
+          child: ListView.builder(
+            padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
+            itemCount: _store.observableList.length,
+            itemBuilder: _itemBuilder,
+            itemExtent: 100.0,
+          ),
+        ),
       ),
     );
   }

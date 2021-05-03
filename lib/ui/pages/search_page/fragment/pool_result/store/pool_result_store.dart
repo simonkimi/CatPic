@@ -16,6 +16,10 @@ abstract class PoolResultStoreBase extends ILoadMore<BooruPool> with Store {
   final BooruAdapter adapter;
 
   @override
+  @observable
+  bool isLoading = false;
+
+  @override
   Future<List<BooruPool>> onLoadNextPage() => adapter.poolList(
         name: searchText,
         page: page,

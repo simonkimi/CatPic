@@ -6,6 +6,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/store/artist_result_store.dart';
+import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -38,7 +39,7 @@ class ArtistResultFragment extends StatelessWidget {
         _store.refreshController.requestRefresh();
       }
     });
-    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
+
     return BasicSearchBar(
       historyType: HistoryType.ARTIST,
       onSearch: (value) {
@@ -46,32 +47,41 @@ class ArtistResultFragment extends StatelessWidget {
       },
       body: Observer(
         builder: (_) {
-          return Scrollbar(
-            showTrackOnHover: true,
-            child: FloatingSearchBarScrollNotifier(
-              child: SmartRefresher(
-                enablePullUp: true,
-                enablePullDown: true,
-                footer: CustomFooter(
-                  builder: buildFooter,
-                ),
-                controller: _store.refreshController,
-                header: MaterialClassicHeader(
-                  distance: barHeight + 70,
-                  height: barHeight + 80,
-                ),
-                onRefresh: _store.onRefresh,
-                onLoading: _store.onLoadMore,
-                child: ListView.builder(
-                  padding:
-                      EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-                  itemCount: _store.observableList.length,
-                  itemBuilder: _itemBuilder,
-                ),
-              ),
-            ),
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _store.isLoading
+                ? LoadingWidget(store: _store)
+                : buildScrollbar(),
           );
         },
+      ),
+    );
+  }
+
+  Scrollbar buildScrollbar() {
+    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
+    return Scrollbar(
+      showTrackOnHover: true,
+      child: FloatingSearchBarScrollNotifier(
+        child: SmartRefresher(
+          enablePullUp: true,
+          enablePullDown: true,
+          footer: CustomFooter(
+            builder: buildFooter,
+          ),
+          controller: _store.refreshController,
+          header: MaterialClassicHeader(
+            distance: barHeight + 70,
+            height: barHeight + 80,
+          ),
+          onRefresh: _store.onRefresh,
+          onLoading: _store.onLoadMore,
+          child: ListView.builder(
+            padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
+            itemCount: _store.observableList.length,
+            itemBuilder: _itemBuilder,
+          ),
+        ),
       ),
     );
   }
