@@ -78,7 +78,7 @@ class Root {
       tags: asT<String>(jsonRes['tags'])!,
       createdAt: asT<int>(jsonRes['created_at'])!,
       updatedAt: asT<int>(jsonRes['updated_at']),
-      creatorId: asT<int>(jsonRes['creator_id'])!,
+      creatorId: asT<int>(jsonRes['creator_id']),
       approverId: asT<Object?>(jsonRes['approver_id']),
       author: asT<String>(jsonRes['author'])!,
       change: asT<int>(jsonRes['change'])!,
@@ -128,7 +128,7 @@ class Root {
   String tags;
   int createdAt;
   int? updatedAt;
-  int creatorId;
+  int? creatorId;
   Object? approverId;
   String author;
   int change;

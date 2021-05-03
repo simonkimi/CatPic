@@ -69,6 +69,8 @@ abstract class ILoadMore<T> {
       return;
     }
     print('onLoadMore current page: $page');
+    await _loadNextPage();
+    await onDataChange();
     try {
       await _loadNextPage();
       await onDataChange();
@@ -76,7 +78,7 @@ abstract class ILoadMore<T> {
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) return;
       refreshController.loadFailed();
-      print('onLoadMore ${e.message}');
+      print('onLoadMore ${e.message} \n ${e.stackTrace}');
       BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
     } catch (e) {
       print('onLoadMore ${e.toString()}');
