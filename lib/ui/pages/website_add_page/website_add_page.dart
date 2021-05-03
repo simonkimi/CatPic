@@ -141,9 +141,18 @@ class WebsiteAddPage extends StatelessWidget {
         },
         title: I18n.of(context).site_type,
         choiceItems: [
-          S2Choice(value: WebsiteType.GELBOORU.index, title: 'Gelbooru'),
-          S2Choice(value: WebsiteType.MOEBOORU.index, title: 'Moebooru'),
-          S2Choice(value: WebsiteType.DANBOORU.index, title: 'Danbooru'),
+          S2Choice(
+            value: WebsiteType.GELBOORU.index,
+            title: WebsiteType.GELBOORU.string,
+          ),
+          S2Choice(
+            value: WebsiteType.MOEBOORU.index,
+            title: WebsiteType.MOEBOORU.string,
+          ),
+          S2Choice(
+            value: WebsiteType.DANBOORU.index,
+            title: WebsiteType.DANBOORU.string,
+          ),
         ],
       ),
     ];

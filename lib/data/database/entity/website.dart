@@ -26,15 +26,36 @@ class WebsiteTable extends Table {
 
   BlobColumn get favicon =>
       blob().clientDefault(() => Uint8List.fromList([]))();
+
+  TextColumn get username => text().nullable()();
+
+  TextColumn get password => text().nullable()();
 }
 
-enum WebsiteScheme { HTTP, HTTPS }
+enum WebsiteScheme {
+  HTTP,
+  HTTPS,
+}
 
-enum WebsiteType { EHENTAI, GELBOORU, MOEBOORU, DANBOORU }
+enum WebsiteType {
+  EHENTAI,
+  GELBOORU,
+  MOEBOORU,
+  DANBOORU,
+}
 
-Map<int, String> websiteTypeName = {
-  WebsiteType.EHENTAI.index: 'EHentai',
-  WebsiteType.GELBOORU.index: 'Gelbooru',
-  WebsiteType.MOEBOORU.index: 'Moebooru',
-  WebsiteType.DANBOORU.index: 'Danbooru',
-};
+extension WebsiteTypeName on WebsiteType {
+  String get string {
+    switch (this) {
+      case WebsiteType.EHENTAI:
+        return 'EHentai';
+      case WebsiteType.GELBOORU:
+        return 'Gelbooru';
+
+      case WebsiteType.MOEBOORU:
+        return 'Moebooru';
+      case WebsiteType.DANBOORU:
+        return 'Danbooru';
+    }
+  }
+}
