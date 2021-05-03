@@ -45,6 +45,8 @@
   "illegal_ip": "非法IP",
   "turn_on_host" : "必须先开启自定义主机!",
   "to_add_website": "还没有网站, 点我添加一个!",
+  "search_empty": "什么也没有啊!",
+  "search_error": "貌似出了点问题...",
 
   "safe": "安全",
   "explicit": "暴露",

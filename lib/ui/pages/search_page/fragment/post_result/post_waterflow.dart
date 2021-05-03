@@ -8,6 +8,7 @@ import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_resu
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -28,45 +29,81 @@ class PostWaterFlow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (store.lock.locked) {
-        store.refreshController.requestRefresh();
-      }
-    });
-
-    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Observer(builder: (_) {
-      return Scrollbar(
-        showTrackOnHover: true,
-        child: FloatingSearchBarScrollNotifier(
-          child: SmartRefresher(
-            enablePullUp: true,
-            enablePullDown: true,
-            footer: CustomFooter(
-              builder: buildFooter,
-            ),
-            controller: store.refreshController,
-            header: MaterialClassicHeader(
-              distance: barHeight + 70,
-              height: barHeight + 80,
-            ),
-            onRefresh: store.onRefresh,
-            onLoading: store.onLoadMore,
-            child: WaterfallFlow.builder(
-              padding:
-                  EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
-              gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                crossAxisCount: settingStore.previewRowNum,
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 5,
-              ),
-              itemCount: store.postList.length,
-              itemBuilder: _itemBuilder,
-            ),
-          ),
-        ),
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child:
+            store.observableList.isEmpty ? buildLoading(context) : buildList(),
       );
     });
+  }
+
+  Widget buildLoading(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      child: store.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    child: SvgPicture.asset(
+                      'assets/svg/empty.svg',
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    I18n.of(context).search_empty,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor),
+                  )
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget buildList() {
+    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
+    return Scrollbar(
+      showTrackOnHover: true,
+      child: FloatingSearchBarScrollNotifier(
+        child: SmartRefresher(
+          enablePullUp: true,
+          enablePullDown: true,
+          footer: CustomFooter(
+            builder: buildFooter,
+          ),
+          controller: store.refreshController,
+          header: MaterialClassicHeader(
+            distance: barHeight + 70,
+            height: barHeight + 80,
+          ),
+          onRefresh: store.onRefresh,
+          onLoading: store.onLoadMore,
+          child: WaterfallFlow.builder(
+            padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
+            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+              crossAxisCount: settingStore.previewRowNum,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+            ),
+            itemCount: store.postList.length,
+            itemBuilder: _itemBuilder,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _itemBuilder(BuildContext context, int index) {

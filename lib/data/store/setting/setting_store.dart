@@ -54,6 +54,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var preloadingNumber = 3;
 
+  @observable
+  var toolbarOpen = true;
+
   late CacheOptions dioCacheOptions;
 
   var cacheDir = '';
@@ -73,6 +76,7 @@ abstract class SettingStoreBase with Store {
     onlineTag = sp.getBool('onlineTag') ?? false;
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
+    toolbarOpen = sp.getBool('toolbarOpen') ?? true;
 
     cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
 
@@ -95,6 +99,12 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString(cacheDir, path);
     return path;
+  }
+
+  @action
+  void setToolbarOpen(bool value) {
+    toolbarOpen = value;
+    SpUtil.putBool('toolbarOpen', value);
   }
 
   @action

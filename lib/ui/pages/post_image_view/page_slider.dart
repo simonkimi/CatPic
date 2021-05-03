@@ -49,7 +49,7 @@ class PageSliderState extends State<PageSlider> {
         children: [
           Text(
             value.toInt().toString(),
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.white),
           ),
           Expanded(
             child: Slider(
@@ -70,7 +70,7 @@ class PageSliderState extends State<PageSlider> {
           ),
           Text(
             widget.count.toString(),
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),

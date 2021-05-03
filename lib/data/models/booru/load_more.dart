@@ -24,7 +24,10 @@ abstract class ILoadMore<T> {
 
   int? get pageItemCount;
 
-  Future<void> loadNextPage() async {
+  bool isLoading = false;
+
+  Future<void> _loadNextPage() async {
+    isLoading = true;
     await lock.synchronized(() async {
       final list = await onLoadNextPage();
       page += 1;
@@ -35,6 +38,7 @@ abstract class ILoadMore<T> {
         refreshController.loadNoData();
       print('loadNextPage ${page - 1} ${list.length}');
     });
+    isLoading = false;
   }
 
   Future<void> onRefresh() async {
@@ -42,7 +46,7 @@ abstract class ILoadMore<T> {
     try {
       observableList.clear();
       page = 0;
-      await loadNextPage();
+      await _loadNextPage();
       await onDataChange();
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) return;
@@ -65,7 +69,7 @@ abstract class ILoadMore<T> {
     }
     print('onLoadMore current page: $page');
     try {
-      await loadNextPage();
+      await _loadNextPage();
       await onDataChange();
       refreshController.loadComplete();
     } on DioError catch (e) {

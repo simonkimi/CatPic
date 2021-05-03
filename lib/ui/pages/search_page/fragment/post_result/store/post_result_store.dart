@@ -16,6 +16,10 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
 
   final BooruAdapter adapter;
 
+  @override
+  @observable
+  bool isLoading = false;
+
   @computed
   List<BooruPost> get postList {
     if (settingStore.saveModel) {

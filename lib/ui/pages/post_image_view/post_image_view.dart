@@ -375,8 +375,8 @@ class PostImageViewPage extends HookWidget {
 
   Widget buildBottomBar() {
     final infoController =
-        useAnimationController(duration: const Duration(milliseconds: 200))
-          ..animateTo(1);
+        useAnimationController(duration: const Duration(milliseconds: 200));
+
     final infoHideAni =
         Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 1))
             .animate(infoController);
@@ -409,8 +409,7 @@ class PostImageViewPage extends HookWidget {
 
   Widget buildBottomPageBar() {
     return BottomAppBar(
-      elevation: 0,
-      color: Colors.black54,
+      color: Colors.transparent,
       child: SizedBox(
         height: 60,
         child: Padding(

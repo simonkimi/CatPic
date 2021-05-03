@@ -30,7 +30,7 @@ abstract class PostImageViewStoreBase with Store {
   BooruPost? loadedBooruPost;
 
   @observable
-  var infoBarDisplay = false;
+  var infoBarDisplay = settingStore.toolbarOpen;
 
   @observable
   var pageBarDisplay = false;
@@ -38,6 +38,7 @@ abstract class PostImageViewStoreBase with Store {
   @action
   void setInfoBarDisplay(bool value) {
     infoBarDisplay = value;
+    settingStore.setToolbarOpen(value);
   }
 
   @action
