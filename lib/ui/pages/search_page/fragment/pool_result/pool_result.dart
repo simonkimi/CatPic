@@ -16,33 +16,27 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class PoolResultFragment extends StatelessWidget {
   PoolResultFragment({
     Key? key,
-    this.searchText = '',
     required this.adapter,
-  })   : _store = PoolResultStore(
-          searchText: searchText,
-          adapter: adapter,
-        ),
-        super(key: key);
+    required this.store,
+  }) : super(key: key);
 
-  final String searchText;
   final BooruAdapter adapter;
 
   final controller = FloatingSearchBarController();
-  final PoolResultStore _store;
+  final PoolResultStore store;
 
   @override
   Widget build(BuildContext context) {
     return BasicSearchBar(
       historyType: HistoryType.POOL,
       onSearch: (value) {
-        _store.onNewSearch(value.trim());
+        store.onNewSearch(value.trim());
       },
       body: Observer(
         builder: (_) {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child:
-                _store.isLoading ? LoadingWidget(store: _store) : buildList(),
+            child: store.isLoading ? LoadingWidget(store: store) : buildList(),
           );
         },
       ),
@@ -60,16 +54,17 @@ class PoolResultFragment extends StatelessWidget {
           footer: CustomFooter(
             builder: buildFooter,
           ),
-          controller: _store.refreshController,
+          controller: store.refreshController,
           header: MaterialClassicHeader(
             distance: barHeight + 70,
             height: barHeight + 80,
           ),
-          onRefresh: _store.onRefresh,
-          onLoading: _store.onLoadMore,
+          onRefresh: store.onRefresh,
+          onLoading: store.onLoadMore,
           child: ListView.builder(
+            controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-            itemCount: _store.observableList.length,
+            itemCount: store.observableList.length,
             itemBuilder: _itemBuilder,
             itemExtent: 100.0,
           ),
@@ -79,7 +74,7 @@ class PoolResultFragment extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    final pool = _store.observableList[index];
+    final pool = store.observableList[index];
     return Card(
       key: ValueKey('Pool${pool.id}'),
       child: InkWell(

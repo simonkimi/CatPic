@@ -18,37 +18,33 @@ class TagResultFragment extends StatelessWidget {
     Key? key,
     this.searchText = '',
     required this.adapter,
-  })   : _store = TagResultStore(
-          searchText: searchText,
-          adapter: adapter,
-        ),
-        super(key: key);
+    required this.store,
+  }) : super(key: key);
 
   final String searchText;
   final BooruAdapter adapter;
 
   final controller = FloatingSearchBarController();
-  final TagResultStore _store;
+  final TagResultStore store;
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (_store.lock.locked) {
-        _store.refreshController.requestRefresh();
+      if (store.lock.locked) {
+        store.refreshController.requestRefresh();
       }
     });
 
     return BasicSearchBar(
       historyType: HistoryType.TAG,
       onSearch: (value) {
-        _store.onNewSearch(value.trim());
+        store.onNewSearch(value.trim());
       },
       body: Observer(
         builder: (_) {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child:
-                _store.isLoading ? LoadingWidget(store: _store) : buildList(),
+            child: store.isLoading ? LoadingWidget(store: store) : buildList(),
           );
         },
       ),
@@ -66,16 +62,17 @@ class TagResultFragment extends StatelessWidget {
           footer: CustomFooter(
             builder: buildFooter,
           ),
-          controller: _store.refreshController,
+          controller: store.refreshController,
           header: MaterialClassicHeader(
             distance: barHeight + 70,
             height: barHeight + 80,
           ),
-          onRefresh: _store.onRefresh,
-          onLoading: _store.onLoadMore,
+          onRefresh: store.onRefresh,
+          onLoading: store.onLoadMore,
           child: ListView.builder(
+            controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-            itemCount: _store.observableList.length,
+            itemCount: store.observableList.length,
             itemBuilder: _itemBuilder,
           ),
         ),
@@ -84,7 +81,7 @@ class TagResultFragment extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    final tag = _store.observableList[index];
+    final tag = store.observableList[index];
     return Card(
       child: ListTile(
         title: Text(tag.name),

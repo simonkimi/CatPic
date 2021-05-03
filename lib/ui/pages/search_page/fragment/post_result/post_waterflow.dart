@@ -58,6 +58,7 @@ class PostWaterFlow extends StatelessWidget {
           onRefresh: store.onRefresh,
           onLoading: store.onLoadMore,
           child: WaterfallFlow.builder(
+            controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
             gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
               crossAxisCount: settingStore.previewRowNum,

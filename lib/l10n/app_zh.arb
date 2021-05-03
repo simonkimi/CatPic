@@ -83,6 +83,9 @@
   "no_more_text": "到底了",
   "can_load_text": "松手加载数据",
   "network_error": "网络错误",
+  "jump_page": "跳页",
+  "page": "页数",
+  "input_page": "请输入页数",
 
   "display": "显示",
   "preview": "缩略图",

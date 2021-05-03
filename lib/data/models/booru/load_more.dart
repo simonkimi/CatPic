@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart' hide Lock;
 import 'package:mobx/mobx.dart';
@@ -13,6 +14,7 @@ abstract class ILoadMore<T> {
   String searchText = '';
   final observableList = ObservableList<T>();
   final refreshController = RefreshController();
+  final listScrollController = ScrollController();
   final cancelToken = CancelToken();
   var page = 0;
 
@@ -97,5 +99,11 @@ abstract class ILoadMore<T> {
     observableList.clear();
     await onRefresh();
     await onDataChange();
+  }
+
+  Future<void> onJumpPage(int newPage) async {
+    page = newPage - 1;
+    observableList.clear();
+    await onLoadMore();
   }
 }

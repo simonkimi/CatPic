@@ -18,39 +18,34 @@ import '../../search_page.dart';
 class ArtistResultFragment extends StatelessWidget {
   ArtistResultFragment({
     Key? key,
-    this.searchText = '',
+    required this.store,
     required this.adapter,
-  })   : _store = ArtistResultStore(
-          searchText: searchText,
-          adapter: adapter,
-        ),
-        super(key: key);
+  }) : super(key: key);
 
-  final String searchText;
   final BooruAdapter adapter;
 
   final controller = FloatingSearchBarController();
-  final ArtistResultStore _store;
+  final ArtistResultStore store;
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (_store.lock.locked) {
-        _store.refreshController.requestRefresh();
+      if (store.lock.locked) {
+        store.refreshController.requestRefresh();
       }
     });
 
     return BasicSearchBar(
       historyType: HistoryType.ARTIST,
       onSearch: (value) {
-        _store.onNewSearch(value.trim());
+        store.onNewSearch(value.trim());
       },
       body: Observer(
         builder: (_) {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: _store.isLoading
-                ? LoadingWidget(store: _store)
+            child: store.isLoading
+                ? LoadingWidget(store: store)
                 : buildScrollbar(),
           );
         },
@@ -69,16 +64,17 @@ class ArtistResultFragment extends StatelessWidget {
           footer: CustomFooter(
             builder: buildFooter,
           ),
-          controller: _store.refreshController,
+          controller: store.refreshController,
           header: MaterialClassicHeader(
             distance: barHeight + 70,
             height: barHeight + 80,
           ),
-          onRefresh: _store.onRefresh,
-          onLoading: _store.onLoadMore,
+          onRefresh: store.onRefresh,
+          onLoading: store.onLoadMore,
           child: ListView.builder(
+            controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-            itemCount: _store.observableList.length,
+            itemCount: store.observableList.length,
             itemBuilder: _itemBuilder,
           ),
         ),
@@ -87,7 +83,7 @@ class ArtistResultFragment extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    final artist = _store.observableList[index];
+    final artist = store.observableList[index];
     return Card(
       child: ExpansionTile(
         title: Text(artist.name),

@@ -6,18 +6,15 @@ import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_resu
 import 'package:flutter/material.dart';
 
 class PostResultFragment extends StatelessWidget {
-  PostResultFragment({
-    Key? key,
-    this.searchText = '',
-    required this.adapter,
-  })   : _store = PostResultStore(
-          searchText: searchText,
-          adapter: adapter,
-        ),
-        super(key: key);
+  PostResultFragment(
+      {Key? key,
+      this.searchText = '',
+      required this.adapter,
+      required this.store})
+      : super(key: key);
   final String searchText;
   final BooruAdapter adapter;
-  final PostResultStore _store;
+  final PostResultStore store;
   final tmpController = SearchBarTmpController();
 
   @override
@@ -28,7 +25,7 @@ class PostResultFragment extends StatelessWidget {
       tmpController: tmpController,
       onSearch: (value) {
         print('onSearch $value');
-        _store.onNewSearch(value.trim());
+        store.onNewSearch(value.trim());
       },
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
@@ -40,7 +37,7 @@ class PostResultFragment extends StatelessWidget {
           ),
         ),
         child: PostWaterFlow(
-          store: _store,
+          store: store,
           dio: adapter.dio,
           onAddTag: (value) {
             tmpController.tmp = tmpController.tmp.trim() + ' $value ';
