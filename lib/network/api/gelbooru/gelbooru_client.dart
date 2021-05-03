@@ -42,7 +42,7 @@ class GelbooruClient extends BaseClient {
       ...baseUri.queryParameters,
       'name_pattern': names + '%',
       'limit': limit.toString(),
-      'order': order.string
+      'orderby': order.string
     }.trim);
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data ?? '';
   }

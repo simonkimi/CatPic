@@ -45,13 +45,12 @@ class DanbooruClient extends BaseClient {
       Order order = Order.COUNT,
       CancelToken? cancelToken}) async {
     final uri = Uri(
-        path: 'tag.json',
+        path: 'tags.json',
         queryParameters: <String, String>{
-          'search[name_normalize]': name,
+          'search[name_matches]': name + '*',
           'limit': limit.toString(),
-          'order': order.string
+          'search[order]': order.string
         }.trim);
-
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }
 

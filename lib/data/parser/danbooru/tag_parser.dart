@@ -1,16 +1,19 @@
 import 'dart:convert';
 
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'tag_model.dart';
 
 class DanbooruTagParser {
   static List<BooruTag> parse(String tagJson) {
+    print(tagJson);
     final List<dynamic> tags = jsonDecode(tagJson);
     return tags
+        .map((e) => Root.fromJson(e))
         .map((e) => BooruTag(
-              id: e['id'],
-              name: e['name'],
-              type: _getBooruTagType(e['category']),
-              count: e['post_count'],
+              id: e.id.toString(),
+              name: e.name,
+              type: _getBooruTagType(e.category),
+              count: e.postCount,
             ))
         .toList();
   }
