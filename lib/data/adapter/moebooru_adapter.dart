@@ -1,9 +1,11 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
+import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/moebooru/artist_parser.dart';
+import 'package:catpic/data/parser/moebooru/comment_parser.dart';
 import 'package:catpic/data/parser/moebooru/pool_parser.dart';
 import 'package:catpic/data/parser/moebooru/post_parser.dart';
 import 'package:catpic/data/parser/moebooru/tag_parser.dart';
@@ -89,5 +91,11 @@ class MoebooruAdapter implements BooruAdapter {
       page: page,
     );
     return await compute(MoebooruArtistParse.parse, str);
+  }
+
+  @override
+  Future<List<BooruComments>> comment({required String id}) async {
+    final str = await client.commentsList(id);
+    return await compute(MoebooruCommentParser.parse, str);
   }
 }

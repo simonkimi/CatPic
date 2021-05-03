@@ -1,8 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
+import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/parser/gelbooru/comment_parser.dart';
 import 'package:catpic/data/parser/gelbooru/post_parser.dart';
 import 'package:catpic/data/parser/gelbooru/tag_parser.dart';
 import 'package:catpic/network/api/gelbooru/gelbooru_client.dart';
@@ -65,6 +67,12 @@ class GelbooruAdapter implements BooruAdapter {
     required int page,
   }) {
     throw UnsupportedError('Gelbooru not support Pool!');
+  }
+
+  @override
+  Future<List<BooruComments>> comment({required String id}) async {
+    final str = await client.commentsList(id);
+    return await compute(GelbooruCommentParser.parse, str);
   }
 
   @override

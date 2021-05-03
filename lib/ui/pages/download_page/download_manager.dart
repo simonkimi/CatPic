@@ -91,9 +91,7 @@ class DownloadManagerPage extends StatelessWidget {
 
   Widget _buildDownloadCard(BuildContext context, List<WebsiteTableData> list,
       DownloadTableData data, double? progress) {
-    final dio = DioBuilder.build(
-      list.get((e) => e.id == data.websiteId),
-    );
+    final dio = DioBuilder.build(list.get((e) => e.id == data.websiteId));
 
     return Container(
       height: 100,

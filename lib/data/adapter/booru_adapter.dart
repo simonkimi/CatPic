@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
+import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
@@ -61,6 +62,8 @@ abstract class BooruAdapter {
     required String name,
     required int page,
   });
+
+  Future<List<BooruComments>> comment({required String id});
 
   Dio get dio;
 

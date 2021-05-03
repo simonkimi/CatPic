@@ -53,7 +53,8 @@ class MoebooruClient extends BaseClient {
   /// 获取评论列表
   /// [id] The id number of the comment to retrieve.
   Future<String> commentsList(String id) async {
-    final uri = Uri(path: 'comment/show.json', queryParameters: {'id': id});
+    final uri =
+        Uri(path: 'comment.json', queryParameters: {'post_id': id}.trim);
     return (await dio.getUri<String>(uri)).data!;
   }
 

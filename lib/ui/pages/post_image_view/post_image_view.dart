@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/default_button.dart';
@@ -8,6 +9,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/download/download_store.dart';
+import 'package:catpic/ui/pages/post_image_view/booru_comments.dart';
 import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
 import 'package:catpic/ui/pages/post_image_view/store/store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
@@ -26,13 +28,15 @@ typedef ItemBuilder = Future<BooruPost> Function(int index);
 class PostImageViewPage extends HookWidget {
   PostImageViewPage.builder({
     Key? key,
-    required this.dio,
+    this.adapter,
     required this.index,
     this.onAddTag,
     this.favicon,
+    this.dio,
     required this.futureItemBuilder,
     required this.itemCount,
-  })   : store = PostImageViewStore(
+  })   : assert(dio != null || adapter != null),
+        store = PostImageViewStore(
           currentIndex: index,
           itemBuilder: futureItemBuilder,
           itemCount: itemCount,
@@ -42,12 +46,14 @@ class PostImageViewPage extends HookWidget {
 
   PostImageViewPage.count({
     Key? key,
-    required this.dio,
+    this.adapter,
     required this.index,
     this.onAddTag,
     this.favicon,
+    this.dio,
     required List<BooruPost> postList,
-  })   : futureItemBuilder = ((index) => Future.value(postList[index])),
+  })   : assert(dio != null || adapter != null),
+        futureItemBuilder = ((index) => Future.value(postList[index])),
         itemCount = postList.length,
         store = PostImageViewStore(
           currentIndex: index,
@@ -57,7 +63,7 @@ class PostImageViewPage extends HookWidget {
         pageController = PageController(initialPage: index),
         super(key: key);
 
-  final Dio dio;
+  final BooruAdapter? adapter;
   final Uint8List? favicon;
   final int index;
   final ItemBuilder futureItemBuilder;
@@ -65,6 +71,7 @@ class PostImageViewPage extends HookWidget {
   final PostImageViewStore store;
   final ValueChanged<String>? onAddTag;
   final PageController pageController;
+  final Dio? dio;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +88,7 @@ class PostImageViewPage extends HookWidget {
     return Container(
       color: Colors.black,
       child: MultiImageViewer(
-        dio: dio,
+        dio: adapter?.dio ?? dio!,
         index: index,
         itemCount: itemCount,
         pageController: pageController,
@@ -317,17 +324,26 @@ class PostImageViewPage extends HookWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Expanded(
-                //   flex: 1,
-                //   child: OutlinedButton(
-                //     onPressed: () {},
-                //     child: Icon(
-                //       Icons.message_outlined,
-                //       color: Theme.of(context).primaryColor,
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(width: 10),
+                if (adapter != null)
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (_) {
+                          return BooruCommentsPage(
+                            id: store.loadedBooruPost!.id,
+                            adapter: adapter!,
+                          );
+                        }));
+                      },
+                      child: Icon(
+                        Icons.message_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                if (adapter != null) const SizedBox(width: 10),
                 Expanded(
                   flex: 1,
                   child: OutlinedButton(

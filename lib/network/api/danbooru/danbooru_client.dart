@@ -58,7 +58,11 @@ class DanbooruClient extends BaseClient {
   /// 获取评论
   /// [id] The id number of the comment to retrieve.
   Future<String> commentsList(String id) async {
-    final uri = Uri(path: 'comments/$id.json');
+    final uri = Uri(
+        path: 'comments.json',
+        queryParameters: {
+          'search[post_id]': id,
+        }.trim);
     return (await dio.getUri<String>(uri)).data!;
   }
 

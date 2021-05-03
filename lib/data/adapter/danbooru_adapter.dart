@@ -1,9 +1,11 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
+import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/parser/danbooru/artist_parser.dart';
+import 'package:catpic/data/parser/danbooru/comment_parser.dart';
 import 'package:catpic/data/parser/danbooru/pool_parser.dart';
 import 'package:catpic/data/parser/danbooru/post_parser.dart';
 import 'package:catpic/data/parser/danbooru/tag_parser.dart';
@@ -86,5 +88,11 @@ class DanbooruAdapter implements BooruAdapter {
       page: page,
     );
     return await compute(DanbooruArtistParser.parse, str);
+  }
+
+  @override
+  Future<List<BooruComments>> comment({required String id}) async {
+    final str = await client.commentsList(id);
+    return await compute(DanbooruCommentParser.parse, str);
   }
 }

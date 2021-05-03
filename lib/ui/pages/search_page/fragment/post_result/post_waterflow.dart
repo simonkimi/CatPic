@@ -81,7 +81,7 @@ class PostWaterFlow extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => PostImageViewPage.count(
             favicon: mainStore.websiteEntity?.favicon,
-            dio: BooruAdapter.fromWebsite(mainStore.websiteEntity!).dio,
+            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
             postList: store.postList,
             onAddTag: onAddTag,
             index: index,
