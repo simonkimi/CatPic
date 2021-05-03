@@ -1,4 +1,4 @@
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/main.dart';

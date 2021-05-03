@@ -1,5 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/main.dart';

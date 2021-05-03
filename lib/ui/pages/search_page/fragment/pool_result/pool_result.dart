@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/dio_image.dart';

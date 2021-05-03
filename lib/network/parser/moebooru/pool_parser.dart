@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/data/parser/moebooru/post_parser.dart';
+import 'package:catpic/network/parser/moebooru/post_parser.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:flutter/foundation.dart';

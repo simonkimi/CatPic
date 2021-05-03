@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/artist_result.dart';
 import 'package:catpic/ui/pages/search_page/fragment/tag_result/tag_result.dart';

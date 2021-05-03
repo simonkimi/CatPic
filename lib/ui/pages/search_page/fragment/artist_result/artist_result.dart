@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';

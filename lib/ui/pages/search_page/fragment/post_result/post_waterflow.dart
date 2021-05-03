@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';

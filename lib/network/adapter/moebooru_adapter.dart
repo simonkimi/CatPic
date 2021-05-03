@@ -4,43 +4,48 @@ import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
-import 'package:catpic/data/parser/danbooru/artist_parser.dart';
-import 'package:catpic/data/parser/danbooru/comment_parser.dart';
-import 'package:catpic/data/parser/danbooru/pool_parser.dart';
-import 'package:catpic/data/parser/danbooru/post_parser.dart';
-import 'package:catpic/data/parser/danbooru/tag_parser.dart';
-import 'package:catpic/network/api/danbooru/danbooru_client.dart';
+import 'package:catpic/network/parser/moebooru/artist_parser.dart';
+import 'package:catpic/network/parser/moebooru/comment_parser.dart';
+import 'package:catpic/network/parser/moebooru/pool_parser.dart';
+import 'package:catpic/network/parser/moebooru/post_parser.dart';
+import 'package:catpic/network/parser/moebooru/tag_parser.dart';
+import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'booru_adapter.dart';
 
-class DanbooruAdapter implements BooruAdapter {
-  DanbooruAdapter(this.websiteEntity) {
-    client = DanbooruClient(websiteEntity);
+class MoebooruAdapter implements BooruAdapter {
+  MoebooruAdapter(this.websiteEntity) {
+    client = MoebooruClient(websiteEntity);
   }
 
   final WebsiteTableData websiteEntity;
 
   @override
-  late DanbooruClient client;
+  late MoebooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
-    return [SupportPage.POSTS, SupportPage.TAGS, SupportPage.POOLS];
+    return [
+      SupportPage.POSTS,
+      SupportPage.TAGS,
+      SupportPage.ARTISTS,
+      SupportPage.POOLS,
+    ];
   }
 
   @override
-  Future<List<BooruPost>> postList(
-      {required String tags,
-      required int page,
-      required int limit,
-      CancelToken? cancelToken,
-      Order order = Order.COUNT}) async {
+  Future<List<BooruPost>> postList({
+    required String tags,
+    required int page,
+    required int limit,
+    CancelToken? cancelToken,
+  }) async {
     final str = await client.postsList(
         tags: tags, limit: limit, page: page, cancelToken: cancelToken);
-
-    return await compute(DanbooruPostParse.parse, str);
+    return await compute(MoebooruPostParse.parse, str);
   }
 
   @override
@@ -48,18 +53,19 @@ class DanbooruAdapter implements BooruAdapter {
     required String name,
     required int page,
     required int limit,
-    Order order = Order.COUNT,
     CancelToken? cancelToken,
   }) async {
     final str = await client.tagsList(
-      limit: limit,
       name: name,
       page: page,
-      order: order,
+      limit: limit,
       cancelToken: cancelToken,
     );
-    return await compute(DanbooruTagParser.parse, str);
+    return await compute(MoebooruTagParse.parse, str);
   }
+
+  @override
+  Dio get dio => client.dio;
 
   @override
   Future<List<BooruPool>> poolList({
@@ -68,15 +74,12 @@ class DanbooruAdapter implements BooruAdapter {
     CancelToken? cancelToken,
   }) async {
     final str = await client.poolList(
-      name: name,
+      query: name,
       page: page,
       cancelToken: cancelToken,
     );
-    return await compute(DanbooruPoolParser.parse, str);
+    return await compute(MoebooruPoolParser.parse, str);
   }
-
-  @override
-  Dio get dio => client.dio;
 
   @override
   Future<List<BooruArtist>> artistList({
@@ -87,12 +90,12 @@ class DanbooruAdapter implements BooruAdapter {
       name: name,
       page: page,
     );
-    return await compute(DanbooruArtistParser.parse, str);
+    return await compute(MoebooruArtistParse.parse, str);
   }
 
   @override
   Future<List<BooruComments>> comment({required String id}) async {
     final str = await client.commentsList(id);
-    return await compute(DanbooruCommentParser.parse, str);
+    return await compute(MoebooruCommentParser.parse, str);
   }
 }

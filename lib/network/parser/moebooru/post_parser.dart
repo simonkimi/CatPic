@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:catpic/data/models/booru/booru_post.dart';
-import 'package:catpic/data/parser/moebooru/post_model.dart';
+import 'package:catpic/network/parser/moebooru/post_model.dart';
 
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {

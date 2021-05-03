@@ -1,5 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';

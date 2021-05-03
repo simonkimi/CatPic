@@ -1,4 +1,4 @@
-import 'package:catpic/data/adapter/booru_adapter.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
 import 'package:catpic/ui/pages/search_page/fragment/post_result/post_waterflow.dart';
