@@ -2,6 +2,7 @@ import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
+import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/main.dart';
@@ -34,7 +35,6 @@ class _MainDrawerState extends State<MainDrawer> {
       child: Observer(
         builder: (context) {
           return Column(
-            // padding: EdgeInsets.zero,
             children: [
               buildUserAccountsDrawerHeader(),
               buildBody(),
@@ -116,104 +116,145 @@ class _MainDrawerState extends State<MainDrawer> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            if (support?.contains(SupportPage.POSTS) ?? false)
-              ListTile(
-                leading: const Icon(Icons.image),
-                title: Text(I18n.of(context).posts),
-                selected: widget.type == SearchType.POST,
-                onTap: () {
-                  if (widget.onSearchChange?.call(SearchType.POST) ?? true)
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const SearchPage()),
-                        (route) => false);
-                  else
-                    Navigator.of(context).pop();
-                },
-              ),
-            if (support?.contains(SupportPage.POOLS) ?? false)
-              ListTile(
-                leading: const Icon(Icons.filter),
-                title: Text(I18n.of(context).pools),
-                selected: widget.type == SearchType.POOL,
-                onTap: () {
-                  if (widget.onSearchChange?.call(SearchType.POOL) ?? true)
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const SearchPage(
-                                  searchType: SearchType.POOL,
-                                )),
-                        (route) => false);
-                  else
-                    Navigator.of(context).pop();
-                },
-              ),
-            if (support?.contains(SupportPage.TAGS) ?? false)
-              ListTile(
-                leading: const Icon(Icons.tag),
-                title: Text(I18n.of(context).tag),
-                onTap: () {
-                  if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const SearchPage(
-                                  searchType: SearchType.TAGS,
-                                )),
-                        (route) => false);
-                  else
-                    Navigator.of(context).pop();
-                },
-              ),
+            if (support?.contains(SupportPage.POSTS) ?? false) buildPostTile(),
+            if (support?.contains(SupportPage.POOLS) ?? false) buildPoolTile(),
+            if (support?.contains(SupportPage.TAGS) ?? false) buildTagTile(),
             if (support?.contains(SupportPage.ARTISTS) ?? false)
-              ListTile(
-                leading: const Icon(Icons.supervisor_account_sharp),
-                title: Text(I18n.of(context).artist),
-                onTap: () {
-                  if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const SearchPage(
-                                  searchType: SearchType.ARTIST,
-                                )),
-                        (route) => false);
-                  else
-                    Navigator.of(context).pop();
-                },
-              ),
+              buildArtistTile(),
+            if (support?.contains(SupportPage.FAVOURITE) ?? false)
+              buildFavouriteTile(),
           ],
         ),
       ),
       const Divider(),
-      ListTile(
-        leading: const Icon(Icons.history),
-        title: Text(I18n.of(context).history),
-        onTap: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      ListTile(
-        leading: const Icon(Icons.download_rounded),
-        title: Text(I18n.of(context).download),
-        onTap: () {
-          Navigator.of(context).pop();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DownloadManagerPage()),
-          );
-        },
-      ),
-      ListTile(
-        leading: const Icon(Icons.settings),
-        title: Text(I18n.of(context).setting),
-        onTap: () {
-          Navigator.of(context).pop();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SettingPage()),
-          );
-        },
-      )
+      buildDownloadTile(),
+      buildSettingTile()
     ];
+  }
+
+  ListTile buildSettingTile() {
+    return ListTile(
+      leading: const Icon(Icons.settings),
+      title: Text(I18n.of(context).setting),
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SettingPage()),
+        );
+      },
+    );
+  }
+
+  ListTile buildDownloadTile() {
+    return ListTile(
+      leading: const Icon(Icons.download_rounded),
+      title: Text(I18n.of(context).download),
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DownloadManagerPage()),
+        );
+      },
+    );
+  }
+
+  ListTile buildFavouriteTile() {
+    return ListTile(
+      leading: const Icon(Icons.favorite),
+      title: Text(I18n.of(context).favourite),
+      onTap: () {
+        final website = mainStore.websiteEntity!;
+        if (website.username != null) {
+          if (widget.onSearchChange?.call(SearchType.POST) ?? true)
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return SearchPage(
+                searchText: BooruAdapter.fromWebsite(website)
+                    .favouriteList(website.username!),
+                searchType: SearchType.POST,
+              );
+            }));
+          else
+            Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
+        }
+      },
+    );
+  }
+
+  ListTile buildArtistTile() {
+    return ListTile(
+      leading: const Icon(Icons.supervisor_account_sharp),
+      title: Text(I18n.of(context).artist),
+      onTap: () {
+        if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                        searchType: SearchType.ARTIST,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildTagTile() {
+    return ListTile(
+      leading: const Icon(Icons.tag),
+      title: Text(I18n.of(context).tag),
+      onTap: () {
+        if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                        searchType: SearchType.TAGS,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildPoolTile() {
+    return ListTile(
+      leading: const Icon(Icons.filter),
+      title: Text(I18n.of(context).pools),
+      selected: widget.type == SearchType.POOL,
+      onTap: () {
+        if (widget.onSearchChange?.call(SearchType.POOL) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                        searchType: SearchType.POOL,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildPostTile() {
+    return ListTile(
+      leading: const Icon(Icons.image),
+      title: Text(I18n.of(context).posts),
+      selected: widget.type == SearchType.POST,
+      onTap: () {
+        if (widget.onSearchChange?.call(SearchType.POST) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const SearchPage()),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
   }
 
   Widget buildUserAccountsDrawerHeader() {

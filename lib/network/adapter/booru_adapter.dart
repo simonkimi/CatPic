@@ -17,6 +17,7 @@ enum SupportPage {
   POOLS,
   ARTISTS,
   TAGS,
+  FAVOURITE,
 }
 
 enum Order {
@@ -64,6 +65,10 @@ abstract class BooruAdapter {
   });
 
   Future<List<BooruComments>> comment({required String id});
+
+  String favouriteList(String username);
+
+  Future<void> favourite(String postId, String username, String password);
 
   Dio get dio;
 

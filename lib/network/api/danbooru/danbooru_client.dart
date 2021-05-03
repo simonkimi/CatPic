@@ -90,4 +90,19 @@ class DanbooruClient extends BaseClient {
             {'search[any_name_matches]': name, 'page': page.toString()}.trim);
     return (await dio.getUri(uri)).data;
   }
+
+  Future<void> favourite({
+    required String postId,
+    required String username,
+    required String apiKey,
+  }) async {
+    final uri =
+        Uri(path: 'favorites.json', queryParameters: {'post_id': postId}.trim);
+
+    await dio.postUri(uri,
+        data: {
+          'login': username,
+          'api_key': apiKey,
+        }.trim);
+  }
 }

@@ -38,6 +38,7 @@ dependencies:
   synchronized: ^3.0.0
   flutter_hooks: ^0.16.0
   flutter_speed_dial: ^3.0.5
+  crypto: ^3.0.1
 
 
   pull_to_refresh:

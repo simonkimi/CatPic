@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
@@ -97,5 +100,20 @@ class MoebooruClient extends BaseClient {
       queryParameters: {'name': name, 'page': page.toString()}.trim,
     );
     return (await dio.getUri<String>(uri)).data!;
+  }
+
+  Future<void> favourite({
+    required String postId,
+    required String username,
+    required String password,
+  }) async {
+    final uri = Uri(path: 'post/vote.json');
+
+    await dio.postUri(uri, data: {
+      'id': postId,
+      'login': username,
+      'password_hash':
+          sha1.convert(utf8.encode('choujin-steiner--$password--')).toString(),
+    }.trim);
   }
 }

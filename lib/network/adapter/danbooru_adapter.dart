@@ -27,7 +27,13 @@ class DanbooruAdapter implements BooruAdapter {
 
   @override
   List<SupportPage> getSupportPage() {
-    return [SupportPage.POSTS, SupportPage.TAGS, SupportPage.POOLS];
+    return [
+      SupportPage.ARTISTS,
+      SupportPage.POSTS,
+      SupportPage.TAGS,
+      SupportPage.POOLS,
+      SupportPage.FAVOURITE,
+    ];
   }
 
   @override
@@ -94,5 +100,15 @@ class DanbooruAdapter implements BooruAdapter {
   Future<List<BooruComments>> comment({required String id}) async {
     final str = await client.commentsList(id);
     return await compute(DanbooruCommentParser.parse, str);
+  }
+
+  @override
+  String favouriteList(String username) => 'ordfav:$username';
+
+  @override
+  Future<void> favourite(
+      String postId, String username, String password) async {
+    await client.favourite(
+        postId: postId, username: username, apiKey: password);
   }
 }

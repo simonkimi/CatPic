@@ -33,6 +33,7 @@ class MoebooruAdapter implements BooruAdapter {
       SupportPage.TAGS,
       SupportPage.ARTISTS,
       SupportPage.POOLS,
+      SupportPage.FAVOURITE,
     ];
   }
 
@@ -98,4 +99,14 @@ class MoebooruAdapter implements BooruAdapter {
     final str = await client.commentsList(id);
     return await compute(MoebooruCommentParser.parse, str);
   }
+
+  @override
+  Future<void> favourite(
+      String postId, String username, String password) async {
+    await client.favourite(
+        postId: postId, username: username, password: password);
+  }
+
+  @override
+  String favouriteList(String username) => 'vote:3:$username';
 }

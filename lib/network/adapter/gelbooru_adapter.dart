@@ -82,4 +82,14 @@ class GelbooruAdapter implements BooruAdapter {
   }) {
     throw UnsupportedError('Gelbooru not support Artist!');
   }
+
+  @override
+  Future<void> favourite(String postId, String username, String password) {
+    throw UnsupportedError('Gelbooru not support Favourite!');
+  }
+
+  @override
+  String favouriteList(String username) {
+    throw UnsupportedError('Gelbooru not support FavouriteList!');
+  }
 }
