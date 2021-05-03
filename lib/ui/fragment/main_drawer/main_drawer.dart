@@ -167,16 +167,13 @@ class _MainDrawerState extends State<MainDrawer> {
       onTap: () {
         final website = mainStore.websiteEntity!;
         if (website.username != null) {
-          if (widget.onSearchChange?.call(SearchType.POST) ?? true)
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return SearchPage(
-                searchText: BooruAdapter.fromWebsite(website)
-                    .favouriteList(website.username!),
-                searchType: SearchType.POST,
-              );
-            }));
-          else
-            Navigator.of(context).pop();
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return SearchPage(
+              searchText: BooruAdapter.fromWebsite(website)
+                  .favouriteList(website.username!),
+              searchType: SearchType.POST,
+            );
+          }));
         } else {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => LoginPage()),

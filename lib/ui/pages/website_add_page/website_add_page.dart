@@ -32,6 +32,12 @@ class WebsiteAddPage extends StatelessWidget {
               ...buildWebsiteSetting(context),
               const Divider(),
               ...buildAdvanceSetting(context),
+              if (store.websiteType == WebsiteType.DANBOORU.index ||
+                  store.websiteType == WebsiteType.MOEBOORU.index)
+                const Divider(),
+              if (store.websiteType == WebsiteType.DANBOORU.index ||
+                  store.websiteType == WebsiteType.MOEBOORU.index)
+                ...buildUserSetting(context),
             ],
           );
         },
@@ -90,7 +96,7 @@ class WebsiteAddPage extends StatelessWidget {
             : store.websiteName),
         leading: const SizedBox(),
         onChanged: (value) {
-          store.setName(value);
+          store.setWebsiteName(value);
         },
       ),
     ];
@@ -109,7 +115,7 @@ class WebsiteAddPage extends StatelessWidget {
         hintText: 'example.org',
         defaultValue: store.websiteHost,
         onChanged: (value) {
-          store.setHost(value.getHost());
+          store.setWebsiteHost(value.getHost());
         },
       ),
       SwitchListTile(
@@ -186,6 +192,40 @@ class WebsiteAddPage extends StatelessWidget {
           } else {
             store.setDirectLink(false);
           }
+        },
+      ),
+    ];
+  }
+
+  String getPasswordTitle() {
+    if (store.websiteType == WebsiteType.MOEBOORU.index)
+      return I18n.g.password;
+    else if (store.websiteType == WebsiteType.DANBOORU.index)
+      return I18n.g.api_key;
+    return 'Password';
+  }
+
+  List<Widget> buildUserSetting(BuildContext context) {
+    return [
+      SummaryTile(I18n.of(context).user_setting),
+      TextInputTile(
+        defaultValue: store.username,
+        title: Text(I18n.of(context).username),
+        subtitle: Text(
+            store.username.isEmpty ? I18n.of(context).not_set : store.username),
+        leading: const SizedBox(),
+        onChanged: (value) {
+          store.setUsername(value);
+        },
+      ),
+      TextInputTile(
+        defaultValue: store.password,
+        title: Text(getPasswordTitle()),
+        subtitle: Text(
+            store.password.isEmpty ? I18n.of(context).not_set : store.password),
+        leading: const SizedBox(),
+        onChanged: (value) {
+          store.setPassword(value);
         },
       ),
     ];

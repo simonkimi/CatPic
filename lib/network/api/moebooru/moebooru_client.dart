@@ -109,11 +109,13 @@ class MoebooruClient extends BaseClient {
   }) async {
     final uri = Uri(path: 'post/vote.json');
 
-    await dio.postUri(uri, data: {
-      'id': postId,
-      'login': username,
-      'password_hash':
-          sha1.convert(utf8.encode('choujin-steiner--$password--')).toString(),
-    }.trim);
+    await dio.postUri(uri,
+        data: {
+          'id': postId,
+          'login': username,
+          'password_hash': sha1
+              .convert(utf8.encode('choujin-steiner--$password--'))
+              .toString(),
+        }.trim);
   }
 }

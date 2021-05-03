@@ -26,6 +26,7 @@ enum SearchType {
   POOL,
   ARTIST,
   TAGS,
+  FAVOURITE,
 }
 
 class SearchPage extends StatefulWidget {

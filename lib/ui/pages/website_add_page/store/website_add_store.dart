@@ -6,6 +6,7 @@ import 'package:mobx/mobx.dart';
 
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:moor/moor.dart';
 
 part 'website_add_store.g.dart';
 
@@ -25,11 +26,16 @@ abstract class WebsiteAddStoreBase with Store {
   @observable
   bool directLink = false;
 
-  @action
-  void setName(String value) => websiteName = value;
+  @observable
+  String username = '';
+  @observable
+  String password = '';
 
   @action
-  void setHost(String value) => websiteHost = value;
+  void setWebsiteName(String value) => websiteName = value;
+
+  @action
+  void setWebsiteHost(String value) => websiteHost = value;
 
   @action
   void setScheme(int value) => scheme = value;
@@ -43,6 +49,12 @@ abstract class WebsiteAddStoreBase with Store {
   @action
   void setDirectLink(bool value) => directLink = value;
 
+  @action
+  void setUsername(String value) => username = value;
+
+  @action
+  void setPassword(String value) => password = value;
+
   /// 保存网站
   Future<bool> saveWebsite() async {
     if (websiteHost.isEmpty) {
@@ -55,13 +67,15 @@ abstract class WebsiteAddStoreBase with Store {
 
     // 保存网站
     final websiteDao = DatabaseHelper().websiteDao;
-    final entity = WebsiteTableCompanion.insert(
-      host: websiteHost,
-      name: websiteName,
-      scheme: scheme,
-      useDoH: useDoH,
-      type: websiteType,
-      directLink: directLink,
+    final entity = WebsiteTableCompanion(
+      host: Value(websiteHost),
+      name: Value(websiteName),
+      scheme: Value(scheme),
+      useDoH: Value(useDoH),
+      type: Value(websiteType),
+      directLink: Value(directLink),
+      username: username.isNotEmpty ? Value(username) : const Value(null),
+      password: password.isNotEmpty ? Value(password) : const Value(null),
     );
     final id = await websiteDao.insert(entity);
     final table = await websiteDao.getById(id);
