@@ -29,9 +29,7 @@ class EmptyWebsiteFragment extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     I18n.of(context).to_add_website,
                     style: TextStyle(

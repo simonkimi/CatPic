@@ -37,9 +37,7 @@ class LoadingWidget extends StatelessWidget {
                                 color: Theme.of(context).primaryColor,
                               ),
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
+                            const SizedBox(height: 10),
                             Text(
                               I18n.of(context).search_empty,
                               style: TextStyle(

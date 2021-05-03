@@ -146,9 +146,7 @@ class PostWaterFlow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(Icons.error),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(I18n.of(context).tap_to_reload),
                 ],
               ),

@@ -146,9 +146,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                           children: [
                             CircularProgressIndicator(
                                 value: progress == 0 ? null : progress),
-                            const SizedBox(
-                              height: 20,
-                            ),
+                            const SizedBox(height: 20),
                             if (progress == 0)
                               Text(
                                 I18n.of(context).connecting,
@@ -183,9 +181,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                             Icons.error,
                             color: Colors.white,
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20),
                           Text(
                             state.lastException.toString(),
                             style: const TextStyle(color: Colors.white),

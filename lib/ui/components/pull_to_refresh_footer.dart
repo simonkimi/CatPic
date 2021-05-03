@@ -19,9 +19,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
     case LoadStatus.idle:
       return buildRow([
         const Icon(Icons.arrow_upward),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Text(
           I18n.of(context).idle_loading,
           style: const TextStyle(color: Colors.black),
@@ -30,9 +28,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
     case LoadStatus.canLoading:
       return buildRow([
         const Icon(Icons.arrow_downward),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Text(
           I18n.of(context).can_load_text,
           style: const TextStyle(color: Colors.black),
@@ -45,9 +41,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
           height: 25,
           child: CircularProgressIndicator(strokeWidth: 2.5),
         ),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Text(
           I18n.of(context).loading_text,
           style: const TextStyle(color: Colors.black),
@@ -65,9 +59,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
     case LoadStatus.failed:
       return buildRow([
         const Icon(Icons.sms_failed),
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Text(
           I18n.of(context).load_fail,
           style: const TextStyle(color: Colors.black),
