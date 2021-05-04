@@ -130,6 +130,10 @@ class _TagSearchBarState extends State<TagSearchBar>
       controller: searchBarController,
       tmpController: widget.tmpController,
       searchText: widget.searchText,
+      leadingActions: mainStore.searchPageCount >= 1
+          ? [FloatingSearchBarAction.back()]
+          : null,
+      automaticallyImplyDrawerHamburger: mainStore.searchPageCount == 1,
       defaultHint: widget.searchText.isNotEmpty ? widget.searchText : 'CatPic',
       showTmp: filterDisplaySwitch,
       onSubmitted: (value) async {

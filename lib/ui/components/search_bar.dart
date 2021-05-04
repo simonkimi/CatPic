@@ -35,6 +35,9 @@ class SearchBar extends StatefulWidget {
     this.progress,
     this.showTmp = false,
     this.tmpController,
+    this.leadingActions,
+    this.automaticallyImplyDrawerHamburger = true,
+    this.automaticallyImplyBackButton = true,
   }) : super(key: key);
 
   final OnQueryChangedCallback? onSubmitted;
@@ -43,6 +46,7 @@ class SearchBar extends StatefulWidget {
   final FloatingSearchBarBuilder candidateBuilder;
   final List<Widget>? actions;
   final Widget? body;
+  final List<Widget>? leadingActions;
 
   final FloatingSearchBarController? controller;
   final SearchBarTmpController? tmpController;
@@ -52,6 +56,8 @@ class SearchBar extends StatefulWidget {
   final OnFocusChangedCallback? onFocusChanged;
   final dynamic progress;
   final bool showTmp;
+  final bool automaticallyImplyDrawerHamburger;
+  final bool automaticallyImplyBackButton;
 
   @override
   SearchBarState createState() => SearchBarState();
@@ -107,6 +113,10 @@ class SearchBarState extends State<SearchBar> {
         transitionCurve: Curves.easeInOut,
         physics: const ClampingScrollPhysics(),
         axisAlignment: isPortrait ? 0.0 : -1.0,
+        leadingActions: widget.leadingActions,
+        automaticallyImplyDrawerHamburger:
+            widget.automaticallyImplyDrawerHamburger,
+        automaticallyImplyBackButton: widget.automaticallyImplyBackButton,
         openAxisAlignment: 0.0,
         openWidth: isPortrait ? 600 : 500,
         debounceDelay: const Duration(milliseconds: 100),

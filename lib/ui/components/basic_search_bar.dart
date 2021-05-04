@@ -71,6 +71,10 @@ class _BasicSearchBarState extends State<BasicSearchBar> {
         _setSearchHistory(value.trim());
         widget.onSearch(value.trim());
       },
+      leadingActions: mainStore.searchPageCount >= 1
+          ? [FloatingSearchBarAction.back()]
+          : null,
+      automaticallyImplyDrawerHamburger: mainStore.searchPageCount == 1,
       candidateBuilder: (ctx, _) {
         return Card(
           child: Column(
