@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'main.dart';
+import 'navigator.dart';
 
 class I18n {
   static List<Locale> supportedLocales = AppLocalizations.supportedLocales;

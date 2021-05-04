@@ -15,31 +15,61 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:catpic/themes.dart' as theme;
 
 import 'data/store/main/main_store.dart';
+import 'navigator.dart';
 
 final downloadStore = DownloadStore();
 final mainStore = MainStore();
 final settingStore = SettingStore();
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await SpUtil.getInstance();
-  await settingStore.init();
-  await mainStore.init();
-  downloadStore.startDownload();
-  runApp(CatPicApp());
+void main() {
+  runApp(const SplashPage());
 }
 
-class AppNavigator {
-  factory AppNavigator() => _appNavigator;
+class SplashPage extends StatelessWidget {
+  const SplashPage({Key? key}) : super(key: key);
 
-  AppNavigator._();
+  Future<void> loading() async {
+    await SpUtil.getInstance();
+    await settingStore.init();
+    await mainStore.init();
+    downloadStore.startDownload();
+  }
 
-  static final AppNavigator _appNavigator = AppNavigator._();
-  final GlobalKey<NavigatorState> _key = GlobalKey(debugLabel: 'navigate_key');
+  Widget buildHello(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: Text(
+            'CatPic',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-  GlobalKey<NavigatorState> get key => _key;
-
-  BuildContext get context => _key.currentState!.context;
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      child: FutureBuilder<void>(
+        future: loading(),
+        builder: (context, snapshot) {
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: snapshot.connectionState == ConnectionState.done
+                ? CatPicApp()
+                : buildHello(context),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class CatPicApp extends StatelessWidget {
