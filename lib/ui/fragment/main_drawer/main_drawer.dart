@@ -192,15 +192,15 @@ class _MainDrawerState extends State<MainDrawer> {
       leading: const Icon(Icons.supervisor_account_sharp),
       title: Text(I18n.of(context).artist),
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => const SearchPage(
-                        searchType: SearchType.ARTIST,
-                      )),
-              (route) => false);
-        else
+        if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true) {
           Navigator.of(context).pop();
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SearchPage(
+                    searchType: SearchType.ARTIST,
+                  )));
+        } else {
+          Navigator.of(context).pop();
+        }
       },
     );
   }
@@ -210,15 +210,15 @@ class _MainDrawerState extends State<MainDrawer> {
       leading: const Icon(Icons.tag),
       title: Text(I18n.of(context).tag),
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => const SearchPage(
-                        searchType: SearchType.TAGS,
-                      )),
-              (route) => false);
-        else
+        if (widget.onSearchChange?.call(SearchType.TAGS) ?? true) {
           Navigator.of(context).pop();
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SearchPage(
+                    searchType: SearchType.TAGS,
+                  )));
+        } else {
+          Navigator.of(context).pop();
+        }
       },
     );
   }
@@ -229,15 +229,15 @@ class _MainDrawerState extends State<MainDrawer> {
       title: Text(I18n.of(context).pools),
       selected: widget.type == SearchType.POOL,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.POOL) ?? true)
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => const SearchPage(
-                        searchType: SearchType.POOL,
-                      )),
-              (route) => false);
-        else
+        if (widget.onSearchChange?.call(SearchType.POOL) ?? true) {
           Navigator.of(context).pop();
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SearchPage(
+                    searchType: SearchType.POOL,
+                  )));
+        } else {
+          Navigator.of(context).pop();
+        }
       },
     );
   }
@@ -248,12 +248,13 @@ class _MainDrawerState extends State<MainDrawer> {
       title: Text(I18n.of(context).posts),
       selected: widget.type == SearchType.POST,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.POST) ?? true)
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const SearchPage()),
-              (route) => false);
-        else
+        Navigator.of(context).pop();
+        if (widget.onSearchChange?.call(SearchType.POST) ?? true) {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SearchPage()));
+        } else {
           Navigator.of(context).pop();
+        }
       },
     );
   }
