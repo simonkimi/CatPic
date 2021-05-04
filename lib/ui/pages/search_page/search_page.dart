@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/default_button.dart';
@@ -15,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../../../i18n.dart';
 import 'fragment/empty_website/empty_website.dart';
@@ -80,74 +80,98 @@ class _SearchPageState extends State<SearchPage> {
         duration: const Duration(milliseconds: 1),
         child: searchBody,
       ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        // backgroundColor: Theme.of(context).primaryColor,
-        // foregroundColor: Colors.white,
-        overlayColor: Colors.transparent,
-        overlayOpacity: 0.5,
-        children: [
-          SpeedDialChild(
-            child: const Icon(Icons.refresh),
-            onTap: () async {
-              await currentStore.onRefresh();
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.last_page),
-            onTap: () async {
-              final page = await showDialog(
-                  context: context,
-                  builder: (context) {
-                    final inputController = TextEditingController();
-                    return AlertDialog(
-                      title: Text(I18n.of(context).jump_page),
-                      content: SingleChildScrollView(
-                        child: ListBody(
-                          children: [
-                            TextField(
-                              controller: inputController,
-                              decoration: InputDecoration(
-                                hintText: I18n.of(context).input_page,
-                                labelText: I18n.of(context).page,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+      floatingActionButton: Observer(
+        builder: (_) {
+          return SpeedDial(
+            icon: Icons.add,
+            backgroundColor:
+                settingStore.theme < 0 ? const Color(0xFF616161) : Colors.white,
+            foregroundColor:
+                settingStore.theme < 0 ? const Color(0xFFFDFDFD) : Colors.black,
+            overlayColor: Colors.transparent,
+            overlayOpacity: 0.5,
+            children: [
+              SpeedDialChild(
+                backgroundColor: settingStore.theme < 0
+                    ? const Color(0xFF616161)
+                    : Colors.white,
+                foregroundColor: settingStore.theme < 0
+                    ? const Color(0xFFFDFDFD)
+                    : Colors.black,
+                child: const Icon(Icons.refresh),
+                onTap: () async {
+                  await currentStore.onRefresh();
+                },
+              ),
+              SpeedDialChild(
+                backgroundColor: settingStore.theme < 0
+                    ? const Color(0xFF616161)
+                    : Colors.white,
+                foregroundColor: settingStore.theme < 0
+                    ? const Color(0xFFFDFDFD)
+                    : Colors.black,
+                child: const Icon(Icons.last_page),
+                onTap: () async {
+                  final page = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        final inputController = TextEditingController();
+                        return AlertDialog(
+                          title: Text(I18n.of(context).jump_page),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: [
+                                TextField(
+                                  controller: inputController,
+                                  decoration: InputDecoration(
+                                    hintText: I18n.of(context).input_page,
+                                    labelText: I18n.of(context).page,
+                                  ),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                )
                               ],
-                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(-1);
+                              },
+                              child: Text(I18n.of(context).negative),
+                            ),
+                            DefaultButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(
+                                    int.tryParse(inputController.text) ?? 1);
+                              },
+                              child: Text(I18n.of(context).positive),
                             )
                           ],
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(-1);
-                          },
-                          child: Text(I18n.of(context).negative),
-                        ),
-                        DefaultButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pop(int.tryParse(inputController.text) ?? 1);
-                          },
-                          child: Text(I18n.of(context).positive),
-                        )
-                      ],
-                    );
-                  });
-              currentStore.onJumpPage(page);
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.keyboard_arrow_up),
-            onTap: () async {
-              currentStore.listScrollController.animateTo(0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-            },
-          ),
-        ],
+                        );
+                      });
+                  currentStore.onJumpPage(page);
+                },
+              ),
+              SpeedDialChild(
+                backgroundColor: settingStore.theme < 0
+                    ? const Color(0xFF616161)
+                    : Colors.white,
+                foregroundColor: settingStore.theme < 0
+                    ? const Color(0xFFFDFDFD)
+                    : Colors.black,
+                child: const Icon(Icons.keyboard_arrow_up),
+                onTap: () async {
+                  currentStore.listScrollController.animateTo(0,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut);
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
