@@ -13,21 +13,16 @@ class SplashPage extends StatelessWidget {
   }
 
   Widget buildHello(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
-          color: (SpUtil.getInt('theme') ?? 1) < 0
-              ? const Color(0xFF303030)
-              : Colors.white,
-          child: const Center(
-            child: Text(
-              'CatPic',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+        body: Center(
+          child: Text(
+            'CatPic',
+            style: TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
             ),
           ),
         ),
@@ -37,25 +32,30 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
-      child: FutureBuilder<void>(
-        future: loading(),
-        builder: (context, snapshot) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            transitionBuilder: (child, animation) => ScaleTransition(
-              scale: animation,
-              child: FadeTransition(
-                opacity: animation,
-                child: child,
+    return Container(
+      color: (SpUtil.getInt('theme') ?? 1) < 0
+          ? const Color(0xFF303030)
+          : Colors.white,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: FutureBuilder<void>(
+          future: loading(),
+          builder: (context, snapshot) {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: animation,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
               ),
-            ),
-            child: snapshot.connectionState == ConnectionState.done
-                ? CatPicApp()
-                : buildHello(context),
-          );
-        },
+              child: snapshot.connectionState == ConnectionState.done
+                  ? CatPicApp()
+                  : buildHello(context),
+            );
+          },
+        ),
       ),
     );
   }
