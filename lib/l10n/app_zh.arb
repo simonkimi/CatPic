@@ -55,6 +55,15 @@
   "search_empty": "什么也没有啊!",
   "search_error": "貌似出了点问题...",
   "http_401": "用户验证失败!",
+  "not_support": "{website}不支持此功能",
+  "@not_support": {
+    "placeholders": {
+      "website": {
+        "type": "String",
+        "example": "tagme"
+      }
+    }
+  },
 
   "safe": "安全",
   "explicit": "暴露",

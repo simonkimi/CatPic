@@ -349,6 +349,14 @@ class PostImageViewPage extends HookWidget {
                       flex: 1,
                       child: OutlinedButton(
                         onPressed: () async {
+                          if (!adapter!
+                              .getSupportPage()
+                              .contains(SupportPage.FAVOURITE)) {
+                            BotToast.showText(
+                                text: I18n.of(context)
+                                    .not_support(adapter!.website.name));
+                            return;
+                          }
                           if (adapter!.website.username != null &&
                               adapter!.website.password != null) {
                             final result = await store.changeFavouriteState();
