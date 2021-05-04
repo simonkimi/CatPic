@@ -1,6 +1,7 @@
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
@@ -264,37 +265,41 @@ class _MainDrawerState extends State<MainDrawer> {
       subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
     }
     return Observer(builder: (_) {
-      return UserAccountsDrawerHeader(
-        accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
-        accountEmail: Text(subTitle),
-        currentAccountPicture: CircleAvatar(
-          backgroundImage:
-              mainStore.websiteIcon != null && mainStore.websiteIcon!.isNotEmpty
+      return Theme(
+          data: Theme.of(context).copyWith(
+            primaryColor: isDarkMode() ? darkBlueTheme.primaryColorDark : null,
+          ),
+          child: UserAccountsDrawerHeader(
+            accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
+            accountEmail: Text(subTitle),
+            currentAccountPicture: CircleAvatar(
+              backgroundImage: mainStore.websiteIcon != null &&
+                      mainStore.websiteIcon!.isNotEmpty
                   ? MemoryImage(mainStore.websiteIcon!)
                   : null,
-          backgroundColor: Colors.white,
-        ),
-        onDetailsPressed: () {
-          setState(() {
-            showWebsiteList = !showWebsiteList;
-          });
-        },
-        otherAccountsPictures: mainStore.websiteList
-            .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
-            .map((element) {
-          return Builder(
-              builder: (ctx) => InkWell(
-                  onTap: () {
-                    pushNewWebsite(ctx, element);
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: element.favicon.isNotEmpty
-                        ? MemoryImage(element.favicon)
-                        : null,
-                    backgroundColor: Colors.white,
-                  )));
-        }).toList(),
-      );
+              backgroundColor: Colors.white,
+            ),
+            onDetailsPressed: () {
+              setState(() {
+                showWebsiteList = !showWebsiteList;
+              });
+            },
+            otherAccountsPictures: mainStore.websiteList
+                .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
+                .map((element) {
+              return Builder(
+                  builder: (ctx) => InkWell(
+                      onTap: () {
+                        pushNewWebsite(ctx, element);
+                      },
+                      child: CircleAvatar(
+                        backgroundImage: element.favicon.isNotEmpty
+                            ? MemoryImage(element.favicon)
+                            : null,
+                        backgroundColor: Colors.white,
+                      )));
+            }).toList(),
+          ));
     });
   }
 

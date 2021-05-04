@@ -121,6 +121,10 @@
   "auto_complete_online": "将使用网站数据库",
   "safe_model": "安全模式",
   "preload": "预加载",
+  "theme": "主题",
+  "theme_blue": "谷歌蓝",
+  "theme_purple": "矢尹紫",
+  "theme_dark_blue": "深海蓝(夜间)",
 
   "search_in": "在 {site} 搜索",
   "@search_in": {

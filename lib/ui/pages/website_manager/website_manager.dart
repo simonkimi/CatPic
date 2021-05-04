@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:catpic/utils/utils.dart';
@@ -35,19 +36,10 @@ class WebsiteManagerPage extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        tooltip: I18n.of(context).back,
-      ),
+      leading: appBarBackButton(),
       title: Text(
         I18n.of(context).website_manager,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
     );
   }

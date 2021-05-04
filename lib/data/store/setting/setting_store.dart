@@ -7,6 +7,8 @@ import 'package:mobx/mobx.dart';
 import 'package:dio_cache_interceptor/src/store/file_cache_store.dart';
 import 'package:path/path.dart' as p;
 
+import '../../../themes.dart';
+
 part 'setting_store.g.dart';
 
 class SettingStore = SettingStoreBase with _$SettingStore;
@@ -57,6 +59,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var toolbarOpen = true;
 
+  @observable
+  var theme = Themes.BLUE;
+
   late CacheOptions dioCacheOptions;
 
   var cacheDir = '';
@@ -77,8 +82,8 @@ abstract class SettingStoreBase with Store {
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
     toolbarOpen = sp.getBool('toolbarOpen') ?? true;
-
     cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
+    theme = sp.getInt('theme') ?? Themes.BLUE;
 
     dioCacheOptions = CacheOptions(
       store: FileCacheStore(cacheDir),
@@ -99,6 +104,12 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString(cacheDir, path);
     return path;
+  }
+
+  @action
+  void setTheme(int value) {
+    theme = value;
+    SpUtil.putInt('theme', value);
   }
 
   @action

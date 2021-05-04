@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:catpic/i18n.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:smart_select/src/model/chosen.dart';
 import 'package:catpic/main.dart';
+
+import '../../../themes.dart';
 
 class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
@@ -134,6 +137,29 @@ class SettingPage extends StatelessWidget {
     return [
       SummaryTile(I18n.of(context).display),
       // 卡片布局
+      SmartSelect<int>.single(
+        tileBuilder: (context, S2SingleState<int?> state) {
+          return S2Tile.fromState(
+            state,
+            leading: const Icon(Icons.color_lens),
+          );
+        },
+        modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+        selectedValue: settingStore.theme,
+        onChange: (S2SingleSelected<int?> value) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            settingStore.setTheme(value.value!);
+          });
+        },
+        title: I18n.of(context).theme,
+        choiceItems: [
+          S2Choice(title: I18n.of(context).theme_blue, value: Themes.BLUE),
+          S2Choice(title: I18n.of(context).theme_purple, value: Themes.PURPLE),
+          S2Choice(
+              title: I18n.of(context).theme_dark_blue, value: Themes.DARK_BLUE),
+        ],
+      ),
       SwitchListTile(
         title: Text(I18n.of(context).card_layout),
         secondary: const Icon(Icons.apps),
@@ -234,17 +260,9 @@ class SettingPage extends StatelessWidget {
       centerTitle: true,
       title: Text(
         I18n.of(context).setting,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+      leading: appBarBackButton(),
     );
   }
 }

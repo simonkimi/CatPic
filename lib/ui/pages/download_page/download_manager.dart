@@ -5,6 +5,7 @@ import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
@@ -30,18 +31,10 @@ class DownloadManagerPage extends StatelessWidget {
     return AppBar(
       title: Text(
         I18n.of(context).download_manager,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+      leading: appBarBackButton(),
     );
   }
 

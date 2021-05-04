@@ -1,4 +1,5 @@
 import 'package:catpic/network/adapter/booru_adapter.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/post_image_view/store/comment_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -122,18 +123,10 @@ class BooruCommentsPage extends StatelessWidget {
     return AppBar(
       title: Text(
         '# $id',
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+      leading: appBarBackButton(),
     );
   }
 }

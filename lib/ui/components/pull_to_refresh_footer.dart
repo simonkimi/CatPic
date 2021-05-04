@@ -1,3 +1,4 @@
+import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -22,7 +23,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).idle_loading,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
         ),
       ]);
     case LoadStatus.canLoading:
@@ -31,7 +32,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).can_load_text,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.loading:
@@ -44,7 +45,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).loading_text,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.noMore:
@@ -53,7 +54,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).no_more_text,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.failed:
@@ -62,7 +63,7 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).load_fail,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
         )
       ]);
   }

@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/misc_network.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -60,16 +61,7 @@ class HostManagerPage extends StatelessWidget {
         I18n.of(context).host_manager,
         style: const TextStyle(fontSize: 18),
       ),
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        tooltip: I18n.of(context).back,
-      ),
+      leading: appBarBackButton(),
     );
   }
 

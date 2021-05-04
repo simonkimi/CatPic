@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:catpic/ui/pages/website_add_page/store/website_add_store.dart';
@@ -59,19 +60,9 @@ class WebsiteAddPage extends StatelessWidget {
       centerTitle: true,
       title: Text(
         I18n.of(context).add_website,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
-      // 左上角的返回按钮
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          size: 18,
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        tooltip: I18n.of(context).back,
-      ),
+      leading: appBarBackButton(),
       actions: [
         // 右上角的确认按钮
         IconButton(

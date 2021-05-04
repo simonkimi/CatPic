@@ -29,12 +29,6 @@ class TagResultFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (store.lock.locked) {
-        store.refreshController.requestRefresh();
-      }
-    });
-
     return BasicSearchBar(
       historyType: HistoryType.TAG,
       onSearch: (value) {

@@ -7,6 +7,7 @@ import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -44,26 +45,28 @@ class AppNavigator {
 class CatPicApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CatPic',
-      debugShowCheckedModeBanner: false,
-      theme: theme.blueTheme,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        RefreshLocalizations.delegate,
-        AppLocalizations.delegate
-      ],
-      navigatorKey: AppNavigator().key,
-      home: const SearchPage(),
-      builder: BotToastInit(),
-      supportedLocales: AppLocalizations.supportedLocales,
-      routes: {
-        DownloadManagerPage.route: (ctx) => DownloadManagerPage(),
-        AndroidDownloadPage.route: (ctx) => AndroidDownloadPage(),
-        SettingPage.route: (ctx) => SettingPage(),
-        WebsiteAddPage.route: (ctx) => WebsiteAddPage(),
-      },
-    );
+    return Observer(builder: (_) {
+      return MaterialApp(
+        title: 'CatPic',
+        debugShowCheckedModeBanner: false,
+        theme: theme.Themes.of(settingStore.theme),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          RefreshLocalizations.delegate,
+          AppLocalizations.delegate
+        ],
+        navigatorKey: AppNavigator().key,
+        home: const SearchPage(),
+        builder: BotToastInit(),
+        supportedLocales: AppLocalizations.supportedLocales,
+        routes: {
+          DownloadManagerPage.route: (ctx) => DownloadManagerPage(),
+          AndroidDownloadPage.route: (ctx) => AndroidDownloadPage(),
+          SettingPage.route: (ctx) => SettingPage(),
+          WebsiteAddPage.route: (ctx) => WebsiteAddPage(),
+        },
+      );
+    });
   }
 }

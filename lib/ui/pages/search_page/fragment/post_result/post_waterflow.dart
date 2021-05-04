@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:catpic/network/adapter/booru_adapter.dart';
+import 'package:catpic/themes.dart';
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
@@ -103,7 +105,7 @@ class PostWaterFlow extends StatelessWidget {
             onTap: loadDetail,
             child: AspectRatio(
               aspectRatio: post.width / post.height,
-              child: Image(image: MemoryImage(imgData, scale: 0.1)),
+              child: DarkImage(image: MemoryImage(imgData, scale: 0.1)),
             ),
           );
         },
@@ -114,7 +116,9 @@ class PostWaterFlow extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: post.width / post.height,
               child: Container(
-                color: Colors.primaries[index % Colors.primaries.length][50],
+                color: isDarkMode()
+                    ? darkColors[index % darkColors.length]
+                    : Colors.primaries[index % Colors.primaries.length][50],
                 child: Center(
                   child: SizedBox(
                     width: 24,
