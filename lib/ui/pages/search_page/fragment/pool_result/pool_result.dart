@@ -3,8 +3,10 @@ import 'dart:ui' as ui;
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/pages/search_page/fragment/components/fab/fab.dart';
 import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
@@ -32,13 +34,18 @@ class PoolResultFragment extends StatelessWidget {
       onSearch: (value) {
         store.onNewSearch(value.trim());
       },
-      body: Observer(
-        builder: (_) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: store.isLoading ? LoadingWidget(store: store) : buildList(),
-          );
-        },
+      body: Scaffold(
+        body: Observer(
+          builder: (_) {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: store.isLoading && store.observableList.isEmpty
+                  ? LoadingWidget(store: store)
+                  : buildList(),
+            );
+          },
+        ),
+        floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),
     );
   }
@@ -117,7 +124,7 @@ class PoolResultFragment extends StatelessWidget {
                     );
                   },
                   imageBuilder: (BuildContext context, Uint8List imgData) {
-                    return Image(image: MemoryImage(imgData));
+                    return DarkImage(image: MemoryImage(imgData));
                   },
                 ),
               ),

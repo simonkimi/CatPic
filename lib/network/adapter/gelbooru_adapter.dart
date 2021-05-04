@@ -55,6 +55,7 @@ class GelbooruAdapter implements BooruAdapter {
       names: name,
       order: order,
       cancelToken: cancelToken,
+      page: page,
     );
     return await compute(GelbooruTagParse.parse, str);
   }

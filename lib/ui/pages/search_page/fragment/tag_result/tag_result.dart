@@ -3,6 +3,7 @@ import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/pages/search_page/fragment/components/fab/fab.dart';
 import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:catpic/ui/pages/search_page/fragment/tag_result/store/tag_result_store.dart';
 import 'package:flutter/material.dart';
@@ -34,13 +35,18 @@ class TagResultFragment extends StatelessWidget {
       onSearch: (value) {
         store.onNewSearch(value.trim());
       },
-      body: Observer(
-        builder: (_) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: store.isLoading ? LoadingWidget(store: store) : buildList(),
-          );
-        },
+      body: Scaffold(
+        body: Observer(
+          builder: (_) {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: store.isLoading && store.observableList.isEmpty
+                  ? LoadingWidget(store: store)
+                  : buildList(),
+            );
+          },
+        ),
+        floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),
     );
   }

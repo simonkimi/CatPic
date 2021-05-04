@@ -1,6 +1,7 @@
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/tag_search_bar/tag_search_bar.dart';
+import 'package:catpic/ui/pages/search_page/fragment/components/fab/fab.dart';
 import 'package:catpic/ui/pages/search_page/fragment/post_result/post_waterflow.dart';
 import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,15 @@ class PostResultFragment extends StatelessWidget {
             child: child,
           ),
         ),
-        child: PostWaterFlow(
-          store: store,
-          dio: adapter.dio,
-          onAddTag: (value) {
-            tmpController.tmp = tmpController.tmp.trim() + ' $value ';
-          },
+        child: Scaffold(
+          body: PostWaterFlow(
+            store: store,
+            dio: adapter.dio,
+            onAddTag: (value) {
+              tmpController.tmp = tmpController.tmp.trim() + ' $value ';
+            },
+          ),
+          floatingActionButton: FloatActionBubble(loadMoreStore: store),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/store/artist_result_store.dart';
+import 'package:catpic/ui/pages/search_page/fragment/components/fab/fab.dart';
 import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -34,20 +35,23 @@ class ArtistResultFragment extends StatelessWidget {
       onSearch: (value) {
         store.onNewSearch(value.trim());
       },
-      body: Observer(
-        builder: (_) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: store.isLoading
-                ? LoadingWidget(store: store)
-                : buildScrollbar(),
-          );
-        },
+      body: Scaffold(
+        body: Observer(
+          builder: (_) {
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: store.isLoading && store.observableList.isEmpty
+                  ? LoadingWidget(store: store)
+                  : buildList(),
+            );
+          },
+        ),
+        floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),
     );
   }
 
-  Scrollbar buildScrollbar() {
+  Scrollbar buildList() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Scrollbar(
       showTrackOnHover: true,
