@@ -16,14 +16,15 @@ import 'package:flutter/foundation.dart';
 import 'booru_adapter.dart';
 
 class DanbooruAdapter implements BooruAdapter {
-  DanbooruAdapter(this.websiteEntity) {
-    client = DanbooruClient(websiteEntity);
-  }
+  DanbooruAdapter(this.websiteEntity) : client = DanbooruClient(websiteEntity);
 
   final WebsiteTableData websiteEntity;
 
   @override
-  late DanbooruClient client;
+  WebsiteTableData get website => websiteEntity;
+
+  @override
+  final DanbooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {

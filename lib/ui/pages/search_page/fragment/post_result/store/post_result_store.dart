@@ -12,9 +12,12 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   PostResultStoreBase({
     String searchText = '',
     required this.adapter,
+    required this.isFavourite,
   }) : super(searchText);
 
   final BooruAdapter adapter;
+
+  final bool isFavourite;
 
   @override
   @observable
@@ -29,12 +32,18 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   }
 
   @override
-  Future<List<BooruPost>> onLoadNextPage() => adapter.postList(
-        tags: searchText,
-        page: page,
-        limit: settingStore.eachPageItem,
-        cancelToken: cancelToken,
-      );
+  Future<List<BooruPost>> onLoadNextPage() async {
+    final list = await adapter.postList(
+      tags: searchText,
+      page: page,
+      limit: settingStore.eachPageItem,
+      cancelToken: cancelToken,
+    );
+    if (isFavourite) {
+      for (final post in list) post.favourite = true;
+    }
+    return list;
+  }
 
   @override
   int get pageItemCount => settingStore.eachPageItem;

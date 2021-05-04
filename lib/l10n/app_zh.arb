@@ -20,6 +20,7 @@
   "back": "返回",
   "not_set": "未指定",
   "save": "保存",
+  "cancel": "取消",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -53,6 +54,7 @@
   "api_key": "Api Key",
   "search_empty": "什么也没有啊!",
   "search_error": "貌似出了点问题...",
+  "http_401": "用户验证失败!",
 
   "safe": "安全",
   "explicit": "暴露",
@@ -69,8 +71,8 @@
   "metadata": "元数据",
 
   "copy": "复制",
-  "collection": "收藏",
   "copy_finish": "已复制 {tag}",
+  "favourite_success": "收藏成功",
   "@copy_finish": {
     "placeholders": {
       "tag": {

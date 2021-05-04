@@ -169,12 +169,12 @@ class _SearchPageState extends State<SearchPage> {
           currentStore = PostResultStore(
             adapter: adapter,
             searchText: tag,
+            isFavourite: searchType == SearchType.FAVOURITE,
           );
           return PostResultFragment(
             key: key,
             searchText: tag,
             adapter: adapter,
-            isFavourite: searchType == SearchType.FAVOURITE,
             store: currentStore as PostResultStore,
           );
         case SearchType.POOL:

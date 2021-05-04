@@ -169,6 +169,7 @@ class _MainDrawerState extends State<MainDrawer> {
             .websiteDao
             .getById(mainStore.websiteEntity!.id))!;
         if (website.username != null) {
+          Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return SearchPage(
               searchText: BooruAdapter.fromWebsite(website)

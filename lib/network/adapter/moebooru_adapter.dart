@@ -17,14 +17,18 @@ import 'package:flutter/foundation.dart';
 import 'booru_adapter.dart';
 
 class MoebooruAdapter implements BooruAdapter {
-  MoebooruAdapter(this.websiteEntity) {
-    client = MoebooruClient(websiteEntity);
-  }
+  MoebooruAdapter(this.websiteEntity) : client = MoebooruClient(websiteEntity);
 
   final WebsiteTableData websiteEntity;
 
   @override
-  late MoebooruClient client;
+  final MoebooruClient client;
+
+  @override
+  WebsiteTableData get website => websiteEntity;
+
+  @override
+  Dio get dio => client.dio;
 
   @override
   List<SupportPage> getSupportPage() {
@@ -64,9 +68,6 @@ class MoebooruAdapter implements BooruAdapter {
     );
     return await compute(MoebooruTagParse.parse, str);
   }
-
-  @override
-  Dio get dio => client.dio;
 
   @override
   Future<List<BooruPool>> poolList({

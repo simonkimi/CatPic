@@ -21,9 +21,7 @@ class PostWaterFlow extends StatelessWidget {
     required this.store,
     required this.dio,
     required this.onAddTag,
-    this.isFavourite = false,
   }) : super(key: key);
-  final bool isFavourite;
   final PostResultStore store;
   final ValueChanged<String> onAddTag;
   final Dio dio;
@@ -82,7 +80,6 @@ class PostWaterFlow extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => PostImageViewPage.count(
-            isFavourite: isFavourite,
             favicon: mainStore.websiteEntity?.favicon,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
             postList: store.postList,

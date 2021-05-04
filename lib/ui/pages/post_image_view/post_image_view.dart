@@ -9,6 +9,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/download/download_store.dart';
+import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/post_image_view/booru_comments.dart';
 import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
 import 'package:catpic/ui/pages/post_image_view/store/store.dart';
@@ -33,14 +34,12 @@ class PostImageViewPage extends HookWidget {
     this.onAddTag,
     this.favicon,
     this.dio,
-    required this.futureItemBuilder,
-    required this.itemCount,
-    this.isFavourite = false,
-  })  : assert(dio != null || adapter != null),
+    required this.postList,
+  })   : assert(dio != null || adapter != null),
         store = PostImageViewStore(
           currentIndex: index,
-          itemBuilder: futureItemBuilder,
-          itemCount: itemCount,
+          postList: postList,
+          adapter: adapter,
         ),
         pageController = PageController(initialPage: index),
         super(key: key);
@@ -52,15 +51,12 @@ class PostImageViewPage extends HookWidget {
     this.onAddTag,
     this.favicon,
     this.dio,
-    this.isFavourite = false,
-    required List<BooruPost> postList,
+    required this.postList,
   })   : assert(dio != null || adapter != null),
-        futureItemBuilder = ((index) => Future.value(postList[index])),
-        itemCount = postList.length,
         store = PostImageViewStore(
           currentIndex: index,
-          itemBuilder: (index) => Future.value(postList[index]),
-          itemCount: postList.length,
+          postList: postList,
+          adapter: adapter,
         ),
         pageController = PageController(initialPage: index),
         super(key: key);
@@ -68,13 +64,11 @@ class PostImageViewPage extends HookWidget {
   final BooruAdapter? adapter;
   final Uint8List? favicon;
   final int index;
-  final ItemBuilder futureItemBuilder;
-  final int itemCount;
   final PostImageViewStore store;
   final ValueChanged<String>? onAddTag;
   final PageController pageController;
   final Dio? dio;
-  final bool isFavourite;
+  final List<BooruPost> postList;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +76,7 @@ class PostImageViewPage extends HookWidget {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: buildImg(),
-      bottomNavigationBar: buildBottomBar(),
+      bottomNavigationBar: buildBottomBar(context),
       extendBody: true,
     );
   }
@@ -93,20 +87,22 @@ class PostImageViewPage extends HookWidget {
       child: MultiImageViewer(
         dio: adapter?.dio ?? dio!,
         index: index,
-        itemCount: itemCount,
+        itemCount: store.postList.length,
         pageController: pageController,
         futureItemBuilder: (index) async {
-          return (await futureItemBuilder(index)).getDisplayImg();
+          return store.postList[index].getDisplayImg();
         },
         onIndexChange: (value) async {
           store.setIndex(value);
         },
         onCenterTap: () {
-          if (store.pageBarDisplay) {
-            store.setPageBarDisplay(false);
-            return;
+          if (adapter != null) {
+            if (store.pageBarDisplay) {
+              store.setPageBarDisplay(false);
+              return;
+            }
+            store.setInfoBarDisplay(!store.infoBarDisplay);
           }
-          store.setInfoBarDisplay(!store.infoBarDisplay);
         },
       ),
     );
@@ -283,9 +279,9 @@ class PostImageViewPage extends HookWidget {
     );
   }
 
-  Future<void> _download(BooruPost booruPost) async {
+  Future<void> _download() async {
     try {
-      await downloadStore.createDownloadTask(booruPost);
+      await downloadStore.createDownloadTask(store.booruPost);
       BotToast.showText(text: I18n.g.download_start);
     } on TaskExisted {
       BotToast.showText(text: I18n.g.download_exist);
@@ -294,7 +290,7 @@ class PostImageViewPage extends HookWidget {
     }
   }
 
-  void showAsBottomSheet(BuildContext context, BooruPost booruPost) async {
+  void showAsBottomSheet(BuildContext context) async {
     await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
         elevation: 8,
@@ -311,10 +307,10 @@ class PostImageViewPage extends HookWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    buildPopupHeader(context, booruPost),
+                    buildPopupHeader(context, store.booruPost),
                     const SizedBox(height: 10),
-                    ...buildPopupInfo(context, booruPost),
-                    buildPopupTag(booruPost, context),
+                    ...buildPopupInfo(context, store.booruPost),
+                    buildPopupTag(store.booruPost, context),
                   ],
                 ),
               ),
@@ -322,77 +318,97 @@ class PostImageViewPage extends HookWidget {
           );
         },
         footerBuilder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (adapter != null)
+          return Observer(builder: (_) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  if (adapter != null)
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) {
+                            return BooruCommentsPage(
+                              id: store.booruPost.id,
+                              adapter: adapter!,
+                            );
+                          }));
+                        },
+                        child: Icon(
+                          Icons.message_outlined,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  if (adapter != null) const SizedBox(width: 10),
+                  if (adapter != null)
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          if (adapter!.website.username != null &&
+                              adapter!.website.password != null) {
+                            final result = await store.changeFavouriteState();
+                            BotToast.showText(
+                                text: (result ? '' : I18n.of(context).cancel) +
+                                    I18n.of(context).favourite_success);
+                          } else {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          }
+                        },
+                        child: Icon(
+                          store.booruPost.favourite
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  if (store.booruPost.source.isNotEmpty)
+                    const SizedBox(width: 10),
+                  if (store.booruPost.source.isNotEmpty)
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          await launch(store.booruPost.source);
+                        },
+                        child: Icon(
+                          Icons.location_on_outlined,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(width: 10),
                   Expanded(
                     flex: 1,
-                    child: OutlinedButton(
+                    child: DefaultButton(
                       onPressed: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (_) {
-                          return BooruCommentsPage(
-                            id: store.loadedBooruPost!.id,
-                            adapter: adapter!,
-                          );
-                        }));
+                        _download();
                       },
-                      child: Icon(
-                        Icons.message_outlined,
-                        color: Theme.of(context).primaryColor,
+                      child: const Icon(
+                        Icons.download_rounded,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                if (adapter != null) const SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.favorite_outline,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-                if (booruPost.source.isNotEmpty) const SizedBox(width: 10),
-                if (booruPost.source.isNotEmpty)
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        await launch(booruPost.source);
-                      },
-                      child: Icon(
-                        Icons.location_on_outlined,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: DefaultButton(
-                    onPressed: () {
-                      _download(booruPost);
-                    },
-                    child: const Icon(
-                      Icons.download_rounded,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+                ],
+              ),
+            );
+          });
         },
       );
     });
   }
 
-  Widget buildBottomBar() {
+  Widget buildBottomBar(BuildContext context) {
     final infoController =
         useAnimationController(duration: const Duration(milliseconds: 200));
 
@@ -413,10 +429,11 @@ class PostImageViewPage extends HookWidget {
 
       return Stack(
         children: [
-          SlideTransition(
-            position: infoHideAni,
-            child: buildBottomInfoBar(),
-          ),
+          if (adapter != null)
+            SlideTransition(
+              position: infoHideAni,
+              child: buildBottomInfoBar(context),
+            ),
           SlideTransition(
             position: pageHideAni,
             child: buildBottomPageBar(),
@@ -436,7 +453,7 @@ class PostImageViewPage extends HookWidget {
           child: Observer(builder: (_) {
             return PageSlider(
               value: store.currentIndex + 1,
-              count: itemCount,
+              count: store.postList.length,
               controller: store.pageSliderController,
               onChange: (int value) {
                 store.setIndex(value - 1);
@@ -449,101 +466,80 @@ class PostImageViewPage extends HookWidget {
     );
   }
 
-  Widget buildBottomInfoBar() {
+  Widget buildBottomInfoBar(BuildContext context) {
     return BottomAppBar(
       color: Colors.transparent,
-      child: Observer(
-        builder: (context) {
-          return store.loadedBooruPost == null
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation(Colors.white),
-                          strokeWidth: 2.5,
-                        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 16,
+                ),
+                onPressed: () {
+                  Navigator.of(I18n.context).pop();
+                },
+              ),
+              InkWell(
+                onTap: () {
+                  store.setPageBarDisplay(true);
+                  store.setInfoBarDisplay(false);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.image,
+                        size: 16,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          onPressed: () {
-                            Navigator.of(I18n.context).pop();
-                          },
-                        ),
-                        InkWell(
-                          onTap: () {
-                            store.setPageBarDisplay(true);
-                            store.setInfoBarDisplay(false);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.image,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 5),
-                                Observer(
-                                  builder: (_) {
-                                    return Text(
-                                      '${store.currentIndex + 1}/$itemCount',
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 14),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          iconSize: 16,
-                          icon: const Icon(
-                            Icons.info_outline,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            showAsBottomSheet(context, store.loadedBooruPost!);
-                          },
-                        ),
-                        IconButton(
-                          iconSize: 16,
-                          icon: const Icon(
-                            Icons.save_alt,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            _download(store.loadedBooruPost!);
-                          },
-                        ),
-                      ],
-                    )
-                  ],
-                );
-        },
+                      const SizedBox(width: 5),
+                      Observer(
+                        builder: (_) {
+                          return Text(
+                            '${store.currentIndex + 1}/${store.postList.length}',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                iconSize: 16,
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  showAsBottomSheet(context);
+                },
+              ),
+              IconButton(
+                iconSize: 16,
+                icon: const Icon(
+                  Icons.save_alt,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  _download();
+                },
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

@@ -42,6 +42,7 @@ class BooruPost {
     required this.source,
     required this.createTime,
     required this.score,
+    this.favourite = false,
   });
 
   factory BooruPost.fromJson(Map<String, dynamic> jsonRes) {
@@ -72,6 +73,50 @@ class BooruPost {
     );
   }
 
+  BooruPost copyWith({
+    String? id,
+    String? md5,
+    String? creatorId,
+    String? imgURL,
+    String? previewURL,
+    String? sampleURL,
+    int? width,
+    int? height,
+    int? sampleWidth,
+    int? sampleHeight,
+    int? previewWidth,
+    int? previewHeight,
+    int? rating,
+    String? status,
+    Map<String, List<String>>? tags,
+    String? source,
+    String? createTime,
+    String? score,
+    bool? favourite = false,
+  }) {
+    return BooruPost(
+      id: id ?? this.id,
+      md5: md5 ?? this.md5,
+      creatorId: creatorId ?? this.creatorId,
+      imgURL: imgURL ?? this.imgURL,
+      previewURL: previewURL ?? this.previewURL,
+      sampleURL: sampleURL ?? this.sampleURL,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      sampleWidth: sampleWidth ?? this.sampleWidth,
+      sampleHeight: sampleHeight ?? this.sampleHeight,
+      previewWidth: previewWidth ?? this.previewWidth,
+      previewHeight: previewHeight ?? this.previewHeight,
+      rating: rating ?? this.rating,
+      status: status ?? this.status,
+      tags: tags ?? this.tags,
+      source: source ?? this.source,
+      createTime: createTime ?? this.createTime,
+      score: score ?? this.score,
+      favourite: favourite ?? this.favourite,
+    );
+  }
+
   final String id;
   final String creatorId;
   final String createTime;
@@ -93,6 +138,7 @@ class BooruPost {
   final Map<String, List<String>> tags;
   final String source;
   final String score;
+  bool favourite;
 
   Map<String, dynamic> toJson() => {
         'id': id,

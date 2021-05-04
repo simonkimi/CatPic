@@ -1,5 +1,9 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/main.dart';
 
@@ -14,20 +18,21 @@ class PostImageViewStore = PostImageViewStoreBase with _$PostImageViewStore;
 abstract class PostImageViewStoreBase with Store {
   PostImageViewStoreBase({
     required this.currentIndex,
-    required this.itemBuilder,
-    required this.itemCount,
-  });
+    required List<BooruPost> postList,
+    required this.adapter,
+  }) : postList = ObservableList.of(postList);
 
   final PageSliderController pageSliderController = PageSliderController();
 
-  final ItemBuilder itemBuilder;
-  final int itemCount;
+  final ObservableList<BooruPost> postList;
+
+  final BooruAdapter? adapter;
 
   @observable
   int currentIndex;
 
-  @observable
-  BooruPost? loadedBooruPost;
+  @computed
+  BooruPost get booruPost => postList[currentIndex];
 
   @observable
   var infoBarDisplay = settingStore.toolbarOpen;
@@ -50,9 +55,9 @@ abstract class PostImageViewStoreBase with Store {
   Future<void> setIndex(int value) async {
     currentIndex = value;
     pageSliderController.setValue(value);
-    loadedBooruPost = await itemBuilder(value);
+    final loadedBooruPost = postList[value];
     final dao = DatabaseHelper().tagDao;
-    for (final tags in loadedBooruPost!.tags.values) {
+    for (final tags in loadedBooruPost.tags.values) {
       for (final tagStr in tags) {
         if (tagStr.isNotEmpty) {
           await dao.insert(TagTableCompanion.insert(
@@ -61,6 +66,47 @@ abstract class PostImageViewStoreBase with Store {
           ));
         }
       }
+    }
+  }
+
+  @action
+  Future<bool> changeFavouriteState() async {
+    if (booruPost.favourite) {
+      await unFavourite();
+      return false;
+    } else {
+      await favourite();
+      return true;
+    }
+  }
+
+  @action
+  Future<void> favourite() async {
+    try {
+      final username = adapter!.website.username!;
+      final password = adapter!.website.password!;
+      await adapter!.favourite(booruPost.id, username, password);
+      postList[currentIndex] = booruPost.copyWith(favourite: true);
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        BotToast.showText(text: I18n.g.http_401);
+      }
+      BotToast.showText(text: e.message);
+    }
+  }
+
+  @action
+  Future<void> unFavourite() async {
+    try {
+      final username = adapter!.website.username!;
+      final password = adapter!.website.password!;
+      await adapter!.unFavourite(booruPost.id, username, password);
+      postList[currentIndex] = booruPost.copyWith(favourite: false);
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        BotToast.showText(text: I18n.g.http_401);
+      }
+      BotToast.showText(text: e.message);
     }
   }
 }

@@ -40,6 +40,8 @@ abstract class BooruAdapter {
 
   List<SupportPage> getSupportPage();
 
+  WebsiteTableData get website;
+
   Future<List<BooruPost>> postList({
     required String tags,
     required int page,

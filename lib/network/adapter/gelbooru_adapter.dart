@@ -15,19 +15,20 @@ import 'package:flutter/foundation.dart';
 import 'booru_adapter.dart';
 
 class GelbooruAdapter implements BooruAdapter {
-  GelbooruAdapter(this.websiteEntity) {
-    client = GelbooruClient(websiteEntity);
-  }
+  GelbooruAdapter(this.websiteEntity) : client = GelbooruClient(websiteEntity);
 
   final WebsiteTableData websiteEntity;
 
   @override
-  late GelbooruClient client;
+  final GelbooruClient client;
 
   @override
   List<SupportPage> getSupportPage() {
     return [SupportPage.POSTS, SupportPage.TAGS];
   }
+
+  @override
+  WebsiteTableData get website => websiteEntity;
 
   @override
   Future<List<BooruPost>> postList({
