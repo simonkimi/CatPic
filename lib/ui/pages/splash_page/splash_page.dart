@@ -13,16 +13,21 @@ class SplashPage extends StatelessWidget {
   }
 
   Widget buildHello(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Center(
-          child: Text(
-            'CatPic',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
+        body: Container(
+          color: (SpUtil.getInt('theme') ?? 1) < 0
+              ? const Color(0xFF303030)
+              : Colors.white,
+          child: const Center(
+            child: Text(
+              'CatPic',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
             ),
           ),
         ),
