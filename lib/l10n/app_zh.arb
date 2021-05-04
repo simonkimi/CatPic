@@ -19,6 +19,7 @@
   "add": "添加",
   "back": "返回",
   "not_set": "未指定",
+  "save": "保存",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -37,6 +38,7 @@
   "trusted_host_auto_failed": "获取主机地址失败",
   "click_again_to_exit": "再按一次退出",
 
+  "login": "登录",
   "network": "网络",
   "no_website": "还没有网站, 快去添加一个!",
   "host_manager": "主机管理",
@@ -106,7 +108,7 @@
   "auto_complete": "在线自动补全",
   "auto_complete_local": "将使用本地数据库",
   "auto_complete_online": "将使用网站数据库",
-  "save_model": "安全模式",
+  "safe_model": "安全模式",
   "preload": "预加载",
 
   "search_in": "在 {site} 搜索",

@@ -74,7 +74,14 @@ class WebsiteManagerPage extends StatelessWidget {
                 onDeletePress: () {
                   mainStore.deleteWebsite(e);
                 },
-                onSettingPress: () {},
+                onSettingPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WebsiteAddPage(website: e),
+                    ),
+                  );
+                },
               );
             }).toList(),
           );

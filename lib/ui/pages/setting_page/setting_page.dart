@@ -219,7 +219,7 @@ class SettingPage extends StatelessWidget {
         },
       ),
       SwitchListTile(
-        title: Text(I18n.of(context).save_model),
+        title: Text(I18n.of(context).safe_model),
         secondary: const Icon(Icons.block),
         value: settingStore.saveModel,
         onChanged: (value) {

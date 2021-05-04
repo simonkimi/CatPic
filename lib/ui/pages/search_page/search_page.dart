@@ -142,7 +142,9 @@ class _SearchPageState extends State<SearchPage> {
           SpeedDialChild(
             child: const Icon(Icons.keyboard_arrow_up),
             onTap: () async {
-              currentStore.listScrollController.jumpTo(0);
+              currentStore.listScrollController.animateTo(0,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut);
             },
           ),
         ],

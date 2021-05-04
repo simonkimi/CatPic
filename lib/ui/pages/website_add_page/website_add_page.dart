@@ -1,3 +1,4 @@
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
@@ -10,8 +11,16 @@ import 'package:smart_select/smart_select.dart';
 import 'package:smart_select/src/model/chosen.dart';
 
 class WebsiteAddPage extends StatelessWidget {
+  WebsiteAddPage({
+    Key? key,
+    this.website,
+  })  : store = WebsiteAddStore(website),
+        super(key: key);
+
+  final WebsiteTableData? website;
+
   static const route = 'WebsiteAddPage';
-  final store = WebsiteAddStore();
+  final WebsiteAddStore store;
 
   @override
   Widget build(BuildContext context) {

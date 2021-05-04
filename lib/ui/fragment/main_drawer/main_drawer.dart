@@ -164,8 +164,10 @@ class _MainDrawerState extends State<MainDrawer> {
     return ListTile(
       leading: const Icon(Icons.favorite),
       title: Text(I18n.of(context).favourite),
-      onTap: () {
-        final website = mainStore.websiteEntity!;
+      onTap: () async {
+        final website = (await DatabaseHelper()
+            .websiteDao
+            .getById(mainStore.websiteEntity!.id))!;
         if (website.username != null) {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return SearchPage(

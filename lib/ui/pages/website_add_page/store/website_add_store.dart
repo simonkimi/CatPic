@@ -13,23 +13,34 @@ part 'website_add_store.g.dart';
 class WebsiteAddStore = WebsiteAddStoreBase with _$WebsiteAddStore;
 
 abstract class WebsiteAddStoreBase with Store {
-  @observable
-  String websiteName = '';
-  @observable
-  String websiteHost = '';
-  @observable
-  int scheme = WebsiteScheme.HTTPS.index;
-  @observable
-  int websiteType = WebsiteType.GELBOORU.index;
-  @observable
-  bool useDoH = false;
-  @observable
-  bool directLink = false;
+  WebsiteAddStoreBase(this.website)
+      : websiteName = website?.name ?? '',
+        websiteHost = website?.host ?? '',
+        scheme = website?.scheme ?? WebsiteScheme.HTTPS.index,
+        websiteType = website?.type ?? WebsiteType.GELBOORU.index,
+        useDoH = website?.useDoH ?? false,
+        directLink = website?.directLink ?? false,
+        username = website?.username ?? '',
+        password = website?.password ?? '';
+
+  WebsiteTableData? website;
 
   @observable
-  String username = '';
+  late String websiteName;
   @observable
-  String password = '';
+  late String websiteHost;
+  @observable
+  late int scheme;
+  @observable
+  late int websiteType;
+  @observable
+  late bool useDoH;
+  @observable
+  late bool directLink;
+  @observable
+  String username;
+  @observable
+  String password;
 
   @action
   void setWebsiteName(String value) => websiteName = value;
@@ -67,23 +78,36 @@ abstract class WebsiteAddStoreBase with Store {
 
     // 保存网站
     final websiteDao = DatabaseHelper().websiteDao;
-    final entity = WebsiteTableCompanion(
-      host: Value(websiteHost),
-      name: Value(websiteName),
-      scheme: Value(scheme),
-      useDoH: Value(useDoH),
-      type: Value(websiteType),
-      directLink: Value(directLink),
-      username: username.isNotEmpty ? Value(username) : const Value(null),
-      password: password.isNotEmpty ? Value(password) : const Value(null),
-    );
-    final id = await websiteDao.insert(entity);
-    final table = await websiteDao.getById(id);
+    if (website != null) {
+      await websiteDao.updateSite(website!.copyWith(
+        name: websiteName,
+        host: websiteHost,
+        scheme: scheme,
+        useDoH: useDoH,
+        type: websiteType,
+        directLink: directLink,
+        username: username.isNotEmpty ? username : null,
+        password: password.isNotEmpty ? password : null,
+      ));
+    } else {
+      final entity = WebsiteTableCompanion(
+        host: Value(websiteHost),
+        name: Value(websiteName),
+        scheme: Value(scheme),
+        useDoH: Value(useDoH),
+        type: Value(websiteType),
+        directLink: Value(directLink),
+        username: username.isNotEmpty ? Value(username) : const Value(null),
+        password: password.isNotEmpty ? Value(password) : const Value(null),
+      );
+      final id = await websiteDao.insert(entity);
+      final table = await websiteDao.getById(id);
+      getFavicon(table!).then((favicon) {
+        mainStore.setWebsiteFavicon(id, favicon);
+      });
+    }
+
     mainStore.updateList();
-    // 获取封面图片
-    getFavicon(table!).then((favicon) {
-      mainStore.setWebsiteFavicon(id, favicon);
-    });
     return true;
   }
 }

@@ -51,7 +51,6 @@ extension WebsiteTypeName on WebsiteType {
         return 'EHentai';
       case WebsiteType.GELBOORU:
         return 'Gelbooru';
-
       case WebsiteType.MOEBOORU:
         return 'Moebooru';
       case WebsiteType.DANBOORU:
