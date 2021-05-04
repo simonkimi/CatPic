@@ -4,6 +4,7 @@ import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
+import 'package:catpic/ui/pages/splash_page/splash_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,55 +22,10 @@ final downloadStore = DownloadStore();
 final mainStore = MainStore();
 final settingStore = SettingStore();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SpUtil.getInstance();
   runApp(const SplashPage());
-}
-
-class SplashPage extends StatelessWidget {
-  const SplashPage({Key? key}) : super(key: key);
-
-  Future<void> loading() async {
-    await SpUtil.getInstance();
-    await settingStore.init();
-    await mainStore.init();
-    downloadStore.startDownload();
-  }
-
-  Widget buildHello(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text(
-            'CatPic',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
-      child: FutureBuilder<void>(
-        future: loading(),
-        builder: (context, snapshot) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            child: snapshot.connectionState == ConnectionState.done
-                ? CatPicApp()
-                : buildHello(context),
-          );
-        },
-      ),
-    );
-  }
 }
 
 class CatPicApp extends StatelessWidget {
