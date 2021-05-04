@@ -20,7 +20,14 @@ abstract class MainStoreBase with Store {
   @observable
   Uint8List? websiteIcon;
 
+  @observable
   int searchPageCount = 0;
+
+  @action
+  void addSearchPage() => searchPageCount++;
+
+  @action
+  void descSearchPage() => searchPageCount--;
 
   @action
   Future<void> init() async {

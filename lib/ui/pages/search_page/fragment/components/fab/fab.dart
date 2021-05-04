@@ -28,6 +28,19 @@ class FloatActionBubble extends StatelessWidget {
           overlayColor: Colors.transparent,
           overlayOpacity: 0.5,
           children: [
+            if (mainStore.searchPageCount > 1)
+              SpeedDialChild(
+                backgroundColor: settingStore.theme < 0
+                    ? const Color(0xFF616161)
+                    : Colors.white,
+                foregroundColor: settingStore.theme < 0
+                    ? const Color(0xFFFDFDFD)
+                    : Colors.black,
+                child: const Icon(Icons.first_page),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
             SpeedDialChild(
               backgroundColor: settingStore.theme < 0
                   ? const Color(0xFF616161)
@@ -47,7 +60,7 @@ class FloatActionBubble extends StatelessWidget {
               foregroundColor: settingStore.theme < 0
                   ? const Color(0xFFFDFDFD)
                   : Colors.black,
-              child: const Icon(Icons.last_page),
+              child: const Icon(Icons.find_in_page_outlined),
               onTap: () async {
                 final page = await showDialog(
                     context: context,
@@ -89,7 +102,7 @@ class FloatActionBubble extends StatelessWidget {
                         ],
                       );
                     });
-                loadMoreStore.onJumpPage(page);
+                loadMoreStore.onJumpPage(page ?? 1);
               },
             ),
             SpeedDialChild(

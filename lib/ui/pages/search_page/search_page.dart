@@ -48,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    mainStore.searchPageCount += 1;
+    mainStore.addSearchPage();
     _eventSiteChangeListener =
         EventBusUtil().bus.on<EventSiteChange>().listen((event) {
       changeSearchBody(searchText, searchType);
@@ -59,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void dispose() {
     super.dispose();
-    mainStore.searchPageCount -= 1;
+    mainStore.descSearchPage();
     print('SearchPageCount: ${mainStore.searchPageCount}');
     _eventSiteChangeListener.cancel();
   }
