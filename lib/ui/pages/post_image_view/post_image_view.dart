@@ -379,21 +379,25 @@ class PostImageViewPage extends HookWidget {
                         ),
                       ),
                     ),
-                  if (store.booruPost.source.isNotEmpty)
-                    const SizedBox(width: 10),
-                  if (store.booruPost.source.isNotEmpty)
-                    Expanded(
-                      flex: 1,
-                      child: OutlinedButton(
-                        onPressed: () async {
-                          await launch(store.booruPost.source);
-                        },
-                        child: Icon(
-                          Icons.location_on_outlined,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        if (store.booruPost.source.isEmpty) {
+                          BotToast.showText(
+                              text: I18n.of(context)
+                                  .not_support('# ${store.booruPost.id}'));
+                          return;
+                        }
+                        await launch(store.booruPost.source);
+                      },
+                      child: Icon(
+                        Icons.location_on_outlined,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     flex: 1,
