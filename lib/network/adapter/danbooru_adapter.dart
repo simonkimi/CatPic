@@ -111,4 +111,11 @@ class DanbooruAdapter implements BooruAdapter {
     await client.favourite(
         postId: postId, username: username, apiKey: password);
   }
+
+  @override
+  Future<void> unFavourite(
+      String postId, String username, String password) async {
+    await client.unFavourite(
+        postId: postId, username: username, apiKey: password);
+  }
 }

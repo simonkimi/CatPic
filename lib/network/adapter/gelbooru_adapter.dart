@@ -92,4 +92,9 @@ class GelbooruAdapter implements BooruAdapter {
   String favouriteList(String username) {
     throw UnsupportedError('Gelbooru not support FavouriteList!');
   }
+
+  @override
+  Future<void> unFavourite(String postId, String username, String password) {
+    throw UnsupportedError('Gelbooru not support Favourite!');
+  }
 }

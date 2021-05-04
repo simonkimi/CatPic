@@ -173,7 +173,7 @@ class _MainDrawerState extends State<MainDrawer> {
             return SearchPage(
               searchText: BooruAdapter.fromWebsite(website)
                   .favouriteList(website.username!),
-              searchType: SearchType.POST,
+              searchType: SearchType.FAVOURITE,
             );
           }));
         } else {

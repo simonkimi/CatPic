@@ -105,4 +105,18 @@ class DanbooruClient extends BaseClient {
           'api_key': apiKey,
         }.trim);
   }
+
+  Future<void> unFavourite({
+    required String postId,
+    required String username,
+    required String apiKey,
+  }) async {
+    final uri = Uri(
+        path: 'favorites/$postId.json',
+        queryParameters: {
+          'login': username,
+          'api_key': apiKey,
+        }.trim);
+    await dio.deleteUri(uri);
+  }
 }

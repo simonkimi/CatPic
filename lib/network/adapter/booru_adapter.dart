@@ -70,6 +70,8 @@ abstract class BooruAdapter {
 
   Future<void> favourite(String postId, String username, String password);
 
+  Future<void> unFavourite(String postId, String username, String password);
+
   Dio get dio;
 
   BaseClient get client;

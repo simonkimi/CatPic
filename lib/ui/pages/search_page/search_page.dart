@@ -164,6 +164,7 @@ class _SearchPageState extends State<SearchPage> {
       final key = UniqueKey();
       final adapter = BooruAdapter.fromWebsite(mainStore.websiteEntity!);
       switch (searchType) {
+        case SearchType.FAVOURITE:
         case SearchType.POST:
           currentStore = PostResultStore(
             adapter: adapter,
@@ -173,6 +174,7 @@ class _SearchPageState extends State<SearchPage> {
             key: key,
             searchText: tag,
             adapter: adapter,
+            isFavourite: searchType == SearchType.FAVOURITE,
             store: currentStore as PostResultStore,
           );
         case SearchType.POOL:

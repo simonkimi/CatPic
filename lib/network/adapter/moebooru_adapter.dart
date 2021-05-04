@@ -108,5 +108,12 @@ class MoebooruAdapter implements BooruAdapter {
   }
 
   @override
+  Future<void> unFavourite(
+      String postId, String username, String password) async {
+    await client.unFavourite(
+        postId: postId, username: username, password: password);
+  }
+
+  @override
   String favouriteList(String username) => 'vote:3:$username';
 }

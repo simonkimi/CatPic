@@ -113,6 +113,25 @@ class MoebooruClient extends BaseClient {
         data: {
           'id': postId,
           'login': username,
+          'score': '3',
+          'password_hash': sha1
+              .convert(utf8.encode('choujin-steiner--$password--'))
+              .toString(),
+        }.trim);
+  }
+
+  Future<void> unFavourite({
+    required String postId,
+    required String username,
+    required String password,
+  }) async {
+    final uri = Uri(path: 'post/vote.json');
+
+    await dio.postUri(uri,
+        data: {
+          'id': postId,
+          'login': username,
+          'score': '2',
           'password_hash': sha1
               .convert(utf8.encode('choujin-steiner--$password--'))
               .toString(),

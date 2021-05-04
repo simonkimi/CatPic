@@ -35,7 +35,8 @@ class PostImageViewPage extends HookWidget {
     this.dio,
     required this.futureItemBuilder,
     required this.itemCount,
-  })   : assert(dio != null || adapter != null),
+    this.isFavourite = false,
+  })  : assert(dio != null || adapter != null),
         store = PostImageViewStore(
           currentIndex: index,
           itemBuilder: futureItemBuilder,
@@ -51,6 +52,7 @@ class PostImageViewPage extends HookWidget {
     this.onAddTag,
     this.favicon,
     this.dio,
+    this.isFavourite = false,
     required List<BooruPost> postList,
   })   : assert(dio != null || adapter != null),
         futureItemBuilder = ((index) => Future.value(postList[index])),
@@ -72,6 +74,7 @@ class PostImageViewPage extends HookWidget {
   final ValueChanged<String>? onAddTag;
   final PageController pageController;
   final Dio? dio;
+  final bool isFavourite;
 
   @override
   Widget build(BuildContext context) {

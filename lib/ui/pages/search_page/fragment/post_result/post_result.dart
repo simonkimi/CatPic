@@ -6,15 +6,17 @@ import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_resu
 import 'package:flutter/material.dart';
 
 class PostResultFragment extends StatelessWidget {
-  PostResultFragment(
-      {Key? key,
-      this.searchText = '',
-      required this.adapter,
-      required this.store})
-      : super(key: key);
+  PostResultFragment({
+    Key? key,
+    this.searchText = '',
+    required this.adapter,
+    required this.store,
+    this.isFavourite = false,
+  }) : super(key: key);
   final String searchText;
   final BooruAdapter adapter;
   final PostResultStore store;
+  final bool isFavourite;
   final tmpController = SearchBarTmpController();
 
   @override
