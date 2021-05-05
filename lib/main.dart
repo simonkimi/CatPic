@@ -4,7 +4,6 @@ import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
-import 'package:catpic/ui/pages/splash_page/splash_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -25,7 +24,9 @@ final settingStore = SettingStore();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SpUtil.getInstance();
-  runApp(const SplashPage());
+  await settingStore.init();
+  await mainStore.init();
+  runApp(CatPicApp());
 }
 
 class CatPicApp extends StatelessWidget {

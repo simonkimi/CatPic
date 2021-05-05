@@ -6,6 +6,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/entity/website.dart';
 
+final startDate = DateTime.now();
+
+void printTimeLine([String? tag]) {
+  final thisTime = DateTime.now();
+  print('${tag ?? 'TimeLine'}: ${thisTime.difference(startDate).toString()}');
+}
+
 extension IterableUtils<T> on Iterable<T> {
   T? get(bool test(T e)) {
     for (final e in this) {

@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:catpic/utils/utils.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
-import 'package:dio_cache_interceptor/src/store/file_cache_store.dart';
 import 'package:path/path.dart' as p;
 
 import '../../../themes.dart';
@@ -85,13 +85,16 @@ abstract class SettingStoreBase with Store {
     cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
 
+    printTimeLine('SpUtil.getSp');
+
     dioCacheOptions = CacheOptions(
-      store: FileCacheStore(cacheDir),
+      store: HiveCacheStore(cacheDir),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],
       priority: CachePriority.normal,
       maxStale: const Duration(days: 30),
     );
+    printTimeLine('dioCacheOptions');
   }
 
   Future<String> getCacheDir() async {
@@ -100,9 +103,9 @@ abstract class SettingStoreBase with Store {
                 ? await getApplicationSupportDirectory()
                 : await getApplicationDocumentsDirectory())
             .path,
-        'cache');
+        'cache.hive');
     final sp = SpUtil.getSp()!;
-    sp.setString(cacheDir, path);
+    sp.setString('cacheDir', path);
     return path;
   }
 

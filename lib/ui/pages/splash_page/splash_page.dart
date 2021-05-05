@@ -1,3 +1,4 @@
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_util/sp_util.dart';
 
@@ -7,8 +8,11 @@ class SplashPage extends StatelessWidget {
   const SplashPage({Key? key}) : super(key: key);
 
   Future<void> loading() async {
+    printTimeLine('loading');
     await settingStore.init();
+    printTimeLine('setting init');
     await mainStore.init();
+    printTimeLine('mainStore init');
     downloadStore.startDownload();
   }
 
