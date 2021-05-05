@@ -500,7 +500,7 @@ class PostImageViewPage extends HookWidget {
               InkWell(
                 onTap: () {
                   store.setPageBarDisplay(true);
-                  store.setInfoBarDisplay(false);
+                  store.setInfoBarDisplayWithoutSave(false);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

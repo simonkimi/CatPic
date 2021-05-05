@@ -47,6 +47,11 @@ abstract class PostImageViewStoreBase with Store {
   }
 
   @action
+  void setInfoBarDisplayWithoutSave(bool value) {
+    infoBarDisplay = value;
+  }
+
+  @action
   void setPageBarDisplay(bool value) {
     pageBarDisplay = value;
   }
