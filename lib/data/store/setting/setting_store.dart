@@ -64,7 +64,7 @@ abstract class SettingStoreBase with Store {
 
   late CacheOptions dioCacheOptions;
 
-  var cacheDir = '';
+  var documentDir = '';
 
   @action
   Future<void> init() async {
@@ -82,11 +82,11 @@ abstract class SettingStoreBase with Store {
     autoCompleteUseNetwork = sp.getBool('autoCompleteUseNetwork') ?? true;
     saveModel = sp.getBool('saveModel') ?? true;
     toolbarOpen = sp.getBool('toolbarOpen') ?? true;
-    cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
+    documentDir = sp.getString('documentDir') ?? await getDocumentDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
 
     dioCacheOptions = CacheOptions(
-      store: HiveCacheStore(cacheDir),
+      store: HiveCacheStore(p.join(documentDir, 'cache')),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],
       priority: CachePriority.normal,
@@ -95,16 +95,14 @@ abstract class SettingStoreBase with Store {
     printTimeLine('dioCacheOptions');
   }
 
-  Future<String> getCacheDir() async {
-    final path = p.join(
-        (Platform.isWindows
-                ? await getApplicationSupportDirectory()
-                : await getApplicationDocumentsDirectory())
-            .path,
-        'cache');
+  Future<String> getDocumentDir() async {
+    final path = Platform.isWindows
+        ? await getApplicationSupportDirectory()
+        : await getApplicationDocumentsDirectory();
+
     final sp = SpUtil.getSp()!;
-    sp.setString('cacheDir', path);
-    return path;
+    sp.setString('documentDir', path.path);
+    return path.path;
   }
 
   @action

@@ -1,8 +1,9 @@
+import 'dart:ffi';
 import 'dart:io';
+import 'package:catpic/main.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:catpic/data/database/dao/download_dao.dart';
 import 'package:catpic/data/database/dao/history_dao.dart';
@@ -18,15 +19,19 @@ import 'entity/website.dart';
 
 part 'database.g.dart';
 
+DynamicLibrary openOnWindows() {
+  final exeDir = File(Platform.resolvedExecutable).parent;
+  final libraryNextToExe = File(p.join(exeDir.path, 'sqlite3.dll'));
+  if (libraryNextToExe.existsSync())
+    return DynamicLibrary.open(libraryNextToExe.path);
+  final scriptDir = File(Platform.script.toFilePath()).parent;
+  final libraryNextToScript = File(p.join(scriptDir.path, 'sqlite3.dll'));
+  return DynamicLibrary.open(libraryNextToScript.path);
+}
+
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    late Directory dbFolder;
-    if (Platform.isWindows) {
-      dbFolder = await getApplicationSupportDirectory();
-    } else {
-      dbFolder = await getApplicationDocumentsDirectory();
-    }
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final file = File(p.join(settingStore.documentDir, 'db.sqlite'));
     return VmDatabase(file);
   });
 }

@@ -13,7 +13,9 @@ import 'package:sp_util/sp_util.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:catpic/themes.dart' as theme;
+import 'package:sqlite3/open.dart';
 
+import 'data/database/database.dart';
 import 'data/store/main/main_store.dart';
 import 'navigator.dart';
 
@@ -23,6 +25,7 @@ final settingStore = SettingStore();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  open.overrideFor(OperatingSystem.windows, openOnWindows);
   await SpUtil.getInstance();
   await settingStore.init();
   await mainStore.init();
