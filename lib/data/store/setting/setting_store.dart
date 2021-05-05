@@ -85,8 +85,6 @@ abstract class SettingStoreBase with Store {
     cacheDir = sp.getString('cacheDir') ?? await getCacheDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
 
-    printTimeLine('SpUtil.getSp');
-
     dioCacheOptions = CacheOptions(
       store: HiveCacheStore(cacheDir),
       policy: CachePolicy.noCache,
@@ -103,7 +101,7 @@ abstract class SettingStoreBase with Store {
                 ? await getApplicationSupportDirectory()
                 : await getApplicationDocumentsDirectory())
             .path,
-        'cache.hive');
+        'cache');
     final sp = SpUtil.getSp()!;
     sp.setString('cacheDir', path);
     return path;
