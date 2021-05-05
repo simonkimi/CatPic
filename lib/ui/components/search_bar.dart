@@ -1,8 +1,6 @@
 import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-
 
 class SearchBarTmpController {
   SearchBarTmpController();
@@ -94,50 +92,52 @@ class SearchBarState extends State<SearchBar> {
     final isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
 
-    return Observer(builder: (_) {
-      return FloatingSearchBar(
-        hint: widget.showTmp
-            ? (_searchTmp.isEmpty ? defaultHint : _searchTmp)
-            : (_searchText.isEmpty ? defaultHint : _searchText),
-        backgroundColor:
-            isDarkMode(context) ? const Color(0xFF424242) : Colors.white,
-        controller: controller,
-        scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-        transitionDuration: const Duration(milliseconds: 300),
-        transitionCurve: Curves.easeInOut,
-        physics: const ClampingScrollPhysics(),
-        axisAlignment: isPortrait ? 0.0 : -1.0,
-        openAxisAlignment: 0.0,
-        openWidth: isPortrait ? 600 : 500,
-        debounceDelay: const Duration(milliseconds: 100),
-        progress: widget.progress,
-        body: widget.body,
-        onQueryChanged: (query) {
-          if (controller.isOpen) {
-            widget.onQueryChanged?.call(query);
-            setState(() {
-              _searchTmp = query;
-            });
-          }
-        },
-        onSubmitted: (query) {
-          controller.close();
-          widget.onSubmitted?.call(query);
+    return FloatingSearchBar(
+      hint: widget.showTmp
+          ? (_searchTmp.isEmpty ? defaultHint : _searchTmp)
+          : (_searchText.isEmpty ? defaultHint : _searchText),
+      backgroundColor:
+          isDarkMode(context) ? const Color(0xFF424242) : Colors.white,
+      controller: controller,
+      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionCurve: Curves.easeInOut,
+      physics: const ClampingScrollPhysics(),
+      axisAlignment: isPortrait ? 0.0 : -1.0,
+      openAxisAlignment: 0.0,
+      openWidth: isPortrait ? 600 : 500,
+      debounceDelay: const Duration(milliseconds: 100),
+      progress: widget.progress,
+      automaticallyImplyDrawerHamburger: !Navigator.of(context).canPop(),
+      leadingActions: [
+        if (Navigator.of(context).canPop()) FloatingSearchBarAction.back(),
+      ],
+      body: widget.body,
+      onQueryChanged: (query) {
+        if (controller.isOpen) {
+          widget.onQueryChanged?.call(query);
           setState(() {
-            _searchText = query;
+            _searchTmp = query;
           });
-        },
-        onFocusChanged: (isFocused) {
-          widget.onFocusChanged?.call(isFocused);
-          if (isFocused) {
-            controller.query = _searchTmp;
-          }
-        },
-        transition: CircularFloatingSearchBarTransition(),
-        actions: widget.actions,
-        builder: widget.candidateBuilder,
-      );
-    });
+        }
+      },
+      onSubmitted: (query) {
+        controller.close();
+        widget.onSubmitted?.call(query);
+        setState(() {
+          _searchText = query;
+        });
+      },
+      onFocusChanged: (isFocused) {
+        widget.onFocusChanged?.call(isFocused);
+        if (isFocused) {
+          controller.query = _searchTmp;
+        }
+      },
+      transition: CircularFloatingSearchBarTransition(),
+      actions: widget.actions,
+      builder: widget.candidateBuilder,
+    );
   }
 }
 
