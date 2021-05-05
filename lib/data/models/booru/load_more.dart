@@ -31,8 +31,8 @@ abstract class ILoadMore<T> {
   Future<void> _loadNextPage() async {
     isLoading = true;
     await lock.synchronized(() async {
-      final list = await onLoadNextPage();
       page += 1;
+      final list = await onLoadNextPage();
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();

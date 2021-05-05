@@ -1,7 +1,7 @@
+import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../main.dart';
 
 class DarkImage extends StatelessWidget {
   const DarkImage({
@@ -13,7 +13,7 @@ class DarkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      return settingStore.theme > 0
+      return !isDarkMode(context)
           ? Image(image: image)
           : Stack(
               children: [

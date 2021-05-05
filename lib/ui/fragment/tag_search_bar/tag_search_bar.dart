@@ -228,7 +228,7 @@ class _TagSearchBarState extends State<TagSearchBar>
         cancelToken?.cancel();
         cancelToken = CancelToken();
         setState(() {
-          loadingProgress = true;
+          if (mounted) loadingProgress = true;
         });
         final adapter = BooruAdapter.fromWebsite(mainStore.websiteEntity!);
         final onlineTag = await adapter.tagList(
@@ -238,7 +238,7 @@ class _TagSearchBarState extends State<TagSearchBar>
           cancelToken: cancelToken,
         );
         setState(() {
-          loadingProgress = false;
+          if (mounted) loadingProgress = false;
         });
         return onlineTag
             .map((e) => SearchSuggestion(
@@ -303,5 +303,11 @@ class _TagSearchBarState extends State<TagSearchBar>
         type: HistoryType.POST,
       ));
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    cancelToken?.cancel();
   }
 }

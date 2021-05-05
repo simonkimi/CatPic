@@ -1,8 +1,8 @@
+import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
-import '../../main.dart';
 
 class SearchBarTmpController {
   SearchBarTmpController();
@@ -100,7 +100,7 @@ class SearchBarState extends State<SearchBar> {
             ? (_searchTmp.isEmpty ? defaultHint : _searchTmp)
             : (_searchText.isEmpty ? defaultHint : _searchText),
         backgroundColor:
-            settingStore.theme < 0 ? const Color(0xFF424242) : Colors.white,
+            isDarkMode(context) ? const Color(0xFF424242) : Colors.white,
         controller: controller,
         scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
         transitionDuration: const Duration(milliseconds: 300),

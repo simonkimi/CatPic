@@ -86,7 +86,8 @@ final purpleTheme = ThemeData(
   primarySwatch: _purplePrimary.swatch,
 );
 
-bool isDarkMode() => Theme.of(I18n.context).brightness == Brightness.dark;
+bool isDarkMode([BuildContext? context]) =>
+    Theme.of(context ?? I18n.context).brightness == Brightness.dark;
 
 const darkColors = <Color>[
   Color(0xFF253139),

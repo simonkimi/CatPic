@@ -267,7 +267,8 @@ class _MainDrawerState extends State<MainDrawer> {
     return Observer(builder: (_) {
       return Theme(
           data: Theme.of(context).copyWith(
-            primaryColor: isDarkMode() ? darkBlueTheme.primaryColorDark : null,
+            primaryColor:
+                isDarkMode(context) ? darkBlueTheme.primaryColorDark : null,
           ),
           child: UserAccountsDrawerHeader(
             accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),

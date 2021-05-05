@@ -24,7 +24,7 @@ class MoebooruClient extends BaseClient {
         path: 'post.json',
         queryParameters: {
           'limit': limit.toString(),
-          'page': (page + 1).toString(),
+          'page': page.toString(),
           'tags': tags
         }.trim);
 
@@ -71,7 +71,7 @@ class MoebooruClient extends BaseClient {
   }) async {
     final uri = Uri(
       path: 'pool.json',
-      queryParameters: {'query': query, 'page': (page + 1).toString()}.trim,
+      queryParameters: {'query': query, 'page': page.toString()}.trim,
     );
     return (await dio.getUri<String>(uri, cancelToken: cancelToken)).data!;
   }

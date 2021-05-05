@@ -23,7 +23,8 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).idle_loading,
-          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.white : Colors.black),
         ),
       ]);
     case LoadStatus.canLoading:
@@ -32,7 +33,8 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).can_load_text,
-          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.loading:
@@ -45,7 +47,8 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).loading_text,
-          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.noMore:
@@ -54,7 +57,8 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).no_more_text,
-          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.white : Colors.black),
         )
       ]);
     case LoadStatus.failed:
@@ -63,7 +67,8 @@ Widget buildFooter(BuildContext context, LoadStatus? status) {
         const SizedBox(width: 10),
         Text(
           I18n.of(context).load_fail,
-          style: TextStyle(color: isDarkMode() ? Colors.white : Colors.black),
+          style: TextStyle(
+              color: isDarkMode(context) ? Colors.white : Colors.black),
         )
       ]);
   }

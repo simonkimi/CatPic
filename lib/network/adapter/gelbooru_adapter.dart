@@ -38,7 +38,7 @@ class GelbooruAdapter implements BooruAdapter {
     CancelToken? cancelToken,
   }) async {
     final str = await client.postsList(
-        tags: tags, limit: limit, pid: page, cancelToken: cancelToken);
+        tags: tags, limit: limit, pid: page - 1, cancelToken: cancelToken);
     return await compute(GelbooruPostParser.parse, str);
   }
 
@@ -55,7 +55,7 @@ class GelbooruAdapter implements BooruAdapter {
       names: name,
       order: order,
       cancelToken: cancelToken,
-      page: page,
+      page: page - 1,
     );
     return await compute(GelbooruTagParse.parse, str);
   }
