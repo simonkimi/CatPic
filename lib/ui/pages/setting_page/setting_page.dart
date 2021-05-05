@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -11,11 +13,18 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:smart_select/src/model/chosen.dart';
 import 'package:catpic/main.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../themes.dart';
 
 class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
+
+  Future<int> getCacheSize() async {
+    final file = File(p.join(settingStore.cacheDir, 'dio_cache.hive'));
+    if (file.existsSync()) return await file.length();
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +60,7 @@ class SettingPage extends StatelessWidget {
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => HostManagerPage()));
         },
-      )
+      ),
     ];
   }
 
@@ -130,6 +139,52 @@ class SettingPage extends StatelessWidget {
         title: I18n.of(context).download_quality,
         choiceItems: qualityChoice,
       ),
+      StatefulBuilder(builder: (context, setState) {
+        return ListTile(
+          title: Text(I18n.of(context).cache),
+          leading: const Icon(Icons.insert_drive_file_outlined),
+          trailing: FutureBuilder<int>(
+            future: getCacheSize(),
+            builder: (context, snapshot) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                    ((snapshot.data ?? 0) / (1024 * 1024)).toStringAsFixed(2) +
+                        ' MB'),
+              );
+            },
+          ),
+          onTap: () async {
+            final result = await showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(I18n.of(context).clean_cache),
+                    content: Text(I18n.of(context).confirm_clean_cache),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(I18n.of(context).negative),
+                      ),
+                      DefaultButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: Text(I18n.of(context).positive),
+                      )
+                    ],
+                  );
+                });
+            if (result == true) {
+              await settingStore.dioCacheOptions.store!.clean();
+              BotToast.showText(text: I18n.of(context).clean_success);
+              setState(() {});
+            }
+          },
+        );
+      }),
     ];
   }
 
@@ -141,7 +196,7 @@ class SettingPage extends StatelessWidget {
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
-            leading: const Icon(Icons.color_lens),
+            leading: const Icon(Icons.color_lens_outlined),
           );
         },
         modalType: S2ModalType.popupDialog,
@@ -246,7 +301,7 @@ class SettingPage extends StatelessWidget {
       ),
       SwitchListTile(
         title: Text(I18n.of(context).safe_model),
-        secondary: const Icon(Icons.block),
+        secondary: const Icon(Icons.child_care),
         value: settingStore.saveModel,
         onChanged: (value) {
           settingStore.setSaveModel(value);
