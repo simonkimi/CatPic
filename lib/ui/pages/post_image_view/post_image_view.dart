@@ -111,6 +111,7 @@ class PostImageViewPage extends HookWidget {
   Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
     return Wrap(
       spacing: 3,
+      runSpacing: 3,
       children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
         return CustomPopupMenu(
           arrowColor: Colors.black87,
@@ -291,8 +292,11 @@ class PostImageViewPage extends HookWidget {
   }
 
   void showAsBottomSheet(BuildContext context) async {
+    final size = MediaQuery.of(context).size;
+    print('${size.width}  ${size.height}');
     await showSlidingBottomSheet(context, builder: (context) {
       return SlidingSheetDialog(
+        maxWidth: size.height < size.width ? size.height : double.infinity,
         elevation: 8,
         cornerRadius: 16,
         snapSpec: const SnapSpec(
@@ -425,7 +429,7 @@ class PostImageViewPage extends HookWidget {
         useAnimationController(duration: const Duration(milliseconds: 200));
 
     final infoHideAni =
-        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 1))
+        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 2))
             .animate(infoController);
 
     final pageController =

@@ -19,6 +19,27 @@ class ImageQuality {
   static const int raw = 2;
 }
 
+class CardSize {
+  static const int SMALL = 1;
+  static const int MIDDLE = 2;
+  static const int LARGE = 3;
+  static const int HUGE = 4;
+
+  static int of(int value) {
+    switch (value) {
+      case SMALL:
+        return 100;
+      case LARGE:
+        return 200;
+      case HUGE:
+        return 250;
+      case MIDDLE:
+      default:
+        return 150;
+    }
+  }
+}
+
 abstract class SettingStoreBase with Store {
   @observable
   var useCardWidget = true; // 卡片布局
@@ -30,7 +51,7 @@ abstract class SettingStoreBase with Store {
   var eachPageItem = 50; // 每页数量
 
   @observable
-  var previewRowNum = 3; // 显示列数
+  var cardSize = 1; // 卡片大小
 
   @observable
   var previewQuality = ImageQuality.preview; // 预览质量
@@ -72,7 +93,7 @@ abstract class SettingStoreBase with Store {
     useCardWidget = sp.getBool('useCardWidget') ?? true;
     showCardDetail = sp.getBool('showCardDetail') ?? true;
     eachPageItem = sp.getInt('eachPageItem') ?? 50;
-    previewRowNum = sp.getInt('previewRowNum') ?? 3;
+    cardSize = sp.getInt('cardSize') ?? 3;
     downloadUri = sp.getString('downloadUri') ?? '';
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
@@ -172,9 +193,9 @@ abstract class SettingStoreBase with Store {
   }
 
   @action
-  void setPreviewRowNum(int value) {
-    previewRowNum = value;
-    SpUtil.putInt('previewRowNum', value);
+  void setCardSize(int value) {
+    cardSize = value;
+    SpUtil.putInt('cardSize', value);
   }
 
   @action

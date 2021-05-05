@@ -16,6 +16,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/data/store/setting/setting_store.dart';
 
 class PostWaterFlow extends StatelessWidget {
   const PostWaterFlow({
@@ -61,10 +62,10 @@ class PostWaterFlow extends StatelessWidget {
           child: WaterfallFlow.builder(
             controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
-            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount: settingStore.previewRowNum,
+            gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
               mainAxisSpacing: 5,
               crossAxisSpacing: 5,
+              maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
             ),
             itemCount: store.postList.length,
             itemBuilder: _itemBuilder,

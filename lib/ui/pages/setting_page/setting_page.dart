@@ -21,7 +21,8 @@ class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
 
   Future<int> getCacheSize() async {
-    final file = File(p.join(settingStore.documentDir, 'cache', 'dio_cache.hive'));
+    final file =
+        File(p.join(settingStore.documentDir, 'cache', 'dio_cache.hive'));
     if (file.existsSync()) return await file.length();
     return 0;
   }
@@ -237,18 +238,22 @@ class SettingPage extends StatelessWidget {
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
-            leading: const Icon(Icons.view_column_outlined),
+            leading: const Icon(Icons.photo_size_select_small),
           );
         },
         modalType: S2ModalType.popupDialog,
         modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: settingStore.previewRowNum,
+        selectedValue: settingStore.cardSize,
         onChange: (S2SingleSelected<int?> value) {
-          settingStore.setPreviewRowNum(value.value!);
+          settingStore.setCardSize(value.value!);
         },
-        title: I18n.of(context).column_num,
-        choiceItems: List.generate(
-            5, (index) => S2Choice(title: '${index + 2}', value: index + 2)),
+        title: I18n.of(context).card_size,
+        choiceItems: [
+          S2Choice(value: CardSize.SMALL, title: I18n.of(context).small),
+          S2Choice(value: CardSize.MIDDLE, title: I18n.of(context).middle),
+          S2Choice(value: CardSize.LARGE, title: I18n.of(context).large),
+          S2Choice(value: CardSize.HUGE, title: I18n.of(context).huge),
+        ],
       ),
       // 加载数量
       SmartSelect<int>.single(
