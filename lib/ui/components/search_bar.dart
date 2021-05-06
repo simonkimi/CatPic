@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:catpic/main.dart';
 import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
@@ -109,9 +111,12 @@ class SearchBarState extends State<SearchBar> {
       openWidth: isPortrait ? 600 : 500,
       debounceDelay: const Duration(milliseconds: 100),
       progress: widget.progress,
-      automaticallyImplyDrawerHamburger: !Navigator.of(context).canPop(),
+      automaticallyImplyDrawerHamburger:
+          Platform.isAndroid && !Navigator.of(context).canPop(),
       leadingActions: [
-        if (Navigator.of(context).canPop() && mainStore.searchPageCount > 1)
+        if (!Platform.isAndroid &&
+            Navigator.of(context).canPop() &&
+            mainStore.searchPageCount > 1)
           FloatingSearchBarAction.back(),
       ],
       body: widget.body,
