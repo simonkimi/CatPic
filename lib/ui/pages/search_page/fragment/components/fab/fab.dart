@@ -80,7 +80,7 @@ class FloatActionBubble extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop(-1);
+                          Navigator.of(context).pop();
                         },
                         child: Text(I18n.of(context).negative),
                       ),
@@ -94,7 +94,7 @@ class FloatActionBubble extends StatelessWidget {
                     ],
                   );
                 });
-            loadMoreStore.onJumpPage(page ?? 1);
+            if (page != null) loadMoreStore.onJumpPage(page);
           },
         ),
         SpeedDialChild(

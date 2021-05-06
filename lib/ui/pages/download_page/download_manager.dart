@@ -152,6 +152,9 @@ class DownloadManagerPage extends StatelessWidget {
             ),
           );
         },
+        onLongPress: () {
+
+        },
         child: Card(
           key: ValueKey('DownloadCard${downloadTable.id}'),
           child: Padding(
