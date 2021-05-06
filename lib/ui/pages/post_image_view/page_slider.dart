@@ -60,7 +60,7 @@ class PageSliderState extends State<PageSlider> {
               value: value.toDouble(),
               max: widget.count.toDouble(),
               min: 1.0,
-              divisions: widget.count - 1,
+              divisions: widget.count - 1 > 0 ? widget.count - 1 : null,
               onChanged: (v) {
                 setState(() {
                   value = v.toInt();

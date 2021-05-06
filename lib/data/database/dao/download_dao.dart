@@ -31,6 +31,9 @@ class DownloadDao extends DatabaseAccessor<AppDataBase>
   Future<void> insert(DownloadTableCompanion data) =>
       into(downloadTable).insert(data);
 
+  Future<void> remove(DownloadTableData data) =>
+      delete(downloadTable).delete(data);
+
   Future<void> onWebsiteDelete(int id) => (update(downloadTable)
         ..where((tbl) =>
             tbl.websiteId.equals(id) &

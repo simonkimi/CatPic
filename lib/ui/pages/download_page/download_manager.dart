@@ -152,8 +152,53 @@ class DownloadManagerPage extends StatelessWidget {
             ),
           );
         },
-        onLongPress: () {
-
+        onLongPress: () async {
+          vibrate(duration: 50, amplitude: 100);
+          await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: Text(I18n.of(context).display),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PostImageViewPage.count(
+                                  dio: dio,
+                                  index: 0,
+                                  postList: [
+                                    BooruPost.fromJson(
+                                        jsonDecode(downloadTable.booruJson))
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          title: Text(I18n.of(context).delete),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            downloadStore.deleteDownload(downloadTable);
+                          },
+                        ),
+                        ListTile(
+                          title: Text(I18n.of(context).download_restart),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            downloadStore.restartDownload(downloadTable);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
         },
         child: Card(
           key: ValueKey('DownloadCard${downloadTable.id}'),

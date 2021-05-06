@@ -32,6 +32,7 @@ class DownLoadTask {
 
   final DownloadTableData database;
   var progress = 0.0.obs;
+  final cancelToken = CancelToken();
 
   @override
   String toString() {
@@ -75,6 +76,32 @@ abstract class DownloadStoreBase with Store {
   }
 
   @action
+  Future<void> restartDownload(DownloadTableData downloadTableData) async {
+    downloadingList
+        .get((task) => task.database.id == downloadTableData.id)
+        ?.cancelToken
+        .cancel();
+    downloadingList
+        .removeWhere((task) => task.database.id == downloadTableData.id);
+    DatabaseHelper().downloadDao.replace(downloadTableData.copyWith(
+      status: DownloadStatus.PENDING,
+    ));
+    await startDownload();
+  }
+
+  @action
+  Future<void> deleteDownload(DownloadTableData downloadTableData) async {
+    downloadingList
+        .get((task) => task.database.id == downloadTableData.id)
+        ?.cancelToken
+        .cancel();
+
+    downloadingList
+        .removeWhere((task) => task.database.id == downloadTableData.id);
+    DatabaseHelper().downloadDao.remove(downloadTableData);
+  }
+
+  @action
   Future<void> startDownload() async {
     await dao.startDownload();
     final pendingList = (await dao.getUnfinished()) // 取出数据库里等待中的
@@ -112,14 +139,21 @@ abstract class DownloadStoreBase with Store {
       final downloadPath = settingStore.downloadUri;
       final rsp = await dio.get<Uint8List>(url,
           options: Options(responseType: ResponseType.bytes),
-          onReceiveProgress: (count, total) {
+          cancelToken: task.cancelToken, onReceiveProgress: (count, total) {
         task.progress.value = count / total;
       });
       await bridge.writeFile(rsp.data!, fileName, downloadPath);
       BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
+    } on DioError catch (e) {
+      if (!CancelToken.isCancel(e)) {
+        BotToast.showText(
+            text: I18n.g.download_network_error + ': ${e.toString()}');
+        await dao.replace(task.database.copyWith(status: DownloadStatus.FAIL));
+      }
     } catch (e) {
+      BotToast.showText(text: I18n.g.download_error + ': ${e.toString()}');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FAIL));
     }
     downloadingList.remove(task);

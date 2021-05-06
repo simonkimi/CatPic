@@ -156,7 +156,9 @@
   "download_start": "开始下载了...",
   "download_exist": "任务已存在",
   "download_finish": "下载{filename}完成",
-  "download_reload": "重新下载",
+  "download_restart": "重新下载",
+  "download_error": "下载错误",
+  "download_network_error": "下载网络错误",
   "@download_finish": {
     "placeholders": {
       "filename": {

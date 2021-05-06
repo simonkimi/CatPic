@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' hide log;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/entity/website.dart';
+import 'package:vibration/vibration.dart';
 
 final startDate = DateTime.now();
 
@@ -151,6 +153,25 @@ class FFConvert {
     }
     return json.decode(value.toString()) as T?;
   };
+}
+
+Future<void> vibrate({
+  int duration = 500,
+  List<int> pattern = const [],
+  int repeat = -1,
+  List<int> intensities = const [],
+  int amplitude = -1,
+}) async {
+  if ((Platform.isIOS || Platform.isAndroid) &&
+      (await Vibration.hasVibrator() ?? false)) {
+    Vibration.vibrate(
+      duration: duration,
+      pattern: pattern,
+      repeat: repeat,
+      intensities: intensities,
+      amplitude: amplitude,
+    );
+  }
 }
 
 class Log {
