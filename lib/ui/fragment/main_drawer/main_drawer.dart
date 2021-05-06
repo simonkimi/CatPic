@@ -98,6 +98,7 @@ class _MainDrawerState extends State<MainDrawer> {
         leading: const Icon(Icons.settings),
         title: Text(I18n.of(context).website_manager),
         onTap: () {
+          Navigator.of(context).pop();
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => WebsiteManagerPage()));
         },
