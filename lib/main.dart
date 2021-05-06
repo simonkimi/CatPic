@@ -29,6 +29,7 @@ void main() async {
   await SpUtil.getInstance();
   await settingStore.init();
   await mainStore.init();
+  downloadStore.startDownload();
   runApp(CatPicApp());
 }
 

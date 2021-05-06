@@ -39,6 +39,7 @@ dependencies:
   flutter_hooks: ^0.16.0
   flutter_speed_dial: ^3.0.5
   crypto: ^3.0.1
+  get: ^4.1.4
 
 
   pull_to_refresh:

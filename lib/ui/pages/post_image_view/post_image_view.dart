@@ -96,13 +96,11 @@ class PostImageViewPage extends HookWidget {
           store.setIndex(value);
         },
         onCenterTap: () {
-          if (adapter != null) {
-            if (store.pageBarDisplay) {
-              store.setPageBarDisplay(false);
-              return;
-            }
-            store.setInfoBarDisplay(!store.infoBarDisplay);
+          if (store.pageBarDisplay) {
+            store.setPageBarDisplay(false);
+            return;
           }
+          store.setInfoBarDisplay(!store.infoBarDisplay);
         },
       ),
     );
@@ -445,11 +443,10 @@ class PostImageViewPage extends HookWidget {
 
       return Stack(
         children: [
-          if (adapter != null)
-            SlideTransition(
-              position: infoHideAni,
-              child: buildBottomInfoBar(context),
-            ),
+          SlideTransition(
+            position: infoHideAni,
+            child: buildBottomInfoBar(context),
+          ),
           SlideTransition(
             position: pageHideAni,
             child: buildBottomPageBar(),
@@ -503,8 +500,10 @@ class PostImageViewPage extends HookWidget {
               ),
               InkWell(
                 onTap: () {
-                  store.setPageBarDisplay(true);
-                  store.setInfoBarDisplayWithoutSave(false);
+                  if (adapter != null) {
+                    store.setPageBarDisplay(true);
+                    store.setInfoBarDisplayWithoutSave(false);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -533,26 +532,28 @@ class PostImageViewPage extends HookWidget {
           ),
           Row(
             children: [
-              IconButton(
-                iconSize: 16,
-                icon: const Icon(
-                  Icons.info_outline,
-                  color: Colors.white,
+              if (adapter != null)
+                IconButton(
+                  iconSize: 16,
+                  icon: const Icon(
+                    Icons.info_outline,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    showAsBottomSheet(context);
+                  },
                 ),
-                onPressed: () {
-                  showAsBottomSheet(context);
-                },
-              ),
-              IconButton(
-                iconSize: 16,
-                icon: const Icon(
-                  Icons.save_alt,
-                  color: Colors.white,
+              if (adapter != null)
+                IconButton(
+                  iconSize: 16,
+                  icon: const Icon(
+                    Icons.save_alt,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    _download();
+                  },
                 ),
-                onPressed: () {
-                  _download();
-                },
-              ),
             ],
           )
         ],

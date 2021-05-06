@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/app_bar.dart';
@@ -13,6 +13,8 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/main.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get/get.dart';
 
 class DownloadManagerPage extends StatelessWidget {
   static const route = 'DownloadManagerPage';
@@ -22,7 +24,13 @@ class DownloadManagerPage extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context),
       body: SafeArea(
-        child: buildBody(context),
+        child: buildFuture(context),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.play_arrow),
+        onPressed: () {
+          downloadStore.startDownload();
+        },
       ),
     );
   }
@@ -38,7 +46,7 @@ class DownloadManagerPage extends StatelessWidget {
     );
   }
 
-  Widget buildBody(BuildContext context) {
+  Widget buildFuture(BuildContext context) {
     // 能优化, 先放着, 能用就行
     return FutureBuilder<List<WebsiteTableData>>(
       // 方便由id获取WebsiteEntity, 以构造Dio
@@ -50,42 +58,81 @@ class DownloadManagerPage extends StatelessWidget {
             stream: DatabaseHelper().downloadDao.getAllStream(),
             initialData: const [],
             builder: (_, downloadList) {
-              return StreamBuilder(
-                // 获取下载列表, 此数据每2秒更新一次
-                stream: Stream.periodic(const Duration(seconds: 2)),
-                builder: (_, downloadingTask) {
-                  final taskList = downloadStore.downloadingList;
-                  return ListView(
-                    children: [
-                      ...downloadList.data!
-                          .where((e) =>
-                              e.status == DownloadStatus.PENDING ||
-                              e.status == DownloadStatus.FAIL)
-                          .map((e) {
-                        final task = taskList
-                            .get((element) => element.database.id == e.id);
-                        return _buildDownloadCard(
-                            context, websiteList.data!, e, task?.progress);
-                      }),
-                      ...downloadList.data!
-                          .where((e) => e.status == DownloadStatus.FINISH)
-                          .toList()
-                          .reversed
-                          .map((e) => _buildDownloadCard(
-                              context, websiteList.data!, e, 1))
-                    ],
-                  );
-                },
+              return buildBody(
+                context: context,
+                websiteList: websiteList.data!,
+                downloadList: downloadList.data!,
               );
             });
       },
     );
   }
 
-  Widget _buildDownloadCard(BuildContext context, List<WebsiteTableData> list,
-      DownloadTableData data, double? progress) {
-    final dio = DioBuilder.build(list.get((e) => e.id == data.websiteId));
+  Widget buildBody({
+    required BuildContext context,
+    required List<DownloadTableData> downloadList,
+    required List<WebsiteTableData> websiteList,
+  }) {
+    return ListView(
+      children: [
+        buildDownloadingList(context, downloadList, websiteList),
+        buildDownloadedList(context, downloadList, websiteList),
+      ],
+    );
+  }
 
+  Widget buildDownloadingList(
+    BuildContext context,
+    List<DownloadTableData> downloadList,
+    List<WebsiteTableData> websiteList,
+  ) {
+    return Observer(builder: (_) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: downloadStore.downloadingList.map((element) {
+          return _buildDownloadCard(
+            context: context,
+            task: element,
+            dio: DioBuilder.build(
+                websiteList.get((e) => e.id == element.database.id)),
+            downloadTable: element.database,
+          );
+        }).toList(),
+      );
+    });
+  }
+
+  Widget buildDownloadedList(
+    BuildContext context,
+    List<DownloadTableData> downloadList,
+    List<WebsiteTableData> websiteList,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: downloadList
+          .where((e) =>
+              e.status == DownloadStatus.FINISH ||
+              e.status == DownloadStatus.FAIL)
+          .toList()
+          .reversed
+          .map((e) {
+        return _buildDownloadCard(
+          dio: DioBuilder.build(
+              websiteList.get((website) => e.id == website.id)),
+          context: context,
+          downloadTable: e,
+          task: null,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildDownloadCard({
+    required BuildContext context,
+    required Dio dio,
+    required DownloadTableData downloadTable,
+    required DownLoadTask? task,
+  }) {
     return Container(
       height: 100,
       child: GestureDetector(
@@ -96,20 +143,22 @@ class DownloadManagerPage extends StatelessWidget {
               builder: (context) => PostImageViewPage.count(
                 dio: dio,
                 index: 0,
-                postList: [BooruPost.fromJson(jsonDecode(data.booruJson))],
+                postList: [
+                  BooruPost.fromJson(jsonDecode(downloadTable.booruJson))
+                ],
               ),
             ),
           );
         },
         child: Card(
-          key: ValueKey('DownloadCard${data.id}'),
+          key: ValueKey('DownloadCard${downloadTable.id}'),
           child: Padding(
             padding: const EdgeInsets.all(5),
             child: Row(
               children: [
                 Container(
                   width: 60,
-                  child: buildCardImage(dio, data.previewUrl),
+                  child: buildCardImage(dio, downloadTable.previewUrl),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -117,7 +166,7 @@ class DownloadManagerPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '# ${data.postId}',
+                        '# ${downloadTable.postId}',
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
@@ -125,22 +174,27 @@ class DownloadManagerPage extends StatelessWidget {
                       ),
                       const Expanded(child: SizedBox()),
                       Text(
-                        data.imgUrl,
+                        downloadTable.imgUrl,
                         style: Theme.of(context).textTheme.subtitle2,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 5),
-                      Text(data.createTime.toString(),
+                      Text(downloadTable.createTime.toString(),
                           style: Theme.of(context).textTheme.subtitle2),
                       const SizedBox(height: 5),
-                      if (progress != 1 && data.status != DownloadStatus.FAIL)
-                        LinearProgressIndicator(value: progress),
-                      if (data.status == DownloadStatus.FAIL)
+                      if (downloadTable.status == DownloadStatus.FAIL)
                         LinearProgressIndicator(
-                          value: progress,
+                          value: task?.progress.value ?? 1,
                           valueColor: const AlwaysStoppedAnimation(Colors.red),
-                        )
+                        ),
+                      if (downloadTable.status != DownloadStatus.FAIL &&
+                          downloadTable.status != DownloadStatus.FINISH)
+                        if (task == null)
+                          const LinearProgressIndicator(value: null)
+                        else
+                          Obx(() => LinearProgressIndicator(
+                              value: task.progress.value))
                     ],
                   ),
                 ),

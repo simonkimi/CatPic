@@ -15,6 +15,7 @@ import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/utils/utils.dart';
+import 'package:get/get.dart';
 
 part 'download_store.g.dart';
 
@@ -30,7 +31,7 @@ class DownLoadTask {
   DownLoadTask(this.database);
 
   final DownloadTableData database;
-  var progress = 0.0;
+  var progress = 0.0.obs;
 
   @override
   String toString() {
@@ -39,7 +40,9 @@ class DownLoadTask {
 }
 
 abstract class DownloadStoreBase with Store {
-  var downloadingList = <DownLoadTask>[];
+  @observable
+  var downloadingList = ObservableList<DownLoadTask>();
+
   final dao = DatabaseHelper().downloadDao;
 
   @action
@@ -110,7 +113,7 @@ abstract class DownloadStoreBase with Store {
       final rsp = await dio.get<Uint8List>(url,
           options: Options(responseType: ResponseType.bytes),
           onReceiveProgress: (count, total) {
-        task.progress = count / total;
+        task.progress.value = count / total;
       });
       await bridge.writeFile(rsp.data!, fileName, downloadPath);
       BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
