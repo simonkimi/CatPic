@@ -12,6 +12,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/utils/utils.dart';
@@ -84,8 +85,8 @@ abstract class DownloadStoreBase with Store {
     downloadingList
         .removeWhere((task) => task.database.id == downloadTableData.id);
     DatabaseHelper().downloadDao.replace(downloadTableData.copyWith(
-      status: DownloadStatus.PENDING,
-    ));
+          status: DownloadStatus.PENDING,
+        ));
     await startDownload();
   }
 
@@ -138,7 +139,10 @@ abstract class DownloadStoreBase with Store {
     try {
       final downloadPath = settingStore.downloadUri;
       final rsp = await dio.get<Uint8List>(url,
-          options: Options(responseType: ResponseType.bytes),
+          options: settingStore.dioCacheOptions
+              .copyWith(policy: CachePolicy.noCache)
+              .toOptions()
+              .copyWith(responseType: ResponseType.bytes),
           cancelToken: task.cancelToken, onReceiveProgress: (count, total) {
         task.progress.value = count / total;
       });
