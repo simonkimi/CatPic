@@ -111,8 +111,7 @@ class SearchBarState extends State<SearchBar> {
       openWidth: isPortrait ? 600 : 500,
       debounceDelay: const Duration(milliseconds: 100),
       progress: widget.progress,
-      automaticallyImplyDrawerHamburger:
-          Platform.isAndroid && !Navigator.of(context).canPop(),
+      automaticallyImplyDrawerHamburger: Platform.isAndroid || !Navigator.of(context).canPop(),
       leadingActions: [
         if (!Platform.isAndroid &&
             Navigator.of(context).canPop() &&
