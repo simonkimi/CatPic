@@ -19,7 +19,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 
 class PostWaterFlow extends StatelessWidget {
-  const PostWaterFlow({
+  PostWaterFlow({
     Key? key,
     required this.store,
     required this.dio,
@@ -28,6 +28,8 @@ class PostWaterFlow extends StatelessWidget {
   final PostResultStore store;
   final ValueChanged<String> onAddTag;
   final Dio dio;
+
+  final retryList = <Function>[];
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +141,12 @@ class PostWaterFlow extends StatelessWidget {
           );
         },
         errorBuilder: (context, error, reload) {
+          retryList.add(reload);
           return InkWell(
             key: ValueKey('error${post.id}'),
             onTap: () {
-              reload();
+              for (final retry in retryList) retry();
+              retryList.clear();
             },
             child: AspectRatio(
               aspectRatio: post.width / post.height,

@@ -125,7 +125,9 @@ class _DioImageState extends State<DioImage> {
         if (mounted) {
           setState(() {
             chunkEvent = ImageChunkEvent(
-                expectedTotalBytes: total, cumulativeBytesLoaded: received);
+              expectedTotalBytes: total,
+              cumulativeBytesLoaded: received,
+            );
           });
         }
       });

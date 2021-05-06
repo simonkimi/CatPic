@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
@@ -6,10 +7,9 @@ import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/main.dart';
@@ -29,7 +29,9 @@ class DownloadManagerPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.play_arrow),
         onPressed: () {
-          downloadStore.startDownload();
+          downloadStore.startDownload().then((value) {
+            BotToast.showText(text: I18n.of(context).download_start);
+          });
         },
       ),
     );
@@ -118,7 +120,7 @@ class DownloadManagerPage extends StatelessWidget {
           .map((e) {
         return _buildDownloadCard(
           dio: DioBuilder.build(
-              websiteList.get((website) => e.id == website.id)),
+              websiteList.get((website) => e.websiteId == website.id)),
           context: context,
           downloadTable: e,
           task: null,
@@ -207,34 +209,9 @@ class DownloadManagerPage extends StatelessWidget {
   }
 
   Widget buildCardImage(Dio dio, String url) {
-    return ExtendedImage(
-      image: DioImageProvider(url: url, dio: dio),
-      handleLoadingProgress: true,
-      enableLoadState: true,
-      loadStateChanged: (state) {
-        switch (state.extendedImageLoadState) {
-          case LoadState.loading:
-            var progress = state.loadingProgress?.expectedTotalBytes != null
-                ? state.loadingProgress!.cumulativeBytesLoaded /
-                    state.loadingProgress!.expectedTotalBytes!
-                : 0.0;
-            progress = progress.isFinite ? progress : 0;
-            return Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  value: progress,
-                  strokeWidth: 2.5,
-                ),
-              ),
-            );
-          case LoadState.completed:
-            return null;
-          case LoadState.failed:
-            return const Icon(Icons.error);
-        }
-      },
+    return DioImage(
+      dio: dio,
+      imageUrlBuilder: () => Future.value(url),
     );
   }
 }

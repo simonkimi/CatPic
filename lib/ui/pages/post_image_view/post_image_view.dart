@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -109,7 +110,7 @@ class PostImageViewPage extends HookWidget {
   Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
     return Wrap(
       spacing: 3,
-      runSpacing: 3,
+      runSpacing: Platform.isWindows ? 3 : 0,
       children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
         return CustomPopupMenu(
           arrowColor: Colors.black87,
@@ -222,7 +223,7 @@ class PostImageViewPage extends HookWidget {
   Container buildPopupHeader(BuildContext context, BooruPost booruPost) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).primaryColorDark,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: ListTile(
@@ -320,103 +321,108 @@ class PostImageViewPage extends HookWidget {
           );
         },
         footerBuilder: (context, state) {
-          return Observer(builder: (_) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (adapter != null)
-                    Expanded(
-                      flex: 1,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (_) {
-                            return BooruCommentsPage(
-                              id: store.booruPost.id,
-                              adapter: adapter!,
-                            );
-                          }));
-                        },
-                        child: Icon(
-                          Icons.message_outlined,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                  if (adapter != null) const SizedBox(width: 10),
-                  if (adapter != null)
-                    Expanded(
-                      flex: 1,
-                      child: OutlinedButton(
-                        onPressed: () async {
-                          if (!adapter!
-                              .getSupportPage()
-                              .contains(SupportPage.FAVOURITE)) {
-                            BotToast.showText(
-                                text: I18n.of(context)
-                                    .not_support(adapter!.website.name));
-                            return;
-                          }
-                          if (adapter!.website.username != null &&
-                              adapter!.website.password != null) {
-                            final result = await store.changeFavouriteState();
-                            BotToast.showText(
-                                text: (result ? '' : I18n.of(context).cancel) +
-                                    I18n.of(context).favourite_success);
-                          } else {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(),
-                              ),
-                            );
-                          }
-                        },
-                        child: Icon(
-                          store.booruPost.favourite
-                              ? Icons.favorite
-                              : Icons.favorite_outline,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        if (store.booruPost.source.isEmpty) {
-                          BotToast.showText(
-                              text: I18n.of(context)
-                                  .not_support('# ${store.booruPost.id}'));
-                          return;
-                        }
-                        await launch(store.booruPost.source);
-                      },
-                      child: Icon(
-                        Icons.location_on_outlined,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: DefaultButton(
-                      onPressed: () {
-                        _download();
-                      },
-                      child: const Icon(
-                        Icons.download_rounded,
-                        color: Colors.white,
-                      ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: adapter != null
+                      ? OutlinedButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (_) {
+                              return BooruCommentsPage(
+                                id: store.booruPost.id,
+                                adapter: adapter!,
+                              );
+                            }));
+                          },
+                          child: Icon(
+                            Icons.message_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )
+                      : const SizedBox(),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: adapter != null
+                      ? Observer(builder: (_) {
+                          return OutlinedButton(
+                            onPressed: () async {
+                              if (!adapter!
+                                  .getSupportPage()
+                                  .contains(SupportPage.FAVOURITE)) {
+                                BotToast.showText(
+                                    text: I18n.of(context)
+                                        .not_support(adapter!.website.name));
+                                return;
+                              }
+                              if (adapter!.website.username != null &&
+                                  adapter!.website.password != null) {
+                                final result =
+                                    await store.changeFavouriteState();
+                                BotToast.showText(
+                                    text: (result
+                                            ? ''
+                                            : I18n.of(context).cancel) +
+                                        I18n.of(context).favourite_success);
+                              } else {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPage(),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Icon(
+                              store.booruPost.favourite
+                                  ? Icons.favorite
+                                  : Icons.favorite_outline,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );
+                        })
+                      : const SizedBox(),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      if (store.booruPost.source.isEmpty) {
+                        BotToast.showText(
+                            text: I18n.of(context)
+                                .not_support('# ${store.booruPost.id}'));
+                        return;
+                      }
+                      await launch(store.booruPost.source);
+                    },
+                    child: Icon(
+                      Icons.location_on_outlined,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
-                ],
-              ),
-            );
-          });
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: DefaultButton(
+                    onPressed: () {
+                      _download();
+                    },
+                    child: const Icon(
+                      Icons.download_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       );
     });
@@ -500,10 +506,8 @@ class PostImageViewPage extends HookWidget {
               ),
               InkWell(
                 onTap: () {
-                  if (adapter != null) {
-                    store.setPageBarDisplay(true);
-                    store.setInfoBarDisplayWithoutSave(false);
-                  }
+                  store.setPageBarDisplay(true);
+                  store.setInfoBarDisplayWithoutSave(false);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -532,17 +536,16 @@ class PostImageViewPage extends HookWidget {
           ),
           Row(
             children: [
-              if (adapter != null)
-                IconButton(
-                  iconSize: 16,
-                  icon: const Icon(
-                    Icons.info_outline,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    showAsBottomSheet(context);
-                  },
+              IconButton(
+                iconSize: 16,
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.white,
                 ),
+                onPressed: () {
+                  showAsBottomSheet(context);
+                },
+              ),
               if (adapter != null)
                 IconButton(
                   iconSize: 16,

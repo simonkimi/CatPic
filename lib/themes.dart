@@ -65,6 +65,7 @@ final blueTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.blue,
   accentColor: Colors.blue[800],
+  primaryColorDark: Colors.blue[800],
   primarySwatch: Colors.blue,
 );
 
@@ -83,6 +84,7 @@ final purpleTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: _purplePrimary,
   accentColor: const Color(0xFF46489f),
+  primaryColorDark: const Color(0xFF46489f),
   primarySwatch: _purplePrimary.swatch,
 );
 
