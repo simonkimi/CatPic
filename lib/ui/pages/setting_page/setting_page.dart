@@ -128,7 +128,7 @@ class SettingPage extends StatelessWidget {
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
-            leading: const Icon(Icons.cloud_download_outlined),
+            leading: const Icon(Icons.download_rounded),
           );
         },
         modalType: S2ModalType.popupDialog,
@@ -143,7 +143,7 @@ class SettingPage extends StatelessWidget {
       StatefulBuilder(builder: (context, setState) {
         return ListTile(
           title: Text(I18n.of(context).cache),
-          leading: const Icon(Icons.insert_drive_file_outlined),
+          leading: const Icon(Icons.cached),
           trailing: FutureBuilder<int>(
             future: getCacheSize(),
             builder: (context, snapshot) {
@@ -279,7 +279,7 @@ class SettingPage extends StatelessWidget {
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
             state,
-            leading: const Icon(Icons.autorenew_sharp),
+            leading: const Icon(Icons.last_page_outlined),
           );
         },
         modalType: S2ModalType.popupDialog,

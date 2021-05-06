@@ -28,6 +28,17 @@ class WebsiteAddPage extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context),
       body: buildBody(context),
+      floatingActionButton: FloatingActionButton(
+        tooltip: I18n.of(context).positive,
+        child: const Icon(Icons.check),
+        onPressed: () {
+          store.saveWebsite().then((result) {
+            if (result) {
+              Navigator.of(context).pop();
+            }
+          });
+        },
+      ),
     );
   }
 
@@ -63,24 +74,6 @@ class WebsiteAddPage extends StatelessWidget {
         style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
       leading: appBarBackButton(),
-      actions: [
-        // 右上角的确认按钮
-        IconButton(
-          icon: const Icon(
-            Icons.check,
-            size: 20,
-          ),
-          onPressed: () {
-            // 保存网站后返回并且刷新页面
-            store.saveWebsite().then((result) {
-              if (result) {
-                Navigator.pop(context);
-              }
-            });
-          },
-          tooltip: I18n.of(context).positive,
-        )
-      ],
     );
   }
 
