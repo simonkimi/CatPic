@@ -17,7 +17,7 @@ class LoadingWidget extends StatelessWidget {
       builder: (_) {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: store.isLoading
+          child: store.isLoading || store.lock.locked
               ? const Center(
                   child: CircularProgressIndicator(),
                 )

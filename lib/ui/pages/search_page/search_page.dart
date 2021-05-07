@@ -51,6 +51,7 @@ class _SearchPageState extends State<SearchPage> {
     mainStore.addSearchPage();
     _eventSiteChangeListener =
         EventBusUtil().bus.on<EventSiteChange>().listen((event) {
+      print('Event bus EventSiteChange');
       changeSearchBody(searchText, searchType);
     });
     print('SearchPageCount: ${mainStore.searchPageCount}');
@@ -79,6 +80,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void changeSearchBody(String tag, SearchType type) {
+    if (tag == searchText && type == searchType) {
+      return;
+    }
     final widget = buildSearchBody(tag, type);
     setState(() {
       searchBody = widget;

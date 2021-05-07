@@ -36,7 +36,7 @@ class PostWaterFlow extends StatelessWidget {
     return Observer(builder: (_) {
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: store.observableList.isEmpty
+        child: store.observableList.isEmpty && (store.isLoading || store.lock.locked)
             ? LoadingWidget(store: store)
             : buildList(),
       );

@@ -15,7 +15,7 @@ abstract class ILoadMore<T> {
   final observableList = ObservableList<T>();
   final refreshController = RefreshController();
   final listScrollController = ScrollController();
-  final cancelToken = CancelToken();
+  var cancelToken = CancelToken();
   var page = 0;
 
   final lock = Lock();
@@ -32,13 +32,13 @@ abstract class ILoadMore<T> {
     isLoading = true;
     await lock.synchronized(() async {
       page += 1;
+      isLoading = true;
       final list = await onLoadNextPage();
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
         refreshController.loadNoData();
-      print('loadNextPage ${page - 1} ${list.length}');
     });
   }
 
@@ -56,9 +56,9 @@ abstract class ILoadMore<T> {
       BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
       print('onRefresh ${e.message} ${e.requestOptions.path}');
     } catch (e) {
-      print('onRefresh ${e.toString()}');
       refreshController.loadFailed();
       refreshController.refreshFailed();
+      print('onRefresh ${e.toString()}');
       BotToast.showText(text: e.toString());
     } finally {
       isLoading = false;
@@ -70,7 +70,6 @@ abstract class ILoadMore<T> {
       refreshController.loadComplete();
       return;
     }
-    print('onLoadMore current page: $page');
     await _loadNextPage();
     await onDataChange();
     try {
@@ -93,7 +92,12 @@ abstract class ILoadMore<T> {
 
   Future<void> onNewSearch(String tag) async {
     print('onNewSearch $tag');
-    if (lock.locked) cancelToken.cancel();
+    if (lock.locked) {
+      cancelToken.cancel();
+      cancelToken = CancelToken();
+      await lock.synchronized(() {});
+    }
+    isLoading = true;
     searchText = tag;
     page = 0;
     observableList.clear();
