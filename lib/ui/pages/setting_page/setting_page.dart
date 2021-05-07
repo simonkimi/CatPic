@@ -232,7 +232,8 @@ class SettingPage extends StatelessWidget {
         title: I18n.of(context).theme_dark_mode,
         choiceItems: [
           S2Choice(
-              title: I18n.of(context).theme_follow_system, value: DarkMode.FOLLOW_SYSTEM),
+              title: I18n.of(context).theme_follow_system,
+              value: DarkMode.FOLLOW_SYSTEM),
           S2Choice(title: I18n.of(context).open, value: DarkMode.OPEN),
           S2Choice(title: I18n.of(context).close, value: DarkMode.CLOSE),
         ],
