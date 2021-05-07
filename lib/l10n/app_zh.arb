@@ -21,6 +21,8 @@
   "not_set": "未指定",
   "save": "保存",
   "cancel": "取消",
+  "open": "开启",
+  "close": "关闭",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -129,6 +131,8 @@
   "theme_blue": "谷歌蓝",
   "theme_purple": "矢尹紫",
   "theme_dark_blue": "深空蓝",
+  "theme_dark_mode": "夜间模式",
+  "theme_follow_system": "跟随系统",
   "in_statistic": "统计中...",
   "cache": "缓存",
   "cache_size": "缓存大小",

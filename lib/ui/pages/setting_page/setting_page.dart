@@ -212,8 +212,29 @@ class SettingPage extends StatelessWidget {
         choiceItems: [
           S2Choice(title: I18n.of(context).theme_blue, value: Themes.BLUE),
           S2Choice(title: I18n.of(context).theme_purple, value: Themes.PURPLE),
+        ],
+      ),
+      SmartSelect<int>.single(
+        tileBuilder: (context, S2SingleState<int?> state) {
+          return S2Tile.fromState(
+            state,
+            leading: const Icon(Icons.nightlight_round),
+          );
+        },
+        modalType: S2ModalType.popupDialog,
+        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+        selectedValue: settingStore.dartMode,
+        onChange: (S2SingleSelected<int?> value) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            settingStore.setDarkMode(value.value!);
+          });
+        },
+        title: I18n.of(context).theme_dark_mode,
+        choiceItems: [
           S2Choice(
-              title: I18n.of(context).theme_dark_blue, value: Themes.DARK_BLUE),
+              title: I18n.of(context).theme_follow_system, value: DarkMode.FOLLOW_SYSTEM),
+          S2Choice(title: I18n.of(context).open, value: DarkMode.OPEN),
+          S2Choice(title: I18n.of(context).close, value: DarkMode.CLOSE),
         ],
       ),
       SwitchListTile(

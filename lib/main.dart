@@ -40,7 +40,12 @@ class CatPicApp extends StatelessWidget {
       return MaterialApp(
         title: 'CatPic',
         debugShowCheckedModeBanner: false,
-        theme: theme.Themes.of(settingStore.theme),
+        darkTheme: settingStore.dartMode == DarkMode.FOLLOW_SYSTEM
+            ? theme.darkBlueTheme
+            : null,
+        theme: settingStore.dartMode == DarkMode.OPEN
+            ? theme.darkBlueTheme
+            : theme.Themes.of(settingStore.theme),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

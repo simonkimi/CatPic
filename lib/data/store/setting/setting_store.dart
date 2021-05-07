@@ -19,6 +19,12 @@ class ImageQuality {
   static const int raw = 2;
 }
 
+class DarkMode {
+  static const int OPEN = 0;
+  static const int CLOSE = 1;
+  static const int FOLLOW_SYSTEM = 2;
+}
+
 class CardSize {
   static const int SMALL = 1;
   static const int MIDDLE = 2;
@@ -83,6 +89,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var theme = Themes.BLUE;
 
+  @observable
+  var dartMode = DarkMode.FOLLOW_SYSTEM;
+
   late CacheOptions dioCacheOptions;
 
   var documentDir = '';
@@ -105,6 +114,7 @@ abstract class SettingStoreBase with Store {
     toolbarOpen = sp.getBool('toolbarOpen') ?? true;
     documentDir = sp.getString('documentDir') ?? await getDocumentDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
+    dartMode = sp.getInt('dartMode') ?? DarkMode.FOLLOW_SYSTEM;
 
     dioCacheOptions = CacheOptions(
       store: HiveCacheStore(p.join(documentDir, 'cache')),
@@ -124,6 +134,12 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString('documentDir', path.path);
     return path.path;
+  }
+
+  @action
+  void setDarkMode(int value) {
+    dartMode = value;
+    SpUtil.putInt('dartMode', value);
   }
 
   @action
