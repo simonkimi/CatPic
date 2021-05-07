@@ -50,6 +50,13 @@ final darkBlueTheme = ThemeData(
           : const Color(0xFF646464);
     }),
   ),
+  radioTheme: RadioThemeData(
+    fillColor: MaterialStateProperty.resolveWith((states) {
+      return states.contains(MaterialState.selected)
+          ? const Color(0xFF61AAE1)
+          : const Color(0xFFB9B9B9);
+    }),
+  ),
 );
 
 final blueTheme = ThemeData(

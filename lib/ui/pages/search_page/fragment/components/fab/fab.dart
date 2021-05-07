@@ -4,9 +4,8 @@ import 'package:catpic/ui/components/default_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-import '../../../../../../i18n.dart';
-import '../../../../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 class FloatActionBubble extends StatelessWidget {
   const FloatActionBubble({
@@ -57,7 +56,8 @@ class FloatActionBubble extends StatelessWidget {
             final page = await showDialog(
                 context: context,
                 builder: (context) {
-                  final inputController = TextEditingController();
+                  final inputController = TextEditingController()
+                    ..text = loadMoreStore.page.toString();
                   return AlertDialog(
                     title: Text(I18n.of(context).jump_page),
                     content: SingleChildScrollView(

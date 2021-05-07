@@ -4,7 +4,7 @@ import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../i18n.dart';
+import 'package:catpic/i18n.dart';
 
 part 'comment_store.g.dart';
 

@@ -15,7 +15,6 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        print(store.isLoading);
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: store.isLoading

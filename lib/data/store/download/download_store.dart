@@ -49,7 +49,8 @@ abstract class DownloadStoreBase with Store {
 
   @action
   Future<void> createDownloadTask(BooruPost booruPost) async {
-    if (Platform.isAndroid && settingStore.downloadUri.isEmpty) {
+    if ((Platform.isAndroid || Platform.isWindows) &&
+        settingStore.downloadUri.isEmpty) {
       throw DownloadPermissionDenied();
     }
 
@@ -146,7 +147,7 @@ abstract class DownloadStoreBase with Store {
           cancelToken: task.cancelToken, onReceiveProgress: (count, total) {
         task.progress.value = count / total;
       });
-      await bridge.writeFile(rsp.data!, fileName, downloadPath);
+      await saveFile(rsp.data!, fileName, downloadPath);
       BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
@@ -161,5 +162,12 @@ abstract class DownloadStoreBase with Store {
       await dao.replace(task.database.copyWith(status: DownloadStatus.FAIL));
     }
     downloadingList.remove(task);
+  }
+
+  Future<void> saveFile(
+      Uint8List data, String fileName, String filePath) async {
+    if (Platform.isAndroid) {
+      await bridge.writeFile(data, fileName, filePath);
+    }
   }
 }

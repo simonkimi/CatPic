@@ -25,7 +25,6 @@ class HostManagerPage extends StatelessWidget {
       initialData: const [],
       stream: database.hostDao.getAllStream(),
       builder: (context, s) {
-        print(s.data);
         return ListView(
           children: s.data!.map((e) {
             return Dismissible(

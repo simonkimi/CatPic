@@ -5,7 +5,6 @@ import 'tag_model.dart';
 
 class DanbooruTagParser {
   static List<BooruTag> parse(String tagJson) {
-    print(tagJson);
     final List<dynamic> tags = jsonDecode(tagJson);
     return tags
         .map((e) => Root.fromJson(e))
