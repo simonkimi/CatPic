@@ -322,7 +322,8 @@ class PostImageViewPage extends HookWidget {
         },
         footerBuilder: (context, state) {
           return Padding(
-            padding: EdgeInsets.only(left: 20, right: 20, bottom: Platform.isWindows ? 5: 0),
+            padding: EdgeInsets.only(
+                left: 20, right: 20, bottom: Platform.isWindows ? 5 : 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

@@ -80,7 +80,6 @@ class _MultiImageViewerState extends State<MultiImageViewer>
 
   @override
   Widget build(BuildContext context) {
-    print('onTapUp');
     final onTapUp = (TapUpDetails details) {
       final totalW = MediaQuery.of(context).size.width;
       final left = totalW / 3;

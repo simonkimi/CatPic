@@ -10,11 +10,12 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 typedef SearchChange = bool Function(SearchType);
 
-class MainDrawer extends StatefulWidget {
+class MainDrawer extends HookWidget {
   const MainDrawer({
     Key? key,
     this.onSearchChange,
@@ -24,21 +25,15 @@ class MainDrawer extends StatefulWidget {
   final SearchType? type;
 
   @override
-  _MainDrawerState createState() => _MainDrawerState();
-}
-
-class _MainDrawerState extends State<MainDrawer> {
-  bool showWebsiteList = false;
-
-  @override
   Widget build(BuildContext context) {
+    final showWebsiteList = useState(false);
     return Drawer(
       child: Observer(
         builder: (context) {
           return Column(
             children: [
-              buildUserAccountsDrawerHeader(),
-              buildBody(),
+              buildUserAccountsDrawerHeader(context, showWebsiteList),
+              buildBody(context, showWebsiteList),
             ],
           );
         },
@@ -46,19 +41,22 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  Expanded buildBody() {
+  Expanded buildBody(
+      BuildContext context, ValueNotifier<bool> showWebsiteList) {
     return Expanded(
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
         child: Column(
-          key: Key(showWebsiteList ? 'WebsiteList' : 'MainMenu'),
-          children: showWebsiteList ? buildWebsiteList() : buildMainMenu(),
+          key: Key(showWebsiteList.value ? 'WebsiteList' : 'MainMenu'),
+          children: showWebsiteList.value
+              ? buildWebsiteList(context)
+              : buildMainMenu(context),
         ),
       ),
     );
   }
 
-  List<Widget> buildWebsiteList() {
+  List<Widget> buildWebsiteList(BuildContext context) {
     return [
       Expanded(
         child: StreamBuilder<List<WebsiteTableData>>(
@@ -106,7 +104,7 @@ class _MainDrawerState extends State<MainDrawer> {
     ];
   }
 
-  List<Widget> buildMainMenu() {
+  List<Widget> buildMainMenu(BuildContext context) {
     List<SupportPage>? support;
     if (mainStore.websiteEntity != null) {
       support =
@@ -118,23 +116,26 @@ class _MainDrawerState extends State<MainDrawer> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            if (support?.contains(SupportPage.POSTS) ?? false) buildPostTile(),
+            if (support?.contains(SupportPage.POSTS) ?? false)
+              buildPostTile(context),
             if (support?.contains(SupportPage.FAVOURITE) ?? false)
-              buildHotTile(),
-            if (support?.contains(SupportPage.POOLS) ?? false) buildPoolTile(),
-            if (support?.contains(SupportPage.TAGS) ?? false) buildTagTile(),
+              buildHotTile(context),
+            if (support?.contains(SupportPage.POOLS) ?? false)
+              buildPoolTile(context),
+            if (support?.contains(SupportPage.TAGS) ?? false)
+              buildTagTile(context),
             if (support?.contains(SupportPage.ARTISTS) ?? false)
-              buildArtistTile(),
+              buildArtistTile(context),
           ],
         ),
       ),
       const Divider(),
-      buildDownloadTile(),
-      buildSettingTile()
+      buildDownloadTile(context),
+      buildSettingTile(context)
     ];
   }
 
-  ListTile buildSettingTile() {
+  ListTile buildSettingTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.settings),
       title: Text(I18n.of(context).setting),
@@ -148,7 +149,7 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildDownloadTile() {
+  ListTile buildDownloadTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.download_rounded),
       title: Text(I18n.of(context).download),
@@ -162,7 +163,7 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildFavouriteTile() {
+  ListTile buildFavouriteTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.favorite),
       title: Text(I18n.of(context).favourite),
@@ -188,13 +189,13 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildArtistTile() {
+  ListTile buildArtistTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.supervisor_account_sharp),
       title: Text(I18n.of(context).artist),
-      selected: widget.type == SearchType.ARTIST,
+      selected: type == SearchType.ARTIST,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
+        if (onSearchChange?.call(SearchType.ARTIST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) => const SearchPage(
@@ -207,13 +208,13 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildTagTile() {
+  ListTile buildTagTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.tag),
       title: Text(I18n.of(context).tag),
-      selected: widget.type == SearchType.TAGS,
+      selected: type == SearchType.TAGS,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
+        if (onSearchChange?.call(SearchType.TAGS) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) => const SearchPage(
@@ -226,13 +227,13 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildPoolTile() {
+  ListTile buildPoolTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.filter),
       title: Text(I18n.of(context).pools),
-      selected: widget.type == SearchType.POOL,
+      selected: type == SearchType.POOL,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.POOL) ?? true)
+        if (onSearchChange?.call(SearchType.POOL) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                   builder: (context) => const SearchPage(
@@ -245,11 +246,11 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildHotTile() {
+  ListTile buildHotTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.whatshot),
       title: Text(I18n.of(context).hot),
-      selected: widget.type == SearchType.FAVOURITE,
+      selected: type == SearchType.FAVOURITE,
       onTap: () {
         Navigator.of(context).pop();
         Navigator.push(
@@ -264,13 +265,13 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  ListTile buildPostTile() {
+  ListTile buildPostTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.image),
       title: Text(I18n.of(context).posts),
-      selected: widget.type == SearchType.POST,
+      selected: type == SearchType.POST,
       onTap: () {
-        if (widget.onSearchChange?.call(SearchType.POST) ?? true)
+        if (onSearchChange?.call(SearchType.POST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const SearchPage()),
               (route) => false);
@@ -280,7 +281,8 @@ class _MainDrawerState extends State<MainDrawer> {
     );
   }
 
-  Widget buildUserAccountsDrawerHeader() {
+  Widget buildUserAccountsDrawerHeader(
+      BuildContext context, ValueNotifier<bool> showWebsiteList) {
     var subTitle = I18n.of(context).no_website;
     if (mainStore.websiteEntity != null) {
       final scheme = getSchemeString(mainStore.websiteEntity!.scheme);
@@ -303,9 +305,7 @@ class _MainDrawerState extends State<MainDrawer> {
               backgroundColor: Colors.white,
             ),
             onDetailsPressed: () {
-              setState(() {
-                showWebsiteList = !showWebsiteList;
-              });
+              showWebsiteList.value = !showWebsiteList.value;
             },
             otherAccountsPictures: mainStore.websiteList
                 .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
@@ -335,17 +335,5 @@ class _MainDrawerState extends State<MainDrawer> {
       MaterialPageRoute(builder: (context) => const SearchPage()),
       (route) => false,
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    print('MainDrawer initState');
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    print('MainDrawer dispose');
   }
 }
