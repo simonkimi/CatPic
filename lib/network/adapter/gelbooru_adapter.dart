@@ -99,4 +99,16 @@ class GelbooruAdapter implements BooruAdapter {
   Future<void> unFavourite(String postId, String username, String password) {
     throw UnsupportedError('Gelbooru not support Favourite!');
   }
+
+  @override
+  Future<List<BooruPost>> hotList({
+    required int year,
+    required int month,
+    required int day,
+    required PopularType popularType,
+    required int page,
+    required int limit,
+  }) {
+    throw UnsupportedError('Gelbooru not support Hot!');
+  }
 }

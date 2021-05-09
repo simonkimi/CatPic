@@ -117,4 +117,41 @@ class MoebooruAdapter implements BooruAdapter {
 
   @override
   String favouriteList(String username) => 'vote:3:$username';
+
+  @override
+  Future<List<BooruPost>> hotList({
+    required int year,
+    required int month,
+    required int day,
+    required PopularType popularType,
+    required int page,
+    required int limit,
+  }) async {
+    late final String str;
+    if (page >= 2) return [];
+    switch (popularType) {
+      case PopularType.DAY:
+        str = await client.hotByDayList(
+          year: year.toString(),
+          month: month.toString(),
+          day: day.toString(),
+        );
+        break;
+      case PopularType.WEEK:
+        str = await client.hotByWeekList(
+          year: year.toString(),
+          month: month.toString(),
+          day: day.toString(),
+        );
+        break;
+      case PopularType.MONTH:
+        str = await client.hotByMonthList(
+          year: year.toString(),
+          month: month.toString(),
+          day: day.toString(),
+        );
+        break;
+    }
+    return await compute(MoebooruPostParse.parse, str);
+  }
 }

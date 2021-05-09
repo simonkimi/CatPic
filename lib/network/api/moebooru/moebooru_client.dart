@@ -7,14 +7,6 @@ import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
-class PopularType {
-  static const RECENT = 0;
-  static const DAY = 1;
-  static const WEEK = 2;
-  static const MONTH = 3;
-  static const YEAR = 4;
-}
-
 class MoebooruClient extends BaseClient {
   MoebooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
@@ -178,32 +170,6 @@ class MoebooruClient extends BaseClient {
     final uri = Uri(
       path: 'post/popular_by_month.json',
       queryParameters: {'day': day, 'month': month, 'year': year},
-    );
-    return (await dio.getUri<String>(uri)).data!;
-  }
-
-  Future<String> hotRecentList({
-    required int popularType,
-  }) async {
-    late final String tag;
-    switch (popularType) {
-      case PopularType.DAY:
-        tag = '1d';
-        break;
-      case PopularType.WEEK:
-        tag = '1w';
-        break;
-      case PopularType.MONTH:
-        tag = '1m';
-        break;
-      case PopularType.YEAR:
-      default:
-        tag = '1y';
-        break;
-    }
-    final uri = Uri(
-      path: 'popular_recent.json?period=1d',
-      queryParameters: {'period': tag},
     );
     return (await dio.getUri<String>(uri)).data!;
   }

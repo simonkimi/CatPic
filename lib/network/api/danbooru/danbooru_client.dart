@@ -119,4 +119,61 @@ class DanbooruClient extends BaseClient {
         }.trim);
     await dio.deleteUri(uri);
   }
+
+  Future<String> hotByDayList({
+    required String year,
+    required String month,
+    required String day,
+    required String page,
+    required String limit,
+  }) async {
+    final uri = Uri(
+      path: 'explore/posts/popular.json',
+      queryParameters: {
+        'date': '$year-$month-$day',
+        'scale': 'day',
+        'page': page,
+        'limit': limit,
+      },
+    );
+    return (await dio.getUri<String>(uri)).data!;
+  }
+
+  Future<String> hotByWeekList({
+    required String year,
+    required String month,
+    required String day,
+    required String page,
+    required String limit,
+  }) async {
+    final uri = Uri(
+      path: 'explore/posts/popular.json',
+      queryParameters: {
+        'date': '$year-$month-$day',
+        'scale': 'week',
+        'page': page,
+        'limit': limit,
+      },
+    );
+    return (await dio.getUri<String>(uri)).data!;
+  }
+
+  Future<String> hotByMonthList({
+    required String year,
+    required String month,
+    required String day,
+    required String page,
+    required String limit,
+  }) async {
+    final uri = Uri(
+      path: 'explore/posts/popular.json',
+      queryParameters: {
+        'date': '$year-$month-$day',
+        'scale': 'month',
+        'page': page,
+        'limit': limit,
+      },
+    );
+    return (await dio.getUri<String>(uri)).data!;
+  }
 }

@@ -18,12 +18,19 @@ enum SupportPage {
   ARTISTS,
   TAGS,
   FAVOURITE,
+  HOT,
 }
 
 enum Order {
   NAME,
   COUNT,
   Date,
+}
+
+enum PopularType {
+  DAY,
+  WEEK,
+  MONTH,
 }
 
 abstract class BooruAdapter {
@@ -64,6 +71,15 @@ abstract class BooruAdapter {
   Future<List<BooruArtist>> artistList({
     required String name,
     required int page,
+  });
+
+  Future<List<BooruPost>> hotList({
+    required int year,
+    required int month,
+    required int day,
+    required PopularType popularType,
+    required int page,
+    required int limit,
   });
 
   Future<List<BooruComments>> comment({required String id});
