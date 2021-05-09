@@ -22,7 +22,7 @@ class SettingPage extends StatelessWidget {
 
   Future<int> getCacheSize() async {
     final file =
-        File(p.join(settingStore.documentDir, 'cache', 'dio_cache.hive'));
+        File(p.join(settingStore.documentDir, 'cache', 'dio_cache.db'));
     if (file.existsSync()) return await file.length();
     return 0;
   }
