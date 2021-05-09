@@ -147,6 +147,7 @@ class MoebooruClient extends BaseClient {
       path: 'post/popular_by_day.json',
       queryParameters: {'day': day, 'month': month, 'year': year},
     );
+    print(uri);
     return (await dio.getUri<String>(uri)).data!;
   }
 

@@ -34,6 +34,7 @@ class DanbooruAdapter implements BooruAdapter {
       SupportPage.TAGS,
       SupportPage.POOLS,
       SupportPage.FAVOURITE,
+      SupportPage.FAVOURITE,
     ];
   }
 

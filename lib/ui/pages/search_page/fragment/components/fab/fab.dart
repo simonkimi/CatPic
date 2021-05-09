@@ -56,8 +56,7 @@ class FloatActionBubble extends StatelessWidget {
             final page = await showDialog(
                 context: context,
                 builder: (context) {
-                  final inputController = TextEditingController()
-                    ..text = loadMoreStore.page.toString();
+                  final inputController = TextEditingController();
                   return AlertDialog(
                     title: Text(I18n.of(context).jump_page),
                     content: SingleChildScrollView(
@@ -66,7 +65,7 @@ class FloatActionBubble extends StatelessWidget {
                           TextField(
                             controller: inputController,
                             decoration: InputDecoration(
-                              hintText: I18n.of(context).input_page,
+                              hintText: loadMoreStore.page.toString(),
                               labelText: I18n.of(context).page,
                             ),
                             inputFormatters: [
@@ -80,12 +79,16 @@ class FloatActionBubble extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(-1);
                         },
                         child: Text(I18n.of(context).negative),
                       ),
                       DefaultButton(
                         onPressed: () {
+                          if (inputController.text.isEmpty) {
+                            Navigator.of(context).pop();
+                            return;
+                          }
                           Navigator.of(context)
                               .pop(int.tryParse(inputController.text) ?? 1);
                         },
@@ -94,7 +97,9 @@ class FloatActionBubble extends StatelessWidget {
                     ],
                   );
                 });
-            if (page != null) loadMoreStore.onJumpPage(page);
+            if (page != null) {
+              loadMoreStore.onJumpPage(page);
+            }
           },
         ),
         SpeedDialChild(

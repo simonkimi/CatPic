@@ -119,12 +119,12 @@ class _MainDrawerState extends State<MainDrawer> {
           padding: EdgeInsets.zero,
           children: [
             if (support?.contains(SupportPage.POSTS) ?? false) buildPostTile(),
+            if (support?.contains(SupportPage.FAVOURITE) ?? false)
+              buildHotTile(),
             if (support?.contains(SupportPage.POOLS) ?? false) buildPoolTile(),
             if (support?.contains(SupportPage.TAGS) ?? false) buildTagTile(),
             if (support?.contains(SupportPage.ARTISTS) ?? false)
               buildArtistTile(),
-            if (support?.contains(SupportPage.FAVOURITE) ?? false)
-              buildFavouriteTile(),
           ],
         ),
       ),
@@ -239,6 +239,24 @@ class _MainDrawerState extends State<MainDrawer> {
               (route) => false);
         else
           Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildHotTile() {
+    return ListTile(
+      leading: const Icon(Icons.whatshot),
+      title: Text(I18n.of(context).hot),
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SearchPage(
+              searchType: SearchType.HOT,
+            ),
+          ),
+        );
       },
     );
   }

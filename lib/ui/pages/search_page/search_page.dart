@@ -5,6 +5,8 @@ import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/artist_result.dart';
 import 'package:catpic/ui/pages/search_page/fragment/artist_result/store/artist_result_store.dart';
 import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
+import 'package:catpic/ui/pages/search_page/fragment/popular_result/popular_result.dart';
+import 'package:catpic/ui/pages/search_page/fragment/popular_result/store/store.dart';
 import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
 import 'package:catpic/ui/pages/search_page/fragment/tag_result/store/tag_result_store.dart';
 import 'package:catpic/ui/pages/search_page/fragment/tag_result/tag_result.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:catpic/main.dart';
 import 'fragment/empty_website/empty_website.dart';
 import 'fragment/pool_result/pool_result.dart';
+import 'fragment/popular_result/store/store.dart';
 import 'fragment/post_result/post_result.dart';
 
 enum SearchType {
@@ -22,6 +25,7 @@ enum SearchType {
   ARTIST,
   TAGS,
   FAVOURITE,
+  HOT,
 }
 
 class SearchPage extends StatefulWidget {
@@ -136,6 +140,15 @@ class _SearchPageState extends State<SearchPage> {
             key: key,
             adapter: adapter,
             store: currentStore as TagResultStore,
+          );
+        case SearchType.HOT:
+          currentStore = PopularResultStore(
+            adapter: adapter,
+            searchText: '',
+          );
+          return PopularResultFragment(
+            key: key,
+            store: currentStore as PopularResultStore,
           );
       }
     }

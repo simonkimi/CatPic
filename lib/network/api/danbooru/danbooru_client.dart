@@ -136,6 +136,7 @@ class DanbooruClient extends BaseClient {
         'limit': limit,
       },
     );
+    print(uri);
     return (await dio.getUri<String>(uri)).data!;
   }
 

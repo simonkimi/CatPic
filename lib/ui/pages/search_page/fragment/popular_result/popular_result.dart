@@ -20,8 +20,8 @@ import '../../../../../i18n.dart';
 import '../../../../../main.dart';
 import '../../../../../themes.dart';
 
-class PopularResult extends StatelessWidget {
-  PopularResult({Key? key, required this.store}) : super(key: key);
+class PopularResultFragment extends StatelessWidget {
+  PopularResultFragment({Key? key, required this.store}) : super(key: key);
 
   final PopularResultStore store;
 
@@ -74,7 +74,7 @@ class PopularResult extends StatelessWidget {
               ];
             },
             onSelected: (value) async {
-              await store.setType(value);
+              if (store.popularType != value) await store.setType(value);
             },
           ),
         ),

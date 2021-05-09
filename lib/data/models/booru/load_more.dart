@@ -70,12 +70,9 @@ abstract class ILoadMore<T> {
       refreshController.loadComplete();
       return;
     }
-    await _loadNextPage();
-    await onDataChange();
     try {
       await _loadNextPage();
       await onDataChange();
-      refreshController.loadComplete();
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) return;
       refreshController.loadFailed();

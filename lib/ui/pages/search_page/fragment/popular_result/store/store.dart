@@ -1,3 +1,4 @@
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/main.dart';
@@ -6,10 +7,10 @@ import 'package:mobx/mobx.dart';
 
 part 'store.g.dart';
 
-class PopularResult = PopularResultStore with _$PopularResult;
+class PopularResultStore = PopularResultStoreBase with _$PopularResultStore;
 
-abstract class PopularResultStore extends ILoadMore<BooruPost> with Store {
-  PopularResultStore({
+abstract class PopularResultStoreBase extends ILoadMore<BooruPost> with Store {
+  PopularResultStoreBase({
     required String searchText,
     required this.adapter,
   }) : super(searchText);
@@ -53,6 +54,8 @@ abstract class PopularResultStore extends ILoadMore<BooruPost> with Store {
 
   @override
   Future<List<BooruPost>> onLoadNextPage() {
+    if (adapter.website.type == WebsiteType.MOEBOORU.index && page >= 2)
+      return Future.value([]);
     return adapter.hotList(
       year: year,
       month: month,
@@ -64,7 +67,7 @@ abstract class PopularResultStore extends ILoadMore<BooruPost> with Store {
   }
 
   @override
-  int? get pageItemCount => settingStore.eachPageItem;
+  int? get pageItemCount => null;
 
   @override
   @action

@@ -18,7 +18,6 @@ enum SupportPage {
   ARTISTS,
   TAGS,
   FAVOURITE,
-  HOT,
 }
 
 enum Order {

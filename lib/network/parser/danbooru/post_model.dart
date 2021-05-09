@@ -95,7 +95,7 @@ class Root {
         hasActiveChildren: asT<bool>(jsonRes['has_active_children'])!,
         bitFlags: asT<int>(jsonRes['bit_flags'])!,
         tagCountMeta: asT<int>(jsonRes['tag_count_meta'])!,
-        hasLarge: asT<bool>(jsonRes['has_large'])!,
+        hasLarge: asT<bool>(jsonRes['has_large']),
         hasVisibleChildren: asT<bool>(jsonRes['has_visible_children'])!,
         tagStringGeneral: asT<String>(jsonRes['tag_string_general'])!,
         tagStringCharacter: asT<String>(jsonRes['tag_string_character'])!,
@@ -146,7 +146,7 @@ class Root {
   bool hasActiveChildren;
   int bitFlags;
   int tagCountMeta;
-  bool hasLarge;
+  bool? hasLarge;
   bool hasVisibleChildren;
   String tagStringGeneral;
   String tagStringCharacter;
