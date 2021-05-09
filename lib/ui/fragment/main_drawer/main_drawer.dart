@@ -192,6 +192,7 @@ class _MainDrawerState extends State<MainDrawer> {
     return ListTile(
       leading: const Icon(Icons.supervisor_account_sharp),
       title: Text(I18n.of(context).artist),
+      selected: widget.type == SearchType.ARTIST,
       onTap: () {
         if (widget.onSearchChange?.call(SearchType.ARTIST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -210,6 +211,7 @@ class _MainDrawerState extends State<MainDrawer> {
     return ListTile(
       leading: const Icon(Icons.tag),
       title: Text(I18n.of(context).tag),
+      selected: widget.type == SearchType.TAGS,
       onTap: () {
         if (widget.onSearchChange?.call(SearchType.TAGS) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -247,6 +249,7 @@ class _MainDrawerState extends State<MainDrawer> {
     return ListTile(
       leading: const Icon(Icons.whatshot),
       title: Text(I18n.of(context).hot),
+      selected: widget.type == SearchType.FAVOURITE,
       onTap: () {
         Navigator.of(context).pop();
         Navigator.push(
