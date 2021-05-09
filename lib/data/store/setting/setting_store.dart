@@ -117,7 +117,7 @@ abstract class SettingStoreBase with Store {
     dartMode = sp.getInt('dartMode') ?? DarkMode.FOLLOW_SYSTEM;
 
     dioCacheOptions = CacheOptions(
-      store: HiveCacheStore(p.join(documentDir, 'cache')),
+      store: DbCacheStore(databasePath: p.join(documentDir, 'cache')),
       policy: CachePolicy.noCache,
       hitCacheOnErrorExcept: [401, 403],
       priority: CachePriority.normal,
