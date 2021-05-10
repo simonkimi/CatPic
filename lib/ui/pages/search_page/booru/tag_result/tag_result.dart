@@ -19,8 +19,11 @@ class TagResultFragment extends StatelessWidget {
     Key? key,
     this.searchText = '',
     required this.adapter,
-    required this.store,
-  }) : super(key: key);
+  })   : store = TagResultStore(
+          adapter: adapter,
+          searchText: searchText,
+        ),
+        super(key: key);
 
   final String searchText;
   final BooruAdapter adapter;

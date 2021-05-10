@@ -19,9 +19,13 @@ import '../../search_page.dart';
 class ArtistResultFragment extends StatelessWidget {
   ArtistResultFragment({
     Key? key,
-    required this.store,
+    required String tag,
     required this.adapter,
-  }) : super(key: key);
+  })   : store = ArtistResultStore(
+          adapter: adapter,
+          searchText: tag,
+        ),
+        super(key: key);
 
   final BooruAdapter adapter;
 

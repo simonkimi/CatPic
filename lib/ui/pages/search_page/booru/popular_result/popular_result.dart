@@ -21,7 +21,14 @@ import '../../../../../main.dart';
 import '../../../../../themes.dart';
 
 class PopularResultFragment extends StatelessWidget {
-  PopularResultFragment({Key? key, required this.store}) : super(key: key);
+  PopularResultFragment({
+    Key? key,
+    required BooruAdapter adapter,
+  })   : store = PopularResultStore(
+          adapter: adapter,
+          searchText: '',
+        ),
+        super(key: key);
 
   final PopularResultStore store;
 

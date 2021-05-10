@@ -11,11 +11,18 @@ class PostResultFragment extends StatelessWidget {
     Key? key,
     this.searchText = '',
     required this.adapter,
-    required this.store,
-  }) : super(key: key);
+    required this.isFavourite,
+  })   : store = PostResultStore(
+          adapter: adapter,
+          searchText: searchText,
+          isFavourite: isFavourite,
+        ),
+        super(key: key);
+
   final String searchText;
   final BooruAdapter adapter;
   final PostResultStore store;
+  final bool isFavourite;
   final tmpController = SearchBarTmpController();
 
   @override

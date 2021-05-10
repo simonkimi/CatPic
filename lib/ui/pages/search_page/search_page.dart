@@ -3,12 +3,7 @@ import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/search_page/booru/artist_result/artist_result.dart';
-import 'package:catpic/ui/pages/search_page/booru/artist_result/store/artist_result_store.dart';
-import 'package:catpic/ui/pages/search_page/booru/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/search_page/booru/popular_result/popular_result.dart';
-import 'package:catpic/ui/pages/search_page/booru/popular_result/store/store.dart';
-import 'package:catpic/ui/pages/search_page/booru/post_result/store/post_result_store.dart';
-import 'package:catpic/ui/pages/search_page/booru/tag_result/store/tag_result_store.dart';
 import 'package:catpic/ui/pages/search_page/booru/tag_result/tag_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:catpic/main.dart';
 import 'booru/empty_website/empty_website.dart';
 import 'booru/pool_result/pool_result.dart';
-import 'booru/popular_result/store/store.dart';
 import 'booru/post_result/post_result.dart';
 
 enum SearchType {
@@ -26,6 +20,7 @@ enum SearchType {
   TAGS,
   FAVOURITE,
   POPULAR,
+  EH_INDEX,
 }
 
 class SearchPage extends StatefulWidget {
@@ -100,55 +95,34 @@ class _SearchPageState extends State<SearchPage> {
       switch (searchType) {
         case SearchType.FAVOURITE:
         case SearchType.POST:
-          currentStore = PostResultStore(
-            adapter: adapter,
-            searchText: tag,
-            isFavourite: searchType == SearchType.FAVOURITE,
-          );
           return PostResultFragment(
             key: key,
             searchText: tag,
             adapter: adapter,
-            store: currentStore as PostResultStore,
+            isFavourite: searchType == SearchType.FAVOURITE,
           );
         case SearchType.POOL:
-          currentStore = PoolResultStore(
-            adapter: adapter,
-            searchText: tag,
-          );
           return PoolResultFragment(
             key: key,
             adapter: adapter,
-            store: currentStore as PoolResultStore,
-          );
-        case SearchType.ARTIST:
-          currentStore = ArtistResultStore(
-            adapter: adapter,
             searchText: tag,
           );
+        case SearchType.ARTIST:
           return ArtistResultFragment(
             key: key,
             adapter: adapter,
-            store: currentStore as ArtistResultStore,
+            tag: tag,
           );
         case SearchType.TAGS:
-          currentStore = TagResultStore(
-            adapter: adapter,
-            searchText: tag,
-          );
           return TagResultFragment(
             key: key,
             adapter: adapter,
-            store: currentStore as TagResultStore,
+            searchText: tag,
           );
         case SearchType.POPULAR:
-          currentStore = PopularResultStore(
-            adapter: adapter,
-            searchText: '',
-          );
           return PopularResultFragment(
+            adapter: adapter,
             key: key,
-            store: currentStore as PopularResultStore,
           );
       }
     }

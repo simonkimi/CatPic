@@ -18,9 +18,13 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class PoolResultFragment extends StatelessWidget {
   PoolResultFragment({
     Key? key,
+    required String searchText,
     required this.adapter,
-    required this.store,
-  }) : super(key: key);
+  })   : store = PoolResultStore(
+          adapter: adapter,
+          searchText: searchText,
+        ),
+        super(key: key);
 
   final BooruAdapter adapter;
 
