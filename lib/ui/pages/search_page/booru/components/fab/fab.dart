@@ -79,7 +79,7 @@ class FloatActionBubble extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop(-1);
+                          Navigator.of(context).pop();
                         },
                         child: Text(I18n.of(context).negative),
                       ),

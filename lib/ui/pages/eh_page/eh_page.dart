@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 
-enum SearchType {
+enum EHSearchType {
   INDEX,
 }
 
@@ -15,11 +15,11 @@ class EhPage extends StatefulWidget {
   const EhPage({
     Key? key,
     this.searchText = '',
-    this.searchType = SearchType.INDEX,
+    this.searchType = EHSearchType.INDEX,
   }) : super(key: key);
 
   final String searchText;
-  final SearchType searchType;
+  final EHSearchType searchType;
 
   @override
   _EhPageState createState() => _EhPageState();
@@ -65,7 +65,7 @@ class _EhPageState extends State<EhPage> {
     );
   }
 
-  void changeSearchBody(String tag, SearchType type) {
+  void changeSearchBody(String tag, EHSearchType type) {
     if (tag == searchText && type == searchType) {
       return;
     }
@@ -75,7 +75,7 @@ class _EhPageState extends State<EhPage> {
     });
   }
 
-  Widget buildSearchBody(String tag, SearchType type) {
+  Widget buildSearchBody(String tag, EHSearchType type) {
     if (mainStore.websiteEntity != null) {
       final key = UniqueKey();
     }

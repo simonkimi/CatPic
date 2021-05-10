@@ -3,6 +3,14 @@ import 'package:catpic/network/api/misc_network.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 
+const commonHost = <String, String>{
+  'yande.re': '198.98.54.92',
+  'files.yande.re': '198.98.54.92',
+  'assets.yande.re': '198.98.54.92',
+  'e-hentai.org': '104.20.134.21',
+  'exhentai.org': '178.175.129.252',
+};
+
 class HostInterceptor extends Interceptor {
   HostInterceptor({
     required this.directLink,
@@ -44,6 +52,7 @@ class HostInterceptor extends Interceptor {
 
   Future<String> doh(String host) async {
     dio.lock();
+    if (commonHost.containsKey(host)) return commonHost[host]!;
     final ip = await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
