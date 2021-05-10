@@ -5,20 +5,12 @@ import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
-import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
+import 'base_adapter.dart';
 import 'danbooru_adapter.dart';
 import 'gelbooru_adapter.dart';
 import 'moebooru_adapter.dart';
-
-enum SupportPage {
-  POSTS,
-  POOLS,
-  ARTISTS,
-  TAGS,
-  FAVOURITE,
-}
 
 enum Order {
   NAME,
@@ -32,7 +24,15 @@ enum PopularType {
   MONTH,
 }
 
-abstract class BooruAdapter {
+enum SupportPage {
+  POSTS,
+  POOLS,
+  ARTISTS,
+  TAGS,
+  FAVOURITE,
+}
+
+abstract class BooruAdapter extends Adapter {
   factory BooruAdapter.fromWebsite(WebsiteTableData table) {
     if (table.type == WebsiteType.GELBOORU.index) {
       return GelbooruAdapter(table);
@@ -45,8 +45,6 @@ abstract class BooruAdapter {
   }
 
   List<SupportPage> getSupportPage();
-
-  WebsiteTableData get website;
 
   Future<List<BooruPost>> postList({
     required String tags,
@@ -88,10 +86,6 @@ abstract class BooruAdapter {
   Future<void> favourite(String postId, String username, String password);
 
   Future<void> unFavourite(String postId, String username, String password);
-
-  Dio get dio;
-
-  BaseClient get client;
 }
 
 extension OrderUtil on Order {

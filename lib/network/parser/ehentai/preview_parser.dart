@@ -18,7 +18,8 @@ class PreviewParser {
       final pages = parsePages(element);
       final stars = parseStar(element);
       final tag = element.querySelector('.gl1c')?.text ?? '';
-      final uploadTime = element.querySelector('.glnew')?.text ?? '';
+      final uploadTime = element.querySelector('[id^=posted]')?.text ?? '';
+
       final previewImg =
           element.querySelector('.glthumb img')?.attributes['src'] ?? '';
       final language = parseLanguage(element);
