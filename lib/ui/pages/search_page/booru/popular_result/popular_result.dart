@@ -1,50 +1,104 @@
 import 'dart:ui' as ui;
+import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
-import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:catpic/ui/pages/search_page/fragment/loading/loading.dart';
-import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
-import 'package:dio/dio.dart';
+import 'package:catpic/ui/pages/search_page/booru/components/fab/fab.dart';
+import 'package:catpic/ui/pages/search_page/booru/loading/loading.dart';
+import 'package:catpic/ui/pages/search_page/booru/popular_result/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-import 'package:catpic/main.dart';
-import 'package:catpic/i18n.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 
-class PostWaterFlow extends StatelessWidget {
-  PostWaterFlow({
-    Key? key,
-    required this.store,
-    required this.dio,
-    required this.onAddTag,
-  }) : super(key: key);
-  final PostResultStore store;
-  final ValueChanged<String> onAddTag;
-  final Dio dio;
+import '../../../../../i18n.dart';
+import '../../../../../main.dart';
+import '../../../../../themes.dart';
+
+class PopularResultFragment extends StatelessWidget {
+  PopularResultFragment({Key? key, required this.store}) : super(key: key);
+
+  final PopularResultStore store;
 
   final retryList = <Function>[];
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: store.observableList.isEmpty &&
-                (store.isLoading || store.lock.locked)
-            ? LoadingWidget(store: store)
-            : buildList(),
-      );
-    });
+    return SearchBar(
+      body: buildBody(),
+      candidateBuilder: (BuildContext context, Animation<double> transition) {
+        return const SizedBox();
+      },
+      actions: [
+        FloatingSearchBarAction(
+          showIfClosed: true,
+          showIfOpened: true,
+          child: IconButton(
+            icon: const Icon(Icons.date_range),
+            onPressed: () async {
+              final newData = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1970),
+                lastDate: DateTime.now(),
+              );
+              if (newData != null)
+                await store.setDate(newData.year, newData.month, newData.day);
+            },
+          ),
+        ),
+        FloatingSearchBarAction(
+          showIfClosed: true,
+          showIfOpened: true,
+          child: PopupMenuButton<PopularType>(
+            icon: const Icon(Icons.list_alt),
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem<PopularType>(
+                  value: PopularType.DAY,
+                  child: Text(I18n.of(context).day),
+                ),
+                PopupMenuItem<PopularType>(
+                  value: PopularType.WEEK,
+                  child: Text(I18n.of(context).week),
+                ),
+                PopupMenuItem<PopularType>(
+                  value: PopularType.MONTH,
+                  child: Text(I18n.of(context).month),
+                ),
+              ];
+            },
+            onSelected: (value) async {
+              if (store.popularType != value) await store.setType(value);
+            },
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget buildList() {
+  Scaffold buildBody() {
+    return Scaffold(
+      body: Observer(
+        builder: (_) {
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: store.isLoading && store.observableList.isEmpty
+                ? LoadingWidget(store: store)
+                : buildList(),
+          );
+        },
+      ),
+      floatingActionButton: FloatActionBubble(loadMoreStore: store),
+    );
+  }
+
+  Scrollbar buildList() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Scrollbar(
       showTrackOnHover: true,
@@ -70,7 +124,7 @@ class PostWaterFlow extends StatelessWidget {
               crossAxisSpacing: 5,
               maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
             ),
-            itemCount: store.postList.length,
+            itemCount: store.observableList.length,
             itemBuilder: _itemBuilder,
           ),
         ),
@@ -89,7 +143,6 @@ class PostWaterFlow extends StatelessWidget {
             favicon: mainStore.websiteEntity?.favicon,
             adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
             postList: store.postList,
-            onAddTag: onAddTag,
             index: index,
           ),
         ),
@@ -102,7 +155,7 @@ class PostWaterFlow extends StatelessWidget {
       subTitle: '${post.width} x ${post.height}',
       body: DioImage(
         imageUrl: post.getPreviewImg(),
-        dio: dio,
+        dio: store.adapter.dio,
         imageBuilder: (context, imgData) {
           return InkWell(
             key: ValueKey('loaded${post.id}'),

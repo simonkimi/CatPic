@@ -3,11 +3,7 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 
 class GalleryImgParser {
-  GalleryImgParser(this.html);
-
-  final String html;
-
-  GalleryImgModel parse() {
+  static GalleryImgModel parse(String html) {
     final document = parser.parse(html).body;
 
     final meta = parseWidthHeightSize(document!);
@@ -35,7 +31,7 @@ class GalleryImgParser {
     );
   }
 
-  List<String> parseWidthHeightSize(Element element) {
+  static List<String> parseWidthHeightSize(Element element) {
     final metaElement = element.querySelector('#i2')?.children[1];
     if (metaElement != null) {
       final re = RegExp(r'::\s(\d+)\sx\s(\d+)\s::\s([\d.]+\s.+)');
@@ -45,7 +41,7 @@ class GalleryImgParser {
     return [];
   }
 
-  List<String> parseRawImg(Element element) {
+  static List<String> parseRawImg(Element element) {
     final rawElement = element.querySelector('#i7 > a');
     if (rawElement != null) {
       final url = rawElement.attributes['href'];

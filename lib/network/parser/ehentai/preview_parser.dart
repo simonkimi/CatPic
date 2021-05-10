@@ -3,11 +3,7 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 
 class PreviewParser {
-  PreviewParser(this.previewHtml);
-
-  final String previewHtml;
-
-  List<PreViewModel> parse() {
+  static List<PreViewModel> parse(String previewHtml) {
     final document = parser.parse(previewHtml);
 
     final previewList = document
@@ -53,7 +49,7 @@ class PreviewParser {
   }
 
   /// 解析gid和gtoken
-  List<String> parseToken(String targetUrl) {
+  static List<String> parseToken(String targetUrl) {
     if (targetUrl.isNotEmpty) {
       final re = RegExp(r'/g/(\w+)/(\w+)/');
       final match = re.firstMatch(targetUrl)!;
@@ -63,7 +59,7 @@ class PreviewParser {
   }
 
   /// 解析有多少面
-  int parsePages(Element e) {
+  static int parsePages(Element e) {
     final pageElement = e.querySelectorAll('.gl4c div');
     if (pageElement.length == 2) {
       return int.parse(pageElement[1].text.split(' ')[0]);
@@ -72,7 +68,7 @@ class PreviewParser {
   }
 
   /// 解析几颗星
-  double parseStar(Element e) {
+  static double parseStar(Element e) {
     final starElement = e.querySelector('.ir');
     if (starElement != null) {
       final re = RegExp(r':-?(\d+)px\s-?(\d+)px');
@@ -85,7 +81,7 @@ class PreviewParser {
     return 0;
   }
 
-  List<PreviewTag> parseTag(Element element) {
+  static List<PreviewTag> parseTag(Element element) {
     final tagElements = element.querySelectorAll('.gt');
     return tagElements.map((e) {
       final tag = e.text;
@@ -101,7 +97,7 @@ class PreviewParser {
   }
 
   /// 解析语言
-  String parseLanguage(Element element) {
+  static String parseLanguage(Element element) {
     final tagElement = element.querySelectorAll('.gt');
     for (final e in tagElement) {
       if (e.attributes['title']?.contains('language') ?? false) {
@@ -112,7 +108,7 @@ class PreviewParser {
   }
 
   /// 解析预览图长宽
-  List<int> parseImg(Element e) {
+  static List<int> parseImg(Element e) {
     final imgElement = e.querySelector('.glthumb img');
     if (imgElement != null) {
       final styleText = imgElement.attributes['style'];

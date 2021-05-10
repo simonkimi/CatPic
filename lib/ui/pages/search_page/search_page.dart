@@ -2,22 +2,22 @@ import 'dart:async';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
-import 'package:catpic/ui/pages/search_page/fragment/artist_result/artist_result.dart';
-import 'package:catpic/ui/pages/search_page/fragment/artist_result/store/artist_result_store.dart';
-import 'package:catpic/ui/pages/search_page/fragment/pool_result/store/pool_result_store.dart';
-import 'package:catpic/ui/pages/search_page/fragment/popular_result/popular_result.dart';
-import 'package:catpic/ui/pages/search_page/fragment/popular_result/store/store.dart';
-import 'package:catpic/ui/pages/search_page/fragment/post_result/store/post_result_store.dart';
-import 'package:catpic/ui/pages/search_page/fragment/tag_result/store/tag_result_store.dart';
-import 'package:catpic/ui/pages/search_page/fragment/tag_result/tag_result.dart';
+import 'package:catpic/ui/pages/search_page/booru/artist_result/artist_result.dart';
+import 'package:catpic/ui/pages/search_page/booru/artist_result/store/artist_result_store.dart';
+import 'package:catpic/ui/pages/search_page/booru/pool_result/store/pool_result_store.dart';
+import 'package:catpic/ui/pages/search_page/booru/popular_result/popular_result.dart';
+import 'package:catpic/ui/pages/search_page/booru/popular_result/store/store.dart';
+import 'package:catpic/ui/pages/search_page/booru/post_result/store/post_result_store.dart';
+import 'package:catpic/ui/pages/search_page/booru/tag_result/store/tag_result_store.dart';
+import 'package:catpic/ui/pages/search_page/booru/tag_result/tag_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
-import 'fragment/empty_website/empty_website.dart';
-import 'fragment/pool_result/pool_result.dart';
-import 'fragment/popular_result/store/store.dart';
-import 'fragment/post_result/post_result.dart';
+import 'booru/empty_website/empty_website.dart';
+import 'booru/pool_result/pool_result.dart';
+import 'booru/popular_result/store/store.dart';
+import 'booru/post_result/post_result.dart';
 
 enum SearchType {
   POST,
@@ -25,7 +25,7 @@ enum SearchType {
   ARTIST,
   TAGS,
   FAVOURITE,
-  HOT,
+  POPULAR,
 }
 
 class SearchPage extends StatefulWidget {
@@ -141,7 +141,7 @@ class _SearchPageState extends State<SearchPage> {
             adapter: adapter,
             store: currentStore as TagResultStore,
           );
-        case SearchType.HOT:
+        case SearchType.POPULAR:
           currentStore = PopularResultStore(
             adapter: adapter,
             searchText: '',

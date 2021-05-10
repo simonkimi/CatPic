@@ -3,11 +3,7 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 
 class GalleryParser {
-  GalleryParser(this.galleryHtml);
-
-  final String galleryHtml;
-
-  GalleryModel parse() {
+  static GalleryModel parse(String galleryHtml) {
     final document = parser.parse(galleryHtml).body!;
     final tags = parseTags(document);
     final favcount = int.tryParse(document
@@ -37,7 +33,7 @@ class GalleryParser {
     );
   }
 
-  List<TagModels> parseTags(Element e) {
+  static List<TagModels> parseTags(Element e) {
     final tagElements = e.querySelectorAll('#taglist > table > tbody > tr');
     return tagElements.map((e) {
       var title = e.children[0].text;
@@ -48,7 +44,7 @@ class GalleryParser {
   }
 
   /// 解析预览 [0]: 预览URL, [1]: 指向地址
-  List<PreviewImage> parsePreview(Element element) {
+  static List<PreviewImage> parsePreview(Element element) {
     final imgContainer = element.querySelectorAll('.gdtm');
     return imgContainer.map((e) {
       final style = e.children[0].attributes['style'];
@@ -67,14 +63,14 @@ class GalleryParser {
   }
 
   /// 解析最大面数
-  int parseMaxPage(Element element) {
+  static int parseMaxPage(Element element) {
     final bottomBarElements =
         element.querySelectorAll('.ptb > tbody > tr > td');
     final ele = bottomBarElements[bottomBarElements.length - 2];
     return int.parse(ele.text);
   }
 
-  List<CommentModel> parseComment(Element element) {
+  static List<CommentModel> parseComment(Element element) {
     final comments = element.querySelectorAll('.c1');
 
     return comments.map((e) {

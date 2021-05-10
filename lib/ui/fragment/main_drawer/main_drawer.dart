@@ -250,14 +250,14 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.whatshot),
       title: Text(I18n.of(context).hot),
-      selected: type == SearchType.FAVOURITE,
+      selected: type == SearchType.POPULAR,
       onTap: () {
         Navigator.of(context).pop();
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => const SearchPage(
-              searchType: SearchType.HOT,
+              searchType: SearchType.POPULAR,
             ),
           ),
         );
