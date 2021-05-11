@@ -152,6 +152,10 @@ class WebsiteAddPage extends StatelessWidget {
             value: WebsiteType.DANBOORU.index,
             title: WebsiteType.DANBOORU.string,
           ),
+          S2Choice(
+            value: WebsiteType.EHENTAI.index,
+            title: WebsiteType.EHENTAI.string,
+          ),
         ],
       ),
     ];

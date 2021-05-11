@@ -2,9 +2,9 @@ import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
+import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/search_page/search_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
@@ -17,14 +17,20 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 typedef SearchChange = bool Function(SearchType);
 
+typedef EhSearchChange = bool Function(EHSearchType);
+
 class MainDrawer extends HookWidget {
   const MainDrawer({
     Key? key,
     this.onSearchChange,
-    this.type,
+    this.boooruType,
+    this.ehSearchType,
+    this.onEHSearchChange,
   }) : super(key: key);
   final SearchChange? onSearchChange;
-  final SearchType? type;
+  final EhSearchChange? onEHSearchChange;
+  final SearchType? boooruType;
+  final EHSearchType? ehSearchType;
 
   @override
   Widget build(BuildContext context) {
@@ -109,10 +115,11 @@ class MainDrawer extends HookWidget {
   List<Widget> buildMainMenu(BuildContext context) {
     Widget buildEhList() {
       return Expanded(
-          child: ListView(
-        padding: EdgeInsets.zero,
-        children: [],
-      ));
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [buildEhIndex(context)],
+        ),
+      );
     }
 
     Widget buildBooruList() {
@@ -149,6 +156,25 @@ class MainDrawer extends HookWidget {
       buildDownloadTile(context),
       buildSettingTile(context)
     ];
+  }
+
+  ListTile buildEhIndex(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.home),
+      title: Text(I18n.of(context).home),
+      selected: ehSearchType == EHSearchType.INDEX,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.INDEX) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const EhPage(
+                        searchType: EHSearchType.INDEX,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
   }
 
   ListTile buildSettingTile(BuildContext context) {
@@ -209,7 +235,7 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.supervisor_account_sharp),
       title: Text(I18n.of(context).artist),
-      selected: type == SearchType.ARTIST,
+      selected: boooruType == SearchType.ARTIST,
       onTap: () {
         if (onSearchChange?.call(SearchType.ARTIST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -228,7 +254,7 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.tag),
       title: Text(I18n.of(context).tag),
-      selected: type == SearchType.TAGS,
+      selected: boooruType == SearchType.TAGS,
       onTap: () {
         if (onSearchChange?.call(SearchType.TAGS) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -247,7 +273,7 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.filter),
       title: Text(I18n.of(context).pools),
-      selected: type == SearchType.POOL,
+      selected: boooruType == SearchType.POOL,
       onTap: () {
         if (onSearchChange?.call(SearchType.POOL) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -266,7 +292,7 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.whatshot),
       title: Text(I18n.of(context).hot),
-      selected: type == SearchType.POPULAR,
+      selected: boooruType == SearchType.POPULAR,
       onTap: () {
         Navigator.of(context).pop();
         Navigator.push(
@@ -285,7 +311,7 @@ class MainDrawer extends HookWidget {
     return ListTile(
       leading: const Icon(Icons.image),
       title: Text(I18n.of(context).posts),
-      selected: type == SearchType.POST,
+      selected: boooruType == SearchType.POST,
       onTap: () {
         if (onSearchChange?.call(SearchType.POST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
@@ -346,10 +372,18 @@ class MainDrawer extends HookWidget {
       BuildContext context, WebsiteTableData entity) async {
     Navigator.of(context).pop();
     await mainStore.setWebsite(entity);
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const SearchPage()),
-      (route) => false,
-    );
+    if (entity.type != WebsiteType.EHENTAI.index) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const SearchPage()),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const EhPage()),
+        (route) => false,
+      );
+    }
   }
 }

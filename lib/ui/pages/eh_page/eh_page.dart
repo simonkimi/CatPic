@@ -55,8 +55,8 @@ class _EhPageState extends State<EhPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(
-        type: searchType,
-        onSearchChange: (newType) => newType != searchType,
+        ehSearchType: searchType,
+        onEHSearchChange: (newType) => newType != searchType,
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 1),

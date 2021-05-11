@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(
-        type: searchType,
+        boooruType: searchType,
         onSearchChange: (newType) => newType != searchType,
       ),
       body: AnimatedSwitcher(
