@@ -3,16 +3,16 @@ import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/search_page/booru/components/fab/fab.dart';
-import 'package:catpic/ui/pages/search_page/booru/loading/loading.dart';
-import 'package:catpic/ui/pages/search_page/booru/tag_result/store/tag_result_store.dart';
+import 'package:catpic/ui/pages/booru_page/result/components/fab/fab.dart';
+import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
+import 'package:catpic/ui/pages/booru_page/result/tag_result/store/tag_result_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 
-import '../../search_page.dart';
+import '../../booru_page.dart';
 
 class TagResultFragment extends StatelessWidget {
   TagResultFragment({
@@ -104,7 +104,7 @@ class TagResultFragment extends StatelessWidget {
         ),
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => SearchPage(
+            builder: (context) => BooruPage(
               searchText: tag.name,
             ),
           ));

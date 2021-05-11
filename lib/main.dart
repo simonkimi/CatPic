@@ -1,8 +1,10 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/data/store/download/download_store.dart';
-import 'package:catpic/ui/pages/search_page/search_page.dart';
+import 'package:catpic/ui/pages/eh_page/eh_page.dart';
+import 'package:catpic/ui/pages/booru_page/booru_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/ui/pages/website_add_page/website_add_page.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +55,9 @@ class CatPicApp extends StatelessWidget {
           AppLocalizations.delegate
         ],
         navigatorKey: AppNavigator().key,
-        home: const SearchPage(),
+        home: mainStore.websiteEntity?.type == WebsiteType.EHENTAI.index
+            ? const EhPage()
+            : const BooruPage(),
         builder: BotToastInit(),
         supportedLocales: AppLocalizations.supportedLocales,
         routes: {

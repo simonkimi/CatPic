@@ -14,7 +14,7 @@ import 'package:catpic/ui/pages/login_page/login_page.dart';
 import 'package:catpic/ui/pages/post_image_view/booru_comments.dart';
 import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
 import 'package:catpic/ui/pages/post_image_view/store/store.dart';
-import 'package:catpic/ui/pages/search_page/search_page.dart';
+import 'package:catpic/ui/pages/booru_page/booru_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,7 +155,7 @@ class PostImageViewPage extends HookWidget {
                           Navigator.of(context).pop();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => SearchPage(
+                              builder: (_) => BooruPage(
                                 searchText: e.trim() + ' ',
                               ),
                             ),

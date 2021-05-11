@@ -218,9 +218,10 @@ class DownloadManagerPage extends StatelessWidget {
                       Text(
                         '# ${downloadTable.postId}',
                         style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                       const Expanded(child: SizedBox()),
                       Text(

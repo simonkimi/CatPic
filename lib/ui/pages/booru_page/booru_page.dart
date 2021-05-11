@@ -2,16 +2,16 @@ import 'dart:async';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
-import 'package:catpic/ui/pages/search_page/booru/artist_result/artist_result.dart';
-import 'package:catpic/ui/pages/search_page/booru/popular_result/popular_result.dart';
-import 'package:catpic/ui/pages/search_page/booru/tag_result/tag_result.dart';
+import 'package:catpic/ui/pages/booru_page/result/artist_result/artist_result.dart';
+import 'package:catpic/ui/pages/booru_page/result/popular_result/popular_result.dart';
+import 'package:catpic/ui/pages/booru_page/result/tag_result/tag_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
-import 'booru/empty_website/empty_website.dart';
-import 'booru/pool_result/pool_result.dart';
-import 'booru/post_result/post_result.dart';
+import 'result/empty_website/empty_website.dart';
+import 'result/pool_result/pool_result.dart';
+import 'result/post_result/post_result.dart';
 
 enum SearchType {
   POST,
@@ -22,8 +22,8 @@ enum SearchType {
   POPULAR,
 }
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({
+class BooruPage extends StatefulWidget {
+  const BooruPage({
     Key? key,
     this.searchText = '',
     this.searchType = SearchType.POST,
@@ -32,10 +32,10 @@ class SearchPage extends StatefulWidget {
   final SearchType searchType;
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _BooruPageState createState() => _BooruPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _BooruPageState extends State<BooruPage> {
   late final searchText = widget.searchText;
   late final searchType = widget.searchType;
   late var searchBody = buildSearchBody(searchText, searchType);

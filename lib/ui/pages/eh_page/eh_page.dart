@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
-import 'package:catpic/ui/pages/search_page/booru/empty_website/empty_website.dart';
+import 'package:catpic/ui/pages/eh_page/index_page/index_result.dart';
+import 'package:catpic/ui/pages/booru_page/result/empty_website/empty_website.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
@@ -40,14 +43,14 @@ class _EhPageState extends State<EhPage> {
       print('Event bus EventSiteChange');
       changeSearchBody(searchText, searchType);
     });
-    print('SearchPageCount: ${mainStore.searchPageCount}');
+    print('EhPageCount: ${mainStore.searchPageCount}');
   }
 
   @override
   void dispose() {
     super.dispose();
     mainStore.descSearchPage();
-    print('SearchPageCount: ${mainStore.searchPageCount}');
+    print('EhPageCount: ${mainStore.searchPageCount}');
     _eventSiteChangeListener.cancel();
   }
 
@@ -58,9 +61,14 @@ class _EhPageState extends State<EhPage> {
         ehSearchType: searchType,
         onEHSearchChange: (newType) => newType != searchType,
       ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 1),
-        child: searchBody,
+      body: SearchBar(
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 1),
+          child: searchBody,
+        ),
+        candidateBuilder: (BuildContext context, Animation<double> transition) {
+          return const SizedBox();
+        },
       ),
     );
   }
@@ -78,12 +86,13 @@ class _EhPageState extends State<EhPage> {
   Widget buildSearchBody(String tag, EHSearchType type) {
     if (mainStore.websiteEntity != null) {
       final key = UniqueKey();
+      final adapter = EHAdapter(mainStore.websiteEntity!);
       switch (type) {
         case EHSearchType.INDEX:
-          return EhPage(
+          return EhIndexResult(
             key: key,
             searchText: tag,
-            searchType: EHSearchType.INDEX,
+            adapter: adapter,
           );
       }
     }

@@ -6,7 +6,7 @@ import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
-import 'package:catpic/ui/pages/search_page/search_page.dart';
+import 'package:catpic/ui/pages/booru_page/booru_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
@@ -216,7 +216,7 @@ class MainDrawer extends HookWidget {
         if (website.username != null) {
           Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return SearchPage(
+            return BooruPage(
               searchText: BooruAdapter.fromWebsite(website)
                   .favouriteList(website.username!),
               searchType: SearchType.FAVOURITE,
@@ -240,7 +240,7 @@ class MainDrawer extends HookWidget {
         if (onSearchChange?.call(SearchType.ARTIST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (context) => const SearchPage(
+                  builder: (context) => const BooruPage(
                         searchType: SearchType.ARTIST,
                       )),
               (route) => false);
@@ -259,7 +259,7 @@ class MainDrawer extends HookWidget {
         if (onSearchChange?.call(SearchType.TAGS) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (context) => const SearchPage(
+                  builder: (context) => const BooruPage(
                         searchType: SearchType.TAGS,
                       )),
               (route) => false);
@@ -278,7 +278,7 @@ class MainDrawer extends HookWidget {
         if (onSearchChange?.call(SearchType.POOL) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (context) => const SearchPage(
+                  builder: (context) => const BooruPage(
                         searchType: SearchType.POOL,
                       )),
               (route) => false);
@@ -298,7 +298,7 @@ class MainDrawer extends HookWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const SearchPage(
+            builder: (context) => const BooruPage(
               searchType: SearchType.POPULAR,
             ),
           ),
@@ -315,7 +315,7 @@ class MainDrawer extends HookWidget {
       onTap: () {
         if (onSearchChange?.call(SearchType.POST) ?? true)
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const SearchPage()),
+              MaterialPageRoute(builder: (context) => const BooruPage()),
               (route) => false);
         else
           Navigator.of(context).pop();
@@ -375,7 +375,7 @@ class MainDrawer extends HookWidget {
     if (entity.type != WebsiteType.EHENTAI.index) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const SearchPage()),
+        MaterialPageRoute(builder: (context) => const BooruPage()),
         (route) => false,
       );
     } else {

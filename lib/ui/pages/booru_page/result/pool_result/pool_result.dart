@@ -6,10 +6,10 @@ import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/search_page/booru/components/fab/fab.dart';
-import 'package:catpic/ui/pages/search_page/booru/loading/loading.dart';
-import 'package:catpic/ui/pages/search_page/booru/pool_result/store/pool_result_store.dart';
-import 'package:catpic/ui/pages/search_page/search_page.dart';
+import 'package:catpic/ui/pages/booru_page/result/components/fab/fab.dart';
+import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
+import 'package:catpic/ui/pages/booru_page/result/pool_result/store/pool_result_store.dart';
+import 'package:catpic/ui/pages/booru_page/booru_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -91,7 +91,7 @@ class PoolResultFragment extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => SearchPage(
+            builder: (context) => BooruPage(
               searchText: 'pool:${pool.id}',
             ),
           ));
