@@ -14,7 +14,6 @@ import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
-
 import 'booru_adapter.dart';
 
 class MoebooruAdapter implements BooruAdapter {

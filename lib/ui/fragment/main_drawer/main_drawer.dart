@@ -1,6 +1,8 @@
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/login_page/login_page.dart';
@@ -105,14 +107,21 @@ class MainDrawer extends HookWidget {
   }
 
   List<Widget> buildMainMenu(BuildContext context) {
-    List<SupportPage>? support;
-    if (mainStore.websiteEntity != null) {
-      support =
-          BooruAdapter.fromWebsite(mainStore.websiteEntity!).getSupportPage();
+    Widget buildEhList() {
+      return Expanded(
+          child: ListView(
+        padding: EdgeInsets.zero,
+        children: [],
+      ));
     }
 
-    return [
-      Expanded(
+    Widget buildBooruList() {
+      List<SupportPage>? support;
+      if (mainStore.websiteEntity != null) {
+        support =
+            BooruAdapter.fromWebsite(mainStore.websiteEntity!).getSupportPage();
+      }
+      return Expanded(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -128,7 +137,14 @@ class MainDrawer extends HookWidget {
               buildArtistTile(context),
           ],
         ),
-      ),
+      );
+    }
+
+    return [
+      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI.index)
+        buildBooruList(),
+      if (mainStore.websiteEntity?.type == WebsiteType.EHENTAI.index)
+        buildEhList(),
       const Divider(),
       buildDownloadTile(context),
       buildSettingTile(context)

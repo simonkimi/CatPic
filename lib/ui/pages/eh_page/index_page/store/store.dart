@@ -29,7 +29,7 @@ abstract class EhIndexStoreBase extends ILoadMore<PreViewModel> with Store {
         filter: EhFilter.buildAdvanceFilter(
           searchText: searchText,
         ),
-        page: page,
+        page: page - 1,
       );
 
   @override

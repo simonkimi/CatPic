@@ -134,7 +134,7 @@ class WebsiteAddPage extends StatelessWidget {
         },
         modalType: S2ModalType.popupDialog,
         modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: WebsiteType.GELBOORU.index,
+        selectedValue: store.websiteType,
         onChange: (S2SingleSelected<int?> value) {
           store.setWebsiteType(value.value!);
         },

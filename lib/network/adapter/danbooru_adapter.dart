@@ -13,7 +13,6 @@ import 'package:catpic/network/api/danbooru/danbooru_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-
 import 'booru_adapter.dart';
 
 class DanbooruAdapter implements BooruAdapter {
