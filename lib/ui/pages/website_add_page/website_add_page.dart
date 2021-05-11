@@ -31,6 +31,7 @@ class WebsiteAddPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: I18n.of(context).positive,
         child: const Icon(Icons.check),
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           store.saveWebsite().then((result) {
             if (result) {
@@ -177,6 +178,15 @@ class WebsiteAddPage extends StatelessWidget {
           }
         },
       ),
+      if (store.useDoH)
+        SwitchListTile(
+          title: Text(I18n.of(context).only_host),
+          value: store.onlyHost,
+          secondary: const Icon(Icons.location_on_outlined),
+          onChanged: (value) {
+            store.setOnlyHost(value);
+          },
+        ),
       SwitchListTile(
         title: Text(I18n.of(context).direct_link),
         subtitle: Text(I18n.of(context).direct_link_desc),

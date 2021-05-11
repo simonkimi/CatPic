@@ -21,7 +21,8 @@ abstract class WebsiteAddStoreBase with Store {
         useDoH = website?.useDoH ?? false,
         directLink = website?.directLink ?? false,
         username = website?.username ?? '',
-        password = website?.password ?? '';
+        password = website?.password ?? '',
+        onlyHost = website?.onlyHost ?? false;
 
   WebsiteTableData? website;
 
@@ -37,6 +38,8 @@ abstract class WebsiteAddStoreBase with Store {
   late bool useDoH;
   @observable
   late bool directLink;
+  @observable
+  late bool onlyHost;
   @observable
   String username;
   @observable
@@ -59,6 +62,9 @@ abstract class WebsiteAddStoreBase with Store {
 
   @action
   void setDirectLink(bool value) => directLink = value;
+
+  @action
+  void setOnlyHost(bool value) => onlyHost = value;
 
   @action
   void setUsername(String value) => username = value;
@@ -84,6 +90,7 @@ abstract class WebsiteAddStoreBase with Store {
         host: websiteHost,
         scheme: scheme,
         useDoH: useDoH,
+        onlyHost: onlyHost,
         type: websiteType,
         directLink: directLink,
         username: username.isNotEmpty ? username : null,
@@ -97,6 +104,7 @@ abstract class WebsiteAddStoreBase with Store {
         useDoH: Value(useDoH),
         type: Value(websiteType),
         directLink: Value(directLink),
+        onlyHost: Value(onlyHost),
         username: username.isNotEmpty ? Value(username) : const Value(null),
         password: password.isNotEmpty ? Value(password) : const Value(null),
       );
@@ -106,7 +114,6 @@ abstract class WebsiteAddStoreBase with Store {
         mainStore.setWebsiteFavicon(id, favicon);
       });
     }
-
     mainStore.updateList();
     return true;
   }

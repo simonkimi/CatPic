@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
+import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
 import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
 import 'package:flutter/material.dart';
@@ -68,10 +69,9 @@ class EhIndexResult extends StatelessWidget {
 
   Widget _itemBuilder(BuildContext context, int index) {
     final item = store.observableList[index];
-    return Card(
-      child: ListTile(
-        title: Text(item.title),
-      ),
+    return PreviewExtendedCard(
+      preViewModel: item,
+      adapter: adapter,
     );
   }
 }

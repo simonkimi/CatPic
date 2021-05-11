@@ -13,14 +13,12 @@ const commonHost = <String, String>{
 
 class HostInterceptor extends Interceptor {
   HostInterceptor({
-    required this.directLink,
+    required this.websiteEntity,
     required this.dio,
-    required this.websiteId,
   });
 
+  final WebsiteTableData websiteEntity;
   final Dio dio;
-  final bool directLink;
-  final int websiteId;
 
   List<HostTableData> hostList = [];
 
@@ -28,6 +26,10 @@ class HostInterceptor extends Interceptor {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final uri = options.uri;
+    if (websiteEntity.onlyHost && uri.host != websiteEntity.host) {
+      return handler.next(options);
+    }
+
     if (hostList.isEmpty) {
       await updateHostLink();
     }
@@ -35,7 +37,7 @@ class HostInterceptor extends Interceptor {
     final ip = hostTargetData?.ip ?? await doh(uri.host);
     if (ip.isNotEmpty) {
       options.path = uri.replace(host: ip).toString();
-      if (directLink) {
+      if (websiteEntity.directLink) {
         options.headers['Host'] = uri.host;
       }
     }
@@ -55,8 +57,8 @@ class HostInterceptor extends Interceptor {
         commonHost.containsKey(host) ? commonHost[host]! : await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
-      await hostDao.insert(
-          HostTableCompanion.insert(host: host, ip: ip, websiteId: websiteId));
+      await hostDao.insert(HostTableCompanion.insert(
+          host: host, ip: ip, websiteId: websiteEntity.id));
       hostList = await hostDao.getAll();
       dio.unlock();
       return ip;

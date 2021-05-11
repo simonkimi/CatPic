@@ -30,8 +30,7 @@ class DioBuilder {
     if (websiteEntity.useDoH) {
       dio.interceptors.add(HostInterceptor(
         dio: dio,
-        directLink: websiteEntity.directLink,
-        websiteId: websiteEntity.id,
+        websiteEntity: websiteEntity,
       ));
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
           (client) {

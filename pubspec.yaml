@@ -41,6 +41,7 @@ dependencies:
   crypto: ^3.0.1
   get: ^4.1.4
   vibration: ^1.7.4-nullsafety.0
+  flutter_rating_bar: ^4.0.0
 
 
   pull_to_refresh:

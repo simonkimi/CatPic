@@ -6,7 +6,7 @@ import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/booru_page/result/components/fab/fab.dart';
+import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
 import 'package:catpic/ui/pages/booru_page/result/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/booru_page/booru_page.dart';

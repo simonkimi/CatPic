@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class PreViewModel {
   PreViewModel({
     required this.gid,
@@ -52,5 +54,31 @@ class PreviewTag {
   @override
   String toString() {
     return '{$tag $color}';
+  }
+}
+
+Color fromEhTag(String tag) {
+  switch (tag) {
+    case 'Doujinshi':
+      return Colors.red;
+    case 'Manga':
+      return Colors.orange;
+    case 'Artist CG':
+      return Colors.yellow;
+    case 'Game CG':
+      return const Color(0xFF4CB051);
+    case 'Western':
+      return const Color(0xFF8BC349);
+    case 'Non-H':
+      return Colors.blue;
+    case 'Image Set':
+      return const Color(0xFF3F51B6);
+    case 'Cosplay':
+      return Colors.purple;
+    case 'Asian Porn':
+      return Colors.pink;
+    case 'Misc':
+    default:
+      return const Color(0xFF999996);
   }
 }

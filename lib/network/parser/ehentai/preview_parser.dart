@@ -21,7 +21,8 @@ class PreviewParser {
       final uploadTime = element.querySelector('[id^=posted]')?.text ?? '';
 
       final previewImg =
-          element.querySelector('.glthumb img')?.attributes['src'] ?? '';
+      parsePreview(element.querySelector('.glthumb :first-child img'));
+
       final language = parseLanguage(element);
 
       final imgSize = parseImg(element);
@@ -47,6 +48,14 @@ class PreviewParser {
           previewWidth: imgSize[0],
           previewHeight: imgSize[1]);
     }).toList();
+  }
+
+  static String parsePreview(Element? element) {
+    if (element?.attributes.containsKey('data-src') ?? false)
+      return element!.attributes['data-src']!;
+    else if (element?.attributes.containsKey('src') ?? false)
+      return element!.attributes['src']!;
+    return '';
   }
 
   /// 解析gid和gtoken

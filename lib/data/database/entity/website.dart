@@ -20,6 +20,8 @@ class WebsiteTable extends Table {
 
   BoolColumn get useDoH => boolean()();
 
+  BoolColumn get onlyHost => boolean()();
+
   BoolColumn get directLink => boolean()();
 
   TextColumn get cookies => text().withDefault(const Constant(''))();

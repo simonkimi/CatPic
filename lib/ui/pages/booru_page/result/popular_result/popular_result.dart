@@ -7,7 +7,7 @@ import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
-import 'package:catpic/ui/pages/booru_page/result/components/fab/fab.dart';
+import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
 import 'package:catpic/ui/pages/booru_page/result/popular_result/store/store.dart';
 import 'package:flutter/material.dart';
