@@ -224,7 +224,7 @@ class DownloadManagerPage extends StatelessWidget {
                       ),
                       const Expanded(child: SizedBox()),
                       Text(
-                        downloadTable.imgUrl,
+                        downloadTable.imgUrl.replaceAll('', '\u200B'),
                         style: Theme.of(context).textTheme.subtitle2,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
