@@ -7,37 +7,38 @@ import 'package:flutter/material.dart';
 import 'package:catpic/main.dart';
 
 typedef ImageWidgetBuilder = Widget Function(
-  BuildContext context,
-  Uint8List imgData,
-);
+    BuildContext context,
+    Uint8List imgData,
+    );
 
 typedef UrlBuilder = Future<String> Function();
 
 typedef LoadingWidgetBuilder = Widget Function(
-  BuildContext context,
-  ImageChunkEvent chunkEvent,
-);
+    BuildContext context,
+    ImageChunkEvent chunkEvent,
+    );
 
 typedef ErrorBuilder = Widget Function(
-  BuildContext context,
-  Object? err,
-  Function reload,
-);
+    BuildContext context,
+    Object? err,
+    Function reload,
+    );
 
 class DioImage extends StatefulWidget {
   const DioImage({
     Key? key,
-    this.dio,
+    required this.dio,
     this.imageUrl,
     this.imageUrlBuilder,
     this.duration,
     this.imageBuilder,
     this.loadingBuilder,
     this.errorBuilder,
-  })  : assert(imageUrl != null || imageUrlBuilder != null),
+  })
+      : assert(imageUrl != null || imageUrlBuilder != null),
         super(key: key);
 
-  final Dio? dio;
+  final Dio dio;
   final String? imageUrl;
   final UrlBuilder? imageUrlBuilder;
 
@@ -59,7 +60,7 @@ enum LoadingType {
 
 class _DioImageState extends State<DioImage> {
   late final ErrorBuilder errorBuilder = widget.errorBuilder ??
-      (context, err, reload) {
+          (context, err, reload) {
         return InkWell(
           onTap: () {
             reload();
@@ -71,17 +72,17 @@ class _DioImageState extends State<DioImage> {
       };
 
   late final LoadingWidgetBuilder loadingBuilder = widget.loadingBuilder ??
-      (context, chunkEvent) {
+          (context, chunkEvent) {
         return Center(
           child: SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
               value: (chunkEvent.expectedTotalBytes == null ||
-                      chunkEvent.expectedTotalBytes == 0)
+                  chunkEvent.expectedTotalBytes == 0)
                   ? 0
                   : chunkEvent.cumulativeBytesLoaded /
-                      chunkEvent.expectedTotalBytes!,
+                  chunkEvent.expectedTotalBytes!,
               strokeWidth: 2.5,
             ),
           ),
@@ -89,13 +90,13 @@ class _DioImageState extends State<DioImage> {
       };
 
   late final ImageWidgetBuilder imageBuilder = widget.imageBuilder ??
-      (context, imgData) => Image(image: MemoryImage(imgData));
+          (context, imgData) => Image(image: MemoryImage(imgData));
 
-  late final Dio dio = widget.dio ?? Dio();
+  late final Dio dio = widget.dio;
   var _loadingType = LoadingType.LOADING;
 
   var chunkEvent =
-      const ImageChunkEvent(expectedTotalBytes: 0, cumulativeBytesLoaded: 0);
+  const ImageChunkEvent(expectedTotalBytes: 0, cumulativeBytesLoaded: 0);
   final cancelToken = CancelToken();
 
   Uint8List? imageData;
@@ -114,23 +115,26 @@ class _DioImageState extends State<DioImage> {
           expectedTotalBytes: null, cumulativeBytesLoaded: 0);
     });
     try {
-      final rsp = await dio.get<List<int>>(
-          widget.imageUrl ?? await widget.imageUrlBuilder!(),
+      final String url = widget.imageUrl ?? await widget.imageUrlBuilder!();
+      final rsp = await dio
+          .get<List<int>>(url,
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
-              .copyWith(policy: CachePolicy.request)
+              .copyWith(
+              policy: CachePolicy.request,
+              keyBuilder: (req) => url)
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {
-        if (mounted) {
-          setState(() {
-            chunkEvent = ImageChunkEvent(
-              expectedTotalBytes: total,
-              cumulativeBytesLoaded: received,
-            );
+            if (mounted) {
+              setState(() {
+                chunkEvent = ImageChunkEvent(
+                  expectedTotalBytes: total,
+                  cumulativeBytesLoaded: received,
+                );
+              });
+            }
           });
-        }
-      });
       if (mounted) {
         setState(() {
           imageData = Uint8List.fromList(rsp.data!);
@@ -145,7 +149,6 @@ class _DioImageState extends State<DioImage> {
         });
       }
     } catch (e) {
-      print(e);
       if (mounted) {
         setState(() {
           _loadingType = LoadingType.ERROR;

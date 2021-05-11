@@ -31,7 +31,6 @@ class HostInterceptor extends Interceptor {
     if (hostList.isEmpty) {
       await updateHostLink();
     }
-
     final hostTargetData = hostList.get((e) => e.host == uri.host);
     final ip = hostTargetData?.ip ?? await doh(uri.host);
     if (ip.isNotEmpty) {
@@ -52,8 +51,8 @@ class HostInterceptor extends Interceptor {
 
   Future<String> doh(String host) async {
     dio.lock();
-    if (commonHost.containsKey(host)) return commonHost[host]!;
-    final ip = await getDoH(host);
+    final ip =
+        commonHost.containsKey(host) ? commonHost[host]! : await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DatabaseHelper().hostDao;
       await hostDao.insert(

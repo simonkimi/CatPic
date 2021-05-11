@@ -78,6 +78,14 @@ class _EhPageState extends State<EhPage> {
   Widget buildSearchBody(String tag, EHSearchType type) {
     if (mainStore.websiteEntity != null) {
       final key = UniqueKey();
+      switch (type) {
+        case EHSearchType.INDEX:
+          return EhPage(
+            key: key,
+            searchText: tag,
+            searchType: EHSearchType.INDEX,
+          );
+      }
     }
     return EmptyWebsiteFragment();
   }
