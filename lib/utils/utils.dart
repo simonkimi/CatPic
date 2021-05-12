@@ -33,6 +33,10 @@ extension ListHelper<T> on List<T> {
     addAll(other.where((e) => !contains(e)));
     return this;
   }
+
+  T lastAt(int index) {
+    return this[length - index];
+  }
 }
 
 extension ColorHelper on Color {
@@ -190,5 +194,11 @@ class Log {
         .where((e) => e != null)
         .map((e) => e.toString())
         .join(' '));
+  }
+}
+
+extension IntHelper on num {
+  bool equalBetween(num min, num max) {
+    return min <= this && this <= max;
   }
 }

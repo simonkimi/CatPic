@@ -8,7 +8,7 @@ part 'store.g.dart';
 
 class EhIndexStore = EhIndexStoreBase with _$EhIndexStore;
 
-abstract class EhIndexStoreBase extends ILoadMore<PreViewModel> with Store {
+abstract class EhIndexStoreBase extends ILoadMore<PreViewItemModel> with Store {
   EhIndexStoreBase({
     String searchText = '',
     required this.adapter,
@@ -25,12 +25,15 @@ abstract class EhIndexStoreBase extends ILoadMore<PreViewModel> with Store {
   Future<void> onDataChange() async {}
 
   @override
-  Future<List<PreViewModel>> onLoadNextPage() => adapter.index(
-        filter: EhFilter.buildAdvanceFilter(
-          searchText: searchText,
-        ),
-        page: page - 1,
-      );
+  Future<List<PreViewItemModel>> onLoadNextPage() async {
+    final result = await adapter.index(
+      filter: EhFilter.buildAdvanceFilter(
+        searchText: searchText,
+      ),
+      page: page - 1,
+    );
+    return result.items;
+  }
 
   @override
   int? get pageItemCount => 25;

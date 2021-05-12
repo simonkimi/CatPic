@@ -1,6 +1,7 @@
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
+import 'package:catpic/utils/utils.dart';
 
 class GalleryParser {
   static GalleryModel parse(String galleryHtml) {
@@ -19,17 +20,41 @@ class GalleryParser {
     final previewImages = parsePreview(document);
     final maxPageIndex = parseMaxPage(document);
     final comments = parseComment(document);
+    final title = document.querySelector('#gn')!.text;
+
+    final visible = document
+            .querySelectorAll('#gdd > table > tbody > tr')[2]
+            .children[1]
+            .text ==
+        'Yes';
+
+    final parent = parseParent(document);
 
     return GalleryModel(
+      gid: '',
+      token: '',
+      title: title,
       tags: tags,
       favorited: favcount,
       fileSize: fileSize,
       previewImages: previewImages,
       maxPageIndex: maxPageIndex,
       comments: comments,
-      // TODO parent, visible
-      parent: '',
-      visible: '',
+      parent: parent,
+      visible: visible,
+    );
+  }
+
+  static GalleryBase? parseParent(Element e) {
+    final parentElement = e
+        .querySelectorAll('#gdd > table > tbody > tr')[1]
+        .querySelector('.gdt2');
+    if (parentElement?.text == 'None') return null;
+    final href =
+        parentElement!.querySelector('a')!.attributes['href']!.split('/');
+    return GalleryBase(
+      gid: href.lastAt(3),
+      token: href.lastAt(2),
     );
   }
 
@@ -82,8 +107,24 @@ class GalleryParser {
           e.querySelector('.c6')?.innerHtml.replaceAll('<br>', '\n') ?? '';
       final commentDocument = parser.parse(comment);
       comment = commentDocument.body!.text;
+      final score =
+          e.querySelector('span[id^=comment_score]')?.text.toInt() ?? -99999;
+
+      final voteUser = e
+              .querySelector('div[id^=cvotes]')
+              ?.text
+              .split(',')
+              .map((e) => e.trim())
+              .toList() ??
+          [];
+
       return CommentModel(
-          commentTime: match[1]!, username: uploader, comment: comment);
+        commentTime: match[1]!,
+        username: uploader,
+        comment: comment,
+        score: score,
+        voteUser: voteUser,
+      );
     }).toList();
   }
 }

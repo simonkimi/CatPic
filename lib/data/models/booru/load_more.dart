@@ -11,7 +11,6 @@ import 'package:synchronized/synchronized.dart';
 abstract class ILoadMore<T> {
   ILoadMore(this.searchText) {
     onRefresh();
-
     if (Platform.isWindows) {
       listScrollController.addListener(() {
         if (listScrollController.position.pixels ==

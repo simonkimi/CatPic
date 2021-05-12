@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PreViewModel {
-  PreViewModel({
+class PreViewItemModel {
+  PreViewItemModel({
     required this.gid,
     required this.gtoken,
     required this.title,
@@ -41,7 +41,7 @@ class PreViewModel {
 
   @override
   String toString() {
-    return 'PreViewModel title: $title upload: $uploadTime';
+    return 'PreViewItemModel title: $title upload: $uploadTime';
   }
 }
 

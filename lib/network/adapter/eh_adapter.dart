@@ -1,5 +1,4 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
@@ -20,7 +19,7 @@ class EHAdapter extends Adapter {
   @override
   WebsiteTableData get website => websiteEntity;
 
-  Future<List<PreViewModel>> index({
+  Future<PreviewModel> index({
     required Map<String, dynamic> filter,
     required int page,
   }) async {

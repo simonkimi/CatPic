@@ -1,9 +1,22 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
+import 'package:catpic/utils/utils.dart';
+
+class PreviewModel {
+  PreviewModel({
+    required this.maxPage,
+    required this.resultCount,
+    required this.items,
+  });
+
+  int maxPage;
+  int resultCount;
+  List<PreViewItemModel> items;
+}
 
 class PreviewParser {
-  static List<PreViewModel> parse(String previewHtml) {
+  static PreviewModel parse(String previewHtml) {
     final document = parser.parse(previewHtml);
 
     final previewList = document
@@ -11,7 +24,19 @@ class PreviewParser {
         .where((element) => element.querySelector('.gl1c') != null)
         .toList();
 
-    return previewList.map((element) {
+    final maxPage =
+        document.querySelectorAll('.ptb td').reversed.toList()[1].text.toInt();
+
+    final resultCount = document
+        .querySelector('.ido .ip')!
+        .text
+        .codeUnits
+        .where((e) => e.equalBetween(48, 57))
+        .map((e) => (e - 48).toString())
+        .join('')
+        .toInt();
+
+    final items = previewList.map((element) {
       final title = element.querySelector('.glink')?.text ?? 'Error';
       final uploader =
           element.querySelector('.gl4c :first-child')?.text ?? 'Error';
@@ -32,7 +57,7 @@ class PreviewParser {
 
       final keyTags = parseTag(element);
 
-      return PreViewModel(
+      return PreViewItemModel(
           gid: gidAndgtoken[0],
           gtoken: gidAndgtoken[1],
           pages: pages,
@@ -48,6 +73,11 @@ class PreviewParser {
           previewWidth: imgSize[0],
           previewHeight: imgSize[1]);
     }).toList();
+    return PreviewModel(
+      items: items,
+      maxPage: maxPage,
+      resultCount: resultCount,
+    );
   }
 
   static String parsePreview(Element? element) {

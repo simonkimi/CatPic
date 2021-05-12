@@ -1,5 +1,21 @@
-class GalleryModel {
+class GalleryBase {
+  GalleryBase({
+    required this.gid,
+    required this.token,
+  });
+
+  final String gid;
+  final String token;
+
+  @override
+  String toString() => 'gid: $gid, gtoken: $token';
+}
+
+class GalleryModel extends GalleryBase {
   GalleryModel({
+    required String gid,
+    required String token,
+    required this.title,
     required this.maxPageIndex,
     required this.parent,
     required this.visible,
@@ -8,16 +24,22 @@ class GalleryModel {
     required this.tags,
     required this.previewImages,
     required this.comments,
-  });
+  }) : super(gid: gid, token: token);
 
-  final String parent;
-  final String visible;
+  final String title;
+  final GalleryBase? parent;
+  final bool visible;
   final String fileSize;
   final int favorited;
   final List<TagModels> tags;
   List<PreviewImage> previewImages;
   final int maxPageIndex;
   final List<CommentModel> comments;
+
+  @override
+  String toString() {
+    return 'title: $title, tags: $tags parent: $parent';
+  }
 }
 
 class TagModels {
@@ -59,11 +81,15 @@ class CommentModel {
     required this.username,
     required this.comment,
     required this.commentTime,
+    required this.score,
+    required this.voteUser,
   });
 
   final String username;
   final String comment;
   final String commentTime;
+  final int score;
+  final List<String> voteUser;
 
   @override
   String toString() {

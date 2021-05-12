@@ -11,7 +11,7 @@ class PreviewExtendedCard extends StatelessWidget {
     required this.adapter,
   }) : super(key: key);
 
-  final PreViewModel preViewModel;
+  final PreViewItemModel preViewModel;
   final EHAdapter adapter;
 
   @override
