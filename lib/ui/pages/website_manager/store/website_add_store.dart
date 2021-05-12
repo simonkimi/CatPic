@@ -49,7 +49,13 @@ abstract class WebsiteAddStoreBase with Store {
   void setWebsiteName(String value) => websiteName = value;
 
   @action
-  void setWebsiteHost(String value) => websiteHost = value;
+  void setWebsiteHost(String value) {
+    if (value.split('.').length < 2) {
+      BotToast.showText(text: I18n.g.host_error);
+      return;
+    }
+    websiteHost = value;
+  }
 
   @action
   void setScheme(int value) => scheme = value;

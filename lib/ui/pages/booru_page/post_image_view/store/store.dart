@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/main.dart';
 
-import '../page_slider.dart';
+import '../../../../components/page_slider.dart';
 
 part 'store.g.dart';
 

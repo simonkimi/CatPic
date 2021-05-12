@@ -8,7 +8,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dio_image.dart';
-import 'package:catpic/ui/pages/post_image_view/post_image_view.dart';
+import 'package:catpic/ui/pages/booru_page/post_image_view/post_image_view.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';

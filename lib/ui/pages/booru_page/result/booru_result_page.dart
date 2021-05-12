@@ -9,9 +9,9 @@ import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
-import 'result/empty_website/empty_website.dart';
-import 'result/pool_result/pool_result.dart';
-import 'result/post_result/post_result.dart';
+import 'empty_website/empty_website.dart';
+import 'pool_result/pool_result.dart';
+import 'post_result/post_result.dart';
 
 enum SearchType {
   POST,

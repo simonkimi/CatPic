@@ -6,7 +6,7 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class BooruLoginPage extends StatelessWidget {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 

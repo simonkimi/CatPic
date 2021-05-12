@@ -4,7 +4,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
-import 'package:catpic/ui/pages/website_add_page/store/website_add_store.dart';
+import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -60,6 +60,7 @@ class WebsiteAddPage extends StatelessWidget {
               if (store.websiteType == WebsiteType.DANBOORU.index ||
                   store.websiteType == WebsiteType.MOEBOORU.index)
                 ...buildUserSetting(context),
+              const SizedBox(height: 60),
             ],
           );
         },

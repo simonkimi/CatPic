@@ -9,7 +9,7 @@ import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
 import 'package:catpic/ui/pages/booru_page/result/pool_result/store/pool_result_store.dart';
-import 'package:catpic/ui/pages/booru_page/booru_page.dart';
+import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';

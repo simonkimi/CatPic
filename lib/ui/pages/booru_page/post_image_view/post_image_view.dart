@@ -8,13 +8,12 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/multi_image_viewer.dart';
-import 'package:catpic/ui/pages/download_page/android_download.dart';
 import 'package:catpic/data/store/download/download_store.dart';
-import 'package:catpic/ui/pages/login_page/login_page.dart';
-import 'package:catpic/ui/pages/post_image_view/booru_comments.dart';
-import 'package:catpic/ui/pages/post_image_view/page_slider.dart';
-import 'package:catpic/ui/pages/post_image_view/store/store.dart';
-import 'package:catpic/ui/pages/booru_page/booru_page.dart';
+import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
+import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
+import 'package:catpic/ui/components/page_slider.dart';
+import 'package:catpic/ui/pages/booru_page/login_page/login_page.dart';
+import 'package:catpic/ui/pages/booru_page/post_image_view/store/store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +23,8 @@ import 'package:catpic/ui/components/custom_popup_menu.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:catpic/utils/utils.dart';
+
+import 'booru_comments.dart';
 
 typedef ItemBuilder = Future<BooruPost> Function(int index);
 
@@ -374,7 +375,7 @@ class PostImageViewPage extends HookWidget {
                               } else {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
+                                    builder: (context) => BooruLoginPage(),
                                   ),
                                 );
                               }

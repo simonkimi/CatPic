@@ -34,6 +34,7 @@
   "website_nickname": "网站昵称",
   "website_settings": "网站设置",
   "host": "主机",
+  "host_error": "主机格式错误, 正确为example.com",
   "scheme": "协议",
   "scheme_https": "使用更安全的HTTPS协议",
   "site_type": "站点类型",

@@ -26,7 +26,14 @@ class HostInterceptor extends Interceptor {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final uri = options.uri;
-    if (websiteEntity.onlyHost && uri.host != websiteEntity.host) {
+    if (websiteEntity.onlyHost &&
+        !uri.host.contains(websiteEntity.host
+            .split('.')
+            .reversed
+            .take(2)
+            .toList()
+            .reversed
+            .join('.'))) {
       return handler.next(options);
     }
 

@@ -12,7 +12,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 
-import '../../booru_page.dart';
+import '../booru_result_page.dart';
 
 class TagResultFragment extends StatelessWidget {
   TagResultFragment({
