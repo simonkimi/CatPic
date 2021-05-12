@@ -21,7 +21,7 @@ class PreviewParser {
       final uploadTime = element.querySelector('[id^=posted]')?.text ?? '';
 
       final previewImg =
-      parsePreview(element.querySelector('.glthumb :first-child img'));
+          parsePreview(element.querySelector('.glthumb :first-child img'));
 
       final language = parseLanguage(element);
 

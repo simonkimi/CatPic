@@ -25,19 +25,23 @@ class PreviewExtendedCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: 100,
+                width: 110,
                 height: 150,
                 child: DioImage(
                   dio: adapter.dio,
                   imageUrl: preViewModel.previewImg,
                   imageBuilder: (_, data) => SizedBox(
-                    child: Image(
-                      image: MemoryImage(data, scale: 0.5),
-                      fit: BoxFit.fitWidth,
+                    child: SizedBox(
+                      width: 110,
+                      height: 150,
+                      child: Image(
+                        image: MemoryImage(data, scale: 0.5),
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
                   ),
                 ),
