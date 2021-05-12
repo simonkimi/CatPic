@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart' hide Lock;
@@ -9,12 +11,25 @@ import 'package:synchronized/synchronized.dart';
 abstract class ILoadMore<T> {
   ILoadMore(this.searchText) {
     onRefresh();
+
+    if (Platform.isWindows) {
+      listScrollController.addListener(() {
+        if (listScrollController.position.pixels ==
+                listScrollController.position.maxScrollExtent &&
+            !refreshController.isLoading &&
+            !refreshController.isRefresh &&
+            (refreshController.footerStatus != LoadStatus.noMore)) {
+          refreshController.requestLoading();
+        }
+      });
+    }
   }
 
   String searchText = '';
   final observableList = ObservableList<T>();
   final refreshController = RefreshController();
-  final listScrollController = ScrollController();
+  late final ScrollController listScrollController = ScrollController();
+
   var cancelToken = CancelToken();
   var page = 0;
 
@@ -67,7 +82,6 @@ abstract class ILoadMore<T> {
 
   Future<void> onLoadMore() async {
     if (refreshController.isRefresh || lock.locked) {
-      refreshController.loadComplete();
       return;
     }
     try {
