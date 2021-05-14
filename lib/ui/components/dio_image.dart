@@ -171,9 +171,11 @@ class _DioImageState extends State<DioImage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: widget.duration ?? const Duration(milliseconds: 500),
-      child: buildBody(context),
+    return Material(
+      child: AnimatedSwitcher(
+        duration: widget.duration ?? const Duration(milliseconds: 500),
+        child: buildBody(context),
+      ),
     );
   }
 

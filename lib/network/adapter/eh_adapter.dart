@@ -1,6 +1,8 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
+import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -25,5 +27,14 @@ class EHAdapter extends Adapter {
   }) async {
     final str = await client.getIndex(filter: filter, page: page);
     return await compute(PreviewParser.parse, str);
+  }
+
+  Future<GalleryModel> gallery({
+    required String gid,
+    required String gtoken,
+    required int page,
+  }) async {
+    final str = await client.getGallery(gid, gtoken, page.toString());
+    return await compute(GalleryParser.parse, str);
   }
 }

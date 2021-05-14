@@ -1,27 +1,42 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/dio_image.dart';
+import 'package:catpic/ui/components/nullable_hero.dart';
+import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class PreviewExtendedCard extends StatelessWidget {
   const PreviewExtendedCard({
     Key? key,
-    required this.preViewModel,
+    required this.previewModel,
     required this.adapter,
   }) : super(key: key);
 
-  final PreViewItemModel preViewModel;
+  final PreViewItemModel previewModel;
   final EHAdapter adapter;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusDirectional.circular(5),
-        ),
-        clipBehavior: Clip.antiAlias,
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusDirectional.circular(5),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return EhPreviewPage(
+                  previewModel: previewModel,
+                  heroTag: '${previewModel.gid}${previewModel.gtoken}',
+                  adapter: adapter,
+                );
+              },
+            ),
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.all(0),
           child: Row(
@@ -33,14 +48,17 @@ class PreviewExtendedCard extends StatelessWidget {
                 height: 150,
                 child: DioImage(
                   dio: adapter.dio,
-                  imageUrl: preViewModel.previewImg,
+                  imageUrl: previewModel.previewImg,
                   imageBuilder: (_, data) => SizedBox(
-                    child: SizedBox(
-                      width: 110,
-                      height: 150,
-                      child: Image(
-                        image: MemoryImage(data, scale: 0.5),
-                        fit: BoxFit.fitWidth,
+                    child: NullableHero(
+                      tag: '${previewModel.gid}${previewModel.gtoken}',
+                      child: SizedBox(
+                        width: 110,
+                        height: 150,
+                        child: Image(
+                          image: MemoryImage(data, scale: 0.5),
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
                     ),
                   ),
@@ -60,13 +78,13 @@ class PreviewExtendedCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              preViewModel.title,
+                              previewModel.title,
                               maxLines: 2,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              preViewModel.uploader,
+                              previewModel.uploader,
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -79,7 +97,7 @@ class PreviewExtendedCard extends StatelessWidget {
                             Wrap(
                               spacing: 2,
                               runSpacing: 2,
-                              children: preViewModel.keyTags.map((e) {
+                              children: previewModel.keyTags.map((e) {
                                 return Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
@@ -108,27 +126,41 @@ class PreviewExtendedCard extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  RatingBar.builder(
-                                    itemSize: 16,
-                                    ignoreGestures: true,
-                                    initialRating: preViewModel.stars,
-                                    onRatingUpdate: (value) {},
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      );
-                                    },
+                                  Row(
+                                    children: [
+                                      RatingBar.builder(
+                                        itemSize: 16,
+                                        ignoreGestures: true,
+                                        initialRating: previewModel.stars,
+                                        onRatingUpdate: (value) {},
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        previewModel.stars.toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .subtitle2!
+                                                .color),
+                                      )
+                                    ],
                                   ),
                                   const SizedBox(height: 3),
                                   Container(
                                     padding: const EdgeInsets.all(3),
                                     decoration: BoxDecoration(
-                                      color: fromEhTag(preViewModel.tag),
+                                      color: fromEhTag(previewModel.tag),
                                     ),
                                     child: Text(
-                                      preViewModel.tag,
+                                      previewModel.tag,
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 13,
@@ -149,7 +181,7 @@ class PreviewExtendedCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  '${preViewModel.pages}P',
+                                  '${previewModel.pages}P',
                                   style: TextStyle(
                                       fontSize: 12.5,
                                       color: Theme.of(context)
@@ -158,7 +190,7 @@ class PreviewExtendedCard extends StatelessWidget {
                                           .color),
                                 ),
                                 Text(
-                                  preViewModel.uploadTime,
+                                  previewModel.uploadTime,
                                   style: TextStyle(
                                       fontSize: 12.5,
                                       color: Theme.of(context)

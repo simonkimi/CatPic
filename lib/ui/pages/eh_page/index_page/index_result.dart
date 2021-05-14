@@ -27,15 +27,17 @@ class EhIndexResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_) {
-      return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: store.observableList.isEmpty &&
-                (store.isLoading || store.lock.locked)
-            ? LoadingWidget(store: store)
-            : buildList(),
-      );
-    });
+    return Scaffold(
+      body: Observer(builder: (_) {
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: store.observableList.isEmpty &&
+              (store.isLoading || store.lock.locked)
+              ? LoadingWidget(store: store)
+              : buildList(),
+        );
+      }),
+    );
   }
 
   Widget buildList() {
@@ -70,7 +72,7 @@ class EhIndexResult extends StatelessWidget {
   Widget _itemBuilder(BuildContext context, int index) {
     final item = store.observableList[index];
     return PreviewExtendedCard(
-      preViewModel: item,
+      previewModel: item,
       adapter: adapter,
     );
   }

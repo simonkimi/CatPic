@@ -27,6 +27,9 @@
   "month": "月",
   "week": "周",
   "day": "日",
+  "language": "语言",
+  "size": "大小",
+  "read": "阅读",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",

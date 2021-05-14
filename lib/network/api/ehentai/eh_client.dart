@@ -23,4 +23,8 @@ class EhClient extends BaseClient {
   Future<String> getPopular() async {
     return (await dio.get('popular')).data;
   }
+
+  Future<String> getGallery(String gid, String gtoken, String page) async {
+    return (await dio.get('g/$gid/$gtoken', queryParameters: {'p': page})).data;
+  }
 }

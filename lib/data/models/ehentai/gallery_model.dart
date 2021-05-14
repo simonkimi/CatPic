@@ -24,6 +24,8 @@ class GalleryModel extends GalleryBase {
     required this.tags,
     required this.previewImages,
     required this.comments,
+    required this.imageCount,
+    required this.language,
   }) : super(gid: gid, token: token);
 
   final String title;
@@ -35,6 +37,8 @@ class GalleryModel extends GalleryBase {
   List<PreviewImage> previewImages;
   final int maxPageIndex;
   final List<CommentModel> comments;
+  final int imageCount;
+  final String language;
 
   @override
   String toString() {

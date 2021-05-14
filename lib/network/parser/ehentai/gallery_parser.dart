@@ -30,6 +30,19 @@ class GalleryParser {
 
     final parent = parseParent(document);
 
+    final imageCount = document
+        .querySelectorAll('#gdd > table > tbody > tr')[5]
+        .children[1]
+        .text
+        .replaceAll(' pages', '')
+        .toInt();
+
+    final language = document
+        .querySelectorAll('#gdd > table > tbody > tr')[3]
+        .children[1]
+        .text
+        .replaceAll(' ', '');
+
     return GalleryModel(
       gid: '',
       token: '',
@@ -42,6 +55,8 @@ class GalleryParser {
       comments: comments,
       parent: parent,
       visible: visible,
+      imageCount: imageCount,
+      language: language,
     );
   }
 
