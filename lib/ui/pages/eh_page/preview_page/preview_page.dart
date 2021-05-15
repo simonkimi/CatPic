@@ -1,14 +1,22 @@
+import 'dart:math';
+
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
+import 'package:catpic/ui/components/post_preview_card.dart';
+import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+
+import '../../../../main.dart';
 
 class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
@@ -41,18 +49,24 @@ class EhPreviewPage extends StatelessWidget {
           )
         ],
       ),
-      body: Observer(
-        builder: (context) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                buildPreviewTitle(context),
-                const Divider(),
-                buildNeedLoading(context),
-              ],
-            ),
-          );
+      body: WillPopScope(
+        onWillPop: () async {
+          store.dispose();
+          return true;
         },
+        child: Observer(
+          builder: (context) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  buildPreviewTitle(context),
+                  const Divider(),
+                  buildNeedLoading(context),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -71,6 +85,41 @@ class EhPreviewPage extends StatelessWidget {
               const Divider(),
               buildCommentList(context),
               const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent:
+                        CardSize.of(settingStore.cardSize).toDouble(),
+                  ),
+                  itemCount: min(store.observableList.length, 40),
+                  itemBuilder: (context, index) {
+                    final image = store.observableList[index];
+                    final galleryPreviewImage = store.imageUrlMap[image.image]!;
+                    return PostPreviewCard(
+                      body: Obx(
+                        () => galleryPreviewImage.loadState.value
+                            ? CustomPaint(
+                                painter: ImageClipper(
+                                  galleryPreviewImage.imageData!,
+                                  height: image.height.toDouble(),
+                                  width: 100,
+                                  offset: image.positioning.toDouble(),
+                                ),
+                              )
+                            : const SizedBox(
+                                child: Center(
+                                  child: Icon(Icons.account_balance_wallet),
+                                ),
+                              ),
+                      ),
+                      title: (index + 1).toString(),
+                    );
+                  },
+                ),
+              )
             ],
           );
   }
@@ -78,53 +127,73 @@ class EhPreviewPage extends StatelessWidget {
   Padding buildCommentList(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: store.commentList.take(2).map((e) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        e.username,
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.subtitle2!.color,
-                        ),
-                      ),
-                      Text(
-                        e.commentTime,
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.subtitle2!.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  RichText(
-                    text: TextSpan(
-                      text: e.comment,
-                      style: Theme.of(context).textTheme.bodyText2,
+      child: store.commentList.isNotEmpty
+          ? Column(
+              children: store.commentList.take(2).map((e) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: (e.score >= 0 ? '   +' : '   ') +
-                              e.score.toString(),
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.subtitle2!.color,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              e.username,
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .color,
+                              ),
+                            ),
+                            Text(
+                              e.commentTime,
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .color,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        RichText(
+                          text: TextSpan(
+                            text: e.comment,
+                            style: Theme.of(context).textTheme.bodyText2,
+                            children: [
+                              if (e.score != -99999)
+                                TextSpan(
+                                  text: (e.score >= 0 ? '   +' : '   ') +
+                                      e.score.toString(),
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .subtitle2!
+                                        .color,
+                                  ),
+                                )
+                            ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
-                ],
+                );
+              }).toList(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                I18n.of(context).no_comment,
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold),
               ),
             ),
-          );
-        }).toList(),
-      ),
     );
   }
 

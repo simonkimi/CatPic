@@ -1,16 +1,13 @@
-import 'dart:typed_data';
-
+import 'dart:ui' as ui;
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
-import 'package:moor/moor.dart';
 
-import '../../../../../main.dart';
 
 part 'store.g.dart';
 
@@ -18,10 +15,9 @@ class EhGalleryStore = EhGalleryStoreBase with _$EhGalleryStore;
 
 class GalleryPreviewImage {
   GalleryPreviewImage()
-      : imageData = Uint8List.fromList([]),
-        progress = 0.0.obs,
+      : progress = 0.0.obs,
         loadState = false.obs;
-  Uint8List imageData;
+  ui.Image? imageData;
   final RxDouble progress;
   final RxBool loadState;
 }
@@ -66,21 +62,17 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     for (final waitingImg in galleryModel.previewImages) {
       if (!imageUrlMap.containsKey(waitingImg.image)) {
         final loadingImage = GalleryPreviewImage();
-
-        adapter.dio.get<List<int>>(waitingImg.image,
-            options: settingStore.dioCacheOptions
-                .copyWith(
-                    policy: CachePolicy.request,
-                    keyBuilder: (req) => waitingImg.image)
-                .toOptions()
-                .copyWith(
-                  responseType: ResponseType.bytes,
-                ), onReceiveProgress: (current, total) {
-          loadingImage.progress.value = current / total;
-        }).then((value) {
-          loadingImage.loadState.value = true;
-          loadingImage.imageData = Uint8List.fromList(value.data!);
-        });
+        DioImageProvider(
+          url: waitingImg.image,
+          dio: adapter.dio,
+        ).resolve(const ImageConfiguration()).addListener(
+                ImageStreamListener((ImageInfo image, bool synchronousCall) {
+              loadingImage.imageData = image.image;
+              loadingImage.loadState.value = true;
+            }, onChunk: (ImageChunkEvent event) {
+              loadingImage.progress.value =
+                  event.cumulativeBytesLoaded / (event.expectedTotalBytes ?? 1);
+            }));
         imageUrlMap[waitingImg.image] = loadingImage;
       }
     }
@@ -95,4 +87,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   @override
   int? get pageItemCount => 40;
+
+  void dispose() {
+    cancelToken.cancel();
+  }
 }

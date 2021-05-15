@@ -14,7 +14,7 @@ class LoginInterceptor extends Interceptor {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     if (websiteEntity.type == WebsiteType.EHENTAI.index &&
-        !options.uri.host.contains(websiteEntity.host.baseHost)) {
+        options.uri.host.contains(websiteEntity.host.baseHost)) {
       final String cookies = options.headers['Cookie'] ?? '';
       final cookiesDict = Map.fromEntries(
           cookies.split(';').where((e) => e.isNotEmpty).map((e) {

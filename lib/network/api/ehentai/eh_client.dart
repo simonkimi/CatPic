@@ -1,5 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:dio/dio.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {
@@ -24,7 +25,10 @@ class EhClient extends BaseClient {
     return (await dio.get('popular')).data;
   }
 
-  Future<String> getGallery(String gid, String gtoken, String page) async {
-    return (await dio.get('g/$gid/$gtoken', queryParameters: {'p': page})).data;
+  Future<String> getGallery(
+      String gid, String gtoken, String page, CancelToken? cancelToken) async {
+    return (await dio.get('g/$gid/$gtoken',
+            queryParameters: {'p': page}, cancelToken: cancelToken))
+        .data;
   }
 }

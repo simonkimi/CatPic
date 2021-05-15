@@ -4,6 +4,7 @@ import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
 import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -33,8 +34,9 @@ class EHAdapter extends Adapter {
     required String gid,
     required String gtoken,
     required int page,
+    CancelToken? cancelToken,
   }) async {
-    final str = await client.getGallery(gid, gtoken, page.toString());
+    final str = await client.getGallery(gid, gtoken, page.toString(), cancelToken);
     return await compute(GalleryParser.parse, str);
   }
 }
