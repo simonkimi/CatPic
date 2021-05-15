@@ -1,5 +1,4 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import '../base_client.dart';
 

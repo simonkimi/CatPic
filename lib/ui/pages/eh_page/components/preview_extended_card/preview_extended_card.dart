@@ -54,9 +54,8 @@ class PreviewExtendedCard extends StatelessWidget {
                   imageUrl: previewModel.previewImg,
                   imageBuilder: (_, data) => SizedBox(
                     child: Container(
-                      color: isDarkMode(context)
-                          ? const Color(0xFF424242)
-                          : null,
+                      color:
+                          isDarkMode(context) ? const Color(0xFF424242) : null,
                       child: SizedBox(
                         width: 110,
                         height: 150,

@@ -39,7 +39,8 @@ class EhIndexResult extends StatelessWidget {
         }
         final nowTime = DateTime.now();
         if (mainStore.searchPageCount <= 1 &&
-            nowTime.difference(store.lastClickBack) > const Duration(seconds: 2)) {
+            nowTime.difference(store.lastClickBack) >
+                const Duration(seconds: 2)) {
           BotToast.showText(text: I18n.of(context).click_again_to_exit);
           store.lastClickBack = nowTime;
           return false;
@@ -104,8 +105,7 @@ class EhIndexResult extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    if (index >= store.observableList.length)
-      return const SizedBox();
+    if (index >= store.observableList.length) return const SizedBox();
     final item = store.observableList[index];
     return PreviewExtendedCard(
       previewModel: item,

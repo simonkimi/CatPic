@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:catpic/network/adapter/eh_adapter.dart';
-import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/index_result.dart';
 import 'package:catpic/ui/pages/booru_page/result/empty_website/empty_website.dart';
