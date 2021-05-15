@@ -94,7 +94,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Padding buildPreviewList() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -142,7 +142,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Padding buildCommentList(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: store.commentList.isNotEmpty
           ? Column(
               children: store.commentList.take(2).map((e) {
@@ -215,7 +215,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Padding buildTagList(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: store.tagList.map((e) {
           return Container(
@@ -399,61 +399,41 @@ class EhPreviewPage extends StatelessWidget {
   Widget buildPreviewTitle(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: [
-          SizedBox(
-            width: 140,
-            child: AspectRatio(
-              aspectRatio: previewAspectRatio,
-              child: NullableHero(
-                tag: '${previewModel.gid}${previewModel.gtoken}',
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusDirectional.circular(5),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: ExtendedImage(
-                    fit: BoxFit.fill,
-                    image: DioImageProvider(
-                      dio: adapter.dio,
-                      url: previewModel.previewImg,
-                    ),
-                    enableLoadState: true,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 200),
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: Platform.isWindows ? 0 : -5,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(I18n.of(context).read),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).primaryColor),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        padding: MaterialStateProperty.all(Platform.isWindows
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 15)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2)),
-                        minimumSize:
-                            MaterialStateProperty.all(const Size(0, 0)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 140,
+                child: AspectRatio(
+                  aspectRatio: previewAspectRatio,
+                  child: NullableHero(
+                    tag: '${previewModel.gid}${previewModel.gtoken}',
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusDirectional.circular(5),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: ExtendedImage(
+                        fit: BoxFit.fill,
+                        image: DioImageProvider(
+                          dio: adapter.dio,
+                          url: previewModel.previewImg,
+                        ),
+                        enableLoadState: true,
                       ),
                     ),
                   ),
-                  Column(
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 200),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -515,7 +495,24 @@ class EhPreviewPage extends StatelessWidget {
                       const SizedBox(height: 40),
                     ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: Platform.isWindows ? 0 : -8,
+            left: 148,
+            child: TextButton(
+              onPressed: () {},
+              child: Text(I18n.of(context).read),
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(Theme.of(context).primaryColor),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                padding: MaterialStateProperty.all(Platform.isWindows
+                    ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+                    : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+                minimumSize: MaterialStateProperty.all(const Size(0, 0)),
               ),
             ),
           ),
