@@ -56,18 +56,14 @@ class EhPreviewPage extends StatelessWidget {
           store.dispose();
           return true;
         },
-        child: Observer(
-          builder: (context) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  buildPreviewTitle(context),
-                  const Divider(),
-                  buildNeedLoading(context),
-                ],
-              ),
-            );
-          },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildPreviewTitle(context),
+              const Divider(),
+              Observer(builder: (context) => buildNeedLoading(context)),
+            ],
+          ),
         ),
       ),
     );
