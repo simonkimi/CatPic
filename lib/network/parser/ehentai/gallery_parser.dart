@@ -17,6 +17,7 @@ class GalleryParser {
         .querySelectorAll('#gdd > table > tbody > tr')[4]
         .children[1]
         .text;
+
     final previewImages = parsePreview(document);
     final maxPageIndex = parseMaxPage(document);
     final comments = parseComment(document);

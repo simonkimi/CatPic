@@ -27,13 +27,7 @@ class HostInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     final uri = options.uri;
     if (websiteEntity.onlyHost &&
-        !uri.host.contains(websiteEntity.host
-            .split('.')
-            .reversed
-            .take(2)
-            .toList()
-            .reversed
-            .join('.'))) {
+        !uri.host.contains(websiteEntity.host.baseHost)) {
       return handler.next(options);
     }
 

@@ -67,66 +67,81 @@ class EhPreviewPage extends StatelessWidget {
             children: [
               buildInfoBarRow(context),
               const Divider(),
+              buildTagList(context),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  children: store.tagList.map((e) {
+                  children: store.commentList.take(2).map((e) {
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(
-                                    e.key,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Wrap(
-                              spacing: 3,
-                              runSpacing: 3,
-                              children: e.value.map((e) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: const Color(0xFFEFEEF1),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Text(
-                                      e,
-                                      style: const TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      ),
+
                     );
                   }).toList(),
                 ),
-              )
+              ),
             ],
           );
+  }
+
+  Padding buildTagList(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: store.tagList.map((e) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(
+                          e.key,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Wrap(
+                    spacing: 3,
+                    runSpacing: 3,
+                    children: e.value.map((e) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: const Color(0xFFEFEEF1),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(
+                            e,
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   Row buildInfoBarRow(BuildContext context) {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
+import 'package:catpic/network/interceptor/login_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
 import 'package:catpic/utils/utils.dart';
@@ -26,6 +27,8 @@ class DioBuilder {
     final scheme = getSchemeString(websiteEntity.scheme);
     dio.options.baseUrl = '$scheme://${websiteEntity.host}/';
     dio.transformer = EncodeTransformer();
+
+    dio.interceptors.add(LoginInterceptor(websiteEntity: websiteEntity));
 
     if (websiteEntity.useDoH) {
       dio.interceptors.add(HostInterceptor(

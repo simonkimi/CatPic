@@ -80,6 +80,10 @@ extension StringHelper on String {
   }
 
   int toInt() => int.tryParse(this) ?? 0;
+
+  String get baseHost {
+    return split('.').reversed.take(2).toList().reversed.join('.');
+  }
 }
 
 extension MapHelper<K, V> on Map<K, V> {
