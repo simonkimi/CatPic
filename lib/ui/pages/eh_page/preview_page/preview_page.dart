@@ -18,6 +18,8 @@ import 'package:get/get.dart';
 
 import '../../../../main.dart';
 
+const double kScale = 2.0;
+
 class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
     Key? key,
@@ -93,12 +95,16 @@ class EhPreviewPage extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent:
                         CardSize.of(settingStore.cardSize).toDouble(),
+                    childAspectRatio: 10 / 14,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
                   ),
                   itemCount: min(store.observableList.length, 40),
                   itemBuilder: (context, index) {
                     final image = store.observableList[index];
                     final galleryPreviewImage = store.imageUrlMap[image.image]!;
                     return PostPreviewCard(
+                      hasSize: true,
                       body: Obx(
                         () => galleryPreviewImage.loadState.value
                             ? CustomPaint(
@@ -108,12 +114,10 @@ class EhPreviewPage extends StatelessWidget {
                                   width: 100,
                                   offset: image.positioning.toDouble(),
                                 ),
+                                size:
+                                    Size(100.0 * kScale, image.height * kScale),
                               )
-                            : const SizedBox(
-                                child: Center(
-                                  child: Icon(Icons.account_balance_wallet),
-                                ),
-                              ),
+                            : const SizedBox(),
                       ),
                       title: (index + 1).toString(),
                     );
@@ -481,6 +485,7 @@ class EhPreviewPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ],

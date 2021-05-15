@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 
-
 part 'store.g.dart';
 
 class EhGalleryStore = EhGalleryStoreBase with _$EhGalleryStore;

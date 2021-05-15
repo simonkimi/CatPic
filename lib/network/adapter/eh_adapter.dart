@@ -36,7 +36,8 @@ class EHAdapter extends Adapter {
     required int page,
     CancelToken? cancelToken,
   }) async {
-    final str = await client.getGallery(gid, gtoken, page.toString(), cancelToken);
+    final str =
+        await client.getGallery(gid, gtoken, page.toString(), cancelToken);
     return await compute(GalleryParser.parse, str);
   }
 }
