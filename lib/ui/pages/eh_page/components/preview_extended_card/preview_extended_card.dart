@@ -1,7 +1,6 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
-import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
@@ -45,27 +44,31 @@ class PreviewExtendedCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              DioImage(
-                dio: adapter.dio,
-                imageUrl: previewModel.previewImg,
-                imageBuilder: (_, data) {
-                  return NullableHero(
-                    tag: '${previewModel.gid}${previewModel.gtoken}',
-                    child: SizedBox(
-                      width: 110,
-                      height: 150,
+              SizedBox(
+                width: 110,
+                height: 150,
+                child: DioImage(
+                  dio: adapter.dio,
+                  imageUrl: previewModel.previewImg,
+                  imageBuilder: (_, data) => SizedBox(
+                    child: NullableHero(
+                      tag: '${previewModel.gid}${previewModel.gtoken}',
                       child: Container(
                         color: isDarkMode(context)
                             ? const Color(0xFF424242)
                             : null,
-                        child: DarkImage(
-                          image: MemoryImage(data, scale: 0.5),
-                          fit: BoxFit.fitWidth,
+                        child: SizedBox(
+                          width: 110,
+                          height: 150,
+                          child: Image(
+                            image: MemoryImage(data, scale: 0.5),
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
