@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'dart:math';
-
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
@@ -87,45 +87,57 @@ class EhPreviewPage extends StatelessWidget {
               const Divider(),
               buildCommentList(context),
               const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent:
-                        CardSize.of(settingStore.cardSize).toDouble(),
-                    childAspectRatio: 10 / 14,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: 5,
-                  ),
-                  itemCount: min(store.observableList.length, 40),
-                  itemBuilder: (context, index) {
-                    final image = store.observableList[index];
-                    final galleryPreviewImage = store.imageUrlMap[image.image]!;
-                    return PostPreviewCard(
-                      hasSize: true,
-                      body: Obx(
-                        () => galleryPreviewImage.loadState.value
-                            ? CustomPaint(
-                                painter: ImageClipper(
-                                  galleryPreviewImage.imageData!,
-                                  height: image.height.toDouble(),
-                                  width: 100,
-                                  offset: image.positioning.toDouble(),
-                                ),
-                                size:
-                                    Size(100.0 * kScale, image.height * kScale),
-                              )
-                            : const SizedBox(),
-                      ),
-                      title: (index + 1).toString(),
-                    );
-                  },
-                ),
-              )
+              buildPreviewList()
             ],
           );
+  }
+
+  Padding buildPreviewList() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
+          childAspectRatio: 10 / 14,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
+        ),
+        itemCount: min(store.observableList.length, 40),
+        itemBuilder: (context, index) {
+          final image = store.observableList[index];
+          final galleryPreviewImage = store.imageUrlMap[image.image]!;
+          return PostPreviewCard(
+            hasSize: true,
+            body: Obx(
+              () => galleryPreviewImage.loadState.value
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        clipBehavior: Clip.antiAlias,
+                        child: CustomPaint(
+                          painter: ImageClipper(
+                            galleryPreviewImage.imageData!,
+                            height: image.height.toDouble(),
+                            width: 100,
+                            offset: image.positioning.toDouble(),
+                          ),
+                          size: Size(
+                            100.0 * kScale,
+                            image.height * kScale,
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
+            ),
+            title: (index + 1).toString(),
+          );
+        },
+      ),
+    );
   }
 
   Padding buildCommentList(BuildContext context) {
@@ -376,11 +388,12 @@ class EhPreviewPage extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: SizedBox(
-              height: 200,
+          SizedBox(
+            height: 200,
+            child: AspectRatio(
+              aspectRatio: 10 / 13.9,
               child: NullableHero(
                 tag: '${previewModel.gid}${previewModel.gtoken}',
                 child: Card(
@@ -388,6 +401,7 @@ class EhPreviewPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusDirectional.circular(5),
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: Center(
                     child: ExtendedImage(
                       image: DioImageProvider(
@@ -403,13 +417,12 @@ class EhPreviewPage extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            flex: 2,
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 200),
               child: Stack(
                 children: [
                   Positioned(
-                    bottom: -8,
+                    bottom: Platform.isWindows ? 0 : -8,
                     child: TextButton(
                       onPressed: () {},
                       child: Text(I18n.of(context).read),
