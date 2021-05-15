@@ -41,6 +41,8 @@ class EhFilter {
   }) {
     return {
       'advsearch': 1,
+      'f_sname': 'on',
+      'f_stags': 'on',
       'f_search': searchText ?? '',
       'f_cats': excludeTag ?? '',
       'f_spf': startPage ?? '',

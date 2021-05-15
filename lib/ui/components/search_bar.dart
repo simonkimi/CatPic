@@ -94,7 +94,6 @@ class SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     final isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-
     return FloatingSearchBar(
       hint: widget.showTmp
           ? (_searchTmp.isEmpty ? defaultHint : _searchTmp)

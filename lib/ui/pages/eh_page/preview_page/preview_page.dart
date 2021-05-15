@@ -25,6 +25,7 @@ class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
     Key? key,
     this.heroTag,
+    required this.previewAspectRatio,
     required this.previewModel,
     required this.adapter,
   })   : store = EhGalleryStore(
@@ -36,6 +37,7 @@ class EhPreviewPage extends StatelessWidget {
   final PreViewItemModel previewModel;
   final String? heroTag;
   final EHAdapter adapter;
+  final double previewAspectRatio;
 
   final EhGalleryStore store;
 
@@ -390,9 +392,9 @@ class EhPreviewPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 200,
+            width: 140,
             child: AspectRatio(
-              aspectRatio: 10 / 13.9,
+              aspectRatio: previewAspectRatio,
               child: NullableHero(
                 tag: '${previewModel.gid}${previewModel.gtoken}',
                 child: Card(
@@ -401,14 +403,13 @@ class EhPreviewPage extends StatelessWidget {
                     borderRadius: BorderRadiusDirectional.circular(5),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: Center(
-                    child: ExtendedImage(
-                      image: DioImageProvider(
-                        dio: adapter.dio,
-                        url: previewModel.previewImg,
-                      ),
-                      enableLoadState: true,
+                  child: ExtendedImage(
+                    fit: BoxFit.fill,
+                    image: DioImageProvider(
+                      dio: adapter.dio,
+                      url: previewModel.previewImg,
                     ),
+                    enableLoadState: true,
                   ),
                 ),
               ),
@@ -421,7 +422,7 @@ class EhPreviewPage extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned(
-                    bottom: Platform.isWindows ? 0 : -8,
+                    bottom: Platform.isWindows ? 0 : -5,
                     child: TextButton(
                       onPressed: () {},
                       child: Text(I18n.of(context).read),

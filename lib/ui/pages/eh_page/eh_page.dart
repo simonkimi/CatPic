@@ -61,15 +61,7 @@ class _EhPageState extends State<EhPage> {
         ehSearchType: searchType,
         onEHSearchChange: (newType) => newType != searchType,
       ),
-      body: SearchBar(
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 1),
-          child: searchBody,
-        ),
-        candidateBuilder: (BuildContext context, Animation<double> transition) {
-          return const SizedBox();
-        },
-      ),
+      body: searchBody,
     );
   }
 
