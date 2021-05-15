@@ -9,6 +9,7 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';
+import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';
@@ -99,7 +100,7 @@ class EhPreviewPage extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
-          childAspectRatio: 10 / 14,
+          childAspectRatio: min(10 / 14, previewAspectRatio),
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
         ),
@@ -256,11 +257,22 @@ class EhPreviewPage extends StatelessWidget {
                               ? const Color(0xFF494949)
                               : const Color(0xFFEFEEF1),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(
-                            e,
-                            style: const TextStyle(fontSize: 15),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return EhPage(
+                                searchText: e,
+                                searchType: EHSearchType.INDEX,
+                              );
+                            }));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              e,
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           ),
                         ),
                       );
@@ -431,8 +443,10 @@ class EhPreviewPage extends StatelessWidget {
                             Theme.of(context).primaryColor),
                         foregroundColor:
                             MaterialStateProperty.all(Colors.white),
-                        padding: MaterialStateProperty.all(
-                            const EdgeInsets.symmetric(
+                        padding: MaterialStateProperty.all(Platform.isWindows
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15)
+                            : const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 2)),
                         minimumSize:
                             MaterialStateProperty.all(const Size(0, 0)),

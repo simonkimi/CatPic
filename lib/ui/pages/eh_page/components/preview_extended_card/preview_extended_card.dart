@@ -53,15 +53,15 @@ class PreviewExtendedCard extends StatelessWidget {
                   dio: adapter.dio,
                   imageUrl: previewModel.previewImg,
                   imageBuilder: (_, data) => SizedBox(
-                    child: NullableHero(
-                      tag: '${previewModel.gid}${previewModel.gtoken}',
-                      child: Container(
-                        color: isDarkMode(context)
-                            ? const Color(0xFF424242)
-                            : null,
-                        child: SizedBox(
-                          width: 110,
-                          height: 150,
+                    child: Container(
+                      color: isDarkMode(context)
+                          ? const Color(0xFF424242)
+                          : null,
+                      child: SizedBox(
+                        width: 110,
+                        height: 150,
+                        child: NullableHero(
+                          tag: '${previewModel.gid}${previewModel.gtoken}',
                           child: Image(
                             image: MemoryImage(data, scale: 0.5),
                             fit: BoxFit.fitWidth,

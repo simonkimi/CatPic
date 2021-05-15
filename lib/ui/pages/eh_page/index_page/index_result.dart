@@ -32,30 +32,29 @@ class EhIndexResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          if (Scaffold.of(context).isDrawerOpen) {
-            return true;
-          }
-          final nowTime = DateTime.now();
-          if (mainStore.searchPageCount <= 1 &&
-              nowTime.difference(store.lastClickBack) > const Duration(seconds: 2)) {
-            BotToast.showText(text: I18n.of(context).click_again_to_exit);
-            store.lastClickBack = nowTime;
-            return false;
-          }
+    return WillPopScope(
+      onWillPop: () async {
+        if (Scaffold.of(context).isDrawerOpen) {
           return true;
+        }
+        final nowTime = DateTime.now();
+        if (mainStore.searchPageCount <= 1 &&
+            nowTime.difference(store.lastClickBack) > const Duration(seconds: 2)) {
+          BotToast.showText(text: I18n.of(context).click_again_to_exit);
+          store.lastClickBack = nowTime;
+          return false;
+        }
+        return true;
+      },
+      child: SearchBar(
+        searchText: searchText,
+        onSubmitted: (value) {
+          store.newSearch(value);
         },
-        child: SearchBar(
-          onSubmitted: (value) {
-            store.newSearch(value);
-          },
-          body: buildBody(),
-          candidateBuilder: (BuildContext context, Animation<double> transition) {
-            return const SizedBox();
-          },
-        ),
+        body: buildBody(),
+        candidateBuilder: (BuildContext context, Animation<double> transition) {
+          return const SizedBox();
+        },
       ),
     );
   }
