@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _DioImageState extends State<DioImage> {
       };
 
   late final ImageWidgetBuilder imageBuilder = widget.imageBuilder ??
-      (context, imgData) => Image(
+      (context, imgData) => DarkImage(
             image: MemoryImage(imgData),
             fit: BoxFit.fill,
           );

@@ -4,6 +4,7 @@ import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
@@ -249,7 +250,9 @@ class EhPreviewPage extends StatelessWidget {
                       return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: const Color(0xFFEFEEF1),
+                          color: isDarkMode(context)
+                              ? const Color(0xFF494949)
+                              : const Color(0xFFEFEEF1),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
