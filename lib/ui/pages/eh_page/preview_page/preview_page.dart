@@ -69,18 +69,63 @@ class EhPreviewPage extends StatelessWidget {
               const Divider(),
               buildTagList(context),
               const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: store.commentList.take(2).map((e) {
-                    return Container(
-
-                    );
-                  }).toList(),
-                ),
-              ),
+              buildCommentList(context),
+              const Divider(),
             ],
           );
+  }
+
+  Padding buildCommentList(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: store.commentList.take(2).map((e) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        e.username,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.subtitle2!.color,
+                        ),
+                      ),
+                      Text(
+                        e.commentTime,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.subtitle2!.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: e.comment,
+                      style: Theme.of(context).textTheme.bodyText2,
+                      children: [
+                        TextSpan(
+                          text: (e.score >= 0 ? '   +' : '   ') +
+                              e.score.toString(),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.subtitle2!.color,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   Padding buildTagList(BuildContext context) {

@@ -32,7 +32,7 @@ class EhIndexResult extends StatelessWidget {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: store.observableList.isEmpty &&
-              (store.isLoading || store.lock.locked)
+                  (store.isLoading || store.lock.locked)
               ? LoadingWidget(store: store)
               : buildList(),
         );

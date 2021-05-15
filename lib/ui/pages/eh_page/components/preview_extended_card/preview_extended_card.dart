@@ -145,7 +145,7 @@ class PreviewExtendedCard extends StatelessWidget {
                                       Text(
                                         previewModel.stars.toString(),
                                         style: TextStyle(
-                                          fontSize: 12,
+                                            fontSize: 12,
                                             color: Theme.of(context)
                                                 .textTheme
                                                 .subtitle2!
