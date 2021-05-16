@@ -16,7 +16,7 @@ class DarkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(
-        builder: (context) => isDarkMode(context) && settingStore.darkMask
+        builder: (context) => settingStore.darkMask && isDarkMode(context)
             ? Stack(
                 children: [
                   Image(image: image),
@@ -42,7 +42,7 @@ class DarkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(
-      builder: (context) => isDarkMode(context) && settingStore.darkMask
+      builder: (context) => settingStore.darkMask && isDarkMode(context)
           ? Stack(
               children: [
                 child,
