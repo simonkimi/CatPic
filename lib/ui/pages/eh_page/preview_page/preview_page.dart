@@ -104,7 +104,12 @@ class EhPreviewPage extends StatelessWidget {
       child: Column(
         children: [
           GridView.builder(
-            padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
+            padding: const EdgeInsets.only(
+              right: 10,
+              left: 10,
+              top: 10,
+              bottom: 5,
+            ),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
