@@ -42,6 +42,7 @@ class SettingPage extends StatelessWidget {
   Widget buildBody(BuildContext context) {
     return ListView(
       children: [
+        ...buildThemeSetting(context),
         ...buildDisplaySetting(context),
         ...buildQuality(context),
         ...buildNetwork(context),
@@ -62,6 +63,52 @@ class SettingPage extends StatelessWidget {
               context, MaterialPageRoute(builder: (_) => HostManagerPage()));
         },
       ),
+      StatefulBuilder(builder: (context, setState) {
+        return ListTile(
+          title: Text(I18n.of(context).cache),
+          leading: const Icon(Icons.cached),
+          trailing: FutureBuilder<int>(
+            future: getCacheSize(),
+            builder: (context, snapshot) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                    ((snapshot.data ?? 0) / (1024 * 1024)).toStringAsFixed(2) +
+                        ' MB'),
+              );
+            },
+          ),
+          onTap: () async {
+            final result = await showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(I18n.of(context).clean_cache),
+                    content: Text(I18n.of(context).confirm_clean_cache),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(I18n.of(context).negative),
+                      ),
+                      DefaultButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: Text(I18n.of(context).positive),
+                      )
+                    ],
+                  );
+                });
+            if (result == true) {
+              await settingStore.dioCacheOptions.store!.clean();
+              BotToast.showText(text: I18n.of(context).clean_success);
+              setState(() {});
+            }
+          },
+        );
+      }),
     ];
   }
 
@@ -140,59 +187,12 @@ class SettingPage extends StatelessWidget {
         title: I18n.of(context).download_quality,
         choiceItems: qualityChoice,
       ),
-      StatefulBuilder(builder: (context, setState) {
-        return ListTile(
-          title: Text(I18n.of(context).cache),
-          leading: const Icon(Icons.cached),
-          trailing: FutureBuilder<int>(
-            future: getCacheSize(),
-            builder: (context, snapshot) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Text(
-                    ((snapshot.data ?? 0) / (1024 * 1024)).toStringAsFixed(2) +
-                        ' MB'),
-              );
-            },
-          ),
-          onTap: () async {
-            final result = await showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(I18n.of(context).clean_cache),
-                    content: Text(I18n.of(context).confirm_clean_cache),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(I18n.of(context).negative),
-                      ),
-                      DefaultButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                        child: Text(I18n.of(context).positive),
-                      )
-                    ],
-                  );
-                });
-            if (result == true) {
-              await settingStore.dioCacheOptions.store!.clean();
-              BotToast.showText(text: I18n.of(context).clean_success);
-              setState(() {});
-            }
-          },
-        );
-      }),
     ];
   }
 
-  List<Widget> buildDisplaySetting(BuildContext context) {
+  List<Widget> buildThemeSetting(BuildContext context) {
     return [
-      SummaryTile(I18n.of(context).display),
-      // 卡片布局
+      SummaryTile(I18n.of(context).theme),
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {
           return S2Tile.fromState(
@@ -208,7 +208,7 @@ class SettingPage extends StatelessWidget {
             settingStore.setTheme(value.value!);
           });
         },
-        title: I18n.of(context).theme,
+        title: I18n.of(context).color,
         choiceItems: [
           S2Choice(title: I18n.of(context).theme_blue, value: Themes.BLUE),
           S2Choice(title: I18n.of(context).theme_purple, value: Themes.PURPLE),
@@ -238,6 +238,21 @@ class SettingPage extends StatelessWidget {
           S2Choice(title: I18n.of(context).close, value: DarkMode.CLOSE),
         ],
       ),
+      SwitchListTile(
+        title: Text(I18n.of(context).dark_mask),
+        secondary: const Icon(Icons.lightbulb_outline),
+        value: settingStore.darkMask,
+        onChanged: (value) {
+          settingStore.setDarkMask(value);
+        },
+      ),
+    ];
+  }
+
+  List<Widget> buildDisplaySetting(BuildContext context) {
+    return [
+      SummaryTile(I18n.of(context).display),
+      // 卡片布局
       SwitchListTile(
         title: Text(I18n.of(context).card_layout),
         secondary: const Icon(Icons.apps),

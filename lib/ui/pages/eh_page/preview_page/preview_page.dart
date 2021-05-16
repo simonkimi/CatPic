@@ -6,6 +6,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';
@@ -50,7 +51,10 @@ class EhPreviewPage extends StatelessWidget {
         title: Text(previewModel.titleJpn ?? ''),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert_outlined),
+            icon: const Icon(
+              Icons.more_vert_outlined,
+              color: Colors.white,
+            ),
             onPressed: () {},
           )
         ],
@@ -100,7 +104,7 @@ class EhPreviewPage extends StatelessWidget {
       child: Column(
         children: [
           GridView.builder(
-            padding: const EdgeInsets.only(right: 10, left: 10, bottom: 1),
+            padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -121,21 +125,23 @@ class EhPreviewPage extends StatelessWidget {
                   hasSize: true,
                   body: Obx(
                     () => galleryPreviewImage.loadState.value
-                        ? SizedBox(
-                            width: double.infinity,
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              clipBehavior: Clip.antiAlias,
-                              child: CustomPaint(
-                                painter: ImageClipper(
-                                  galleryPreviewImage.imageData!,
-                                  height: image.height.toDouble(),
-                                  width: 100,
-                                  offset: image.positioning.toDouble(),
-                                ),
-                                size: Size(
-                                  100.0 * kScale,
-                                  image.height * kScale,
+                        ? DarkWidget(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: FittedBox(
+                                fit: BoxFit.fitWidth,
+                                clipBehavior: Clip.antiAlias,
+                                child: CustomPaint(
+                                  painter: ImageClipper(
+                                    galleryPreviewImage.imageData!,
+                                    height: image.height.toDouble(),
+                                    width: 100,
+                                    offset: image.positioning.toDouble(),
+                                  ),
+                                  size: Size(
+                                    100.0 * kScale,
+                                    image.height * kScale,
+                                  ),
                                 ),
                               ),
                             ),
@@ -205,25 +211,30 @@ class EhPreviewPage extends StatelessWidget {
                               ],
                             ),
                             const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: e.comment,
-                                style: Theme.of(context).textTheme.bodyText2,
-                                children: [
-                                  if (e.score != -99999)
-                                    TextSpan(
-                                      text: (e.score >= 0 ? '   +' : '   ') +
-                                          e.score.toString(),
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .subtitle2!
-                                            .color,
-                                      ),
-                                    )
-                                ],
-                              ),
+                            Text(
+                              e.comment,
+                              maxLines: 10,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                            // RichText(
+                            //   text: TextSpan(
+                            //     text: e.comment,
+                            //     style: Theme.of(context).textTheme.bodyText2,
+                            //     children: [
+                            //       if (e.score != -99999)
+                            //         TextSpan(
+                            //           text: (e.score >= 0 ? '   +' : '   ') +
+                            //               e.score.toString(),
+                            //           style: TextStyle(
+                            //             color: Theme.of(context)
+                            //                 .textTheme
+                            //                 .subtitle2!
+                            //                 .color,
+                            //           ),
+                            //         )
+                            //     ],
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -472,6 +483,13 @@ class EhPreviewPage extends StatelessWidget {
                           url: previewModel.previewImg,
                         ),
                         enableLoadState: true,
+                        loadStateChanged: (state) {
+                          if (state.extendedImageLoadState ==
+                              LoadState.completed) {
+                            return DarkWidget(child: state.completedWidget);
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ),

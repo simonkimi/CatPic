@@ -1,5 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import '../../../main.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {
@@ -26,7 +28,15 @@ class EhClient extends BaseClient {
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
     return (await dio.get('g/$gid/$gtoken',
-            queryParameters: {'p': page}, cancelToken: cancelToken))
+            queryParameters: {'p': page},
+            cancelToken: cancelToken,
+            options: settingStore.dioCacheOptions
+                .copyWith(
+                  policy: CachePolicy.request,
+                  keyBuilder: (req) =>
+                      '${dio.options.baseUrl}g/$gid/$gtoken?p=$page',
+                )
+                .toOptions()))
         .data;
   }
 }

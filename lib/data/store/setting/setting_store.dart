@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:catpic/utils/utils.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sp_util/sp_util.dart';
@@ -92,6 +91,9 @@ abstract class SettingStoreBase with Store {
   @observable
   var dartMode = DarkMode.FOLLOW_SYSTEM;
 
+  @observable
+  var darkMask = true;
+
   late CacheOptions dioCacheOptions;
 
   var documentDir = '';
@@ -115,6 +117,7 @@ abstract class SettingStoreBase with Store {
     documentDir = sp.getString('documentDir') ?? await getDocumentDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
     dartMode = sp.getInt('dartMode') ?? DarkMode.FOLLOW_SYSTEM;
+    darkMask = sp.getBool('darkMask') ?? false;
 
     dioCacheOptions = CacheOptions(
       store: DbCacheStore(databasePath: p.join(documentDir, 'cache')),
@@ -123,7 +126,6 @@ abstract class SettingStoreBase with Store {
       priority: CachePriority.normal,
       maxStale: const Duration(days: 30),
     );
-    printTimeLine('dioCacheOptions');
   }
 
   Future<String> getDocumentDir() async {
@@ -134,6 +136,12 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString('documentDir', path.path);
     return path.path;
+  }
+
+  @action
+  void setDarkMask(bool value) {
+    darkMask = value;
+    SpUtil.putBool('darkMask', value);
   }
 
   @action

@@ -1,6 +1,7 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
@@ -222,7 +223,7 @@ class PreviewExtendedCard extends StatelessWidget {
                       previewModel.previewHeight / previewModel.previewWidth,
                   child: NullableHero(
                     tag: '${previewModel.gid}${previewModel.gtoken}',
-                    child: Image(
+                    child: DarkImage(
                       image: MemoryImage(data, scale: 0.5),
                       fit: BoxFit.fitWidth,
                     ),

@@ -1,5 +1,8 @@
 import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../../main.dart';
 
 class DarkImage extends StatelessWidget {
   const DarkImage({
@@ -12,18 +15,43 @@ class DarkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return !isDarkMode(context)
-        ? Image(
-            image: image,
-            fit: fit,
-          )
-        : Stack(
-            children: [
-              Image(image: image),
-              Container(
-                color: Colors.black26,
-              ),
-            ],
-          );
+    return Observer(
+        builder: (context) => isDarkMode(context) && settingStore.darkMask
+            ? Stack(
+                children: [
+                  Image(image: image),
+                  Container(
+                    color: Colors.black26,
+                  ),
+                ],
+              )
+            : Image(
+                image: image,
+                fit: fit,
+              ));
+  }
+}
+
+class DarkWidget extends StatelessWidget {
+  const DarkWidget({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (context) => isDarkMode(context) && settingStore.darkMask
+          ? Stack(
+              children: [
+                child,
+                Container(
+                  color: Colors.black26,
+                ),
+              ],
+            )
+          : child,
+    );
   }
 }

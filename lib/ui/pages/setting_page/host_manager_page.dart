@@ -58,7 +58,7 @@ class HostManagerPage extends StatelessWidget {
       centerTitle: true,
       title: Text(
         I18n.of(context).host_manager,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
       leading: appBarBackButton(),
     );
@@ -134,8 +134,12 @@ class HostManagerPage extends StatelessWidget {
       {required String host,
       required String ip,
       required BuildContext context}) async {
-    if (host.isEmpty || ip.isEmpty) {
-      BotToast.showText(text: I18n.of(context).host_empty);
+    if (host.isEmpty || host.split('.').length < 2) {
+      BotToast.showText(text: I18n.of(context).host_error);
+      return false;
+    }
+    if (ip.isEmpty) {
+      BotToast.showText(text: I18n.of(context).illegal_ip);
       return false;
     }
     final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
