@@ -100,7 +100,7 @@ class EhPreviewPage extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
-          childAspectRatio: min(10 / 14, previewAspectRatio),
+          childAspectRatio: 100 / 142,
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
         ),
@@ -500,22 +500,42 @@ class EhPreviewPage extends StatelessWidget {
             ],
           ),
           Positioned(
-            bottom: Platform.isWindows ? 0 : -8,
-            left: 148,
-            child: TextButton(
-              onPressed: () {},
-              child: Text(I18n.of(context).read),
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Theme.of(context).primaryColor),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-                padding: MaterialStateProperty.all(Platform.isWindows
-                    ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-                    : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
-                minimumSize: MaterialStateProperty.all(const Size(0, 0)),
-              ),
-            ),
-          ),
+              bottom: Platform.isWindows ? 0 : -8,
+              left: 148,
+              child: Observer(
+                builder: (context) {
+                  if (store.observableList.isNotEmpty)
+                    return TextButton(
+                      onPressed: () {},
+                      child: Text(I18n.of(context).read),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        padding: MaterialStateProperty.all(Platform.isWindows
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15)
+                            : const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2)),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(0, 0)),
+                      ),
+                    );
+                  return OutlinedButton(
+                    onPressed: () {},
+                    child: Text(I18n.of(context).read),
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(Platform.isWindows
+                          ? const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15)
+                          : const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2)),
+                      minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+                    ),
+                  );
+                },
+              )),
         ],
       ),
     );
