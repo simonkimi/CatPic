@@ -234,7 +234,8 @@ class EhPreviewPage extends StatelessWidget {
                     child: Text(
                       store.commentList.length <= 2
                           ? I18n.of(context).no_comment
-                          : I18n.of(context).show_more_comment,
+                          : I18n.of(context).show_more_comment(
+                              (store.commentList.length - 2).toString()),
                       style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold),
@@ -242,14 +243,19 @@ class EhPreviewPage extends StatelessWidget {
                   )
                 ],
               )
-            : Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  I18n.of(context).no_comment,
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold),
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      I18n.of(context).no_comment,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
       ),
     );

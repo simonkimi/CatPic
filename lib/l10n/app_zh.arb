@@ -182,7 +182,15 @@
   },
 
   "no_comment": "没有其他评论了",
-  "show_more_comment": "显示更多评论",
+  "show_more_comment": "还有{num}条评论",
+  "@show_more_comment": {
+    "placeholders": {
+      "num": {
+        "type": "String",
+        "example": "3"
+      }
+    }
+  },
   "no_preview": "没有其他预览了",
-  "show_more_preview": "显示更多评论"
+  "show_more_preview": "显示全部预览"
 }
