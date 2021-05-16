@@ -46,31 +46,7 @@ class PreviewExtendedCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 110,
-                height: 150,
-                child: DioImage(
-                  dio: adapter.dio,
-                  imageUrl: previewModel.previewImg,
-                  imageBuilder: (_, data) => SizedBox(
-                    child: Container(
-                      color:
-                          isDarkMode(context) ? const Color(0xFF424242) : null,
-                      child: SizedBox(
-                        width: 110,
-                        height: 150,
-                        child: NullableHero(
-                          tag: '${previewModel.gid}${previewModel.gtoken}',
-                          child: Image(
-                            image: MemoryImage(data, scale: 0.5),
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              buildImage(context),
               const SizedBox(width: 10),
               Expanded(
                 child: Padding(
@@ -79,144 +55,181 @@ class PreviewExtendedCard extends StatelessWidget {
                     constraints: const BoxConstraints(minHeight: 140),
                     child: Stack(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              previewModel.title,
-                              maxLines: 2,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              previewModel.uploader,
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .subtitle2!
-                                    .color,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Wrap(
-                              spacing: 2,
-                              runSpacing: 2,
-                              children: previewModel.keyTags.map((e) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: e.color != 0
-                                        ? Color(0xFF000000 | e.color)
-                                        : isDarkMode(context)
-                                            ? const Color(0xFF312F32)
-                                            : const Color(0xFFEFEEF1),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(3),
-                                    child: Text(
-                                      e.tag,
-                                      style: const TextStyle(fontSize: 11),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 43),
-                          ],
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      RatingBar.builder(
-                                        itemSize: 16,
-                                        ignoreGestures: true,
-                                        initialRating: previewModel.stars,
-                                        onRatingUpdate: (value) {},
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        previewModel.stars.toString(),
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .subtitle2!
-                                                .color),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      color: fromEhTag(previewModel.tag),
-                                    ),
-                                    child: Text(
-                                      previewModel.tag,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 3),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${previewModel.pages}P',
-                                  style: TextStyle(
-                                      fontSize: 12.5,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .subtitle2!
-                                          .color),
-                                ),
-                                Text(
-                                  previewModel.uploadTime,
-                                  style: TextStyle(
-                                      fontSize: 12.5,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .subtitle2!
-                                          .color),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        buildCardInfo(context),
+                        buildStar(context),
+                        buildPageAndTime(context),
                       ],
                     ),
                   ),
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Positioned buildPageAndTime(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              '${previewModel.pages}P',
+              style: TextStyle(
+                  fontSize: 12.5,
+                  color: Theme.of(context).textTheme.subtitle2!.color),
+            ),
+            Text(
+              previewModel.uploadTime,
+              style: TextStyle(
+                fontSize: 12.5,
+                color: Theme.of(context).textTheme.subtitle2!.color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Positioned buildStar(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  RatingBar.builder(
+                    itemSize: 16,
+                    ignoreGestures: true,
+                    initialRating: previewModel.stars,
+                    onRatingUpdate: (value) {},
+                    itemBuilder: (BuildContext context, int index) {
+                      return const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    previewModel.stars.toString(),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.subtitle2!.color),
+                  )
+                ],
+              ),
+              const SizedBox(height: 3),
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: fromEhTag(previewModel.tag),
+                ),
+                child: Text(
+                  previewModel.tag,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column buildCardInfo(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          previewModel.title,
+          maxLines: 2,
+          softWrap: true,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Text(
+          previewModel.uploader,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.subtitle2!.color,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 3),
+        buildTagWrap(context),
+        const SizedBox(height: 43),
+      ],
+    );
+  }
+
+  Wrap buildTagWrap(BuildContext context) {
+    return Wrap(
+      spacing: 2,
+      runSpacing: 2,
+      children: previewModel.keyTags.map((e) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: e.color != 0
+                ? Color(0xFF000000 | e.color)
+                : isDarkMode(context)
+                    ? const Color(0xFF312F32)
+                    : const Color(0xFFEFEEF1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: Text(
+              e.tag,
+              style: const TextStyle(fontSize: 11),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  SizedBox buildImage(BuildContext context) {
+    return SizedBox(
+      width: 110,
+      height: 150,
+      child: DioImage(
+        dio: adapter.dio,
+        imageUrl: previewModel.previewImg,
+        imageBuilder: (_, data) => SizedBox(
+          child: Container(
+            color: isDarkMode(context) ? const Color(0xFF424242) : null,
+            child: SizedBox(
+              width: 110,
+              height: 150,
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio:
+                      previewModel.previewHeight / previewModel.previewWidth,
+                  child: NullableHero(
+                    tag: '${previewModel.gid}${previewModel.gtoken}',
+                    child: Image(
+                      image: MemoryImage(data, scale: 0.5),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
