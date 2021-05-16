@@ -87,129 +87,171 @@ class EhPreviewPage extends StatelessWidget {
               const Divider(),
               buildCommentList(context),
               const Divider(),
-              buildPreviewList()
+              buildPreviewList(context),
             ],
           );
   }
 
-  Padding buildPreviewList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
-          childAspectRatio: 100 / 142,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-        ),
-        itemCount: min(store.observableList.length, 40),
-        itemBuilder: (context, index) {
-          final image = store.observableList[index];
-          final galleryPreviewImage = store.imageUrlMap[image.image]!;
-          return PostPreviewCard(
-            hasSize: true,
-            body: Obx(
-              () => galleryPreviewImage.loadState.value
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        clipBehavior: Clip.antiAlias,
-                        child: CustomPaint(
-                          painter: ImageClipper(
-                            galleryPreviewImage.imageData!,
-                            height: image.height.toDouble(),
-                            width: 100,
-                            offset: image.positioning.toDouble(),
-                          ),
-                          size: Size(
-                            100.0 * kScale,
-                            image.height * kScale,
-                          ),
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
+  Widget buildPreviewList(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        // TODO 点击预览显示图片
+      },
+      child: Column(
+        children: [
+          GridView.builder(
+            padding: const EdgeInsets.only(right: 10, left: 10, bottom: 1),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
+              childAspectRatio: 100 / 142,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
             ),
-            title: (index + 1).toString(),
-          );
-        },
+            itemCount: min(store.observableList.length, 40),
+            itemBuilder: (context, index) {
+              final image = store.observableList[index];
+              final galleryPreviewImage = store.imageUrlMap[image.image]!;
+              return InkWell(
+                onTap: () {
+                  // TODO 显示全部预览
+                },
+                child: PostPreviewCard(
+                  hasSize: true,
+                  body: Obx(
+                    () => galleryPreviewImage.loadState.value
+                        ? SizedBox(
+                            width: double.infinity,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              clipBehavior: Clip.antiAlias,
+                              child: CustomPaint(
+                                painter: ImageClipper(
+                                  galleryPreviewImage.imageData!,
+                                  height: image.height.toDouble(),
+                                  width: 100,
+                                  offset: image.positioning.toDouble(),
+                                ),
+                                size: Size(
+                                  100.0 * kScale,
+                                  image.height * kScale,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                  title: (index + 1).toString(),
+                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              store.imageCount <= 40
+                  ? I18n.of(context).no_preview
+                  : I18n.of(context).show_more_preview,
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Padding buildCommentList(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: store.commentList.isNotEmpty
-          ? Column(
-              children: store.commentList.take(2).map((e) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildCommentList(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        // TODO 点击显示评论
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: store.commentList.isNotEmpty
+            ? Column(
+                children: [
+                  ...store.commentList.take(2).map((e) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              e.username,
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .subtitle2!
-                                    .color,
-                              ),
-                            ),
-                            Text(
-                              e.commentTime,
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .subtitle2!
-                                    .color,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        RichText(
-                          text: TextSpan(
-                            text: e.comment,
-                            style: Theme.of(context).textTheme.bodyText2,
-                            children: [
-                              if (e.score != -99999)
-                                TextSpan(
-                                  text: (e.score >= 0 ? '   +' : '   ') +
-                                      e.score.toString(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  e.username,
                                   style: TextStyle(
                                     color: Theme.of(context)
                                         .textTheme
                                         .subtitle2!
                                         .color,
                                   ),
-                                )
-                            ],
-                          ),
+                                ),
+                                Text(
+                                  e.commentTime,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .subtitle2!
+                                        .color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                                text: e.comment,
+                                style: Theme.of(context).textTheme.bodyText2,
+                                children: [
+                                  if (e.score != -99999)
+                                    TextSpan(
+                                      text: (e.score >= 0 ? '   +' : '   ') +
+                                          e.score.toString(),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .subtitle2!
+                                            .color,
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    );
+                  }).toList(),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      store.commentList.length <= 2
+                          ? I18n.of(context).no_comment
+                          : I18n.of(context).show_more_comment,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                );
-              }).toList(),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                I18n.of(context).no_comment,
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
+                  )
+                ],
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  I18n.of(context).no_comment,
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
+      ),
     );
   }
 
@@ -506,7 +548,9 @@ class EhPreviewPage extends StatelessWidget {
                 builder: (context) {
                   if (store.observableList.isNotEmpty)
                     return TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO 点击显示阅读
+                      },
                       child: Text(I18n.of(context).read),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(

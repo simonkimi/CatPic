@@ -181,5 +181,8 @@
     }
   },
 
-  "no_comment": "暂无评论"
+  "no_comment": "没有其他评论了",
+  "show_more_comment": "显示更多评论",
+  "no_preview": "没有其他预览了",
+  "show_more_preview": "显示更多评论"
 }
