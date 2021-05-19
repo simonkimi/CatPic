@@ -30,7 +30,7 @@ class EhPreviewPage extends StatelessWidget {
     required this.previewAspectRatio,
     required this.previewModel,
     required this.adapter,
-  })   : store = EhGalleryStore(
+  })  : store = EhGalleryStore(
           adapter: adapter,
           previewModel: previewModel,
         ),
@@ -601,9 +601,13 @@ class EhPreviewPage extends StatelessWidget {
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(Platform.isWindows
                           ? const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15)
+                              horizontal: 20,
+                              vertical: 15,
+                            )
                           : const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2)),
+                              horizontal: 10,
+                              vertical: 2,
+                            )),
                       minimumSize: MaterialStateProperty.all(const Size(0, 0)),
                     ),
                   );

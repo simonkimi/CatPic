@@ -12,9 +12,7 @@ class NullableHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return tag != null
-        ? Material(
-            child: Hero(tag: tag!, child: child),
-          )
+        ? Hero(tag: tag!, child: child)
         : child;
   }
 }

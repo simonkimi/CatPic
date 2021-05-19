@@ -134,7 +134,7 @@ class MainDrawer extends HookWidget {
           children: [
             if (support?.contains(SupportPage.POSTS) ?? false)
               buildPostTile(context),
-            if (support?.contains(SupportPage.FAVOURITE) ?? false)
+            if (support?.contains(SupportPage.POPULAR) ?? false)
               buildHotTile(context),
             if (support?.contains(SupportPage.POOLS) ?? false)
               buildPoolTile(context),
@@ -142,6 +142,8 @@ class MainDrawer extends HookWidget {
               buildTagTile(context),
             if (support?.contains(SupportPage.ARTISTS) ?? false)
               buildArtistTile(context),
+            if (support?.contains(SupportPage.FAVOURITE) ?? false)
+              buildFavouriteTile(context),
           ],
         ),
       );
@@ -153,7 +155,8 @@ class MainDrawer extends HookWidget {
       if (mainStore.websiteEntity?.type == WebsiteType.EHENTAI.index)
         buildEhList(),
       const Divider(),
-      buildDownloadTile(context),
+      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI.index)
+        buildDownloadTile(context),
       buildSettingTile(context)
     ];
   }

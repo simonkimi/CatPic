@@ -30,6 +30,7 @@ enum SupportPage {
   ARTISTS,
   TAGS,
   FAVOURITE,
+  POPULAR,
 }
 
 abstract class BooruAdapter extends Adapter {

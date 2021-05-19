@@ -54,7 +54,9 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
         options: settingStore.dioCacheOptions
             .copyWith(
-                policy: CachePolicy.request, keyBuilder: (req) => imageUrl)
+              policy: CachePolicy.request,
+              keyBuilder: (req) => imageUrl,
+            )
             .toOptions()
             .copyWith(responseType: ResponseType.bytes),
         onReceiveProgress: (received, total) {
