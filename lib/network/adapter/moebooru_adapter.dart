@@ -37,7 +37,7 @@ class MoebooruAdapter implements BooruAdapter {
       SupportPage.TAGS,
       SupportPage.ARTISTS,
       SupportPage.POOLS,
-      SupportPage.FAVOURITE,
+      SupportPage.POPULAR,
       SupportPage.FAVOURITE,
     ];
   }

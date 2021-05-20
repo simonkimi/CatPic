@@ -33,7 +33,7 @@ class DanbooruAdapter implements BooruAdapter {
       SupportPage.POSTS,
       SupportPage.TAGS,
       SupportPage.POOLS,
-      SupportPage.FAVOURITE,
+      SupportPage.POPULAR,
       SupportPage.FAVOURITE,
     ];
   }

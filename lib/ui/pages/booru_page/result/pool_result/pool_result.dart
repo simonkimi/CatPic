@@ -43,7 +43,7 @@ class PoolResultFragment extends StatelessWidget {
           builder: (_) {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: store.isLoading && store.observableList.isEmpty
+              child: store.isLoading && store.poolList.isEmpty
                   ? LoadingWidget(store: store)
                   : buildList(),
             );
@@ -75,7 +75,7 @@ class PoolResultFragment extends StatelessWidget {
           child: ListView.builder(
             controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
-            itemCount: store.observableList.length,
+            itemCount: store.poolList.length,
             itemBuilder: _itemBuilder,
             itemExtent: 100.0,
           ),
@@ -85,7 +85,7 @@ class PoolResultFragment extends StatelessWidget {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    final pool = store.observableList[index];
+    final pool = store.poolList[index];
     return Card(
       key: ValueKey('Pool${pool.id}'),
       child: InkWell(
