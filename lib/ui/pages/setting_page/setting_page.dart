@@ -22,6 +22,7 @@ class SettingPage extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return ListView(
+      cacheExtent: 9999,
       children: [
         ListTile(
           leading: const Icon(Icons.settings_display),

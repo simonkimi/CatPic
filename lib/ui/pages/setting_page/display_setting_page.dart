@@ -25,6 +25,7 @@ class DisplaySettingPage extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return ListView(
+      cacheExtent: 9999,
       children: [
         ...buildThemeSetting(context),
         ...buildDisplaySetting(context),

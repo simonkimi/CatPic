@@ -45,6 +45,7 @@ class NetworkSettingPage extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     return ListView(
+      cacheExtent: 9999,
       children: [
         ...buildNetwork(context),
         ...buildQuality(context),
