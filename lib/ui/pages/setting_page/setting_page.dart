@@ -21,10 +21,17 @@ class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
 
   Future<int> getCacheSize() async {
-    final file =
-        File(p.join(settingStore.documentDir, 'cache', 'dio_cache.db'));
-    if (file.existsSync()) return await file.length();
-    return 0;
+    Future<int> getDirSize(Directory dir) async {
+      var currentSize = 0;
+      for (final child in dir.listSync()) {
+        if (child is File)
+          currentSize += await child.length();
+        else if (child is Directory) currentSize += await getDirSize(child);
+      }
+      return currentSize;
+    }
+
+    return getDirSize(Directory(p.join(settingStore.documentDir, 'cache')));
   }
 
   @override

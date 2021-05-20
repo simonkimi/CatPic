@@ -21,7 +21,7 @@ class ArtistResultFragment extends StatelessWidget {
     Key? key,
     required String tag,
     required this.adapter,
-  })   : store = ArtistResultStore(
+  })  : store = ArtistResultStore(
           adapter: adapter,
           searchText: tag,
         ),

@@ -37,7 +37,7 @@ class PostImageViewPage extends HookWidget {
     this.favicon,
     this.dio,
     required this.postList,
-  })   : assert(dio != null || adapter != null),
+  })  : assert(dio != null || adapter != null),
         store = PostImageViewStore(
           currentIndex: index,
           postList: postList,
@@ -54,7 +54,7 @@ class PostImageViewPage extends HookWidget {
     this.favicon,
     this.dio,
     required this.postList,
-  })   : assert(dio != null || adapter != null),
+  })  : assert(dio != null || adapter != null),
         store = PostImageViewStore(
           currentIndex: index,
           postList: postList,
@@ -91,9 +91,8 @@ class PostImageViewPage extends HookWidget {
         index: index,
         itemCount: store.postList.length,
         pageController: pageController,
-        futureItemBuilder: (index) async {
-          return store.postList[index].getDisplayImg();
-        },
+        itemBuilder: (index) => store.postList[index].getDisplayImg(),
+        hasVideo: true,
         onIndexChange: (value) async {
           store.setIndex(value);
         },

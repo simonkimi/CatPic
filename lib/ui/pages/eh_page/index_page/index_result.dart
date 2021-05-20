@@ -20,7 +20,7 @@ class EhIndexResult extends StatelessWidget {
     Key? key,
     this.searchText = '',
     required this.adapter,
-  })   : store = EhIndexStore(
+  })  : store = EhIndexStore(
           adapter: adapter,
           searchText: searchText,
         ),

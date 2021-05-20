@@ -5,9 +5,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/i18n.dart';
+import 'package:video_player/video_player.dart';
 import 'nullable_hero.dart';
 
-typedef ItemBuilder = Future<String> Function(int index);
+typedef FutureItemBuilder = Future<String> Function(int index);
+
+typedef ItemBuilder = String Function(int index);
 
 class MultiImageViewer extends StatefulWidget {
   const MultiImageViewer({
@@ -15,17 +18,23 @@ class MultiImageViewer extends StatefulWidget {
     required this.index,
     required this.dio,
     this.onIndexChange,
-    required this.futureItemBuilder,
+    this.futureItemBuilder,
+    this.itemBuilder,
     required this.itemCount,
     this.pageController,
     this.onCenterTap,
-  }) : super(key: key);
+    this.hasVideo = false,
+  })  : assert(!(itemBuilder == null && futureItemBuilder == null)),
+        assert(!(hasVideo && itemBuilder == null)),
+        super(key: key);
 
   final Dio dio;
   final int index;
   final ValueChanged<int>? onIndexChange;
-  final ItemBuilder futureItemBuilder;
+  final FutureItemBuilder? futureItemBuilder;
+  final ItemBuilder? itemBuilder;
   final int itemCount;
+  final bool hasVideo;
   final PageController? pageController;
   final VoidCallback? onCenterTap;
 
@@ -40,20 +49,35 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   late VoidCallback _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
   late final PageController pageController;
-  late final List<DioImageProvider> imageProviders;
+  late final List<dynamic> contentProvider;
+
+  final videoPlayerControllerMap = <int, VideoPlayerController>{};
 
   @override
   void initState() {
     super.initState();
-    imageProviders = List.generate(
-        widget.itemCount,
-        (index) => DioImageProvider(
-              dio: widget.dio,
-              urlBuilder: () => widget.futureItemBuilder(index),
-            ));
+    if (widget.hasVideo) {
+      contentProvider = List.generate(widget.itemCount, (index) {
+        if (widget.itemBuilder!(index).endsWith('.mp4'))
+          return DioVideoProvider(
+            dio: widget.dio,
+            url: widget.itemBuilder!(index),
+          );
+        return DioImageProvider(
+            dio: widget.dio, url: widget.itemBuilder!(index));
+      });
+    } else {
+      contentProvider = List.generate(
+          widget.itemCount,
+          (index) => DioImageProvider(
+                dio: widget.dio,
+                url: widget.itemBuilder?.call(index),
+                urlBuilder: () => widget.futureItemBuilder!(index),
+              ));
+    }
+
     pageController =
         widget.pageController ?? PageController(initialPage: widget.index);
-
     _doubleClickAnimationController = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
@@ -68,13 +92,17 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   void dispose() {
     super.dispose();
     _doubleClickAnimationController.dispose();
+
+    contentProvider.whereType<DioVideoProvider>().forEach((element) {
+      element.cancel();
+    });
   }
 
   void onPageIndexChange(int index) {
     widget.onIndexChange?.call(index);
     final int preloadNum = settingStore.preloadingNumber;
-    imageProviders.sublist(index + 1).take(preloadNum).forEach((e) {
-      e.resolve(const ImageConfiguration());
+    contentProvider.sublist(index + 1).take(preloadNum).forEach((e) {
+      if (e is DioImageProvider) e.resolve(const ImageConfiguration());
     });
   }
 
@@ -99,100 +127,156 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
       onPageChanged: onPageIndexChange,
-      itemCount: imageProviders.length,
+      itemCount: contentProvider.length,
       itemBuilder: (context, index) {
-        final imageProvider = imageProviders[index];
-        return GestureDetector(
-          onTapUp: onTapUp,
-          child: ExtendedImage(
-            key: UniqueKey(),
-            image: imageProvider,
-            enableLoadState: true,
-            handleLoadingProgress: true,
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                minScale: 0.9,
-                animationMinScale: 0.7,
-                maxScale: 5.0,
-                animationMaxScale: 5.0,
-                speed: 1.0,
-                inertialSpeed: 100.0,
-                initialScale: 1.0,
-                inPageView: true,
-                initialAlignment: InitialAlignment.center,
-              );
-            },
-            onDoubleTap: _doubleTap,
-            loadStateChanged: (state) {
-              switch (state.extendedImageLoadState) {
-                case LoadState.loading:
-                  return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.transparent,
-                    child: Builder(
-                      builder: (context) {
-                        var progress =
-                            state.loadingProgress?.expectedTotalBytes != null
-                                ? state.loadingProgress!.cumulativeBytesLoaded /
-                                    state.loadingProgress!.expectedTotalBytes!
-                                : 0.0;
-                        progress = progress.isFinite ? progress : 0;
-                        return Column(
+        final provider = contentProvider[index];
+        if (provider is DioImageProvider) {
+          return GestureDetector(
+            onTapUp: onTapUp,
+            child: ExtendedImage(
+              key: UniqueKey(),
+              image: provider,
+              enableLoadState: true,
+              handleLoadingProgress: true,
+              mode: ExtendedImageMode.gesture,
+              initGestureConfigHandler: (state) {
+                return GestureConfig(
+                  minScale: 0.9,
+                  animationMinScale: 0.7,
+                  maxScale: 5.0,
+                  animationMaxScale: 5.0,
+                  speed: 1.0,
+                  inertialSpeed: 100.0,
+                  initialScale: 1.0,
+                  inPageView: true,
+                  initialAlignment: InitialAlignment.center,
+                );
+              },
+              onDoubleTap: _doubleTap,
+              loadStateChanged: (state) {
+                switch (state.extendedImageLoadState) {
+                  case LoadState.loading:
+                    return Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.transparent,
+                      child: Builder(
+                        builder: (context) {
+                          var progress =
+                              state.loadingProgress?.expectedTotalBytes != null
+                                  ? state.loadingProgress!
+                                          .cumulativeBytesLoaded /
+                                      state.loadingProgress!.expectedTotalBytes!
+                                  : 0.0;
+                          progress = progress.isFinite ? progress : 0;
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                  value: progress == 0 ? null : progress),
+                              const SizedBox(height: 20),
+                              if (progress == 0)
+                                Text(
+                                  I18n.of(context).connecting,
+                                  style: const TextStyle(color: Colors.white),
+                                )
+                              else
+                                Text(
+                                  '${(progress * 100).toStringAsFixed(2)}%',
+                                  style: const TextStyle(color: Colors.white),
+                                )
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  case LoadState.completed:
+                    return NullableHero(
+                      // tag: imageBase.heroTag,
+                      child: state.completedWidget,
+                    );
+                  case LoadState.failed:
+                    return Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.transparent,
+                      child: Center(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            CircularProgressIndicator(
-                                value: progress == 0 ? null : progress),
+                            const Icon(
+                              Icons.error,
+                              color: Colors.white,
+                            ),
                             const SizedBox(height: 20),
-                            if (progress == 0)
-                              Text(
-                                I18n.of(context).connecting,
-                                style: const TextStyle(color: Colors.white),
-                              )
-                            else
-                              Text(
-                                '${(progress * 100).toStringAsFixed(2)}%',
-                                style: const TextStyle(color: Colors.white),
-                              )
+                            Text(
+                              state.lastException.toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ],
-                        );
-                      },
-                    ),
-                  );
-                case LoadState.completed:
-                  return NullableHero(
-                    // tag: imageBase.heroTag,
-                    child: state.completedWidget,
-                  );
-                case LoadState.failed:
-                  return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.transparent,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            state.lastException.toString(),
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ],
+                        ),
                       ),
+                    );
+                }
+              },
+            ),
+          );
+        } else {
+          final videoProvider = provider as DioVideoProvider;
+          videoProvider.resolve();
+          return StreamBuilder<ImageChunkEvent>(
+            stream: provider.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return StatefulBuilder(builder: (context, setState) {
+                  if (videoPlayerControllerMap[index] == null) {
+                    videoPlayerControllerMap[index] =
+                        VideoPlayerController.file(videoProvider.file)
+                          ..initialize().then((value) {
+                            videoPlayerControllerMap[index]!.play();
+                            setState(() {});
+                          });
+                  }
+
+                  return Center(
+                    child: AspectRatio(
+                      aspectRatio:
+                          videoPlayerControllerMap[index]!.value.aspectRatio,
+                      child: VideoPlayer(videoPlayerControllerMap[index]!),
                     ),
                   );
+                });
               }
+              var progress = snapshot.data?.expectedTotalBytes != null
+                  ? snapshot.data!.cumulativeBytesLoaded /
+                      snapshot.data!.expectedTotalBytes!
+                  : 0.0;
+              progress = progress.isFinite ? progress : 0;
+              print(progress);
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                      value: progress == 0 ? null : progress),
+                  const SizedBox(height: 20),
+                  if (progress == 0)
+                    Text(
+                      I18n.of(context).connecting,
+                      style: const TextStyle(color: Colors.white),
+                    )
+                  else
+                    Text(
+                      '${(progress * 100).toStringAsFixed(2)}%',
+                      style: const TextStyle(color: Colors.white),
+                    )
+                ],
+              );
             },
-          ),
-        );
+          );
+        }
       },
     );
   }

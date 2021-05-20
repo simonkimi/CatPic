@@ -12,7 +12,7 @@ class PostResultFragment extends StatelessWidget {
     this.searchText = '',
     required this.adapter,
     required this.isFavourite,
-  })   : store = PostResultStore(
+  })  : store = PostResultStore(
           adapter: adapter,
           searchText: searchText,
           isFavourite: isFavourite,

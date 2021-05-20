@@ -24,7 +24,7 @@ class PopularResultFragment extends StatelessWidget {
   PopularResultFragment({
     Key? key,
     required BooruAdapter adapter,
-  })   : store = PopularResultStore(
+  })  : store = PopularResultStore(
           adapter: adapter,
           searchText: '',
         ),

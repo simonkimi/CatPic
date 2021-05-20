@@ -135,7 +135,7 @@ class MainDrawer extends HookWidget {
             if (support?.contains(SupportPage.POSTS) ?? false)
               buildPostTile(context),
             if (support?.contains(SupportPage.POPULAR) ?? false)
-              buildHotTile(context),
+              buildPopularTile(context),
             if (support?.contains(SupportPage.POOLS) ?? false)
               buildPoolTile(context),
             if (support?.contains(SupportPage.TAGS) ?? false)
@@ -291,7 +291,7 @@ class MainDrawer extends HookWidget {
     );
   }
 
-  ListTile buildHotTile(BuildContext context) {
+  ListTile buildPopularTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.whatshot),
       title: Text(I18n.of(context).hot),

@@ -12,7 +12,7 @@ class BooruCommentsPage extends StatelessWidget {
     Key? key,
     required this.id,
     required this.adapter,
-  })   : store = CommentStore(id: id, adapter: adapter),
+  })  : store = CommentStore(id: id, adapter: adapter),
         super(key: key);
 
   final String id;

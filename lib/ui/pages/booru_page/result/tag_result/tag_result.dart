@@ -19,7 +19,7 @@ class TagResultFragment extends StatelessWidget {
     Key? key,
     this.searchText = '',
     required this.adapter,
-  })   : store = TagResultStore(
+  })  : store = TagResultStore(
           adapter: adapter,
           searchText: searchText,
         ),

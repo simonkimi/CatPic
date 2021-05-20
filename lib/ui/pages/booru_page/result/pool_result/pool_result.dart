@@ -20,7 +20,7 @@ class PoolResultFragment extends StatelessWidget {
     Key? key,
     required String searchText,
     required this.adapter,
-  })   : store = PoolResultStore(
+  })  : store = PoolResultStore(
           adapter: adapter,
           searchText: searchText,
         ),

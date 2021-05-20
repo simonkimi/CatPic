@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:catpic/main.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:path/path.dart' as p;
 
 typedef UrlBuilder = Future<String> Function();
 
@@ -50,7 +54,6 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
     final imageUrl = url ?? await urlBuilder!();
-
     final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
         options: settingStore.dioCacheOptions
             .copyWith(
@@ -73,5 +76,85 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       throw StateError('$url is empty and cannot be loaded as an image.');
     }
     return await decode(bytes);
+  }
+}
+
+enum LoadingState {
+  PENDING,
+  DOWNLOADING,
+  DONE,
+  ERROR,
+}
+
+class DioVideoProvider {
+  DioVideoProvider({
+    required this.url,
+    this.dio,
+    this.scale = 1.0,
+  });
+
+  final Dio? dio;
+  final String url;
+  final double scale;
+
+  final StreamController<ImageChunkEvent> chunkEvent =
+      StreamController<ImageChunkEvent>.broadcast();
+
+  CancelToken _cancelToken = CancelToken();
+
+  LoadingState loadingState = LoadingState.PENDING;
+
+  Stream<ImageChunkEvent> get stream => chunkEvent.stream;
+
+  String get fileUrl {
+    final fileName = md5.convert(utf8.encode(url)).toString();
+    return p.join(settingStore.documentDir, 'cache', 'video', '$fileName.mp4');
+  }
+
+  File get file => File(fileUrl);
+
+  Future<void> resolve() async {
+    if (loadingState == LoadingState.PENDING ||
+        loadingState == LoadingState.ERROR) {
+      _cancelToken = CancelToken();
+      loadingState = LoadingState.DOWNLOADING;
+      chunkEvent.add(const ImageChunkEvent(
+          cumulativeBytesLoaded: 0, expectedTotalBytes: 0));
+      final cacheUri = p.join(settingStore.documentDir, 'cache', 'video');
+      await Directory(cacheUri).create();
+      try {
+        final file = File(fileUrl);
+        if (file.existsSync()) file.delete();
+      } catch (e) {
+        print(e);
+      }
+
+      try {
+        await (dio ?? Dio()).download(url, fileUrl,
+            options: settingStore.dioCacheOptions
+                .toOptions()
+                .copyWith(responseType: ResponseType.bytes),
+            cancelToken: _cancelToken, onReceiveProgress: (received, total) {
+          print('$received, $total');
+          chunkEvent.add(ImageChunkEvent(
+            cumulativeBytesLoaded: received,
+            expectedTotalBytes: total,
+          ));
+        });
+        chunkEvent.close();
+      } on DioError catch (e) {
+        if (CancelToken.isCancel(e))
+          loadingState = LoadingState.PENDING;
+        else
+          loadingState = LoadingState.ERROR;
+      } catch (e) {
+        loadingState = LoadingState.ERROR;
+      }
+      loadingState = LoadingState.DONE;
+    }
+  }
+
+  void cancel() {
+    _cancelToken.cancel();
   }
 }
