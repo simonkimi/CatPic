@@ -63,6 +63,7 @@ class TagModels {
 
 class PreviewImage {
   PreviewImage({
+    required this.width,
     required this.height,
     required this.image,
     required this.positioning,
@@ -70,6 +71,7 @@ class PreviewImage {
   });
 
   final int height;
+  final int width;
   final String image;
   final int positioning;
   final String target;

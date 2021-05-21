@@ -94,7 +94,7 @@ class EhIndexResult extends StatelessWidget {
           onRefresh: store.onRefresh,
           onLoading: store.onLoadMore,
           child: ListView.builder(
-            itemExtent: 500,
+            cacheExtent: 500,
             controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
             itemCount: store.observableList.length,

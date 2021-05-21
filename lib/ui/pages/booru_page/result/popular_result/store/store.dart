@@ -53,7 +53,7 @@ abstract class PopularResultStoreBase extends ILoadMore<BooruPost> with Store {
   }
 
   @override
-  Future<List<BooruPost>> onLoadNextPage() {
+  Future<List<BooruPost>> loadPage(int page) {
     if (adapter.website.type == WebsiteType.MOEBOORU.index && page >= 2)
       return Future.value([]);
     return adapter.hotList(

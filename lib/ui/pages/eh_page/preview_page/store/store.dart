@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
@@ -25,9 +26,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   EhGalleryStoreBase({
     required this.adapter,
     required this.previewModel,
-  }) : super('') {
-    onRefresh();
-  }
+  }) : super('');
 
   final EHAdapter adapter;
   final PreViewItemModel previewModel;
@@ -49,15 +48,39 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   @observable
   List<TagModels> tagList = [];
 
+  final previewCacheMap = ObservableMap<int, PreviewImage>();
+
   @override
   @action
   Future<void> onDataChange() async {}
 
   @override
+  Future<void> onRefresh() {
+    previewCacheMap.clear();
+    return super.onRefresh();
+  }
+
+  @override
   @action
-  Future<List<PreviewImage>> onLoadNextPage() async {
+  Future<List<PreviewImage>> loadPage(int page) async {
+    final ehPage = page - 1;
+    if (previewCacheMap.containsKey(ehPage * 40) &&
+        previewCacheMap.isNotEmpty) {
+      final cache = List.generate(
+          min(
+            40,
+            imageCount -
+                previewCacheMap.keys
+                    .reduce((value, element) => max(value, element)),
+          ),
+          (index) => previewCacheMap[index + ehPage * 40]!);
+      print(cache.length);
+      return cache;
+    }
+
     final galleryModel = await adapter.gallery(
-        gid: previewModel.gid, gtoken: previewModel.gtoken, page: page - 1);
+        gid: previewModel.gid, gtoken: previewModel.gtoken, page: ehPage);
+
     for (final waitingImg in galleryModel.previewImages) {
       if (!imageUrlMap.containsKey(waitingImg.image)) {
         final loadingImage = GalleryPreviewImage();
@@ -81,6 +104,9 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     favouriteCount = galleryModel.favorited;
     commentList = galleryModel.comments;
     tagList = galleryModel.tags;
+    galleryModel.previewImages.asMap().forEach((key, value) {
+      previewCacheMap[ehPage * 40 + key] = value;
+    });
     return galleryModel.previewImages;
   }
 

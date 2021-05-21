@@ -24,7 +24,7 @@ abstract class TagResultStoreBase extends ILoadMore<BooruTag> with Store {
   bool isLoading = false;
 
   @override
-  Future<List<BooruTag>> onLoadNextPage() => adapter.tagList(
+  Future<List<BooruTag>> loadPage(int page) => adapter.tagList(
       name: searchText, page: page, limit: settingStore.eachPageItem);
 
   @action

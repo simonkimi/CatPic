@@ -1,19 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:math' hide log;
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:vibration/vibration.dart';
-
-final startDate = DateTime.now();
-
-void printTimeLine([String? tag]) {
-  final thisTime = DateTime.now();
-  print('${tag ?? 'TimeLine'}: ${thisTime.difference(startDate).toString()}');
-}
 
 extension IterableUtils<T> on Iterable<T> {
   T? get(bool test(T e)) {
@@ -26,7 +19,7 @@ extension IterableUtils<T> on Iterable<T> {
 
 extension ListHelper<T> on List<T> {
   T random() {
-    return this[Random().nextInt(length)];
+    return this[math.Random().nextInt(length)];
   }
 
   List<T> addAsSet(Iterable<T> other) {
@@ -179,25 +172,6 @@ Future<void> vibrate({
       intensities: intensities,
       amplitude: amplitude,
     );
-  }
-}
-
-class Log {
-  static void i([
-    dynamic p1,
-    dynamic p2,
-    dynamic p3,
-    dynamic p4,
-    dynamic p5,
-    dynamic p6,
-    dynamic p7,
-    dynamic p8,
-    dynamic p9,
-  ]) {
-    print([p1, p2, p3, p4, p5, p6, p7, p8, p9]
-        .where((e) => e != null)
-        .map((e) => e.toString())
-        .join(' '));
   }
 }
 

@@ -28,7 +28,7 @@ abstract class EhIndexStoreBase extends ILoadMore<PreViewItemModel> with Store {
   Future<void> onDataChange() async {}
 
   @override
-  Future<List<PreViewItemModel>> onLoadNextPage() async {
+  Future<List<PreViewItemModel>> loadPage(int page) async {
     final result = await adapter.index(
       filter: EhFilter.buildAdvanceFilter(
         searchText: searchText,

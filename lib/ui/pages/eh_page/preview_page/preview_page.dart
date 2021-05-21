@@ -20,6 +20,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
 import '../../../../main.dart';
+import 'gallery_preview.dart';
 
 const double kScale = 2.0;
 
@@ -99,7 +100,9 @@ class EhPreviewPage extends StatelessWidget {
   Widget buildPreviewList(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO 点击预览显示图片
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return GalleryPreview(store: store);
+        }));
       },
       child: Column(
         children: [
@@ -124,7 +127,7 @@ class EhPreviewPage extends StatelessWidget {
               final galleryPreviewImage = store.imageUrlMap[image.image]!;
               return InkWell(
                 onTap: () {
-                  // TODO 显示全部预览
+                  // TODO 点击预览显示图片
                 },
                 child: PostPreviewCard(
                   hasSize: true,
@@ -134,17 +137,17 @@ class EhPreviewPage extends StatelessWidget {
                             child: SizedBox(
                               width: double.infinity,
                               child: FittedBox(
-                                fit: BoxFit.fitWidth,
+                                fit: BoxFit.contain,
                                 clipBehavior: Clip.antiAlias,
                                 child: CustomPaint(
                                   painter: ImageClipper(
                                     galleryPreviewImage.imageData!,
                                     height: image.height.toDouble(),
-                                    width: 100,
+                                    width: image.width.toDouble(),
                                     offset: image.positioning.toDouble(),
                                   ),
                                   size: Size(
-                                    100.0 * kScale,
+                                    image.width * kScale,
                                     image.height * kScale,
                                   ),
                                 ),

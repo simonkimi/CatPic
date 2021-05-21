@@ -31,10 +31,11 @@ abstract class ILoadMore<T> {
 
   var cancelToken = CancelToken();
   var page = 0;
+  var pageTail = 0;
 
   final lock = Lock();
 
-  Future<List<T>> onLoadNextPage();
+  Future<List<T>> loadPage(int page);
 
   Future<void> onDataChange();
 
@@ -47,7 +48,7 @@ abstract class ILoadMore<T> {
     await lock.synchronized(() async {
       page += 1;
       isLoading = true;
-      final list = await onLoadNextPage();
+      final list = await loadPage(page);
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
@@ -56,34 +57,45 @@ abstract class ILoadMore<T> {
     });
   }
 
+  Future<void> _loadPreviousPage() async {
+    isLoading = true;
+    await lock.synchronized(() async {
+      pageTail -= 1;
+      isLoading = true;
+      final list = await loadPage(pageTail);
+      observableList.insertAll(0, list);
+      refreshController.loadComplete();
+      refreshController.refreshCompleted();
+      if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
+        refreshController.loadNoData();
+    });
+  }
+
   Future<void> onRefresh() async {
-    if (lock.locked) return;
-    observableList.clear();
-    page = 0;
-    await _loadNextPage();
-    await onDataChange();
-    // try {
-    //   observableList.clear();
-    //   page = 0;
-    //   await _loadNextPage();
-    //   await onDataChange();
-    // } on DioError catch (e) {
-    //   if (CancelToken.isCancel(e)) return;
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
-    //   print('onRefresh ${e.message} ${e.requestOptions.path}');
-    // } catch (e) {
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   print('onRefresh ${e.toString()}');
-    //   BotToast.showText(text: e.toString());
-    // } finally {
-    //   isLoading = false;
-    // }
+    print('onRefresh');
+    try {
+      observableList.clear();
+      page = 0;
+      await _loadNextPage();
+      await onDataChange();
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) return;
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
+      print('onRefresh ${e.message} ${e.requestOptions.path}');
+    } catch (e) {
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      print('onRefresh ${e.toString()}');
+      BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
+    }
   }
 
   Future<void> onLoadMore() async {
+    print('onLoadMore');
     if (refreshController.isRefresh || lock.locked) {
       return;
     }
@@ -98,6 +110,32 @@ abstract class ILoadMore<T> {
     } catch (e) {
       print('onLoadMore ${e.toString()}');
       refreshController.loadFailed();
+      BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  Future<void> onLoadPrevious() async {
+    print('onLoadPrevious');
+    if (refreshController.isRefresh || lock.locked) {
+      return;
+    }
+    try {
+      if (pageTail < 1) {
+        refreshController.refreshCompleted();
+        return;
+      }
+      await _loadPreviousPage();
+      await onDataChange();
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) return;
+      refreshController.refreshFailed();
+      print('onLoadMore ${e.message} \n ${e.stackTrace}');
+      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
+    } catch (e) {
+      print('onLoadMore ${e.toString()}');
+      refreshController.refreshFailed();
       BotToast.showText(text: e.toString());
     } finally {
       isLoading = false;
@@ -120,7 +158,9 @@ abstract class ILoadMore<T> {
   }
 
   Future<void> onJumpPage(int newPage) async {
+    print('onJumpPage');
     page = newPage - 1;
+    pageTail = newPage - 1;
     observableList.clear();
     await onLoadMore();
   }

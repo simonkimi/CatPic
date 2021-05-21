@@ -90,14 +90,14 @@ class GalleryParser {
     return imgContainer.map((e) {
       final style = e.children[0].attributes['style'];
       final re = RegExp(
-          r'height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
+          r'width:(\d+)px; height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
       final data = re.firstMatch(style!)!;
-
       final aElement = e.querySelector('a')!;
       return PreviewImage(
-        height: int.tryParse(data[1] ?? '') ?? 0,
-        image: data[2]!,
-        positioning: int.parse(data[3]!),
+        width: int.tryParse(data[1] ?? '') ?? 0,
+        height: int.tryParse(data[2] ?? '') ?? 0,
+        image: data[3]!,
+        positioning: int.parse(data[4]!),
         target: aElement.attributes['href']!,
       );
     }).toList();

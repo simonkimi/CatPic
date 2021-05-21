@@ -145,7 +145,7 @@ class NetworkSettingPage extends StatelessWidget {
 
   List<Widget> buildQuality(BuildContext context) {
     final qualityChoice = [
-      S2Choice(value: ImageQuality.preview, title: I18n.of(context).preview),
+      S2Choice(value: ImageQuality.preview, title: I18n.of(context).thumbnail),
       S2Choice(value: ImageQuality.sample, title: I18n.of(context).sample),
       S2Choice(value: ImageQuality.raw, title: I18n.of(context).raw),
     ];
@@ -165,7 +165,7 @@ class NetworkSettingPage extends StatelessWidget {
         onChange: (S2SingleSelected<int?> value) {
           settingStore.setPreviewQuality(value.value!);
         },
-        title: I18n.of(context).preview_quality,
+        title: I18n.of(context).thumbnail_quality,
         choiceItems: qualityChoice,
       ),
       SmartSelect<int>.single(

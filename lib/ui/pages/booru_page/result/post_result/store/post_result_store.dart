@@ -32,7 +32,7 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   }
 
   @override
-  Future<List<BooruPost>> onLoadNextPage() async {
+  Future<List<BooruPost>> loadPage(int page) async {
     final list = await adapter.postList(
       tags: searchText,
       page: page,

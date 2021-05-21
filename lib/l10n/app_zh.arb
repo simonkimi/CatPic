@@ -116,10 +116,11 @@
   "input_page": "请输入页数",
 
   "display": "显示",
-  "preview": "缩略图",
+  "thumbnail": "缩略图",
   "sample": "大图",
   "raw": "原图",
-  "preview_quality": "预览质量",
+  "thumbnail_quality": "预览质量",
+  "preview": "预览",
   "sample_quality": "看图质量",
   "download_quality": "下载质量",
   "quality": "质量",
