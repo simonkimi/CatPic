@@ -93,6 +93,7 @@ class PostImageViewPage extends HookWidget {
         pageController: pageController,
         itemBuilder: (index) => store.postList[index].getDisplayImg(),
         hasVideo: true,
+        previewBuilder: (index) => store.postList[index].getPreviewImg(),
         onIndexChange: (value) async {
           store.setIndex(value);
         },

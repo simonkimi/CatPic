@@ -106,6 +106,16 @@ class NetworkSettingPage extends StatelessWidget {
                 });
             if (result == true) {
               await settingStore.dioCacheOptions.store!.clean();
+              Future<void> removeVideoCache(Directory dir) async {
+                for (final child in dir.listSync()) {
+                  if (child is File)
+                    await child.delete();
+                  else if (child is Directory) await removeVideoCache(child);
+                }
+              }
+
+              await removeVideoCache(Directory(
+                  p.join(settingStore.documentDir, 'cache', 'video')));
               BotToast.showText(text: I18n.of(context).clean_success);
               setState(() {});
             }

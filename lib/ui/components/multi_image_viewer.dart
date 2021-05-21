@@ -24,8 +24,9 @@ class MultiImageViewer extends StatefulWidget {
     this.pageController,
     this.onCenterTap,
     this.hasVideo = false,
+    this.previewBuilder,
   })  : assert(!(itemBuilder == null && futureItemBuilder == null)),
-        assert(!(hasVideo && itemBuilder == null)),
+        assert(!(hasVideo && (itemBuilder == null || previewBuilder == null))),
         super(key: key);
 
   final Dio dio;
@@ -37,6 +38,7 @@ class MultiImageViewer extends StatefulWidget {
   final bool hasVideo;
   final PageController? pageController;
   final VoidCallback? onCenterTap;
+  final ItemBuilder? previewBuilder;
 
   @override
   _MultiImageViewerState createState() => _MultiImageViewerState();
@@ -82,7 +84,6 @@ class _MultiImageViewerState extends State<MultiImageViewer>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       onPageIndexChange(widget.index);
     });
@@ -92,9 +93,12 @@ class _MultiImageViewerState extends State<MultiImageViewer>
   void dispose() {
     super.dispose();
     _doubleClickAnimationController.dispose();
-
     contentProvider.whereType<DioVideoProvider>().forEach((element) {
       element.cancel();
+    });
+    videoPlayerControllerMap.forEach((key, value) {
+      value.pause();
+      value.dispose();
     });
   }
 
@@ -103,6 +107,9 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     final int preloadNum = settingStore.preloadingNumber;
     contentProvider.sublist(index + 1).take(preloadNum).forEach((e) {
       if (e is DioImageProvider) e.resolve(const ImageConfiguration());
+    });
+    videoPlayerControllerMap.forEach((key, value) {
+      value.pause();
     });
   }
 
@@ -225,17 +232,67 @@ class _MultiImageViewerState extends State<MultiImageViewer>
           );
         } else {
           final videoProvider = provider as DioVideoProvider;
-          videoProvider.resolve();
           return StreamBuilder<ImageChunkEvent>(
             stream: provider.stream,
             builder: (context, snapshot) {
+              final playerState = videoPlayerControllerMap[index]?.value;
+              if (provider.state == LoadingState.PENDING ||
+                  (playerState?.isInitialized ?? false) &&
+                      !(playerState?.isPlaying ?? false)) {
+                return InkWell(
+                  onTap: () {
+                    if (playerState?.isInitialized ?? false) {
+                      videoPlayerControllerMap[index]!.play();
+                      setState(() {});
+                    } else {
+                      provider.resolve();
+                    }
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ExtendedImage(
+                        image: DioImageProvider(
+                          dio: widget.dio,
+                          url: widget.previewBuilder!(index),
+                        ),
+                        handleLoadingProgress: true,
+                        fit: BoxFit.contain,
+                      ),
+                      Center(
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Material(
+                            shape: CircleBorder(
+                              side: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                  style: BorderStyle.solid),
+                            ),
+                            child: const Icon(
+                              Icons.play_arrow,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }
               if (snapshot.connectionState == ConnectionState.done) {
                 return StatefulBuilder(builder: (context, setState) {
                   if (videoPlayerControllerMap[index] == null) {
                     videoPlayerControllerMap[index] =
                         VideoPlayerController.file(videoProvider.file)
                           ..initialize().then((value) {
-                            videoPlayerControllerMap[index]!.play();
+                            videoPlayerControllerMap.forEach((key, value) {
+                              value.pause();
+                            });
+                            videoPlayerControllerMap[index]!
+                              ..play()
+                              ..setLooping(true);
                             setState(() {});
                           });
                   }
@@ -254,7 +311,6 @@ class _MultiImageViewerState extends State<MultiImageViewer>
                       snapshot.data!.expectedTotalBytes!
                   : 0.0;
               progress = progress.isFinite ? progress : 0;
-              print(progress);
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -113,6 +113,8 @@ class DioVideoProvider {
 
   File get file => File(fileUrl);
 
+  LoadingState get state => loadingState;
+
   Future<void> resolve() async {
     if (loadingState == LoadingState.PENDING ||
         loadingState == LoadingState.ERROR) {
@@ -124,7 +126,11 @@ class DioVideoProvider {
       await Directory(cacheUri).create();
       try {
         final file = File(fileUrl);
-        if (file.existsSync()) file.delete();
+        if (file.existsSync()) {
+          loadingState = LoadingState.DONE;
+          chunkEvent.close();
+          return;
+        }
       } catch (e) {
         print(e);
       }
@@ -135,7 +141,6 @@ class DioVideoProvider {
                 .toOptions()
                 .copyWith(responseType: ResponseType.bytes),
             cancelToken: _cancelToken, onReceiveProgress: (received, total) {
-          print('$received, $total');
           chunkEvent.add(ImageChunkEvent(
             cumulativeBytesLoaded: received,
             expectedTotalBytes: total,
