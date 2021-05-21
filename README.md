@@ -1,6 +1,8 @@
 # CatPic
 CatPic是一款图片采集软件, 通过预设的算法, 从多种网站按照一定的规则采集图片
+
 目前已支持Gelbooru/Moebooru/Danbooru网站采集
+
 正在支持EHentai中
 
 # 运行截图
