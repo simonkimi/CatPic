@@ -28,7 +28,7 @@ class EhClient extends BaseClient {
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
     return (await dio.get('g/$gid/$gtoken',
-            queryParameters: {'p': page},
+            queryParameters: {'p': page, 'hc': '1'},
             cancelToken: cancelToken,
             options: settingStore.dioCacheOptions
                 .copyWith(

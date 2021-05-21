@@ -8,21 +8,18 @@ import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
-import 'package:catpic/ui/components/post_preview_card.dart';
-import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';
+import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
+import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
+import 'package:catpic/ui/pages/eh_page/preview_page/comment_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:get/get.dart';
-
 import '../../../../main.dart';
 import 'gallery_preview.dart';
-
-const double kScale = 2.0;
 
 class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
@@ -129,33 +126,9 @@ class EhPreviewPage extends StatelessWidget {
                 onTap: () {
                   // TODO 点击预览显示图片
                 },
-                child: PostPreviewCard(
-                  hasSize: true,
-                  body: Obx(
-                    () => galleryPreviewImage.loadState.value
-                        ? DarkWidget(
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: FittedBox(
-                                fit: BoxFit.contain,
-                                clipBehavior: Clip.antiAlias,
-                                child: CustomPaint(
-                                  painter: ImageClipper(
-                                    galleryPreviewImage.imageData!,
-                                    height: image.height.toDouble(),
-                                    width: image.width.toDouble(),
-                                    offset: image.positioning.toDouble(),
-                                  ),
-                                  size: Size(
-                                    image.width * kScale,
-                                    image.height * kScale,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ),
+                child: EhPreviewCard(
+                  image: image,
+                  model: galleryPreviewImage,
                   title: (index + 1).toString(),
                 ),
               );
@@ -180,7 +153,9 @@ class EhPreviewPage extends StatelessWidget {
   Widget buildCommentList(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO 点击显示评论
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => EhCommentPage(store: store),
+        ));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -188,65 +163,7 @@ class EhPreviewPage extends StatelessWidget {
             ? Column(
                 children: [
                   ...store.commentList.take(2).map((e) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  e.username,
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .subtitle2!
-                                        .color,
-                                  ),
-                                ),
-                                Text(
-                                  e.commentTime,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .subtitle2!
-                                        .color,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              e.comment,
-                              maxLines: 10,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     text: e.comment,
-                            //     style: Theme.of(context).textTheme.bodyText2,
-                            //     children: [
-                            //       if (e.score != -99999)
-                            //         TextSpan(
-                            //           text: (e.score >= 0 ? '   +' : '   ') +
-                            //               e.score.toString(),
-                            //           style: TextStyle(
-                            //             color: Theme.of(context)
-                            //                 .textTheme
-                            //                 .subtitle2!
-                            //                 .color,
-                            //           ),
-                            //         )
-                            //     ],
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
-                    );
+                    return EhComment(model: e);
                   }).toList(),
                   Padding(
                     padding: const EdgeInsets.all(10),

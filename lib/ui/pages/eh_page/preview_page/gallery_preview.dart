@@ -1,15 +1,11 @@
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
-import 'package:catpic/ui/components/dark_image.dart';
-import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
+import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -73,33 +69,9 @@ class GalleryPreview extends StatelessWidget {
   Widget _itemBuilder(BuildContext context, int index) {
     final image = store.observableList[index];
     final galleryPreviewImage = store.imageUrlMap[image.image]!;
-    return PostPreviewCard(
-      hasSize: true,
-      body: Obx(
-        () => galleryPreviewImage.loadState.value
-            ? DarkWidget(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    clipBehavior: Clip.antiAlias,
-                    child: CustomPaint(
-                      painter: ImageClipper(
-                        galleryPreviewImage.imageData!,
-                        height: image.height.toDouble(),
-                        width: image.width.toDouble(),
-                        offset: image.positioning.toDouble(),
-                      ),
-                      size: Size(
-                        image.width * kScale,
-                        image.height * kScale,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            : const SizedBox(),
-      ),
+    return EhPreviewCard(
+      image: image,
+      model: galleryPreviewImage,
       title: (index + 1).toString(),
     );
   }
