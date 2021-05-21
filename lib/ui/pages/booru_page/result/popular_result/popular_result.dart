@@ -124,6 +124,7 @@ class PopularResultFragment extends StatelessWidget {
           onRefresh: store.onRefresh,
           onLoading: store.onLoadMore,
           child: WaterfallFlow.builder(
+            cacheExtent: 500,
             controller: store.listScrollController,
             padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
             gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(

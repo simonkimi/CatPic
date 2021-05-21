@@ -2,7 +2,6 @@ package ink.z31.catpic
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -15,12 +14,15 @@ class MainActivity : FlutterActivity() {
         private const val SAF_CODE = 1
     }
 
-    var safResult: MethodChannel.Result? = null
+    private var safResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            CHANNEL
+        ).setMethodCallHandler { call, result ->
             if (call.method == "saf") {
                 // 请求SAF路径
                 requestSAFUri()
@@ -34,22 +36,33 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun savePicture(data: ByteArray, fileName: String, uriStr: String, result: MethodChannel.Result?) {
+    private fun savePicture(
+        data: ByteArray,
+        fileName: String,
+        uriStr: String,
+        result: MethodChannel.Result?
+    ) {
         val uri = Uri.parse(uriStr)
         val permissions =
-                contentResolver.persistedUriPermissions.filter { it.isReadPermission && it.isWritePermission && it.uri == uri }
+            contentResolver.persistedUriPermissions.filter { it.isReadPermission && it.isWritePermission && it.uri == uri }
         if (permissions.isEmpty()) {
             result?.error("permission", "Permission Denied", null)
         }
         Thread().run {
             try {
                 val document = DocumentFile.fromTreeUri(this@MainActivity, uri)!!
-                val mime = if (fileName.endsWith("jpg", ignoreCase = true) || fileName.endsWith("jpeg", ignoreCase = true)) {
+                val mime = if (fileName.endsWith("jpg", ignoreCase = true) || fileName.endsWith(
+                        "jpeg",
+                        ignoreCase = true
+                    )
+                ) {
                     "image/jpg"
                 } else if (fileName.endsWith("png", ignoreCase = true)) {
                     "image/png"
                 } else if (fileName.endsWith("png", ignoreCase = true)) {
                     "image/gif"
+                } else if (fileName.endsWith("mp4", ignoreCase = true)) {
+                    "video/mp4"
                 } else {
                     "image/jpg"
                 }
@@ -81,8 +94,8 @@ class MainActivity : FlutterActivity() {
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         contentResolver.takePersistableUriPermission(uri, flag)
         contentResolver.persistedUriPermissions
-                .filter { it.isReadPermission && it.isWritePermission && it.uri != uri }
-                .forEach { contentResolver.releasePersistableUriPermission(it.uri, flag) }
+            .filter { it.isReadPermission && it.isWritePermission && it.uri != uri }
+            .forEach { contentResolver.releasePersistableUriPermission(it.uri, flag) }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

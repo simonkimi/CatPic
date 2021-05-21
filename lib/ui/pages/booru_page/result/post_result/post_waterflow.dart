@@ -72,6 +72,7 @@ class PostWaterFlow extends StatelessWidget {
             ),
             itemCount: store.postList.length,
             itemBuilder: _itemBuilder,
+            cacheExtent: 500,
           ),
         ),
       ),
