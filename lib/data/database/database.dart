@@ -11,7 +11,9 @@ import 'package:catpic/data/database/dao/tag_dao.dart';
 import 'package:catpic/data/database/dao/host_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
 
+import 'dao/translate_dao.dart';
 import 'entity/download.dart';
+import 'entity/eh_translate.dart';
 import 'entity/history.dart';
 import 'entity/host.dart';
 import 'entity/tag.dart';
@@ -36,9 +38,21 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(
-    tables: [DownloadTable, HistoryTable, HostTable, TagTable, WebsiteTable],
-    daos: [DownloadDao, HistoryDao, HostDao, TagDao, WebsiteDao])
+@UseMoor(tables: [
+  DownloadTable,
+  HistoryTable,
+  HostTable,
+  TagTable,
+  WebsiteTable,
+  EhTranslateTable
+], daos: [
+  DownloadDao,
+  HistoryDao,
+  HostDao,
+  TagDao,
+  WebsiteDao,
+  TranslateDao,
+])
 class AppDataBase extends _$AppDataBase {
   AppDataBase() : super(_openConnection());
 
@@ -46,12 +60,12 @@ class AppDataBase extends _$AppDataBase {
   int get schemaVersion => 1;
 }
 
-class DatabaseHelper {
-  factory DatabaseHelper() => _databaseHelper;
+class DB {
+  factory DB() => _db;
 
-  DatabaseHelper._();
+  DB._();
 
-  static final DatabaseHelper _databaseHelper = DatabaseHelper._();
+  static final DB _db = DB._();
   final AppDataBase _database = AppDataBase();
 
   WebsiteDao get websiteDao => _database.websiteDao;
@@ -63,4 +77,6 @@ class DatabaseHelper {
   HistoryDao get historyDao => _database.historyDao;
 
   DownloadDao get downloadDao => _database.downloadDao;
+
+  TranslateDao get translateDao => _database.translateDao;
 }

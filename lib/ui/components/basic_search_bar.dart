@@ -109,7 +109,7 @@ class _BasicSearchBarState extends State<BasicSearchBar> {
   }
 
   Future<void> _onSearchTagChange([String? tag]) async {
-    final dao = DatabaseHelper().historyDao;
+    final dao = DB().historyDao;
     final list =
         (await dao.getAll()).where((e) => e.type == widget.historyType);
     setState(() {
@@ -122,7 +122,7 @@ class _BasicSearchBarState extends State<BasicSearchBar> {
 
   Future<void> _setSearchHistory(String tag) async {
     if (tag.isEmpty) return;
-    final dao = DatabaseHelper().historyDao;
+    final dao = DB().historyDao;
     final history = await dao.get(tag);
     if (history != null) {
       await dao.updateHistory(history.copyWith(createTime: DateTime.now()));

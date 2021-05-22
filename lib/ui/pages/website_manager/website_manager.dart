@@ -46,7 +46,7 @@ class WebsiteManagerPage extends StatelessWidget {
 
   Widget _buildWebsiteList() {
     return StreamBuilder<List<WebsiteTableData>>(
-        stream: DatabaseHelper().websiteDao.getAllStream(),
+        stream: DB().websiteDao.getAllStream(),
         initialData: const [],
         builder: (context, s) {
           return ListView(

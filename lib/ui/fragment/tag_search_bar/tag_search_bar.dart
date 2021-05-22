@@ -255,7 +255,7 @@ class _TagSearchBarState extends State<TagSearchBar>
       }
       return [];
     } else {
-      final dao = DatabaseHelper().tagDao;
+      final dao = DB().tagDao;
       final list = await dao.getStart(mainStore.websiteEntity!.id, tag);
       return list.map((e) => SearchSuggestion(e.tag)).toList();
     }
@@ -278,7 +278,7 @@ class _TagSearchBarState extends State<TagSearchBar>
       });
     } else {
       // 历史搜索
-      final dao = DatabaseHelper().historyDao;
+      final dao = DB().historyDao;
       final list = (await dao.getAll())
           .where((e) => e.type == HistoryType.POST)
           .toList();
@@ -293,7 +293,7 @@ class _TagSearchBarState extends State<TagSearchBar>
 
   Future<void> _setSearchHistory(String tag) async {
     if (tag.isEmpty) return;
-    final dao = DatabaseHelper().historyDao;
+    final dao = DB().historyDao;
     final history = await dao.get(tag);
     if (history != null) {
       await dao.updateHistory(history.copyWith(createTime: DateTime.now()));

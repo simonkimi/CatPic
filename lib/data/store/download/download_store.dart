@@ -45,7 +45,7 @@ abstract class DownloadStoreBase with Store {
   @observable
   var downloadingList = ObservableList<DownLoadTask>();
 
-  final dao = DatabaseHelper().downloadDao;
+  final dao = DB().downloadDao;
 
   @action
   Future<void> createDownloadTask(BooruPost booruPost) async {
@@ -85,7 +85,7 @@ abstract class DownloadStoreBase with Store {
         .cancel();
     downloadingList
         .removeWhere((task) => task.database.id == downloadTableData.id);
-    DatabaseHelper().downloadDao.replace(downloadTableData.copyWith(
+    DB().downloadDao.replace(downloadTableData.copyWith(
           status: DownloadStatus.PENDING,
         ));
     await startDownload();
@@ -100,7 +100,7 @@ abstract class DownloadStoreBase with Store {
 
     downloadingList
         .removeWhere((task) => task.database.id == downloadTableData.id);
-    DatabaseHelper().downloadDao.remove(downloadTableData);
+    DB().downloadDao.remove(downloadTableData);
   }
 
   @action
@@ -111,8 +111,7 @@ abstract class DownloadStoreBase with Store {
             downloadingList.get((element) => element.database.id == e.id) ==
             null);
     for (final database in pendingList) {
-      final websiteEntity =
-          await DatabaseHelper().websiteDao.getById(database.websiteId);
+      final websiteEntity = await DB().websiteDao.getById(database.websiteId);
       final dio = DioBuilder.build(websiteEntity);
       String downloadUrl = '';
       switch (settingStore.downloadQuality) {

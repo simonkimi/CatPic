@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 
 class HostManagerPage extends StatelessWidget {
   static const route = 'HostManagerPage';
-  final database = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class HostManagerPage extends StatelessWidget {
   Widget buildBody() {
     return StreamBuilder<List<HostTableData>>(
       initialData: const [],
-      stream: database.hostDao.getAllStream(),
+      stream: DB().hostDao.getAllStream(),
       builder: (context, s) {
         return ListView(
           children: s.data!.map((e) {
@@ -34,7 +33,7 @@ class HostManagerPage extends StatelessWidget {
                 subtitle: Text(e.ip),
               ),
               onDismissed: (_) {
-                DatabaseHelper().hostDao.remove(e);
+                DB().hostDao.remove(e);
               },
             );
           }).toList(),
@@ -147,7 +146,7 @@ class HostManagerPage extends StatelessWidget {
       BotToast.showText(text: I18n.of(context).illegal_ip);
       return false;
     }
-    final dao = DatabaseHelper().hostDao;
+    final dao = DB().hostDao;
 
     final oldHost = await dao.getByHost(host);
     if (oldHost != null) {

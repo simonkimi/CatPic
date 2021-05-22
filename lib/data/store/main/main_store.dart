@@ -32,7 +32,7 @@ abstract class MainStoreBase with Store {
   @action
   Future<void> init() async {
     // 初始化数据
-    final websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DB().websiteDao;
     websiteList = await websiteDao.getAll();
     final lastWebsite = SpUtil.getInt('last_website') ?? -1;
 
@@ -54,7 +54,7 @@ abstract class MainStoreBase with Store {
 
   @action
   Future<void> updateList() async {
-    final websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DB().websiteDao;
     websiteList = await websiteDao.getAll();
     // 判断当前网站是否被删
     if (websiteEntity != null) {
@@ -83,7 +83,7 @@ abstract class MainStoreBase with Store {
   @action
   Future<void> setWebsiteFavicon(int entityId, Uint8List favicon) async {
     if (favicon.isNotEmpty) {
-      final websiteDao = DatabaseHelper().websiteDao;
+      final websiteDao = DB().websiteDao;
       final entity = await websiteDao.getById(entityId);
 
       if (entity != null) {
@@ -101,8 +101,8 @@ abstract class MainStoreBase with Store {
 
   @action
   Future<void> deleteWebsite(WebsiteTableData entity) async {
-    DatabaseHelper().websiteDao.remove(entity);
-    DatabaseHelper().downloadDao.onWebsiteDelete(entity.id);
+    DB().websiteDao.remove(entity);
+    DB().downloadDao.onWebsiteDelete(entity.id);
     updateList();
   }
 }

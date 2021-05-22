@@ -52,12 +52,12 @@ class DownloadManagerPage extends StatelessWidget {
     // 能优化, 先放着, 能用就行
     return FutureBuilder<List<WebsiteTableData>>(
       // 方便由id获取WebsiteEntity, 以构造Dio
-      future: DatabaseHelper().websiteDao.getAll(),
+      future: DB().websiteDao.getAll(),
       initialData: const [],
       builder: (_, websiteList) {
         return StreamBuilder<List<DownloadTableData>>(
             // 获取下载历史数据库
-            stream: DatabaseHelper().downloadDao.getAllStream(),
+            stream: DB().downloadDao.getAllStream(),
             initialData: const [],
             builder: (_, downloadList) {
               return buildBody(

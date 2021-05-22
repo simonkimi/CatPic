@@ -70,9 +70,7 @@ class BooruLoginPage extends StatelessWidget {
                                     ? _passwordController.text
                                     : null,
                               );
-                              await DatabaseHelper()
-                                  .websiteDao
-                                  .updateSite(newSite);
+                              await DB().websiteDao.updateSite(newSite);
                               Navigator.of(context).pop();
                             },
                           ),

@@ -68,7 +68,7 @@ class MainDrawer extends HookWidget {
     return [
       Expanded(
         child: StreamBuilder<List<WebsiteTableData>>(
-            stream: DatabaseHelper().websiteDao.getAllStream(),
+            stream: DB().websiteDao.getAllStream(),
             initialData: const [],
             builder: (context, snapshot) {
               return ListView(
@@ -213,9 +213,8 @@ class MainDrawer extends HookWidget {
       leading: const Icon(Icons.favorite),
       title: Text(I18n.of(context).favourite),
       onTap: () async {
-        final website = (await DatabaseHelper()
-            .websiteDao
-            .getById(mainStore.websiteEntity!.id))!;
+        final website =
+            (await DB().websiteDao.getById(mainStore.websiteEntity!.id))!;
         if (website.username != null) {
           Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {

@@ -89,7 +89,7 @@ abstract class WebsiteAddStoreBase with Store {
     }
 
     // 保存网站
-    final websiteDao = DatabaseHelper().websiteDao;
+    final websiteDao = DB().websiteDao;
     if (website != null) {
       await websiteDao.updateSite(website!.copyWith(
         name: websiteName,

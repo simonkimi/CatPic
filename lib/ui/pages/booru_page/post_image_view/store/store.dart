@@ -61,7 +61,7 @@ abstract class PostImageViewStoreBase with Store {
     currentIndex = value;
     pageSliderController.setValue(value);
     final loadedBooruPost = postList[value];
-    final dao = DatabaseHelper().tagDao;
+    final dao = DB().tagDao;
     for (final tags in loadedBooruPost.tags.values) {
       for (final tagStr in tags) {
         if (tagStr.isNotEmpty) {

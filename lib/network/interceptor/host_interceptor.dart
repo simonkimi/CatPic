@@ -47,7 +47,7 @@ class HostInterceptor extends Interceptor {
 
   Future<void> updateHostLink() async {
     dio.lock();
-    final hostDao = DatabaseHelper().hostDao;
+    final hostDao = DB().hostDao;
     hostList = await hostDao.getAll();
     dio.unlock();
   }
@@ -57,7 +57,7 @@ class HostInterceptor extends Interceptor {
     final ip =
         commonHost.containsKey(host) ? commonHost[host]! : await getDoH(host);
     if (ip.isNotEmpty) {
-      final hostDao = DatabaseHelper().hostDao;
+      final hostDao = DB().hostDao;
       await hostDao.insert(HostTableCompanion.insert(
           host: host, ip: ip, websiteId: websiteEntity.id));
       hostList = await hostDao.getAll();
