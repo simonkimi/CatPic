@@ -48,10 +48,9 @@ class PreviewExtendedCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildImage(context),
-              const SizedBox(width: 10),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3),
+                  padding: const EdgeInsets.all(5),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 140),
                     child: Stack(
@@ -75,26 +74,23 @@ class PreviewExtendedCard extends StatelessWidget {
     return Positioned(
       bottom: 0,
       right: 0,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 3),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '${previewModel.pages}P',
-              style: TextStyle(
-                  fontSize: 12.5,
-                  color: Theme.of(context).textTheme.subtitle2!.color),
-            ),
-            Text(
-              previewModel.uploadTime,
-              style: TextStyle(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            '${previewModel.pages}P',
+            style: TextStyle(
                 fontSize: 12.5,
-                color: Theme.of(context).textTheme.subtitle2!.color,
-              ),
+                color: Theme.of(context).textTheme.subtitle2!.color),
+          ),
+          Text(
+            previewModel.uploadTime,
+            style: TextStyle(
+              fontSize: 12.5,
+              color: Theme.of(context).textTheme.subtitle2!.color,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

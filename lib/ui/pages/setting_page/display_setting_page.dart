@@ -173,25 +173,6 @@ class DisplaySettingPage extends StatelessWidget {
             .map((e) => S2Choice(title: e.toString(), value: e))
             .toList(),
       ),
-      SwitchListTile(
-        title: Text(I18n.of(context).auto_complete),
-        subtitle: Text(settingStore.autoCompleteUseNetwork
-            ? I18n.of(context).auto_complete_online
-            : I18n.of(context).auto_complete_local),
-        secondary: const Icon(Icons.tag),
-        value: settingStore.autoCompleteUseNetwork,
-        onChanged: (value) {
-          settingStore.setAutoCompleteUseNetwork(value);
-        },
-      ),
-      SwitchListTile(
-        title: Text(I18n.of(context).safe_model),
-        secondary: const Icon(Icons.child_care),
-        value: settingStore.saveModel,
-        onChanged: (value) {
-          settingStore.setSaveModel(value);
-        },
-      ),
     ];
   }
 

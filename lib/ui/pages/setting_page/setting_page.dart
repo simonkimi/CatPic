@@ -1,6 +1,8 @@
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/pages/setting_page/booru_setting.dart';
 import 'package:catpic/ui/pages/setting_page/display_setting_page.dart';
+import 'package:catpic/ui/pages/setting_page/eh_setting.dart';
 import 'package:catpic/ui/pages/setting_page/network_setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -24,6 +26,22 @@ class SettingPage extends StatelessWidget {
     return ListView(
       cacheExtent: 9999,
       children: [
+        ListTile(
+          leading: const Icon(Icons.markunread_mailbox_outlined),
+          title: const Text('Booru'),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const BooruSettingPage()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.book),
+          title: const Text('EH'),
+          onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const EHSettingPage()));
+          },
+        ),
         ListTile(
           leading: const Icon(Icons.settings_display),
           title: Text(I18n.of(context).display),
