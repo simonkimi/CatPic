@@ -136,24 +136,6 @@ class DisplaySettingPage extends StatelessWidget {
         ],
       ),
       // 加载数量
-      SmartSelect<int>.single(
-        tileBuilder: (context, S2SingleState<int?> state) {
-          return S2Tile.fromState(
-            state,
-            leading: const Icon(Icons.format_list_numbered_sharp),
-          );
-        },
-        modalType: S2ModalType.popupDialog,
-        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: settingStore.eachPageItem,
-        onChange: (S2SingleSelected<int?> value) {
-          settingStore.setEachPageItem(value.value!);
-        },
-        title: I18n.of(context).per_page_limit,
-        choiceItems: [20, 50, 100, 200]
-            .map((e) => S2Choice(title: e.toString(), value: e))
-            .toList(),
-      ),
       // 预加载
       SmartSelect<int>.single(
         tileBuilder: (context, S2SingleState<int?> state) {

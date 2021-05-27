@@ -48,8 +48,6 @@ class NetworkSettingPage extends StatelessWidget {
       cacheExtent: 9999,
       children: [
         ...buildNetwork(context),
-        ...buildQuality(context),
-        if (Platform.isAndroid) ...buildAndroid(context),
       ],
     );
   }
@@ -122,84 +120,6 @@ class NetworkSettingPage extends StatelessWidget {
           },
         );
       }),
-    ];
-  }
-
-  List<Widget> buildAndroid(BuildContext context) {
-    return [
-      const Divider(),
-      SummaryTile(I18n.of(context).download),
-      ListTile(
-        title: Text(I18n.of(context).download_uri),
-        subtitle: Text(settingStore.downloadUri.isNotEmpty
-            ? settingStore.downloadUri
-            : I18n.of(context).not_set),
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (_) => AndroidDownloadPage()));
-        },
-        leading: const Icon(Icons.drive_file_move_outline),
-      )
-    ];
-  }
-
-  List<Widget> buildQuality(BuildContext context) {
-    final qualityChoice = [
-      S2Choice(value: ImageQuality.preview, title: I18n.of(context).thumbnail),
-      S2Choice(value: ImageQuality.sample, title: I18n.of(context).sample),
-      S2Choice(value: ImageQuality.raw, title: I18n.of(context).raw),
-    ];
-    return [
-      const Divider(),
-      SummaryTile(I18n.of(context).quality),
-      SmartSelect<int>.single(
-        tileBuilder: (context, S2SingleState<int?> state) {
-          return S2Tile.fromState(
-            state,
-            leading: const Icon(Icons.preview),
-          );
-        },
-        modalType: S2ModalType.popupDialog,
-        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: settingStore.previewQuality,
-        onChange: (S2SingleSelected<int?> value) {
-          settingStore.setPreviewQuality(value.value!);
-        },
-        title: I18n.of(context).thumbnail_quality,
-        choiceItems: qualityChoice,
-      ),
-      SmartSelect<int>.single(
-        tileBuilder: (context, S2SingleState<int?> state) {
-          return S2Tile.fromState(
-            state,
-            leading: const Icon(Icons.image_search),
-          );
-        },
-        modalType: S2ModalType.popupDialog,
-        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: settingStore.displayQuality,
-        onChange: (S2SingleSelected<int?> value) {
-          settingStore.setDisplayQuality(value.value!);
-        },
-        title: I18n.of(context).sample_quality,
-        choiceItems: qualityChoice,
-      ),
-      SmartSelect<int>.single(
-        tileBuilder: (context, S2SingleState<int?> state) {
-          return S2Tile.fromState(
-            state,
-            leading: const Icon(Icons.download_rounded),
-          );
-        },
-        modalType: S2ModalType.popupDialog,
-        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-        selectedValue: settingStore.downloadQuality,
-        onChange: (S2SingleSelected<int?> value) {
-          settingStore.setDownloadQuality(value.value!);
-        },
-        title: I18n.of(context).download_quality,
-        choiceItems: qualityChoice,
-      ),
     ];
   }
 
