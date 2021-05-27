@@ -39,9 +39,7 @@ class DisplaySettingPage extends StatelessWidget {
         leading: const Icon(Icons.color_lens_outlined),
         selectedValue: settingStore.theme,
         onChange: (value) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            settingStore.setTheme(value);
-          });
+          settingStore.setTheme(value);
         },
         title: I18n.of(context).color,
         items: [
@@ -55,9 +53,7 @@ class DisplaySettingPage extends StatelessWidget {
         leading: const Icon(Icons.nightlight_round),
         selectedValue: settingStore.dartMode,
         onChange: (value) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            settingStore.setDarkMode(value);
-          });
+          settingStore.setDarkMode(value);
         },
         title: I18n.of(context).theme_dark_mode,
         items: [
