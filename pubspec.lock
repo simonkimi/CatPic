@@ -598,12 +598,10 @@ packages:
   pull_to_refresh:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "0bb4f70dd7540ffe032bbc2a6994df388b4f1c39"
-      resolved-ref: "0bb4f70dd7540ffe032bbc2a6994df388b4f1c39"
-      url: "https://github.com/fzyzcjy/flutter_pulltorefresh"
-    source: git
-    version: "1.6.4"
+      name: pull_to_refresh
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   recase:
     dependency: transitive
     description:
@@ -679,15 +677,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.5.0"
-  smart_select:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: null-safety
-      resolved-ref: aed82cc0a8431515928d27d4ecb1885c32540755
-      url: "https://github.com/iktakahiro/flutter_smart_select.git"
-    source: git
-    version: "4.3.2"
   source_gen:
     dependency: transitive
     description:

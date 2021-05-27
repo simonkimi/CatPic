@@ -5,7 +5,6 @@ import 'package:catpic/ui/pages/setting_page/display_setting_page.dart';
 import 'package:catpic/ui/pages/setting_page/eh_setting.dart';
 import 'package:catpic/ui/pages/setting_page/network_setting_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SettingPage extends StatelessWidget {
   static const route = 'SettingPage';
@@ -15,9 +14,7 @@ class SettingPage extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context),
       body: SafeArea(
-        child: Observer(
-          builder: (context) => buildBody(context),
-        ),
+        child: buildBody(context),
       ),
     );
   }

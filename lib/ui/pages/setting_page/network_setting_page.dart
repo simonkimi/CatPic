@@ -1,14 +1,10 @@
 import 'dart:io';
 
-import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
-import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:smart_select/smart_select.dart';
-import 'package:smart_select/src/model/chosen.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:path/path.dart' as p;
 

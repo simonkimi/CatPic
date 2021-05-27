@@ -2,16 +2,14 @@ import 'dart:io';
 
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:smart_select/smart_select.dart';
-import 'package:smart_select/src/model/chosen.dart';
 
 import '../../../i18n.dart';
 import '../../../main.dart';
-import '../../../themes.dart';
 
 class BooruSettingPage extends StatelessWidget {
   const BooruSettingPage({Key? key}) : super(key: key);
@@ -28,61 +26,50 @@ class BooruSettingPage extends StatelessWidget {
 
   Widget buildBody(BuildContext context) {
     final qualityChoice = [
-      S2Choice(value: ImageQuality.preview, title: I18n.of(context).thumbnail),
-      S2Choice(value: ImageQuality.sample, title: I18n.of(context).sample),
-      S2Choice(value: ImageQuality.raw, title: I18n.of(context).raw),
+      SelectTileItem(
+          value: ImageQuality.preview, title: I18n.of(context).thumbnail),
+      SelectTileItem(
+          value: ImageQuality.sample, title: I18n.of(context).sample),
+      SelectTileItem(value: ImageQuality.raw, title: I18n.of(context).raw),
     ];
+
     return ListView(
       cacheExtent: 9999,
       children: [
         SummaryTile(I18n.of(context).quality),
-        SmartSelect<int>.single(
-          tileBuilder: (context, S2SingleState<int?> state) {
-            return S2Tile.fromState(
-              state,
-              leading: const Icon(Icons.preview),
-            );
-          },
-          modalType: S2ModalType.popupDialog,
-          modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
-          selectedValue: settingStore.previewQuality,
-          onChange: (S2SingleSelected<int?> value) {
-            settingStore.setPreviewQuality(value.value!);
-          },
+        SelectTile<int>(
+          leading: const Icon(Icons.preview),
           title: I18n.of(context).thumbnail_quality,
-          choiceItems: qualityChoice,
-        ),
-        SmartSelect<int>.single(
-          tileBuilder: (context, S2SingleState<int?> state) {
-            return S2Tile.fromState(
-              state,
-              leading: const Icon(Icons.image_search),
-            );
+          items: [
+            SelectTileItem(
+                value: ImageQuality.preview, title: I18n.of(context).thumbnail),
+            SelectTileItem(
+                value: ImageQuality.sample, title: I18n.of(context).sample),
+            SelectTileItem(
+                value: ImageQuality.raw, title: I18n.of(context).raw),
+          ],
+          selectedValue: settingStore.previewQuality,
+          onChange: (value) {
+            settingStore.setPreviewQuality(value);
           },
-          modalType: S2ModalType.popupDialog,
-          modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+        ),
+        SelectTile<int>(
+          leading: const Icon(Icons.image_search),
           selectedValue: settingStore.displayQuality,
-          onChange: (S2SingleSelected<int?> value) {
-            settingStore.setDisplayQuality(value.value!);
+          onChange: (value) {
+            settingStore.setDisplayQuality(value);
           },
           title: I18n.of(context).sample_quality,
-          choiceItems: qualityChoice,
+          items: qualityChoice,
         ),
-        SmartSelect<int>.single(
-          tileBuilder: (context, S2SingleState<int?> state) {
-            return S2Tile.fromState(
-              state,
-              leading: const Icon(Icons.download_rounded),
-            );
-          },
-          modalType: S2ModalType.popupDialog,
-          modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+        SelectTile<int>(
+          leading: const Icon(Icons.download_rounded),
           selectedValue: settingStore.downloadQuality,
-          onChange: (S2SingleSelected<int?> value) {
-            settingStore.setDownloadQuality(value.value!);
+          onChange: (value) {
+            settingStore.setDownloadQuality(value);
           },
           title: I18n.of(context).download_quality,
-          choiceItems: qualityChoice,
+          items: qualityChoice,
         ),
         if (Platform.isAndroid) ...buildAndroid(context),
         const Divider(),
@@ -98,22 +85,15 @@ class BooruSettingPage extends StatelessWidget {
             settingStore.setAutoCompleteUseNetwork(value);
           },
         ),
-        SmartSelect<int>.single(
-          tileBuilder: (context, S2SingleState<int?> state) {
-            return S2Tile.fromState(
-              state,
-              leading: const Icon(Icons.format_list_numbered_sharp),
-            );
-          },
-          modalType: S2ModalType.popupDialog,
-          modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+        SelectTile<int>(
+          leading: const Icon(Icons.format_list_numbered_sharp),
           selectedValue: settingStore.eachPageItem,
-          onChange: (S2SingleSelected<int?> value) {
-            settingStore.setEachPageItem(value.value!);
+          onChange: (value) {
+            settingStore.setEachPageItem(value);
           },
           title: I18n.of(context).per_page_limit,
-          choiceItems: [20, 50, 100, 200]
-              .map((e) => S2Choice(title: e.toString(), value: e))
+          items: [20, 50, 100, 200]
+              .map((e) => SelectTileItem(title: e.toString(), value: e))
               .toList(),
         ),
         SwitchListTile(

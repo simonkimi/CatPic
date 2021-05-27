@@ -2,14 +2,13 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:smart_select/smart_select.dart';
-import 'package:smart_select/src/model/chosen.dart';
 
 class WebsiteAddPage extends StatelessWidget {
   WebsiteAddPage({
@@ -127,34 +126,27 @@ class WebsiteAddPage extends StatelessWidget {
           }
         },
       ),
-      SmartSelect<int>.single(
-        tileBuilder: (context, S2SingleState<int?> state) {
-          return S2Tile.fromState(
-            state,
-            leading: const Icon(Icons.search),
-          );
-        },
-        modalType: S2ModalType.popupDialog,
-        modalConfig: const S2ModalConfig(barrierColor: Colors.black54),
+      SelectTile<int>(
+        leading: const Icon(Icons.search),
         selectedValue: store.websiteType,
-        onChange: (S2SingleSelected<int?> value) {
-          store.setWebsiteType(value.value!);
+        onChange: (value) {
+          store.setWebsiteType(value);
         },
         title: I18n.of(context).site_type,
-        choiceItems: [
-          S2Choice(
+        items: [
+          SelectTileItem(
             value: WebsiteType.GELBOORU.index,
             title: WebsiteType.GELBOORU.string,
           ),
-          S2Choice(
+          SelectTileItem(
             value: WebsiteType.MOEBOORU.index,
             title: WebsiteType.MOEBOORU.string,
           ),
-          S2Choice(
+          SelectTileItem(
             value: WebsiteType.DANBOORU.index,
             title: WebsiteType.DANBOORU.string,
           ),
-          S2Choice(
+          SelectTileItem(
             value: WebsiteType.EHENTAI.index,
             title: WebsiteType.EHENTAI.string,
           ),
