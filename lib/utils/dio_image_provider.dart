@@ -96,7 +96,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   }
 }
 
-enum LoadingState {
+enum DownloadState {
   PENDING,
   DOWNLOADING,
   DONE,
@@ -119,7 +119,7 @@ class DioVideoProvider {
 
   var _cancelToken = CancelToken();
 
-  var loadingState = LoadingState.PENDING;
+  var downloadState = DownloadState.PENDING;
 
   Stream<ImageChunkEvent> get stream => chunkEvent.stream;
 
@@ -130,13 +130,13 @@ class DioVideoProvider {
 
   File get file => File(fileUrl);
 
-  LoadingState get state => loadingState;
+  DownloadState get state => downloadState;
 
   Future<void> resolve() async {
-    if (loadingState == LoadingState.PENDING ||
-        loadingState == LoadingState.ERROR) {
+    if (downloadState == DownloadState.PENDING ||
+        downloadState == DownloadState.ERROR) {
       _cancelToken = CancelToken();
-      loadingState = LoadingState.DOWNLOADING;
+      downloadState = DownloadState.DOWNLOADING;
       chunkEvent.add(const ImageChunkEvent(
           cumulativeBytesLoaded: 0, expectedTotalBytes: 0));
       final cacheUri = p.join(settingStore.documentDir, 'cache', 'video');
@@ -144,7 +144,7 @@ class DioVideoProvider {
       try {
         final file = File(fileUrl);
         if (file.existsSync()) {
-          loadingState = LoadingState.DONE;
+          downloadState = DownloadState.DONE;
           chunkEvent.close();
           return;
         }
@@ -166,13 +166,13 @@ class DioVideoProvider {
         chunkEvent.close();
       } on DioError catch (e) {
         if (CancelToken.isCancel(e))
-          loadingState = LoadingState.PENDING;
+          downloadState = DownloadState.PENDING;
         else
-          loadingState = LoadingState.ERROR;
+          downloadState = DownloadState.ERROR;
       } catch (e) {
-        loadingState = LoadingState.ERROR;
+        downloadState = DownloadState.ERROR;
       }
-      loadingState = LoadingState.DONE;
+      downloadState = DownloadState.DONE;
     }
   }
 

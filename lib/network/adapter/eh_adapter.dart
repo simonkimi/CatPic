@@ -1,7 +1,9 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
+import 'package:catpic/network/parser/ehentai/gallery_img_parser.dart';
 import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
@@ -39,5 +41,15 @@ class EHAdapter extends Adapter {
     final str =
         await client.getGallery(gid, gtoken, page.toString(), cancelToken);
     return await compute(GalleryParser.parse, str);
+  }
+
+  Future<GalleryImgModel> galleryImage(String url) async {
+    final reg = RegExp('s/(.+?)/(.+)');
+    final match = reg.firstMatch(url)!;
+    final token = match[1]!;
+    final galleryPage = match[2]!;
+
+    final str = await client.galleryImage(token, galleryPage);
+    return await compute(GalleryImgParser.parse, str);
   }
 }

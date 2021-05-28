@@ -28,7 +28,9 @@ class EhPreviewPage extends StatelessWidget {
     required this.previewAspectRatio,
     required this.previewModel,
     required this.adapter,
+    required this.imageCount,
   })  : store = EhGalleryStore(
+          imageCount: imageCount,
           adapter: adapter,
           previewModel: previewModel,
         ),
@@ -38,6 +40,7 @@ class EhPreviewPage extends StatelessWidget {
   final String? heroTag;
   final EHAdapter adapter;
   final double previewAspectRatio;
+  final int imageCount;
 
   final EhGalleryStore store;
 

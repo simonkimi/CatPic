@@ -31,6 +31,7 @@ class PreviewExtendedCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) {
                 return EhPreviewPage(
+                  imageCount: previewModel.pages,
                   previewAspectRatio:
                       previewModel.previewHeight / previewModel.previewWidth,
                   previewModel: previewModel,

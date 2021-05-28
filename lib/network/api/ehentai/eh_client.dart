@@ -39,4 +39,16 @@ class EhClient extends BaseClient {
                 .toOptions()))
         .data;
   }
+
+  Future<String> galleryImage(String token, String galleryPage) async {
+    return (await dio.get('s/$token/$galleryPage',
+            options: settingStore.dioCacheOptions
+                .copyWith(
+                  policy: CachePolicy.request,
+                  keyBuilder: (req) =>
+                      '${dio.options.baseUrl}s/$token/$galleryPage',
+                )
+                .toOptions()))
+        .data;
+  }
 }

@@ -251,7 +251,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
             stream: provider.stream,
             builder: (context, snapshot) {
               final playerState = videoPlayerControllerMap[index]?.value;
-              if (provider.state == LoadingState.PENDING ||
+              if (provider.state == DownloadState.PENDING ||
                   (playerState?.isInitialized ?? false) &&
                       !(playerState?.isPlaying ?? false)) {
                 return InkWell(
