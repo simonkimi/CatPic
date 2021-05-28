@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 
@@ -74,7 +74,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
                     .reduce((value, element) => max(value, element)),
           ),
           (index) => previewCacheMap[index + ehPage * 40]!);
-      print(cache.length);
       return cache;
     }
 

@@ -13,20 +13,32 @@ typedef FutureItemBuilder = Future<String> Function(int index);
 typedef ItemBuilder = String Function(int index);
 
 class MultiImageViewer extends StatefulWidget {
-  const MultiImageViewer({
+  const MultiImageViewer.async({
     Key? key,
     required this.index,
     required this.dio,
     this.onIndexChange,
-    this.futureItemBuilder,
-    this.itemBuilder,
     required this.itemCount,
+    this.futureItemBuilder,
     this.pageController,
     this.onCenterTap,
-    this.hasVideo = false,
+  })  : hasVideo = false,
+        itemBuilder = null,
+        previewBuilder = null,
+        super(key: key);
+
+  const MultiImageViewer.videoImage({
+    Key? key,
+    required this.index,
+    required this.dio,
+    this.onIndexChange,
+    required this.itemCount,
+    this.itemBuilder,
+    this.pageController,
     this.previewBuilder,
-  })  : assert(!(itemBuilder == null && futureItemBuilder == null)),
-        assert(!(hasVideo && (itemBuilder == null || previewBuilder == null))),
+    this.onCenterTap,
+  })  : hasVideo = true,
+        futureItemBuilder = null,
         super(key: key);
 
   final Dio dio;
@@ -94,6 +106,9 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     super.dispose();
     _doubleClickAnimationController.dispose();
     contentProvider.whereType<DioVideoProvider>().forEach((element) {
+      element.cancel();
+    });
+    contentProvider.whereType<DioImageProvider>().forEach((element) {
       element.cancel();
     });
     videoPlayerControllerMap.forEach((key, value) {

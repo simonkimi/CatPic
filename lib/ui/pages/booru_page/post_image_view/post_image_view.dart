@@ -86,13 +86,12 @@ class PostImageViewPage extends HookWidget {
   Widget buildImg() {
     return Container(
       color: Colors.black,
-      child: MultiImageViewer(
+      child: MultiImageViewer.videoImage(
         dio: adapter?.dio ?? dio!,
         index: index,
         itemCount: store.postList.length,
         pageController: pageController,
         itemBuilder: (index) => store.postList[index].getDisplayImg(),
-        hasVideo: true,
         previewBuilder: (index) => store.postList[index].getPreviewImg(),
         onIndexChange: (value) async {
           store.setIndex(value);

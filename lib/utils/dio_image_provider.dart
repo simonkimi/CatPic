@@ -28,6 +28,8 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   final double scale;
   final UrlBuilder? urlBuilder;
 
+  var _cancelToken = CancelToken();
+
   @override
   ImageStreamCompleter load(DioImageProvider key, DecoderCallback decode) {
     final StreamController<ImageChunkEvent> chunkEvents =
@@ -53,29 +55,44 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    final imageUrl = url ?? await urlBuilder!();
-    final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
-        options: settingStore.dioCacheOptions
-            .copyWith(
-              policy: CachePolicy.request,
-              keyBuilder: (req) => imageUrl,
-            )
-            .toOptions()
-            .copyWith(responseType: ResponseType.bytes),
-        onReceiveProgress: (received, total) {
-      chunkEvents.add(ImageChunkEvent(
-        cumulativeBytesLoaded: received,
-        expectedTotalBytes: total,
-      ));
-    });
-    if (rsp.data == null) {
-      throw StateError('$url is empty and cannot be loaded as an image.');
+    _cancelToken = CancelToken();
+    try {
+      final imageUrl = url ?? await urlBuilder!();
+      final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
+          cancelToken: _cancelToken,
+          options: settingStore.dioCacheOptions
+              .copyWith(
+                policy: CachePolicy.request,
+                keyBuilder: (req) => imageUrl,
+              )
+              .toOptions()
+              .copyWith(responseType: ResponseType.bytes),
+          onReceiveProgress: (received, total) {
+        chunkEvents.add(ImageChunkEvent(
+          cumulativeBytesLoaded: received,
+          expectedTotalBytes: total,
+        ));
+      });
+      if (rsp.data == null) {
+        throw StateError('$url is empty and cannot be loaded as an image.');
+      }
+      final bytes = Uint8List.fromList(rsp.data!);
+      if (bytes.lengthInBytes == 0) {
+        throw StateError('$url is empty and cannot be loaded as an image.');
+      }
+      return await decode(bytes);
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) {
+        throw StateError('Load cancel');
+      }
+      rethrow;
+    } catch (e) {
+      rethrow;
     }
-    final bytes = Uint8List.fromList(rsp.data!);
-    if (bytes.lengthInBytes == 0) {
-      throw StateError('$url is empty and cannot be loaded as an image.');
-    }
-    return await decode(bytes);
+  }
+
+  void cancel() {
+    _cancelToken.cancel();
   }
 }
 
@@ -100,9 +117,9 @@ class DioVideoProvider {
   final StreamController<ImageChunkEvent> chunkEvent =
       StreamController<ImageChunkEvent>.broadcast();
 
-  CancelToken _cancelToken = CancelToken();
+  var _cancelToken = CancelToken();
 
-  LoadingState loadingState = LoadingState.PENDING;
+  var loadingState = LoadingState.PENDING;
 
   Stream<ImageChunkEvent> get stream => chunkEvent.stream;
 

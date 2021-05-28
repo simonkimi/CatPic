@@ -22,7 +22,10 @@ class GalleryPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (_) {
-      return Scaffold(appBar: buildAppBar(context), body: buildBody());
+      return Scaffold(
+        appBar: buildAppBar(context),
+        body: buildBody(),
+      );
     });
   }
 
