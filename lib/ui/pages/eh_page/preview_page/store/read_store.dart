@@ -12,19 +12,16 @@ class ReadStore = ReadStoreBase with _$ReadStore;
 
 enum LoadingState { NONE, LOADED, ERROR }
 
-class ReadImage {
-  ReadImage({
-    required this.state,
+class ReadImageModel {
+  ReadImageModel({
     required this.adapter,
     this.previewImage,
-  }) {
-    imageProvider = previewImage != null
-        ? DioImageProvider(
-            dio: adapter.dio,
-            urlBuilder: () async {
-              return (await loadModel(adapter)).imgUrl;
-            })
-        : null;
+  }) : state = previewImage != null
+            ? LoadingState.LOADED.obs
+            : LoadingState.NONE.obs {
+    if (previewImage != null) {
+      loadBase(adapter, previewImage!);
+    }
   }
 
   final Rx<LoadingState> state;
@@ -53,7 +50,6 @@ class ReadImage {
         urlBuilder: () async {
           return (await loadModel(adapter)).imgUrl;
         });
-    print('imageProvider: $imageProvider');
     state.value = LoadingState.LOADED;
     previewImage = value;
   }
@@ -69,23 +65,18 @@ abstract class ReadStoreBase with Store {
   }) : readImageList = List.generate(imageCount, (index) {
           final base = (index / 40).floor();
           if (cachePage.containsKey(base)) {
-            return ReadImage(
-              state: LoadingState.LOADED.obs,
+            return ReadImageModel(
               previewImage: cachePage[base]![index % 40],
               adapter: adapter,
             );
           }
-          return ReadImage(
-            state: LoadingState.NONE.obs,
-            adapter: adapter,
-          );
+          return ReadImageModel(adapter: adapter);
         }) {
     cachePage.listen((value) {
       value.forEach((base, value) {
         if (readImageList[base * 40].state.value == LoadingState.NONE) {
           value.asMap().forEach((key, value) {
-            final image = readImageList[base * 40 + key];
-            image.loadBase(adapter, value);
+            readImageList[base * 40 + key].loadBase(adapter, value);
           });
         }
       });
@@ -95,7 +86,7 @@ abstract class ReadStoreBase with Store {
   final RxMap<int, List<PreviewImage>> cachePage;
   final Future<List<PreviewImage>> Function(int) loadPage;
   final int imageCount;
-  final List<ReadImage> readImageList;
+  final List<ReadImageModel> readImageList;
   final EHAdapter adapter;
 
   @observable
