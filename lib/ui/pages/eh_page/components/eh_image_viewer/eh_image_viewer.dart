@@ -52,9 +52,9 @@ class _EhImageViewerState extends State<EhImageViewer>
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
       onPageChanged: (index) {},
-      itemCount: readStore.readImageList.length,
+      itemCount: store.readImageList.length,
       itemBuilder: (context, index) {
-        final galleryImage = readStore.readImageList[index];
+        final galleryImage = store.readImageList[index];
         return Obx(() {
           if (galleryImage.state.value == LoadingState.NONE) {
             return buildLoadingPage(index, 0);

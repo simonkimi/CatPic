@@ -32,6 +32,7 @@ class EhPreviewPage extends StatelessWidget {
     required this.adapter,
     required this.imageCount,
   })  : store = EhGalleryStore(
+          imageCount: imageCount,
           adapter: adapter,
           previewModel: previewModel,
         ),
@@ -507,13 +508,7 @@ class EhPreviewPage extends StatelessWidget {
                           return EhImageViewer(
                             store: store,
                             startIndex: 0,
-                            readStore: ReadStore(
-                              cachePage: store.pageCache,
-                              currentIndex: 0,
-                              imageCount: store.imageCount,
-                              loadPage: store.loadPage,
-                              adapter: store.adapter,
-                            ),
+                            readStore: ReadStore(currentIndex: 0),
                           );
                         }));
                       },
