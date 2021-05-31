@@ -49,6 +49,6 @@ class GalleryImgParser {
       final match = re.firstMatch(rawElement.text)!;
       return [match[1]!, match[2]!, match[3]!, url!];
     }
-    return [];
+    return ['0', '0', '0', ''];
   }
 }

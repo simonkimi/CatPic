@@ -50,6 +50,7 @@ class EHAdapter extends Adapter {
     final galleryPage = match[2]!;
 
     final str = await client.galleryImage(token, galleryPage);
-    return await compute(GalleryImgParser.parse, str);
+    // return compute(GalleryImgParser.parse, str);
+    return GalleryImgParser.parse(str);
   }
 }
