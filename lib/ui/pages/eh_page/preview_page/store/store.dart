@@ -29,6 +29,31 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     required this.adapter,
     required this.previewModel,
   }) : super('') {
+    init();
+  }
+
+  final int imageCount;
+  final EHAdapter adapter;
+  final PreViewItemModel previewModel;
+  final imageUrlMap = <String, GalleryPreviewImage>{};
+  final pageCache = <int, List<PreviewImage>>{}.obs;
+  late final List<ReadImageModel> readImageList;
+
+  @observable
+  String fileSize = '';
+  @observable
+  String language = '';
+  @observable
+  int favouriteCount = 0;
+  @observable
+  List<CommentModel> commentList = [];
+  @observable
+  List<TagModels> tagList = [];
+
+  @override
+  int? get pageItemCount => 40;
+
+  void init() {
     readImageList = List.generate(imageCount, (index) {
       final base = (index / 40).floor();
       if (pageCache.containsKey(base)) {
@@ -50,39 +75,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     });
   }
 
-  final int imageCount;
-  final EHAdapter adapter;
-  final PreViewItemModel previewModel;
-
-  final imageUrlMap = <String, GalleryPreviewImage>{};
-
-  @observable
-  String fileSize = '';
-  @observable
-  String language = '';
-
-  @observable
-  int favouriteCount = 0;
-
-  @observable
-  List<CommentModel> commentList = [];
-
-  @observable
-  List<TagModels> tagList = [];
-
-  final pageCache = <int, List<PreviewImage>>{}.obs;
-
-  @override
-  @action
-  Future<void> onDataChange() async {}
-
   @override
   Future<void> onRefresh() {
     pageCache.clear();
     return super.onRefresh();
   }
-
-  late final List<ReadImageModel> readImageList;
 
   @override
   @action
@@ -98,6 +95,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     for (final waitingImg in galleryModel.previewImages) {
       if (!imageUrlMap.containsKey(waitingImg.image)) {
         final loadingImage = GalleryPreviewImage();
+        // 加载预览图
         DioImageProvider(
           url: waitingImg.image,
           dio: adapter.dio,
@@ -122,7 +120,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   }
 
   @override
-  int? get pageItemCount => 40;
+  @action
+  Future<void> onDataChange() async {}
 
   void dispose() {
     cancelToken.cancel();
