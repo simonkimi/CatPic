@@ -90,11 +90,11 @@ class _EhImageViewerState extends State<EhImageViewer>
       if (left < tap && tap < right) {
         widget.onCenterTap?.call();
       } else if (tap < left) {
-        pageController.previousPage(
-            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+        if (readStore.currentIndex - 1 > 0)
+          pageController.jumpToPage(readStore.currentIndex - 1);
       } else {
-        pageController.nextPage(
-            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+        if (readStore.currentIndex + 1 < store.imageCount)
+          pageController.jumpToPage(readStore.currentIndex + 1);
       }
     };
 

@@ -1,6 +1,8 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:uuid/uuid.dart';
+import 'package:catpic/utils/utils.dart';
 import '../../../main.dart';
 import '../base_client.dart';
 
@@ -33,8 +35,9 @@ class EhClient extends BaseClient {
             options: settingStore.dioCacheOptions
                 .copyWith(
                   policy: CachePolicy.request,
-                  keyBuilder: (req) =>
-                      '${dio.options.baseUrl}g/$gid/$gtoken?p=$page',
+                  keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
+                      '${dio.options.baseUrl}g/$gid/$gtoken?p=$page')
+                    ..print('getGallery'),
                 )
                 .toOptions()))
         .data;
@@ -45,8 +48,9 @@ class EhClient extends BaseClient {
             options: settingStore.dioCacheOptions
                 .copyWith(
                   policy: CachePolicy.request,
-                  keyBuilder: (req) =>
-                      '${dio.options.baseUrl}s/$token/$galleryPage',
+                  keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
+                      '${dio.options.baseUrl}s/$token/$galleryPage')
+                    ..print('galleryImage'),
                 )
                 .toOptions()))
         .data;

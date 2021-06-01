@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:core' as core;
+import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:catpic/data/database/entity/website.dart';
+import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 
 extension IterableUtils<T> on Iterable<T> {
@@ -179,4 +181,8 @@ extension IntHelper on num {
   bool equalBetween(num min, num max) {
     return min <= this && this <= max;
   }
+}
+
+extension DebugHelper<T> on T {
+  void print([String? tag]) => core.print('${tag ?? ''} $this');
 }
