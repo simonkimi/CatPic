@@ -7,7 +7,7 @@ import 'package:catpic/ui/pages/booru_page/result/empty_website/empty_website.da
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
+import 'package:catpic/main.dart';
 
 enum EHSearchType {
   INDEX,

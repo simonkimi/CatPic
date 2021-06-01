@@ -9,7 +9,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../../../main.dart';
+import 'package:catpic/main.dart';
 
 class GalleryPreview extends StatelessWidget {
   const GalleryPreview({

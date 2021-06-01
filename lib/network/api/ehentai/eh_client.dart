@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:uuid/uuid.dart';
 import 'package:catpic/utils/utils.dart';
-import '../../../main.dart';
+import 'package:catpic/main.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {

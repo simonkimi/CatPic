@@ -4,7 +4,7 @@ import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../../i18n.dart';
+import 'package:catpic/i18n.dart';
 
 class EhCommentPage extends StatelessWidget {
   const EhCommentPage({

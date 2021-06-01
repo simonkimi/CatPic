@@ -19,7 +19,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../../../../main.dart';
+import 'package:catpic/main.dart';
 import 'gallery_preview.dart';
 
 class EhPreviewPage extends StatelessWidget {

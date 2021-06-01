@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
 
-import '../../../../../i18n.dart';
-import '../../../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 class EhImageViewer extends StatefulWidget {
   const EhImageViewer({

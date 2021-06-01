@@ -2,7 +2,7 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../i18n.dart';
+import 'package:catpic/i18n.dart';
 
 class EHSettingPage extends StatelessWidget {
   const EHSettingPage({Key? key}) : super(key: key);

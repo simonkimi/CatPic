@@ -6,7 +6,7 @@ import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
 import 'package:path/path.dart' as p;
 
-import '../../../themes.dart';
+import 'package:catpic/themes.dart';
 
 part 'setting_store.g.dart';
 

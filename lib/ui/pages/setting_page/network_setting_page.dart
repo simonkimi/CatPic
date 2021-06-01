@@ -8,8 +8,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:path/path.dart' as p;
 
-import '../../../i18n.dart';
-import '../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'host_manager_page.dart';
 
 class NetworkSettingPage extends StatelessWidget {

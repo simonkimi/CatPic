@@ -3,11 +3,10 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
+import 'package:catpic/ui/components/page_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:catpic/main.dart';
-
-import '../../../../components/page_slider.dart';
 
 part 'store.g.dart';
 
@@ -22,7 +21,7 @@ abstract class PostImageViewStoreBase with Store {
     required this.adapter,
   }) : postList = ObservableList.of(postList);
 
-  final PageSliderController pageSliderController = PageSliderController();
+  final pageSliderController = PageSliderController();
 
   final ObservableList<BooruPost> postList;
 

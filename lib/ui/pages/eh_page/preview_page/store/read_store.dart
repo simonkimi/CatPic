@@ -1,7 +1,7 @@
 import 'package:catpic/ui/components/page_slider.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../../../../main.dart';
+import 'package:catpic/main.dart';
 
 part 'read_store.g.dart';
 

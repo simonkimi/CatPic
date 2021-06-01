@@ -5,9 +5,9 @@ import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../i18n.dart';
-import '../../../main.dart';
-import '../../../themes.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
+import 'package:catpic/themes.dart';
 
 class DisplaySettingPage extends StatelessWidget {
   const DisplaySettingPage({Key? key}) : super(key: key);

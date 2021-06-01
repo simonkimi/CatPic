@@ -8,8 +8,8 @@ import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../../i18n.dart';
-import '../../../main.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 
 class BooruSettingPage extends StatelessWidget {
   const BooruSettingPage({Key? key}) : super(key: key);
