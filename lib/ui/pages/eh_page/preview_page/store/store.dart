@@ -28,16 +28,19 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     required this.imageCount,
     required this.adapter,
     required this.previewModel,
-  }) : super('') {
+  })  : pageLoadLock = List.filled(imageCount, Lock()),
+        super('') {
     init();
   }
 
   final int imageCount;
   final EHAdapter adapter;
   final PreViewItemModel previewModel;
+
   final imageUrlMap = <String, GalleryPreviewImage>{};
   final pageCache = <int, List<PreviewImage>>{}.obs;
   late final List<ReadImageModel> readImageList;
+  final List<Lock> pageLoadLock;
 
   @observable
   String fileSize = '';
@@ -83,40 +86,54 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   @override
   @action
-  Future<List<PreviewImage>> loadPage(int page) async {
+  Future<List<PreviewImage>> loadPage(int page,
+      [bool loadPreview = true]) async {
     final ehPage = page - 1;
-    if (pageCache.containsKey(ehPage)) {
-      return pageCache[ehPage]!;
-    }
+    print('load Page $ehPage');
+    return await pageLoadLock[ehPage].synchronized(() async {
+      final useCache = pageCache.containsKey(ehPage);
+      late final List<PreviewImage> imageList;
 
-    final galleryModel = await adapter.gallery(
-        gid: previewModel.gid, gtoken: previewModel.gtoken, page: ehPage);
-
-    for (final waitingImg in galleryModel.previewImages) {
-      if (!imageUrlMap.containsKey(waitingImg.image)) {
-        final loadingImage = GalleryPreviewImage();
-        // 加载预览图
-        DioImageProvider(
-          url: waitingImg.image,
-          dio: adapter.dio,
-        ).resolve(const ImageConfiguration()).addListener(
-                ImageStreamListener((ImageInfo image, bool synchronousCall) {
-              loadingImage.imageData = image.image;
-              loadingImage.loadState.value = true;
-            }, onChunk: (ImageChunkEvent event) {
-              loadingImage.progress.value =
-                  event.cumulativeBytesLoaded / (event.expectedTotalBytes ?? 1);
-            }));
-        imageUrlMap[waitingImg.image] = loadingImage;
+      if (useCache) {
+        imageList = pageCache[ehPage]!;
+      } else {
+        final galleryModel = await adapter.gallery(
+          gid: previewModel.gid,
+          gtoken: previewModel.gtoken,
+          page: ehPage,
+        );
+        fileSize = galleryModel.fileSize;
+        language = galleryModel.language;
+        favouriteCount = galleryModel.favorited;
+        commentList = galleryModel.comments;
+        tagList = galleryModel.tags;
+        pageCache[ehPage] = galleryModel.previewImages;
+        imageList = galleryModel.previewImages;
       }
-    }
-    fileSize = galleryModel.fileSize;
-    language = galleryModel.language;
-    favouriteCount = galleryModel.favorited;
-    commentList = galleryModel.comments;
-    tagList = galleryModel.tags;
-    pageCache[ehPage] = galleryModel.previewImages;
-    return galleryModel.previewImages;
+      if (loadPreview) {
+        for (final waitingImg in imageList) {
+          if (!imageUrlMap.containsKey(waitingImg.image)) {
+            final loadingImage = GalleryPreviewImage();
+            // 加载预览图
+            DioImageProvider(
+              url: waitingImg.image,
+              dio: adapter.dio,
+            ).resolve(const ImageConfiguration()).addListener(
+                    ImageStreamListener(
+                        (ImageInfo image, bool synchronousCall) {
+                  loadingImage.imageData = image.image;
+                  loadingImage.loadState.value = true;
+                }, onChunk: (ImageChunkEvent event) {
+                  loadingImage.progress.value = event.cumulativeBytesLoaded /
+                      (event.expectedTotalBytes ?? 1);
+                }));
+            imageUrlMap[waitingImg.image] = loadingImage;
+          }
+        }
+      }
+      print('load Page $ehPage finish');
+      return imageList;
+    });
   }
 
   @override

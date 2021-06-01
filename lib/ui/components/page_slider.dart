@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PageSliderController {
-  late PageSliderState _state;
+  PageSliderState? _state;
 
   void setValue(int newValue) {
-    _state.setPage(newValue + 1);
+    _state?.setPage(newValue + 1);
   }
 }
 

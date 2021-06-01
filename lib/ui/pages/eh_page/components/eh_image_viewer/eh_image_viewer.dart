@@ -5,6 +5,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
 
 import '../../../../../i18n.dart';
+import '../../../../../main.dart';
 
 class EhImageViewer extends StatefulWidget {
   const EhImageViewer({
@@ -13,12 +14,16 @@ class EhImageViewer extends StatefulWidget {
     this.pageController,
     required this.startIndex,
     required this.readStore,
+    this.onCenterTap,
+    this.onIndexChange,
   }) : super(key: key);
 
   final EhGalleryStore store;
   final PageController? pageController;
   final int startIndex;
   final ReadStore readStore;
+  final VoidCallback? onCenterTap;
+  final ValueChanged<int>? onIndexChange;
 
   @override
   _EhImageViewerState createState() => _EhImageViewerState();
@@ -45,13 +50,57 @@ class _EhImageViewerState extends State<EhImageViewer>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      onPageIndexChange(widget.startIndex);
+    });
+  }
+
+  Future<void> onPageIndexChange(int index) async {
+    widget.onIndexChange?.call(index);
+    final int preloadNum = settingStore.preloadingNumber;
+
+    if (store.readImageList[index].imageProvider == null) {
+      await store.loadPage(
+        (index / 40).floor() + 1,
+        false,
+      );
+    }
+
+    store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
+      if (e.imageProvider == null) {
+        store
+            .loadPage((store.readImageList.indexOf(e) / 40).floor() + 1, false)
+            .then((value) {
+          e.imageProvider?.resolve(const ImageConfiguration());
+        });
+      } else {
+        e.imageProvider!.resolve(const ImageConfiguration());
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final onTapUp = (TapUpDetails details) {
+      final totalW = MediaQuery.of(context).size.width;
+      final left = totalW / 3;
+      final right = left * 2;
+      final tap = details.globalPosition.dx;
+      if (left < tap && tap < right) {
+        widget.onCenterTap?.call();
+      } else if (tap < left) {
+        pageController.previousPage(
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      } else {
+        pageController.nextPage(
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      }
+    };
+
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
-      onPageChanged: (index) {},
+      onPageChanged: onPageIndexChange,
       itemCount: store.readImageList.length,
       itemBuilder: (context, index) {
         final galleryImage = store.readImageList[index];
@@ -62,6 +111,7 @@ class _EhImageViewerState extends State<EhImageViewer>
           if (galleryImage.state.value == LoadingState.LOADED) {
             return GestureDetector(
               key: UniqueKey(),
+              onTapUp: onTapUp,
               child: ExtendedImage(
                 key: UniqueKey(),
                 image: galleryImage.imageProvider!,

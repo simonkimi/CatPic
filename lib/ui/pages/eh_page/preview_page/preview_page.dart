@@ -9,11 +9,10 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
-import 'package:catpic/ui/pages/eh_page/components/eh_image_viewer/eh_image_viewer.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/comment_page.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/store/read_store.dart';
+import 'package:catpic/ui/pages/eh_page/preview_page/read_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';
@@ -505,10 +504,9 @@ class EhPreviewPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
-                          return EhImageViewer(
+                          return EhReadPage(
                             store: store,
                             startIndex: 0,
-                            readStore: ReadStore(currentIndex: 0),
                           );
                         }));
                       },
