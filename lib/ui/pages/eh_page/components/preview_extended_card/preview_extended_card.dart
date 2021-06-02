@@ -7,6 +7,7 @@ import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:catpic/utils/utils.dart';
 
 class PreviewExtendedCard extends StatelessWidget {
   const PreviewExtendedCard({
@@ -193,7 +194,15 @@ class PreviewExtendedCard extends StatelessWidget {
             padding: const EdgeInsets.all(3),
             child: Text(
               e.tag,
-              style: const TextStyle(fontSize: 11),
+              style: TextStyle(
+                  fontSize: 11,
+                  color: e.color == 0
+                      ? isDarkMode(context)
+                          ? Colors.white
+                          : Colors.black
+                      : Color(0xFF000000 | e.color).isDark()
+                          ? Colors.white
+                          : Colors.black),
             ),
           ),
         );

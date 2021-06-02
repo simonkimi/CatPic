@@ -181,10 +181,4 @@ class _DioImageState extends State<DioImage> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // cancelToken.cancel();
-  }
 }

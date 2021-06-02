@@ -64,7 +64,7 @@ Color fromEhTag(String tag) {
     case 'Manga':
       return Colors.orange;
     case 'Artist CG':
-      return Colors.yellow;
+      return const Color(0xFFFCC02C);
     case 'Game CG':
       return const Color(0xFF4CB051);
     case 'Western':

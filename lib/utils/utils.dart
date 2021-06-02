@@ -55,6 +55,8 @@ extension ColorHelper on Color {
         900: _swatchShade(900),
       };
 
+  bool isDark() => red * 0.299 + green * 0.578 + blue * 0.114 <= 192;
+
   Color _swatchShade(int swatchValue) => HSLColor.fromColor(this)
       .withLightness(1 - (swatchValue / 1000))
       .toColor();
