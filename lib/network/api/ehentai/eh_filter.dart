@@ -25,13 +25,25 @@ class EhFilter {
     return filter;
   }
 
+  static Map<String, String> buildBasicFilter({
+    String? searchText,
+    int? excludeTag,
+    int? page,
+  }) {
+    return {
+      'f_search': searchText ?? '',
+      'f_cats': excludeTag?.toString() ?? '',
+      'page': page?.toString() ?? '0'
+    };
+  }
+
   /// 构建搜索过滤器
   /// [searchText] 关键词
   /// [excludeTag] 排除Tag, 由[tagFilter]构建
   /// [startPage] 开始页面
   /// [endPage] 结束页面
   /// [minRating] 最低星级
-  static Map<String, dynamic> buildAdvanceFilter({
+  static Map<String, String> buildAdvanceFilter({
     String? searchText,
     int? excludeTag,
     int? startPage,
@@ -40,15 +52,15 @@ class EhFilter {
     int? page,
   }) {
     return {
-      'advsearch': 1,
+      'advsearch': '1',
       'f_sname': 'on',
       'f_stags': 'on',
       'f_search': searchText ?? '',
-      'f_cats': excludeTag ?? '',
-      'f_spf': startPage ?? '',
-      'f_spt': endPage ?? '',
-      'f_srdd': minRating ?? '',
-      'page': page ?? 0
+      'f_cats': excludeTag?.toString() ?? '',
+      'f_spf': startPage?.toString() ?? '',
+      'f_spt': endPage?.toString() ?? '',
+      'f_srdd': minRating?.toString() ?? '',
+      'page': page?.toString() ?? '0'
     };
   }
 }
