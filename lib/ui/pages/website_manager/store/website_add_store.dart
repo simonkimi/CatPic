@@ -20,30 +20,39 @@ abstract class WebsiteAddStoreBase with Store {
         websiteType = website?.type ?? WebsiteType.GELBOORU.index,
         useDoH = website?.useDoH ?? false,
         directLink = website?.directLink ?? false,
+        onlyHost = website?.onlyHost ?? false,
         username = website?.username ?? '',
         password = website?.password ?? '',
-        onlyHost = website?.onlyHost ?? false;
+        cookies = ObservableMap.of(Map.fromEntries((website?.cookies ?? '')
+            .split(';')
+            .where((e) => e.isNotEmpty)
+            .map((e) {
+          final data = e.split('=');
+          return MapEntry(data[0].trim(), data.skip(1).join('=').trim());
+        })));
 
   WebsiteTableData? website;
 
   @observable
-  late String websiteName;
+  String websiteName;
   @observable
-  late String websiteHost;
+  String websiteHost;
   @observable
-  late int scheme;
+  int scheme;
   @observable
-  late int websiteType;
+  int websiteType;
   @observable
-  late bool useDoH;
+  bool useDoH;
   @observable
-  late bool directLink;
+  bool directLink;
   @observable
-  late bool onlyHost;
+  bool onlyHost;
   @observable
   String username;
   @observable
   String password;
+
+  ObservableMap<String, String> cookies;
 
   @action
   void setWebsiteName(String value) => websiteName = value;
@@ -92,28 +101,30 @@ abstract class WebsiteAddStoreBase with Store {
     final websiteDao = DB().websiteDao;
     if (website != null) {
       await websiteDao.updateSite(website!.copyWith(
-        name: websiteName,
-        host: websiteHost,
-        scheme: scheme,
-        useDoH: useDoH,
-        onlyHost: onlyHost,
-        type: websiteType,
-        directLink: directLink,
-        username: username.isNotEmpty ? username : null,
-        password: password.isNotEmpty ? password : null,
-      ));
+          name: websiteName,
+          host: websiteHost,
+          scheme: scheme,
+          useDoH: useDoH,
+          onlyHost: onlyHost,
+          type: websiteType,
+          directLink: directLink,
+          username: username.isNotEmpty ? username : null,
+          password: password.isNotEmpty ? password : null,
+          cookies:
+              cookies.entries.map((e) => '${e.key}=${e.value}').join('; ')));
     } else {
       final entity = WebsiteTableCompanion(
-        host: Value(websiteHost),
-        name: Value(websiteName),
-        scheme: Value(scheme),
-        useDoH: Value(useDoH),
-        type: Value(websiteType),
-        directLink: Value(directLink),
-        onlyHost: Value(onlyHost),
-        username: username.isNotEmpty ? Value(username) : const Value(null),
-        password: password.isNotEmpty ? Value(password) : const Value(null),
-      );
+          host: Value(websiteHost),
+          name: Value(websiteName),
+          scheme: Value(scheme),
+          useDoH: Value(useDoH),
+          type: Value(websiteType),
+          directLink: Value(directLink),
+          onlyHost: Value(onlyHost),
+          username: username.isNotEmpty ? Value(username) : const Value(null),
+          password: password.isNotEmpty ? Value(password) : const Value(null),
+          cookies: Value(
+              cookies.entries.map((e) => '${e.key}=${e.value}').join('; ')));
       final id = await websiteDao.insert(entity);
       final table = await websiteDao.getById(id);
       getFavicon(table!).then((favicon) {

@@ -31,6 +31,9 @@
   "size": "大小",
   "read": "阅读",
   "comment": "评论",
+  "key": "键",
+  "value": "值",
+  "import": "导入",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -50,6 +53,7 @@
   "direct_link_desc": "IP访问网站时指定主机",
   "trusted_host_auto_failed": "获取主机地址失败",
   "click_again_to_exit": "再按一次退出",
+  "cookie_desc": "使用Cookie标识您的登录状态",
 
   "login": "登录",
   "network": "网络",

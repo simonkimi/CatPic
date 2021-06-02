@@ -148,6 +148,7 @@ class _DioImageState extends State<DioImage> {
           err = e;
         });
       }
+      rethrow;
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -155,6 +156,7 @@ class _DioImageState extends State<DioImage> {
           err = e;
         });
       }
+      rethrow;
     }
   }
 
@@ -183,6 +185,6 @@ class _DioImageState extends State<DioImage> {
   @override
   void dispose() {
     super.dispose();
-    cancelToken.cancel();
+    // cancelToken.cancel();
   }
 }

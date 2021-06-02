@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
@@ -77,28 +78,32 @@ class EhIndexResult extends StatelessWidget {
 
   Widget buildList() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
-    return Scrollbar(
-      showTrackOnHover: true,
-      child: FloatingSearchBarScrollNotifier(
-        child: SmartRefresher(
-          enablePullUp: true,
-          enablePullDown: true,
-          footer: CustomFooter(
-            builder: buildFooter,
-          ),
-          controller: store.refreshController,
-          header: MaterialClassicHeader(
-            distance: barHeight + 70,
-            height: barHeight + 80,
-          ),
-          onRefresh: store.onRefresh,
-          onLoading: store.onLoadMore,
-          child: ListView.builder(
-            cacheExtent: 500,
-            controller: store.listScrollController,
-            padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
-            itemCount: store.observableList.length,
-            itemBuilder: _itemBuilder,
+    return Scaffold(
+      floatingActionButton: FloatActionBubble(loadMoreStore: store),
+      body: Scrollbar(
+        showTrackOnHover: true,
+        child: FloatingSearchBarScrollNotifier(
+          child: SmartRefresher(
+            enablePullUp: true,
+            enablePullDown: true,
+            footer: CustomFooter(
+              builder: buildFooter,
+            ),
+            controller: store.refreshController,
+            header: MaterialClassicHeader(
+              distance: barHeight + 70,
+              height: barHeight + 80,
+            ),
+            onRefresh: store.onRefresh,
+            onLoading: store.onLoadMore,
+            child: ListView.builder(
+              cacheExtent: 500,
+              controller: store.listScrollController,
+              padding:
+                  EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
+              itemCount: store.observableList.length,
+              itemBuilder: _itemBuilder,
+            ),
           ),
         ),
       ),

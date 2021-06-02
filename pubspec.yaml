@@ -14,14 +14,14 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # 网络相关
+  # network
   html: ^0.15.0
   xml: ^5.0.2
   brotli: ^0.5.0
   dio: ^4.0.0
   dio_cache_interceptor: ^2.2.0
 
-  # ui相关
+  # ui
   flutter_svg: ^0.22.0
   extended_image: ^4.0.1
   sliding_sheet: ^0.5.0
@@ -36,7 +36,7 @@ dependencies:
   pull_to_refresh: 2.0.0
   url_launcher: ^6.0.3
 
-  # 数据持久化
+  # database
   sp_util: ^2.0.3
   shared_preferences: ^2.0.5
   moor: ^4.2.1
@@ -44,14 +44,15 @@ dependencies:
   path_provider: ^2.0.1
   path: ^1.8.0
 
-  # 状态管理
+  # provider
   get: ^4.1.4
   flutter_mobx: ^2.0.0
   event_bus: ^2.0.0
 
-  # 其他
+  # others
   uuid: ^3.0.4
   intl: ^0.17.0
+  tuple: ^2.0.0
   synchronized: ^3.0.0
   crypto: ^3.0.1
   vibration: ^1.7.4-nullsafety.0

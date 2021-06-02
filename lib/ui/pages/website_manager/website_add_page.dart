@@ -5,10 +5,14 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
+import 'package:catpic/ui/pages/website_manager/cookie_manager.dart';
 import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../themes.dart';
 
 class WebsiteAddPage extends StatelessWidget {
   WebsiteAddPage({
@@ -27,18 +31,6 @@ class WebsiteAddPage extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context),
       body: buildBody(context),
-      floatingActionButton: FloatingActionButton(
-        tooltip: I18n.of(context).positive,
-        child: const Icon(Icons.check),
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {
-          store.saveWebsite().then((result) {
-            if (result) {
-              Navigator.of(context).pop();
-            }
-          });
-        },
-      ),
     );
   }
 
@@ -53,13 +45,8 @@ class WebsiteAddPage extends StatelessWidget {
               ...buildWebsiteSetting(context),
               const Divider(),
               ...buildAdvanceSetting(context),
-              if (store.websiteType == WebsiteType.DANBOORU.index ||
-                  store.websiteType == WebsiteType.MOEBOORU.index)
-                const Divider(),
-              if (store.websiteType == WebsiteType.DANBOORU.index ||
-                  store.websiteType == WebsiteType.MOEBOORU.index)
-                ...buildUserSetting(context),
-              const SizedBox(height: 60),
+              const Divider(),
+              ...buildUserSetting(context),
             ],
           );
         },
@@ -75,6 +62,21 @@ class WebsiteAddPage extends StatelessWidget {
         style: const TextStyle(fontSize: 18, color: Colors.white),
       ),
       leading: appBarBackButton(),
+      actions: [
+        IconButton(
+          onPressed: () {
+            store.saveWebsite().then((result) {
+              if (result) {
+                Navigator.of(context).pop();
+              }
+            });
+          },
+          icon: const Icon(
+            Icons.check,
+            color: Colors.white,
+          ),
+        )
+      ],
     );
   }
 
@@ -208,24 +210,47 @@ class WebsiteAddPage extends StatelessWidget {
   List<Widget> buildUserSetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).user_setting),
-      TextInputTile(
-        defaultValue: store.username,
-        title: Text(I18n.of(context).username),
-        subtitle: Text(
-            store.username.isEmpty ? I18n.of(context).not_set : store.username),
-        leading: const SizedBox(),
-        onChanged: (value) {
-          store.setUsername(value);
-        },
-      ),
-      TextInputTile(
-        defaultValue: store.password,
-        title: Text(getPasswordTitle()),
-        subtitle: Text(
-            store.password.isEmpty ? I18n.of(context).not_set : store.password),
-        leading: const SizedBox(),
-        onChanged: (value) {
-          store.setPassword(value);
+      if (store.websiteType == WebsiteType.DANBOORU.index ||
+          store.websiteType == WebsiteType.MOEBOORU.index)
+        TextInputTile(
+          defaultValue: store.username,
+          title: Text(I18n.of(context).username),
+          subtitle: Text(store.username.isEmpty
+              ? I18n.of(context).not_set
+              : store.username),
+          leading: const SizedBox(),
+          onChanged: (value) {
+            store.setUsername(value);
+          },
+        ),
+      if (store.websiteType == WebsiteType.DANBOORU.index ||
+          store.websiteType == WebsiteType.MOEBOORU.index)
+        TextInputTile(
+          defaultValue: store.password,
+          title: Text(getPasswordTitle()),
+          subtitle: Text(store.password.isEmpty
+              ? I18n.of(context).not_set
+              : store.password),
+          leading: const SizedBox(),
+          onChanged: (value) {
+            store.setPassword(value);
+          },
+        ),
+      ListTile(
+        title: Text('Cookie (${store.cookies.length})'),
+        leading: SvgPicture.asset(
+          'assets/svg/cookie.svg',
+          color: isDarkMode(context) ? Colors.white : const Color(0xFF898989),
+          height: 24,
+          width: 24,
+        ),
+        subtitle: Text(I18n.of(context).cookie_desc),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => CookieManagerPage(
+              store: store,
+            ),
+          ));
         },
       ),
     ];
