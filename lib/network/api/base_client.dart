@@ -14,6 +14,8 @@ class DioBuilder {
   static Dio build(WebsiteTableData? websiteEntity) {
     final dio = Dio()
       ..options.connectTimeout = 1000 * 60
+      ..options.receiveTimeout = 1000 * 60
+      ..options.sendTimeout = 1000 * 60
       ..options.headers = {
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language':

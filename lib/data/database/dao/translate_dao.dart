@@ -8,4 +8,16 @@ part 'translate_dao.g.dart';
 class TranslateDao extends DatabaseAccessor<AppDataBase>
     with _$TranslateDaoMixin {
   TranslateDao(attachedDatabase) : super(attachedDatabase);
+
+  Future<List<EhTranslateTableData>> getByTag(String value) async =>
+      (select(ehTranslateTable)..where((tbl) => tbl.namespace.like('%$value%')))
+          .get();
+
+  Future<int> addTranslate(EhTranslateTableCompanion entity) =>
+      into(ehTranslateTable).insert(
+        entity,
+        mode: InsertMode.insertOrIgnore,
+      );
+
+  Future<int> clear() => delete(ehTranslateTable).go();
 }

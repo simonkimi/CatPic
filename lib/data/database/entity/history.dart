@@ -5,6 +5,7 @@ class HistoryType {
   static const POOL = 1;
   static const ARTIST = 2;
   static const TAG = 3;
+  static const EH = 4;
 }
 
 class HistoryTable extends Table {

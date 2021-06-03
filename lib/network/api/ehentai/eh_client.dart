@@ -17,8 +17,7 @@ class EhClient extends BaseClient {
   }) async {
     return (await dio.get('', queryParameters: {
       ...filter,
-      'page': page.toString(),
-      'inline_set': 'dm_l',
+      'page': page.toString()
     }))
         .data;
   }

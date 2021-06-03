@@ -1,10 +1,8 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
-import 'package:catpic/ui/components/dark_image.dart';
-import 'package:catpic/ui/components/dio_image.dart';
-import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
@@ -210,34 +208,34 @@ class PreviewExtendedCard extends StatelessWidget {
     );
   }
 
-  SizedBox buildImage(BuildContext context) {
+  Widget buildImage(BuildContext context) {
     return SizedBox(
       width: 110,
       height: 150,
-      child: DioImage(
-        dio: adapter.dio,
-        imageUrl: previewModel.previewImg,
-        imageBuilder: (_, data) => SizedBox(
-          child: Container(
-            color: isDarkMode(context) ? const Color(0xFF424242) : null,
-            child: SizedBox(
-              width: 110,
-              height: 150,
-              child: Center(
-                child: AspectRatio(
-                  aspectRatio:
-                      previewModel.previewHeight / previewModel.previewWidth,
-                  child: NullableHero(
-                    tag: '${previewModel.gid}${previewModel.gtoken}',
-                    child: DarkImage(
-                      image: MemoryImage(data, scale: 0.5),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
+      child: Hero(
+        tag: '${previewModel.gid}${previewModel.gtoken}',
+        child: Image(
+          width: 110,
+          height: 150,
+          image: DioImageProvider(
+            dio: adapter.dio,
+            url: previewModel.previewImg,
+          ),
+          loadingBuilder: (context, child, loadingProgress) {
+            return loadingProgress == null ? child : Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
