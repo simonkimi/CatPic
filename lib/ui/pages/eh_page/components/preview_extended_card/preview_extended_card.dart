@@ -2,6 +2,7 @@ import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
+import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
@@ -220,32 +221,32 @@ class PreviewExtendedCard extends StatelessWidget {
     return SizedBox(
       width: 110,
       height: 150,
-      child: Hero(
-        tag: '${previewModel.gid}${previewModel.gtoken}',
-        child: Image(
-          width: 110,
-          height: 150,
-          image: DioImageProvider(
-            dio: adapter.dio,
-            url: previewModel.previewImg,
-          ),
-          loadingBuilder: (context, child, loadingProgress) {
-            return loadingProgress == null
-                ? child
-                : Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
+      child: DarkWidget(
+        child: Hero(
+          tag: '${previewModel.gid}${previewModel.gtoken}',
+          child: Image(
+            image: DioImageProvider(
+              dio: adapter.dio,
+              url: previewModel.previewImg,
+            ),
+            loadingBuilder: (context, child, loadingProgress) {
+              return loadingProgress == null
+                  ? child
+                  : Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
                       ),
-                    ),
-                  );
-          },
+                    );
+            },
+          ),
         ),
       ),
     );
