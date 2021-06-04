@@ -186,14 +186,11 @@ class EhPreviewPage extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      I18n.of(context).no_comment,
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  Text(
+                    I18n.of(context).no_comment,
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -203,7 +200,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Padding buildTagList(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       child: Column(
         children: store.tagList.map((e) {
           return Container(
@@ -287,7 +284,11 @@ class EhPreviewPage extends StatelessWidget {
     return Row(
       children: [
         buildInfoBar(
-          store.language,
+          settingStore.ehTranslate
+              ? settingStore
+                      .translateMap[store.language.trim().toLowerCase()] ??
+                  store.language
+              : store.language,
           Text(
             I18n.of(context).language,
             style:
