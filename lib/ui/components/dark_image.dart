@@ -9,9 +9,11 @@ class DarkImage extends StatelessWidget {
     Key? key,
     required this.image,
     this.fit,
+    this.loadingBuilder,
   }) : super(key: key);
   final ImageProvider image;
   final BoxFit? fit;
+  final ImageLoadingBuilder? loadingBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,11 @@ class DarkImage extends StatelessWidget {
         builder: (context) => settingStore.darkMask && isDarkMode(context)
             ? Stack(
                 children: [
-                  Image(image: image),
+                  Image(
+                    image: image,
+                    fit: fit,
+                    loadingBuilder: loadingBuilder,
+                  ),
                   Container(
                     color: Colors.black26,
                   ),
@@ -28,6 +34,7 @@ class DarkImage extends StatelessWidget {
             : Image(
                 image: image,
                 fit: fit,
+                loadingBuilder: loadingBuilder,
               ));
   }
 }
@@ -36,8 +43,13 @@ class DarkWidget extends StatelessWidget {
   const DarkWidget({
     Key? key,
     required this.child,
+    this.width,
+    this.height,
   }) : super(key: key);
+
   final Widget child;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +60,8 @@ class DarkWidget extends StatelessWidget {
                 child,
                 Container(
                   color: Colors.black26,
+                  width: width,
+                  height: height,
                 ),
               ],
             )

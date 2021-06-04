@@ -218,10 +218,12 @@ class PreviewExtendedCard extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    return SizedBox(
+    return DarkWidget(
       width: 110,
       height: 150,
-      child: DarkWidget(
+      child: SizedBox(
+        width: 110,
+        height: 150,
         child: Hero(
           tag: '${previewModel.gid}${previewModel.gtoken}',
           child: Image(
