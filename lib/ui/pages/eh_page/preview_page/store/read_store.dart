@@ -20,7 +20,7 @@ abstract class ReadStoreBase with Store {
   int currentIndex;
 
   @observable
-  var displayPageSlider = false;
+  var displayPageSlider = settingStore.toolbarOpen;
 
   final pageSliderController = PageSliderController();
 

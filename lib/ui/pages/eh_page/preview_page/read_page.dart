@@ -1,3 +1,4 @@
+import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/page_slider.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_image_viewer/eh_image_viewer.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/read_store.dart';
@@ -6,6 +7,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
+class BackAppBar extends HookWidget implements PreferredSizeWidget {
+  const BackAppBar({
+    Key? key,
+    required this.readStore,
+  }) : super(key: key);
+
+  final ReadStore readStore;
+
+  @override
+  Widget build(BuildContext context) {
+    final appBarController =
+        useAnimationController(duration: const Duration(milliseconds: 200));
+
+    final appBarHideAni =
+        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, -1))
+            .animate(appBarController);
+
+    return Observer(builder: (context) {
+      appBarController.byValue(readStore.displayPageSlider);
+      return SlideTransition(
+        position: appBarHideAni,
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: appBarBackButton(),
+          elevation: 0,
+        ),
+      );
+    });
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
 
 class EhReadPage extends HookWidget {
   EhReadPage({
@@ -27,6 +62,7 @@ class EhReadPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BackAppBar(readStore: readStore),
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: buildImg(),
