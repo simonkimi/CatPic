@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
@@ -516,12 +517,16 @@ class EhPreviewPage extends StatelessWidget {
                 builder: (context) {
                   if (store.observableList.isNotEmpty)
                     return TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final readPage = (await DB()
+                                .ehHistoryDao
+                                .getById(store.previewModel.gid))
+                            ?.readPage;
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           return EhReadPage(
                             store: store,
-                            startIndex: 0,
+                            startIndex: readPage ?? 0,
                           );
                         }));
                       },

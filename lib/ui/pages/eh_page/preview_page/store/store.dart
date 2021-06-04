@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
@@ -109,6 +110,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         tagList = galleryModel.tags;
         pageCache[ehPage] = galleryModel.previewImages;
         imageList = galleryModel.previewImages;
+        recordHistory();
       }
       if (loadPreview) {
         for (final waitingImg in imageList) {
@@ -134,6 +136,36 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
       print('load Page $ehPage finish');
       return imageList;
     });
+  }
+
+  Future<void> recordHistory() async {
+    final dao = DB().ehHistoryDao;
+    final model = await dao.getById(previewModel.gid);
+    if (model != null) {
+      await dao.updateHistory(model.copyWith(
+        lastOpen: DateTime.now().millisecond,
+        galleryId: previewModel.gid,
+        galleryToken: previewModel.gtoken,
+        tag: previewModel.tag,
+        previewImg: previewModel.previewImg,
+        uploadTime: previewModel.uploadTime,
+        uploader: previewModel.uploader,
+        star: (previewModel.stars * 10).floor(),
+        pageNumber: previewModel.pages,
+      ));
+    } else {
+      await dao.insert(EhHistoryTableCompanion.insert(
+        galleryId: previewModel.gid,
+        galleryToken: previewModel.gtoken,
+        tag: previewModel.tag,
+        previewImg: previewModel.previewImg,
+        uploadTime: previewModel.uploadTime,
+        uploader: previewModel.uploader,
+        star: (previewModel.stars * 10).floor(),
+        pageNumber: previewModel.pages,
+        readPage: 0,
+      ));
+    }
   }
 
   @override

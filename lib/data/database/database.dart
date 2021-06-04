@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'package:catpic/data/database/entity/eh_history.dart';
 import 'package:catpic/main.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/ffi.dart';
@@ -11,6 +12,7 @@ import 'package:catpic/data/database/dao/tag_dao.dart';
 import 'package:catpic/data/database/dao/host_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
 
+import 'dao/eh_history_dao.dart';
 import 'dao/translate_dao.dart';
 import 'entity/download.dart';
 import 'entity/eh_translate.dart';
@@ -44,7 +46,8 @@ LazyDatabase _openConnection() {
   HostTable,
   TagTable,
   WebsiteTable,
-  EhTranslateTable
+  EhTranslateTable,
+  EhHistoryTable,
 ], daos: [
   DownloadDao,
   HistoryDao,
@@ -52,6 +55,7 @@ LazyDatabase _openConnection() {
   TagDao,
   WebsiteDao,
   TranslateDao,
+  EhHistoryDao,
 ])
 class AppDataBase extends _$AppDataBase {
   AppDataBase() : super(_openConnection());
@@ -79,4 +83,6 @@ class DB {
   DownloadDao get downloadDao => _database.downloadDao;
 
   TranslateDao get translateDao => _database.translateDao;
+
+  EhHistoryDao get ehHistoryDao => _database.ehHistoryDao;
 }
