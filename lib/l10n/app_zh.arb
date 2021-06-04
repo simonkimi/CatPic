@@ -162,7 +162,8 @@
   "database": "数据库",
   "chinese_translate": "中文翻译",
   "eh_complete": "自动补全",
-  "database_version": "数据库版本{version}",
+  "check_update": "检测更新中...",
+  "find_new_version": "发现新版本, 长按更新!",
   "translate_about": "该功能依赖于开源项目EhTagTranslation",
   "@database_version": {
     "placeholders": {

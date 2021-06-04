@@ -282,31 +282,27 @@ abstract class SettingStoreBase with Store {
 
   final updateLock = Lock();
 
-  Future<bool> updateEhDataBase() async {
+  Future<bool> updateEhDataBase([String? body]) async {
     BotToast.showText(text: I18n.g.start_update);
     final cancel = BotToast.showLoading();
     return await updateLock.synchronized<bool>(() async {
       try {
-        final json = await getEhTranslate();
-        if (json['head']['sha'] != ehDatabaseVersion) {
-          await DB().translateDao.clear();
-          final entities = <EhTranslateTableCompanion>[];
-          for (final namespace in json['data']) {
-            for (final entity
-                in (namespace['data'] as Map<String, dynamic>).entries) {
-              entities.add(EhTranslateTableCompanion.insert(
-                namespace: entity.key,
-                translate: entity.value['name']['text'],
-                link: entity.value['intro']['raw'],
-              ));
-            }
+        final json = await getEhTranslate(body ?? (await getEhVersion()).item2);
+        await DB().translateDao.clear();
+        final entities = <EhTranslateTableCompanion>[];
+        for (final namespace in json['data']) {
+          for (final entity
+              in (namespace['data'] as Map<String, dynamic>).entries) {
+            entities.add(EhTranslateTableCompanion.insert(
+              namespace: entity.key,
+              translate: entity.value['name']['text'],
+              link: entity.value['intro']['raw'],
+            ));
           }
-          await DB().translateDao.addTrList(entities);
-          setEhDatabaseVersion(json['head']['sha']);
-          BotToast.showText(text: I18n.g.update_success);
-          return true;
         }
-        BotToast.showText(text: I18n.g.latest_version);
+        await DB().translateDao.addTrList(entities);
+        setEhDatabaseVersion(json['head']['sha']);
+        BotToast.showText(text: I18n.g.update_success);
         return true;
       } catch (e) {
         BotToast.showText(text: I18n.g.update_fail(e.toString()));

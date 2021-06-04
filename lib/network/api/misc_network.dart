@@ -5,6 +5,7 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 Future<String> getDoH(String url) async {
   final dio = Dio()
@@ -56,12 +57,17 @@ Future<Uint8List> getFavicon(WebsiteTableData entity) async {
   }
 }
 
-Future<Map<String, dynamic>> getEhTranslate() async {
+Future<Tuple2<String, String>> getEhVersion() async {
   const ehTranslateTagUrl =
       'https://api.github.com/repos/ehtagtranslation/Database/releases/latest';
   final dio = Dio()..options.connectTimeout = 60 * 1000;
   final data = (await dio.get<String>(ehTranslateTagUrl)).data!;
-  final body = jsonDecode(data)['body'];
+  final body = jsonDecode(data);
+  return Tuple2(body['target_commitish']!, body['body']!);
+}
+
+Future<Map<String, dynamic>> getEhTranslate(String body) async {
+  final dio = Dio()..options.connectTimeout = 60 * 1000;
   final reg = RegExp(r'<!--((.|\s)+?)-->');
   final match = reg.firstMatch(body)![1]!;
   final sha = jsonDecode(match)['mirror'];

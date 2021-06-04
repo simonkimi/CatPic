@@ -1,10 +1,12 @@
 import 'package:catpic/main.dart';
+import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:catpic/i18n.dart';
+import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EHSettingPage extends StatelessWidget {
@@ -85,17 +87,6 @@ class EHSettingPage extends StatelessWidget {
         builder: (context) {
           return AlertDialog(
             title: const Text('EhTagTranslation'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  settingStore.updateEhDataBase();
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  I18n.of(context).update,
-                ),
-              ),
-            ],
             content: SingleChildScrollView(
               child: Column(
                 children: [
@@ -116,11 +107,26 @@ class EHSettingPage extends StatelessWidget {
                   ),
                   ListTile(
                     title: Text(I18n.of(context).version),
-                    subtitle: Observer(
-                        builder: (_) => Text(
-                            settingStore.ehDatabaseVersion.isNotEmpty
-                                ? settingStore.ehDatabaseVersion
-                                : I18n.of(context).not_downloaded)),
+                    subtitle: FutureBuilder<Tuple2<String, String>>(
+                      future: getEhVersion(),
+                      builder: (context, snapshot) {
+                        return Observer(builder: (context) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.data!.item1 ==
+                                settingStore.ehDatabaseVersion) {
+                              return Text(I18n.of(context).latest_version);
+                            } else {
+                              return Text(I18n.of(context).find_new_version);
+                            }
+                          }
+                          return Text(I18n.of(context).check_update);
+                        });
+                      },
+                    ),
+                    onLongPress: () {
+                      settingStore.updateEhDataBase();
+                    },
                   ),
                 ],
               ),
