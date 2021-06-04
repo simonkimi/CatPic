@@ -222,8 +222,11 @@ class EhPreviewPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(5),
                         child: Text(
-                          e.key,
+                          settingStore.ehTranslate
+                              ? e.keyTranslate ?? e.key
+                              : e.key,
                           style: const TextStyle(
+                            height: 1,
                             fontSize: 15,
                             color: Colors.white,
                           ),
@@ -250,7 +253,7 @@ class EhPreviewPage extends StatelessWidget {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
                               return EhPage(
-                                searchText: e,
+                                searchText: e.value,
                                 searchType: EHSearchType.INDEX,
                               );
                             }));
@@ -258,8 +261,13 @@ class EhPreviewPage extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: Text(
-                              e,
-                              style: const TextStyle(fontSize: 15),
+                              settingStore.ehTranslate
+                                  ? e.translate ?? e.value
+                                  : e.value,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                height: 1,
+                              ),
                             ),
                           ),
                         ),

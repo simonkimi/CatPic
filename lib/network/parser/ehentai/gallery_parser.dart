@@ -80,7 +80,7 @@ class GalleryParser {
       var title = e.children[0].text;
       final tags = e.children[1].children.map((e) => e.text).toList();
       title = title.substring(0, title.length - 1);
-      return TagModels(key: title, value: tags);
+      return TagModels(key: title, value: tags.map((e) => TagItem(e)).toList());
     }).toList();
   }
 

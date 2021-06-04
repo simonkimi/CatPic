@@ -56,7 +56,7 @@ Future<Uint8List> getFavicon(WebsiteTableData entity) async {
   }
 }
 
-Future<String> getEhTranslate() async {
+Future<Map<String, dynamic>> getEhTranslate() async {
   const ehTranslateTagUrl =
       'https://api.github.com/repos/ehtagtranslation/Database/releases/latest';
   final dio = Dio()..options.connectTimeout = 60 * 1000;
@@ -78,7 +78,7 @@ Future<String> getEhTranslate() async {
       final jsonGz = await dio.get<List<int>>(url,
           options: Options(responseType: ResponseType.bytes));
       final jsonBytes = gzip.decode(jsonGz.data!);
-      return utf8.decode(jsonBytes);
+      return jsonDecode(utf8.decode(jsonBytes));
     } catch (e) {
       print('尝试$url失败: $e');
     }

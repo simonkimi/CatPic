@@ -132,7 +132,10 @@ class PreviewParser {
         final match = reg.firstMatch(style);
         color = int.parse(match![1]!, radix: 16);
       }
-      return PreviewTag(tag: tag, color: color);
+      return PreviewTag(
+        tag: tag,
+        color: color,
+      );
     }).toList();
   }
 

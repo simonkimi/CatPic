@@ -15,10 +15,8 @@ class EhClient extends BaseClient {
     required Map<String, dynamic> filter,
     required int page,
   }) async {
-    return (await dio.get('', queryParameters: {
-      ...filter,
-      'page': page.toString()
-    }))
+    return (await dio
+            .get('', queryParameters: {...filter, 'page': page.toString()}))
         .data;
   }
 

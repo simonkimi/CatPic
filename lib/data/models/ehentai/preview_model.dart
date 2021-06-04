@@ -46,9 +46,14 @@ class PreViewItemModel {
 }
 
 class PreviewTag {
-  PreviewTag({required this.tag, required this.color});
+  PreviewTag({
+    required this.tag,
+    required this.color,
+    this.translate,
+  });
 
   final String tag;
+  String? translate;
   final int color;
 
   @override

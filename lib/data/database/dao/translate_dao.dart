@@ -9,15 +9,17 @@ class TranslateDao extends DatabaseAccessor<AppDataBase>
     with _$TranslateDaoMixin {
   TranslateDao(attachedDatabase) : super(attachedDatabase);
 
-  Future<List<EhTranslateTableData>> getByTag(String value) async =>
+  Future<List<EhTranslateTableData>> getAll() => select(ehTranslateTable).get();
+
+  Future<List<EhTranslateTableData>> getByTag(String value) =>
       (select(ehTranslateTable)..where((tbl) => tbl.namespace.like('%$value%')))
           .get();
 
-  Future<int> addTranslate(EhTranslateTableCompanion entity) =>
-      into(ehTranslateTable).insert(
-        entity,
-        mode: InsertMode.insertOrIgnore,
-      );
+  Future<void> addTrList(List<EhTranslateTableCompanion> entities) async {
+    await batch((batch) {
+      batch.insertAll(ehTranslateTable, entities);
+    });
+  }
 
   Future<int> clear() => delete(ehTranslateTable).go();
 }

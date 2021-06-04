@@ -90,7 +90,7 @@ class _EhImageViewerState extends State<EhImageViewer>
       if (left < tap && tap < right) {
         widget.onCenterTap?.call();
       } else if (tap < left) {
-        if (readStore.currentIndex - 1 > 0)
+        if (readStore.currentIndex - 1 >= 0)
           pageController.jumpToPage(readStore.currentIndex - 1);
       } else {
         if (readStore.currentIndex + 1 < store.imageCount)

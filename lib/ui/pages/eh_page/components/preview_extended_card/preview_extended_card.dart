@@ -1,9 +1,11 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
 
@@ -19,6 +21,10 @@ class PreviewExtendedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Observer(builder: (_) => buildBody(context));
+  }
+
+  Card buildBody(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusDirectional.circular(5),
@@ -191,16 +197,18 @@ class PreviewExtendedCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(3),
             child: Text(
-              e.tag,
+              settingStore.ehTranslate ? e.translate ?? e.tag : e.tag,
               style: TextStyle(
-                  fontSize: 11,
-                  color: e.color == 0
-                      ? isDarkMode(context)
-                          ? Colors.white
-                          : Colors.black
-                      : Color(0xFF000000 | e.color).isDark()
-                          ? Colors.white
-                          : Colors.black),
+                height: 1,
+                fontSize: 11,
+                color: e.color == 0
+                    ? isDarkMode(context)
+                        ? Colors.white
+                        : Colors.black
+                    : Color(0xFF000000 | e.color).isDark()
+                        ? Colors.white
+                        : Colors.black,
+              ),
             ),
           ),
         );
@@ -222,19 +230,21 @@ class PreviewExtendedCard extends StatelessWidget {
             url: previewModel.previewImg,
           ),
           loadingBuilder: (context, child, loadingProgress) {
-            return loadingProgress == null ? child : Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              ),
-            );
+            return loadingProgress == null
+                ? child
+                : Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
           },
         ),
       ),

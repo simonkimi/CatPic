@@ -46,6 +46,13 @@ class GalleryModel extends GalleryBase {
   }
 }
 
+class TagItem {
+  TagItem(this.value);
+
+  final String value;
+  String? translate;
+}
+
 class TagModels {
   TagModels({
     required this.key,
@@ -53,7 +60,8 @@ class TagModels {
   });
 
   final String key;
-  final List<String> value;
+  String? keyTranslate;
+  final List<TagItem> value;
 
   @override
   String toString() {

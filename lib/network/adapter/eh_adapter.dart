@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
 import 'package:catpic/network/parser/ehentai/gallery_img_parser.dart';
@@ -29,7 +30,8 @@ class EHAdapter extends Adapter {
     required int page,
   }) async {
     final str = await client.getIndex(filter: filter, page: page);
-    return await compute(PreviewParser.parse, str);
+    final model = await compute(PreviewParser.parse, str);
+    return await previewTranslateHook(model);
   }
 
   Future<GalleryModel> gallery({
@@ -40,7 +42,14 @@ class EHAdapter extends Adapter {
   }) async {
     final str =
         await client.getGallery(gid, gtoken, page.toString(), cancelToken);
-    return await compute(GalleryParser.parse, str);
+    final model = await compute(GalleryParser.parse, str);
+    for (final tagList in model.tags) {
+      tagList.keyTranslate = settingStore.translateMap[tagList.key];
+      for (final tag in tagList.value) {
+        tag.translate = settingStore.translateMap[tag.value];
+      }
+    }
+    return model;
   }
 
   Future<GalleryImgModel> galleryImage(String url) async {
@@ -50,7 +59,21 @@ class EHAdapter extends Adapter {
     final galleryPage = match[2]!;
 
     final str = await client.galleryImage(token, galleryPage);
-    // return compute(GalleryImgParser.parse, str);
-    return GalleryImgParser.parse(str);
+    return await compute(GalleryImgParser.parse, str);
+  }
+
+  Future<PreviewModel> previewTranslateHook(PreviewModel model) async {
+    for (final item in model.items) {
+      for (final tag in item.keyTags) {
+        final tagParam = tag.tag.split(':');
+        if (tagParam.length == 2) {
+          tag.translate =
+              '${tagParam[0]}:${settingStore.translateMap[tagParam[1]]}';
+        } else if (tagParam.length == 1) {
+          tag.translate = settingStore.translateMap[tag.tag];
+        }
+      }
+    }
+    return model;
   }
 }

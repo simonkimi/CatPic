@@ -34,6 +34,9 @@
   "key": "键",
   "value": "值",
   "import": "导入",
+  "about": "关于",
+  "update": "更新",
+  "version": "版本",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -156,6 +159,35 @@
   "clean_cache": "清理缓存",
   "confirm_clean_cache": "确认清理缓存?",
   "clean_success": "清理成功",
+  "database": "数据库",
+  "chinese_translate": "中文翻译",
+  "eh_complete": "自动补全",
+  "database_version": "数据库版本{version}",
+  "translate_about": "该功能依赖于开源项目EhTagTranslation",
+  "@database_version": {
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1e52ba37d5a2fbcd3b269d6b82f255581d6c4419"
+      }
+    }
+  },
+  "not_downloaded": "未下载",
+  "project_url": "项目地址",
+  "add_translate": "贡献翻译",
+  "start_update": "开始更新",
+  "latest_version": "已是最新版本",
+  "update_success": "更新成功!",
+  "update_fail": "更新失败: {err}",
+  "@update_fail": {
+    "placeholders": {
+      "err": {
+        "type": "String",
+        "example": "tagme"
+      }
+    }
+  },
+
 
   "search_in": "在 {site} 搜索",
   "@search_in": {

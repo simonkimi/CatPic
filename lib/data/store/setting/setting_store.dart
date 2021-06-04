@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/database/database.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/network/api/misc_network.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sp_util/sp_util.dart';
@@ -7,6 +11,7 @@ import 'package:mobx/mobx.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:catpic/themes.dart';
+import 'package:synchronized/synchronized.dart';
 
 part 'setting_store.g.dart';
 
@@ -94,9 +99,20 @@ abstract class SettingStoreBase with Store {
   @observable
   var darkMask = true;
 
+  @observable
+  var ehTranslate = false;
+
+  @observable
+  var ehAutoCompute = false;
+
+  @observable
+  var ehDatabaseVersion = '';
+
   late CacheOptions dioCacheOptions;
 
   var documentDir = '';
+
+  var translateMap = <String, String>{};
 
   @action
   Future<void> init() async {
@@ -118,6 +134,11 @@ abstract class SettingStoreBase with Store {
     theme = sp.getInt('theme') ?? Themes.BLUE;
     dartMode = sp.getInt('dartMode') ?? DarkMode.FOLLOW_SYSTEM;
     darkMask = sp.getBool('darkMask') ?? false;
+    ehTranslate = sp.getBool('ehTranslate') ?? false;
+    ehAutoCompute = sp.getBool('ehAutoCompute') ?? false;
+    ehDatabaseVersion = sp.getString('ehDatabaseVersion') ?? '';
+
+    if (ehDatabaseVersion.isNotEmpty) initTranslate();
 
     dioCacheOptions = CacheOptions(
       store: DbCacheStore(databasePath: p.join(documentDir, 'cache')),
@@ -128,6 +149,13 @@ abstract class SettingStoreBase with Store {
     );
   }
 
+  Future<void> initTranslate() async {
+    final list = await DB().translateDao.getAll();
+    for (final tr in list) {
+      translateMap[tr.namespace] = tr.translate;
+    }
+  }
+
   Future<String> getDocumentDir() async {
     final path = Platform.isWindows
         ? await getApplicationSupportDirectory()
@@ -136,6 +164,24 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString('documentDir', path.path);
     return path.path;
+  }
+
+  @action
+  void setEhTranslate(bool value) {
+    ehTranslate = value;
+    SpUtil.putBool('ehTranslate', value);
+  }
+
+  @action
+  void setEhAutoCompute(bool value) {
+    ehAutoCompute = value;
+    SpUtil.putBool('ehAutoCompute', value);
+  }
+
+  @action
+  void setEhDatabaseVersion(String value) {
+    ehDatabaseVersion = value;
+    SpUtil.putString('ehDatabaseVersion', value);
   }
 
   @action
@@ -232,5 +278,42 @@ abstract class SettingStoreBase with Store {
   void setEachPageItem(int value) {
     eachPageItem = value;
     SpUtil.putInt('eachPageItem', value);
+  }
+
+  final updateLock = Lock();
+
+  Future<bool> updateEhDataBase() async {
+    BotToast.showText(text: I18n.g.start_update);
+    final cancel = BotToast.showLoading();
+    return await updateLock.synchronized<bool>(() async {
+      try {
+        final json = await getEhTranslate();
+        if (json['head']['sha'] != ehDatabaseVersion) {
+          await DB().translateDao.clear();
+          final entities = <EhTranslateTableCompanion>[];
+          for (final namespace in json['data']) {
+            for (final entity
+                in (namespace['data'] as Map<String, dynamic>).entries) {
+              entities.add(EhTranslateTableCompanion.insert(
+                namespace: entity.key,
+                translate: entity.value['name']['text'],
+                link: entity.value['intro']['raw'],
+              ));
+            }
+          }
+          await DB().translateDao.addTrList(entities);
+          setEhDatabaseVersion(json['head']['sha']);
+          BotToast.showText(text: I18n.g.update_success);
+          return true;
+        }
+        BotToast.showText(text: I18n.g.latest_version);
+        return true;
+      } catch (e) {
+        BotToast.showText(text: I18n.g.update_fail(e.toString()));
+        return false;
+      } finally {
+        cancel();
+      }
+    });
   }
 }
