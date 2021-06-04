@@ -74,6 +74,10 @@ abstract class MainStoreBase with Store {
     if ((websiteEntity?.id ?? -1) != (entity?.id ?? -2)) {
       print('setWebsite ${entity?.name}');
       websiteEntity = entity;
+      if (entity != null)
+        await DB()
+            .websiteDao
+            .updateSite(entity.copyWith(lastOpen: DateTime.now().millisecond));
       websiteIcon = entity?.favicon;
       EventBusUtil().bus.fire(EventSiteChange());
       SpUtil.putInt('last_website', websiteEntity?.id ?? -1);

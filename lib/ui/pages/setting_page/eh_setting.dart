@@ -110,18 +110,15 @@ class EHSettingPage extends StatelessWidget {
                     subtitle: FutureBuilder<Tuple2<String, String>>(
                       future: getEhVersion(),
                       builder: (context, snapshot) {
-                        return Observer(builder: (context) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.data!.item1 ==
-                                settingStore.ehDatabaseVersion) {
-                              return Text(I18n.of(context).latest_version);
-                            } else {
-                              return Text(I18n.of(context).find_new_version);
-                            }
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.data!.item1 ==
+                              settingStore.ehDatabaseVersion) {
+                            return Text(I18n.of(context).latest_version);
+                          } else {
+                            return Text(I18n.of(context).find_new_version);
                           }
-                          return Text(I18n.of(context).check_update);
-                        });
+                        }
+                        return Text(I18n.of(context).check_update);
                       },
                     ),
                     onLongPress: () {

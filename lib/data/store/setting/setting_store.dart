@@ -303,6 +303,7 @@ abstract class SettingStoreBase with Store {
         }
         await DB().translateDao.addTrList(entities);
         setEhDatabaseVersion(json['head']['sha']);
+        initTranslate();
         BotToast.showText(text: I18n.g.update_success);
         return true;
       } catch (e) {
