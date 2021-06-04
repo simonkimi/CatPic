@@ -12,7 +12,9 @@ class TranslateDao extends DatabaseAccessor<AppDataBase>
   Future<List<EhTranslateTableData>> getAll() => select(ehTranslateTable).get();
 
   Future<List<EhTranslateTableData>> getByTag(String value) =>
-      (select(ehTranslateTable)..where((tbl) => tbl.namespace.like('%$value%')))
+      (select(ehTranslateTable)
+            ..where((tbl) =>
+                tbl.name.like('%$value%') | tbl.translate.like('%$value%')))
           .get();
 
   Future<void> addTrList(List<EhTranslateTableCompanion> entities) async {

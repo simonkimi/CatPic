@@ -152,7 +152,7 @@ abstract class SettingStoreBase with Store {
   Future<void> initTranslate() async {
     final list = await DB().translateDao.getAll();
     for (final tr in list) {
-      translateMap[tr.namespace] = tr.translate;
+      translateMap[tr.name] = tr.translate;
     }
   }
 
@@ -294,7 +294,8 @@ abstract class SettingStoreBase with Store {
           for (final entity
               in (namespace['data'] as Map<String, dynamic>).entries) {
             entities.add(EhTranslateTableCompanion.insert(
-              namespace: entity.key,
+              namespace: namespace['namespace'],
+              name: entity.key,
               translate: entity.value['name']['text'],
               link: entity.value['intro']['raw'],
             ));

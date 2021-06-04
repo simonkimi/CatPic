@@ -24,17 +24,21 @@ class PreviewParser {
         .where((element) => element.querySelector('.gl1c') != null)
         .toList();
 
-    final maxPage =
-        document.querySelectorAll('.ptb td').reversed.toList()[1].text.toInt();
+    final pageIndicator =
+        document.querySelectorAll('.ptb td').reversed.toList();
 
-    final resultCount = document
-        .querySelector('.ido .ip')!
-        .text
-        .codeUnits
-        .where((e) => e.equalBetween(48, 57))
-        .map((e) => (e - 48).toString())
-        .join('')
-        .toInt();
+    final maxPage =
+        pageIndicator.isNotEmpty ? pageIndicator[1].text.toInt() : 0;
+
+    final resultIndicator = document.querySelector('.ido .ip');
+
+    final resultCount = resultIndicator != null
+        ? resultIndicator.text.codeUnits
+            .where((e) => e.equalBetween(48, 57))
+            .map((e) => (e - 48).toString())
+            .join('')
+            .toInt()
+        : 0;
 
     final items = previewList.map((element) {
       final title = element.querySelector('.glink')?.text ?? 'Error';

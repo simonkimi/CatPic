@@ -4,7 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/components/search_bar.dart';
+import 'package:catpic/ui/pages/eh_page/components/eh_complete_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
 import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
@@ -48,15 +48,12 @@ class EhIndexResult extends StatelessWidget {
         }
         return true;
       },
-      child: SearchBar(
+      child: EhCompleteBar(
         searchText: searchText,
         onSubmitted: (value) {
           store.newSearch(value);
         },
         body: buildBody(),
-        candidateBuilder: (BuildContext context, Animation<double> transition) {
-          return const SizedBox();
-        },
       ),
     );
   }

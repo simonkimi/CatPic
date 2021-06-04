@@ -5,6 +5,8 @@ class EhTranslateTable extends Table {
 
   TextColumn get namespace => text()();
 
+  TextColumn get name => text()();
+
   TextColumn get translate => text()();
 
   TextColumn get link => text()();
