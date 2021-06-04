@@ -14,7 +14,11 @@ class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
       (select(websiteTable)..where((tbl) => tbl.id.equals(id)))
           .getSingleOrNull();
 
-  Stream<List<WebsiteTableData>> getAllStream() => select(websiteTable).watch();
+  Stream<List<WebsiteTableData>> getAllStream() => (select(websiteTable)
+        ..orderBy([
+          (u) => OrderingTerm(expression: u.lastOpen, mode: OrderingMode.desc)
+        ]))
+      .watch();
 
   Future<int> insert(WebsiteTableCompanion data) =>
       into(websiteTable).insert(data);

@@ -120,7 +120,7 @@ abstract class SettingStoreBase with Store {
     useCardWidget = sp.getBool('useCardWidget') ?? true;
     showCardDetail = sp.getBool('showCardDetail') ?? true;
     eachPageItem = sp.getInt('eachPageItem') ?? 50;
-    cardSize = sp.getInt('cardSize') ?? 3;
+    cardSize = sp.getInt('cardSize') ?? CardSize.MIDDLE;
     downloadUri = sp.getString('downloadUri') ?? '';
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;

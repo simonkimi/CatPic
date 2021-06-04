@@ -128,7 +128,13 @@ class EhPreviewPage extends StatelessWidget {
               final galleryPreviewImage = store.imageUrlMap[image.image]!;
               return InkWell(
                 onTap: () {
-                  // TODO 点击预览显示图片
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return EhReadPage(
+                      store: store,
+                      startIndex: index,
+                    );
+                  }));
                 },
                 child: EhPreviewCard(
                   image: image,

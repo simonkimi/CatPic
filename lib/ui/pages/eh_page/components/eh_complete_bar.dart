@@ -77,7 +77,7 @@ class _EhCompleteBarState extends State<EhCompleteBar> {
         .where((e) => e.history.startsWith(tag!))
         .take(10);
     final lastTag = tag.split(' ').last;
-    final List<EhTranslateTableData> complete =
+    final complete =
         lastTag.isEmpty ? [] : await DB().translateDao.getByTag(lastTag);
     setState(() {
       searchSuggestion = [

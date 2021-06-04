@@ -44,6 +44,7 @@ class _EhImageViewerState extends State<EhImageViewer>
   @override
   void initState() {
     super.initState();
+    print('startINdex: ${widget.startIndex}');
     pageController =
         widget.pageController ?? PageController(initialPage: widget.startIndex);
     _doubleClickAnimationController = AnimationController(
@@ -52,6 +53,7 @@ class _EhImageViewerState extends State<EhImageViewer>
     );
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      pageController.jumpToPage(widget.startIndex);
       onPageIndexChange(widget.startIndex);
     });
   }

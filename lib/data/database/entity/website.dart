@@ -32,6 +32,9 @@ class WebsiteTable extends Table {
   TextColumn get username => text().nullable()();
 
   TextColumn get password => text().nullable()();
+
+  IntColumn get lastOpen =>
+      integer().clientDefault(() => DateTime.now().microsecond)();
 }
 
 enum WebsiteScheme {

@@ -38,7 +38,7 @@ class EhReadPage extends HookWidget {
     return EhImageViewer(
       store: store,
       readStore: readStore,
-      startIndex: 0,
+      startIndex: startIndex,
       pageController: pageController,
       onCenterTap: () {
         readStore.setPageSliderDisplay(!readStore.displayPageSlider);
