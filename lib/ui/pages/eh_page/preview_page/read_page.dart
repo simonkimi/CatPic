@@ -36,17 +36,22 @@ class EhReadPage extends HookWidget {
   }
 
   Widget buildImg() {
-    return EhImageViewer(
-      store: store,
-      readStore: readStore,
-      startIndex: startIndex,
-      pageController: pageController,
-      onCenterTap: () {
-        readStore.setPageSliderDisplay(!readStore.displayPageSlider);
-      },
-      onIndexChange: (value) {
-        readStore.setIndex(value);
-      },
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.black,
+      child: EhImageViewer(
+        store: store,
+        readStore: readStore,
+        startIndex: startIndex,
+        pageController: pageController,
+        onCenterTap: () {
+          readStore.setPageSliderDisplay(!readStore.displayPageSlider);
+        },
+        onIndexChange: (value) {
+          readStore.setIndex(value);
+        },
+      ),
     );
   }
 
