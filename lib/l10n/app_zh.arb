@@ -237,6 +237,8 @@
   "misc": "其他",
 
   "filter": "过滤器",
+  "advance_search": "高级选项",
+  "reset": "重置",
   "search_gallery_tag": "搜索标签",
   "search_torrent": "搜索种子文件名",
   "search_low_power_tags": "搜索低权重标签",

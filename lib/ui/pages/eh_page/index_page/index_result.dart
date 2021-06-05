@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
@@ -12,9 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'package:catpic/main.dart';
-import 'package:catpic/i18n.dart';
 
 class EhIndexResult extends StatelessWidget {
   EhIndexResult({
@@ -33,28 +29,12 @@ class EhIndexResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (Scaffold.of(context).isDrawerOpen) {
-          return true;
-        }
-        final nowTime = DateTime.now();
-        if (mainStore.searchPageCount <= 1 &&
-            nowTime.difference(store.lastClickBack) >
-                const Duration(seconds: 2)) {
-          BotToast.showText(text: I18n.of(context).click_again_to_exit);
-          store.lastClickBack = nowTime;
-          return false;
-        }
-        return true;
+    return EhCompleteBar(
+      searchText: searchText,
+      onSubmitted: (value) {
+        store.newSearch(value);
       },
-      child: EhCompleteBar(
-        searchText: searchText,
-        onSubmitted: (value) {
-          store.newSearch(value);
-        },
-        body: buildBody(),
-      ),
+      body: buildBody(),
     );
   }
 

@@ -35,25 +35,15 @@ class PostResultFragment extends StatelessWidget {
         print('onSearch $value');
         store.onNewSearch(value.trim());
       },
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (child, animation) => ScaleTransition(
-          scale: animation,
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+      body: Scaffold(
+        body: PostWaterFlow(
+          store: store,
+          dio: adapter.dio,
+          onAddTag: (value) {
+            tmpController.tmp = tmpController.tmp.trim() + ' $value ';
+          },
         ),
-        child: Scaffold(
-          body: PostWaterFlow(
-            store: store,
-            dio: adapter.dio,
-            onAddTag: (value) {
-              tmpController.tmp = tmpController.tmp.trim() + ' $value ';
-            },
-          ),
-          floatingActionButton: FloatActionBubble(loadMoreStore: store),
-        ),
+        floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),
     );
   }
