@@ -69,7 +69,7 @@ class EHAdapter extends Adapter {
           if (tagParam[0] == 'f') tagParam[0] = '♀';
           if (tagParam[0] == 'm') tagParam[0] = '♂';
           tag.translate =
-              '${tagParam[0]}:${settingStore.translateMap[tagParam[1]]}';
+              '${tagParam[0]}:${settingStore.translateMap[tagParam[1]] ?? tagParam[1]}';
         } else if (tagParam.length == 1) {
           tag.translate = settingStore.translateMap[tag.tag];
         }
