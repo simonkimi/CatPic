@@ -264,6 +264,16 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                                     typeFilter[e.key]!.value =
                                         !typeFilter[e.key]!.value;
                                   },
+                                  onLongPressed: () {
+                                    final value = !typeFilter[e.key]!.value;
+                                    typeFilter.entries
+                                        .where((ele) => ele.key != e.key)
+                                        .forEach((element) {
+                                      element.value.value = value;
+                                    });
+                                    typeFilter[e.key]!.value = !value;
+                                    vibrate(duration: 50, amplitude: 100);
+                                  },
                                   text: e.key.string,
                                 )))
                             .toList(),

@@ -9,9 +9,11 @@ class SelectButton extends StatelessWidget {
     required this.text,
     required this.activeColor,
     required this.isSelect,
+    this.onLongPressed,
   }) : super(key: key);
 
   final VoidCallback onPressed;
+  final VoidCallback? onLongPressed;
   final String text;
   final Color activeColor;
   final bool isSelect;
@@ -20,6 +22,7 @@ class SelectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
+      onLongPress: onLongPressed,
       child: Text(text),
       style: ButtonStyle(
         padding: MaterialStateProperty.all(EdgeInsets.zero),
