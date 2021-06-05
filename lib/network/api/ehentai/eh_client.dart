@@ -15,20 +15,22 @@ class EhClient extends BaseClient {
     required Map<String, dynamic> filter,
     required int page,
   }) async {
-    return (await dio
-            .get('', queryParameters: {...filter, 'page': page.toString()}))
-        .data;
+    return (await dio.get<String>('', queryParameters: <String, dynamic>{
+      ...filter,
+      'page': page.toString()
+    }))
+        .data!;
   }
 
   /// 热门
   Future<String> getPopular() async {
-    return (await dio.get('popular')).data;
+    return (await dio.get<String>('popular')).data!;
   }
 
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
-    return (await dio.get('g/$gid/$gtoken',
-            queryParameters: {'p': page, 'hc': '1'},
+    return (await dio.get<String>('g/$gid/$gtoken',
+            queryParameters: <String, String>{'p': page, 'hc': '1'},
             cancelToken: cancelToken,
             options: settingStore.dioCacheOptions
                 .copyWith(
@@ -38,11 +40,11 @@ class EhClient extends BaseClient {
                     ..print('getGallery'),
                 )
                 .toOptions()))
-        .data;
+        .data!;
   }
 
   Future<String> galleryImage(String token, String galleryPage) async {
-    return (await dio.get('s/$token/$galleryPage',
+    return (await dio.get<String>('s/$token/$galleryPage',
             options: settingStore.dioCacheOptions
                 .copyWith(
                   policy: CachePolicy.request,
@@ -51,6 +53,6 @@ class EhClient extends BaseClient {
                     ..print('galleryImage'),
                 )
                 .toOptions()))
-        .data;
+        .data!;
   }
 }

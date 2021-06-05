@@ -9,10 +9,10 @@ class AndroidDownloadPage extends StatelessWidget {
   static const route = 'AndroidDownloadPage';
   Future<void> getSafPath(BuildContext context) async {
     final uri = await getSAFUri();
-    if (uri.isEmpty) {
+    if (uri?.isEmpty ?? false) {
       BotToast.showText(text: '获取授权目录失败');
     } else {
-      settingStore.setDownloadUri(uri);
+      settingStore.setDownloadUri(uri!);
     }
     Navigator.of(context).pop();
   }

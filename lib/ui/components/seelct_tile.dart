@@ -64,7 +64,7 @@ class SelectTile<T> extends StatelessWidget {
                         value: e.value,
                         groupValue: selectedValue,
                         onChanged: (value) {
-                          onChange(value!);
+                          onChange(value as T);
                           Navigator.of(context).pop();
                         },
                         title: Text(e.title),

@@ -10,7 +10,7 @@ import 'package:tuple/tuple.dart';
 Future<String> getDoH(String url) async {
   final dio = Dio()
     ..options.connectTimeout = 60 * 1000
-    ..options.headers = {
+    ..options.headers = <String, String>{
       'Accept': 'application/dns-json',
     };
   const dohList = [
@@ -20,14 +20,14 @@ Future<String> getDoH(String url) async {
 
   try {
     for (final query in dohList) {
-      final req = await dio
-          .get<String>(query, queryParameters: {'name': url, 'type': 'A'});
+      final req = await dio.get<String>(query,
+          queryParameters: <String, String>{'name': url, 'type': 'A'});
       if (req.data != null) {
-        final dataJson = json.decode(req.data!);
+        final dataJson = json.decode(req.data!) as Map<String, dynamic>;
         for (final host in dataJson['Answer']) {
           final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
-          if (reg.hasMatch(host['data'])) {
-            return host['data'];
+          if (reg.hasMatch(host['data'] as String)) {
+            return host['data'] as String;
           }
         }
       }
@@ -62,15 +62,15 @@ Future<Tuple2<String, String>> getEhVersion() async {
       'https://api.github.com/repos/ehtagtranslation/Database/releases/latest';
   final dio = Dio()..options.connectTimeout = 60 * 1000;
   final data = (await dio.get<String>(ehTranslateTagUrl)).data!;
-  final body = jsonDecode(data);
-  return Tuple2(body['target_commitish']!, body['body']!);
+  final body = jsonDecode(data) as Map<String, dynamic>;
+  return Tuple2(body['target_commitish']! as String, body['body']! as String);
 }
 
 Future<Map<String, dynamic>> getEhTranslate(String body) async {
   final dio = Dio()..options.connectTimeout = 60 * 1000;
   final reg = RegExp(r'<!--((.|\s)+?)-->');
   final match = reg.firstMatch(body)![1]!;
-  final sha = jsonDecode(match)['mirror'];
+  final sha = jsonDecode(match)['mirror'] as String;
 
   final mirror = [
     'https://cdn.jsdelivr.net/gh/EhTagTranslation/DatabaseReleases@$sha/db.full.json.gz',
@@ -84,7 +84,7 @@ Future<Map<String, dynamic>> getEhTranslate(String body) async {
       final jsonGz = await dio.get<List<int>>(url,
           options: Options(responseType: ResponseType.bytes));
       final jsonBytes = gzip.decode(jsonGz.data!);
-      return jsonDecode(utf8.decode(jsonBytes));
+      return jsonDecode(utf8.decode(jsonBytes)) as Map<String, dynamic>;
     } catch (e) {
       print('尝试$url失败: $e');
     }

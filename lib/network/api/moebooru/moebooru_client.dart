@@ -88,7 +88,7 @@ class MoebooruClient extends BaseClient {
     final uri = Uri(
         path: 'pool/show.json',
         queryParameters: {'id': id.toString(), 'page': page.toString()}.trim);
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   /// 画师列表

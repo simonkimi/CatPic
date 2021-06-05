@@ -11,7 +11,6 @@ import 'package:catpic/network/parser/moebooru/post_parser.dart';
 import 'package:catpic/network/parser/moebooru/tag_parser.dart';
 import 'package:catpic/network/api/moebooru/moebooru_client.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'booru_adapter.dart';

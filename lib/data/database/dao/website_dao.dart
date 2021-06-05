@@ -5,8 +5,8 @@ import '../database.dart';
 part 'website_dao.g.dart';
 
 @UseDao(tables: [WebsiteTable])
-class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
-  WebsiteDao(attachedDatabase) : super(attachedDatabase);
+class WebsiteDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
+  WebsiteDao(T attachedDatabase) : super(attachedDatabase);
 
   Future<List<WebsiteTableData>> getAll() => select(websiteTable).get();
 

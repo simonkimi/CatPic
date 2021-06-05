@@ -53,7 +53,7 @@ class FloatActionBubble extends StatelessWidget {
               isDarkMode(context) ? const Color(0xFFFDFDFD) : Colors.black,
           child: const Icon(Icons.find_in_page_outlined),
           onTap: () async {
-            final page = await showDialog(
+            final page = await showDialog<int?>(
                 context: context,
                 builder: (context) {
                   final inputController = TextEditingController();

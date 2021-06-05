@@ -22,7 +22,7 @@ class PostFilter extends StatefulWidget {
 }
 
 class _PostFilterState extends State<PostFilter> {
-  late final initTags =
+  late final Iterable<String> initTags =
       widget.store.searchText.trim().split(' ').where((e) => e.isNotEmpty);
 
   Widget buildTags() {

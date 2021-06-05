@@ -31,7 +31,7 @@ class DanbooruClient extends BaseClient {
   }
 
   Future<String> postSingle(int id) async {
-    return (await dio.get('posts/$id.json')).data;
+    return (await dio.get<String>('posts/$id.json')).data!;
   }
 
   /// 获取tag详细信息
@@ -88,7 +88,7 @@ class DanbooruClient extends BaseClient {
         path: 'artists.json',
         queryParameters:
             {'search[any_name_matches]': name, 'page': page.toString()}.trim);
-    return (await dio.getUri(uri)).data;
+    return (await dio.getUri<String>(uri)).data!;
   }
 
   Future<void> favourite({
@@ -99,7 +99,7 @@ class DanbooruClient extends BaseClient {
     final uri =
         Uri(path: 'favorites.json', queryParameters: {'post_id': postId}.trim);
 
-    await dio.postUri(uri,
+    await dio.postUri<String>(uri,
         data: {
           'login': username,
           'api_key': apiKey,
@@ -117,7 +117,7 @@ class DanbooruClient extends BaseClient {
           'login': username,
           'api_key': apiKey,
         }.trim);
-    await dio.deleteUri(uri);
+    await dio.deleteUri<String>(uri);
   }
 
   Future<String> hotByDayList({
@@ -129,7 +129,7 @@ class DanbooruClient extends BaseClient {
   }) async {
     final uri = Uri(
       path: 'explore/posts/popular.json',
-      queryParameters: {
+      queryParameters: <String, String>{
         'date': '$year-$month-$day',
         'scale': 'day',
         'page': page,
@@ -148,7 +148,7 @@ class DanbooruClient extends BaseClient {
   }) async {
     final uri = Uri(
       path: 'explore/posts/popular.json',
-      queryParameters: {
+      queryParameters: <String, String>{
         'date': '$year-$month-$day',
         'scale': 'week',
         'page': page,
@@ -167,7 +167,7 @@ class DanbooruClient extends BaseClient {
   }) async {
     final uri = Uri(
       path: 'explore/posts/popular.json',
-      queryParameters: {
+      queryParameters: <String, String>{
         'date': '$year-$month-$day',
         'scale': 'month',
         'page': page,

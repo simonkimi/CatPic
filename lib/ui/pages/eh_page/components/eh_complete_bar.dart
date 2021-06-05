@@ -1,5 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -70,17 +71,21 @@ class _EhCompleteBarState extends State<EhCompleteBar> {
   }
 
   Future<void> _onSearchTagChange([String? tag]) async {
-    tag = tag ?? searchBarController.query;
+    final fullTag = tag ?? searchBarController.query;
 
-    final history = (await DB().historyDao.getAll())
+    final Iterable<HistoryTableData> history = (await DB().historyDao.getAll())
         .where((e) => e.type == HistoryType.EH)
         .where((e) => e.history.startsWith(tag!))
-        .take(10);
-    final lastTag = tag.split(' ').last;
-    final complete =
-        lastTag.isEmpty ? [] : await DB().translateDao.getByTag(lastTag);
+        .take(20);
+
+    final String lastTag = fullTag.split(' ').last;
+    final List<EhTranslateTableData> complete =
+        lastTag.isEmpty || !settingStore.ehAutoCompute
+            ? <EhTranslateTableData>[]
+            : await DB().translateDao.getByTag(lastTag);
+
     setState(() {
-      searchSuggestion = [
+      searchSuggestion = <SearchSuggestion>[
         ...history
             .map((e) => SearchSuggestion(title: e.history, isHistory: true)),
         ...complete.take(50).map((e) => SearchSuggestion(
@@ -92,7 +97,9 @@ class _EhCompleteBarState extends State<EhCompleteBar> {
   }
 
   Future<void> _setSearchHistory(String tag) async {
-    if (tag.isEmpty) return;
+    if (tag.isEmpty) {
+      return;
+    }
     final dao = DB().historyDao;
     final history = await dao.get(tag);
     if (history != null) {

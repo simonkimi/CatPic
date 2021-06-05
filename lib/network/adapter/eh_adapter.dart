@@ -8,7 +8,6 @@ import 'package:catpic/network/parser/ehentai/gallery_img_parser.dart';
 import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class EHAdapter extends Adapter {

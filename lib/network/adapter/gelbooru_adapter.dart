@@ -9,7 +9,6 @@ import 'package:catpic/network/parser/gelbooru/post_parser.dart';
 import 'package:catpic/network/parser/gelbooru/tag_parser.dart';
 import 'package:catpic/network/api/gelbooru/gelbooru_client.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'booru_adapter.dart';

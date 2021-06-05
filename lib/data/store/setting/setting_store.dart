@@ -294,15 +294,15 @@ abstract class SettingStoreBase with Store {
           for (final entity
               in (namespace['data'] as Map<String, dynamic>).entries) {
             entities.add(EhTranslateTableCompanion.insert(
-              namespace: namespace['namespace'],
+              namespace: namespace['namespace'] as String,
               name: entity.key,
-              translate: entity.value['name']['text'],
-              link: entity.value['intro']['raw'],
+              translate: entity.value['name']['text'] as String,
+              link: entity.value['intro']['raw'] as String,
             ));
           }
         }
         await DB().translateDao.addTrList(entities);
-        setEhDatabaseVersion(json['head']['sha']);
+        setEhDatabaseVersion(json['head']['sha'] as String);
         initTranslate();
         BotToast.showText(text: I18n.g.update_success);
         return true;

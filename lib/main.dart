@@ -25,7 +25,7 @@ final downloadStore = DownloadStore();
 final mainStore = MainStore();
 final settingStore = SettingStore();
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   open.overrideFor(OperatingSystem.windows, openOnWindows);
   await SpUtil.getInstance();

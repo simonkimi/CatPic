@@ -4,7 +4,7 @@ import 'artist_model.dart';
 
 class DanbooruArtistParser {
   static List<BooruArtist> parse(String postJson) {
-    final List<dynamic> artists = jsonDecode(postJson);
+    final List<Map<String, dynamic>> artists = jsonDecode(postJson)as List<Map<String, dynamic>>;
 
     return artists
         .map((e) => Root.fromJson(e))

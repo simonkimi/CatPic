@@ -4,7 +4,7 @@ import 'artist_model.dart';
 
 class MoebooruArtistParse {
   static List<BooruArtist> parse(String postJson) {
-    final List<dynamic> artists = jsonDecode(postJson);
+    final artists = jsonDecode(postJson) as List<Map<String, dynamic>>;
 
     return artists
         .map((e) => Root.fromJson(e))

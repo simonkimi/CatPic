@@ -59,8 +59,8 @@ class SearchBar extends StatefulWidget {
 }
 
 class SearchBarState extends State<SearchBar> {
-  late var _searchText = widget.searchText ?? '';
-  late var _searchTmp = widget.searchText ?? '';
+  late String _searchText = widget.searchText ?? '';
+  late String _searchTmp = widget.searchText ?? '';
   late FloatingSearchBarController controller;
   late String defaultHint;
 

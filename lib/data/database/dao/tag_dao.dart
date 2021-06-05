@@ -5,8 +5,8 @@ import '../database.dart';
 part 'tag_dao.g.dart';
 
 @UseDao(tables: [TagTable])
-class TagDao extends DatabaseAccessor<AppDataBase> with _$TagDaoMixin {
-  TagDao(attachedDatabase) : super(attachedDatabase);
+class TagDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase> with _$TagDaoMixin {
+  TagDao(T attachedDatabase) : super(attachedDatabase);
 
   Future<List<TagTableData>> getAll() => select(tagTable).get();
 

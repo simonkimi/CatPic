@@ -290,7 +290,7 @@ class PostImageViewPage extends HookWidget {
     }
   }
 
-  void showAsBottomSheet(BuildContext context) async {
+  Future<void> showAsBottomSheet(BuildContext context) async {
     final size = MediaQuery.of(context).size;
     print('${size.width}  ${size.height}');
     await showSlidingBottomSheet(context, builder: (context) {

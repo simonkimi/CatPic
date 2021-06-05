@@ -6,7 +6,7 @@ import 'post_model.dart';
 
 class DanbooruPostParse {
   static List<BooruPost> parse(String postJson) {
-    final List<dynamic> posts = jsonDecode(postJson);
+    final List<dynamic> posts = jsonDecode(postJson) as List<dynamic>;
     return posts.where((e) => e['id'] != null).map((e) {
       return parseSingle(e);
     }).toList();
@@ -37,7 +37,7 @@ class DanbooruPostParse {
   static BooruPost parseSingle(dynamic postJson) {
     late Root root;
     if (postJson is String) {
-      root = Root.fromJson(jsonDecode(postJson));
+      root = Root.fromJson(jsonDecode(postJson) as Map<String, dynamic>);
     } else if (postJson is Map) {
       root = Root.fromJson(postJson.cast());
     }

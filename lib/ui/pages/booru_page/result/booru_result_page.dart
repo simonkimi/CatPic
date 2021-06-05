@@ -36,8 +36,8 @@ class BooruPage extends StatefulWidget {
 }
 
 class _BooruPageState extends State<BooruPage> {
-  late final searchText = widget.searchText;
-  late final searchType = widget.searchType;
+  late final String searchText = widget.searchText;
+  late final SearchType searchType = widget.searchType;
   late var searchBody = buildSearchBody(searchText, searchType);
   late final StreamSubscription<EventSiteChange> _eventSiteChangeListener;
 

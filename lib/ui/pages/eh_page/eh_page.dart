@@ -28,9 +28,9 @@ class EhPage extends StatefulWidget {
 }
 
 class _EhPageState extends State<EhPage> {
-  late final searchText = widget.searchText;
-  late final searchType = widget.searchType;
-  late var searchBody = buildSearchBody(searchText, searchType);
+  late final String searchText = widget.searchText;
+  late final EHSearchType searchType = widget.searchType;
+  late Widget searchBody = buildSearchBody(searchText, searchType);
   late final StreamSubscription<EventSiteChange> _eventSiteChangeListener;
 
   @override

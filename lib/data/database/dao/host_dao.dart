@@ -5,8 +5,8 @@ import '../database.dart';
 part 'host_dao.g.dart';
 
 @UseDao(tables: [HostTable])
-class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
-  HostDao(attachedDatabase) : super(attachedDatabase);
+class HostDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
+  HostDao(T attachedDatabase) : super(attachedDatabase);
 
   Future<List<HostTableData>> getAll() => select(hostTable).get();
 

@@ -15,7 +15,7 @@ class CookieInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final String cookies = options.headers['Cookie'] ?? '';
+    final String cookies = options.headers['Cookie'] as String? ?? '';
     final currentCookies =
         Map.fromEntries(cookies.split(';').where((e) => e.isNotEmpty).map((e) {
       final data = e.split('=');

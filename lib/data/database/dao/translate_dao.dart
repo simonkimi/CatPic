@@ -5,9 +5,9 @@ import '../database.dart';
 part 'translate_dao.g.dart';
 
 @UseDao(tables: [EhTranslateTable])
-class TranslateDao extends DatabaseAccessor<AppDataBase>
+class TranslateDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase>
     with _$TranslateDaoMixin {
-  TranslateDao(attachedDatabase) : super(attachedDatabase);
+  TranslateDao(T attachedDatabase) : super(attachedDatabase);
 
   Future<List<EhTranslateTableData>> getAll() => select(ehTranslateTable).get();
 

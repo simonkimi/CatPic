@@ -65,7 +65,7 @@ class _TextInputTileState extends State<TextInputTile> {
     );
   }
 
-  void _showDialog(BuildContext context) async {
+  Future<void> _showDialog(BuildContext context) async {
     await showDialog(
         context: context,
         builder: (context) {

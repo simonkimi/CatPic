@@ -47,29 +47,29 @@ class BooruPost {
 
   factory BooruPost.fromJson(Map<String, dynamic> jsonRes) {
     return BooruPost(
-      id: jsonRes['id'],
-      creatorId: jsonRes['creatorId'],
-      createTime: jsonRes['createTime'],
-      md5: jsonRes['md5'],
-      imgURL: jsonRes['imgURL'],
-      previewURL: jsonRes['previewURL'],
-      sampleURL: jsonRes['sampleURL'],
-      width: jsonRes['width'],
-      height: jsonRes['height'],
-      sampleWidth: jsonRes['sampleWidth'],
-      sampleHeight: jsonRes['sampleHeight'],
-      previewWidth: jsonRes['previewWidth'],
-      previewHeight: jsonRes['previewHeight'],
-      rating: jsonRes['rating'],
-      status: jsonRes['status'],
+      id: jsonRes['id'] as String,
+      creatorId: jsonRes['creatorId'] as String,
+      createTime: jsonRes['createTime'] as String,
+      md5: jsonRes['md5'] as String,
+      imgURL: jsonRes['imgURL'] as String,
+      previewURL: jsonRes['previewURL'] as String,
+      sampleURL: jsonRes['sampleURL'] as String,
+      width: jsonRes['width'] as int,
+      height: jsonRes['height'] as int,
+      sampleWidth: jsonRes['sampleWidth'] as int,
+      sampleHeight: jsonRes['sampleHeight'] as int,
+      previewWidth: jsonRes['previewWidth'] as int,
+      previewHeight: jsonRes['previewHeight'] as int,
+      rating: jsonRes['rating'] as int,
+      status: jsonRes['status'] as String,
       tags: (jsonRes['tags'] as Map<String, dynamic>).map(
-        (key, value) => MapEntry<String, List<String>>(
+        (key, dynamic value) => MapEntry<String, List<String>>(
           key,
           (value as List<dynamic>).cast<String>(),
         ),
       ),
-      source: jsonRes['source'],
-      score: jsonRes['score'],
+      source: jsonRes['source'] as String,
+      score: jsonRes['score'] as String,
     );
   }
 
@@ -140,7 +140,7 @@ class BooruPost {
   final String score;
   bool favourite;
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'creatorId': creatorId,
         'createTime': createTime,

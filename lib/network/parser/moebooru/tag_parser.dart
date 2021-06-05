@@ -3,13 +3,13 @@ import 'package:catpic/data/models/booru/booru_tag.dart';
 
 class MoebooruTagParse {
   static List<BooruTag> parse(String tagJson) {
-    final List<dynamic> json = jsonDecode(tagJson);
+    final List<dynamic> json = jsonDecode(tagJson) as List<dynamic>;
 
     return json.map((e) {
       return BooruTag(
           id: e['id'].toString(),
-          name: e['name'],
-          count: e['count'],
+          name: e['name'] as String,
+          count: e['count'] as int,
           type: _getBooruTagType(e['type'].toString()));
     }).toList();
   }

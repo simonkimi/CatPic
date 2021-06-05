@@ -12,7 +12,7 @@ import 'pool_model.dart';
 
 class MoebooruPoolParser {
   static List<MoebooruPool> parse(String jsonStr) {
-    final List<dynamic> json = jsonDecode(jsonStr);
+    final List<Map<String, dynamic>> json = jsonDecode(jsonStr) as List<Map<String, dynamic>>;
 
     return json
         .map((e) => MoebooruPool.fromRoot(PoolList.fromJson(e)))
@@ -20,7 +20,7 @@ class MoebooruPoolParser {
   }
 
   static List<BooruPost> parseSingle(String jsonStr) {
-    final json = jsonDecode(jsonStr);
+    final json = jsonDecode(jsonStr) as Map<String, dynamic>;
     final poolSingle = Pool.fromJson(json);
     return poolSingle.posts
         .map((e) => BooruPost(
