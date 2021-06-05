@@ -66,6 +66,8 @@ class EHAdapter extends Adapter {
       for (final tag in item.keyTags) {
         final tagParam = tag.tag.split(':');
         if (tagParam.length == 2) {
+          if (tagParam[0] == 'f') tagParam[0] = '♀';
+          if (tagParam[0] == 'm') tagParam[0] = '♂';
           tag.translate =
               '${tagParam[0]}:${settingStore.translateMap[tagParam[1]]}';
         } else if (tagParam.length == 1) {
