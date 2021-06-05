@@ -218,14 +218,14 @@ class PreviewExtendedCard extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    return DarkWidget(
-      width: 110,
-      height: 150,
-      child: SizedBox(
+    return Hero(
+      tag: '${previewModel.gid}${previewModel.gtoken}',
+      child: DarkWidget(
         width: 110,
         height: 150,
-        child: Hero(
-          tag: '${previewModel.gid}${previewModel.gtoken}',
+        child: SizedBox(
+          width: 110,
+          height: 150,
           child: Image(
             image: DioImageProvider(
               dio: adapter.dio,
