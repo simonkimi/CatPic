@@ -148,12 +148,9 @@ class _EhCompleteBarState extends State<EhCompleteBar>
         ],
         body: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) => ScaleTransition(
-            scale: animation,
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: child,
           ),
           child:
               filterDisplaySwitch ? buildFilterFragment(context) : widget.body,
@@ -197,7 +194,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
 
     final Iterable<HistoryTableData> history = (await DB().historyDao.getAll())
         .where((e) => e.type == HistoryType.EH)
-        .where((e) => e.history.startsWith(tag!))
+        .where((e) => e.history.startsWith(tag ?? ''))
         .take(20);
 
     final String lastTag = fullTag.split(' ').last;
@@ -247,7 +244,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
+                    horizontal: 15,
                     vertical: 10,
                   ),
                   child: Column(

@@ -162,12 +162,9 @@ class _TagSearchBarState extends State<TagSearchBar>
       ],
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        transitionBuilder: (child, animation) => ScaleTransition(
-          scale: animation,
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: child,
         ),
         child: filterDisplaySwitch
             ? PostFilter(
