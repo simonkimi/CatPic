@@ -254,10 +254,14 @@ class EhPreviewPage extends StatelessWidget {
                         ),
                         child: InkWell(
                           onTap: () {
+                            var tag = e.value;
+                            if (tag.contains(' ')) {
+                              tag = '"$tag\$"';
+                            }
                             Navigator.of(context)
                                 .push(MaterialPageRoute(builder: (context) {
                               return EhPage(
-                                searchText: e.value,
+                                searchText: '${e.parent}:$tag',
                                 searchType: EHSearchType.INDEX,
                               );
                             }));

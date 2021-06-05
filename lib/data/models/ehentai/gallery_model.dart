@@ -47,8 +47,9 @@ class GalleryModel extends GalleryBase {
 }
 
 class TagItem {
-  TagItem(this.value);
+  TagItem(this.value, this.parent);
 
+  final String parent;
   final String value;
   String? translate;
 }
