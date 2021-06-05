@@ -85,12 +85,20 @@ class _EhCompleteBarState extends State<EhCompleteBar> {
                 title: Text(e.title),
                 subtitle: e.subTitle != null ? Text(e.subTitle!) : null,
                 onTap: () {
-                  final tag = e.title.contains(' ') && !e.isHistory
-                      ? '"${e.title}\$"'
-                      : e.title;
+                  late final String completeTag;
+                  if (e.title.contains(' ')) {
+                    if (e.title.contains(':')) {
+                      final tagParams = e.title.split(':');
+                      completeTag = tagParams[0] + ':"${tagParams[1]}\$"';
+                    } else {
+                      completeTag = '"${e.title}\$"';
+                    }
+                  } else {
+                    completeTag = e.title;
+                  }
                   final newTag = searchBarController.query.split(' ')
                     ..removeLast()
-                    ..add(tag);
+                    ..add(completeTag);
                   searchBarController.query = newTag.join(' ') + ' ';
                 },
               );
