@@ -19,7 +19,7 @@ class EhHistoryTable extends Table {
 
   TextColumn get uploader => text()();
 
-  TextColumn get tag => text()();
+  IntColumn get tag => integer()();
 
   IntColumn get lastOpen =>
       integer().clientDefault(() => DateTime.now().millisecond)();

@@ -5,9 +5,9 @@ import 'package:moor/moor.dart';
 part 'download_dao.g.dart';
 
 @UseDao(tables: [DownloadTable])
-class DownloadDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase>
+class DownloadDao extends DatabaseAccessor<AppDataBase>
     with _$DownloadDaoMixin {
-  DownloadDao(T attachedDatabase) : super(attachedDatabase);
+  DownloadDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 
   Future<List<DownloadTableData>> getAll() => select(downloadTable).get();
 

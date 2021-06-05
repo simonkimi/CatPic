@@ -6,8 +6,8 @@ import '../database.dart';
 part 'history_dao.g.dart';
 
 @UseDao(tables: [HistoryTable])
-class HistoryDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
-  HistoryDao(T attachedDatabase) : super(attachedDatabase);
+class HistoryDao extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
+  HistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 
   Future<List<HistoryTableData>> getAll() => (select(historyTable)
         ..orderBy([

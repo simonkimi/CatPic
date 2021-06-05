@@ -174,7 +174,8 @@ class DownloadManagerPage extends StatelessWidget {
                                   index: 0,
                                   postList: [
                                     BooruPost.fromJson(
-                                        jsonDecode(downloadTable.booruJson) as Map<String, dynamic>)
+                                        jsonDecode(downloadTable.booruJson)
+                                            as Map<String, dynamic>)
                                   ],
                                 ),
                               ),

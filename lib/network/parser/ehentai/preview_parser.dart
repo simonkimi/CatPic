@@ -67,7 +67,7 @@ class PreviewParser {
           pages: pages,
           previewImg: previewImg,
           stars: stars,
-          tag: tag,
+          tag: fromEhTag(tag),
           targetUrl: targetUrl,
           title: title,
           uploader: uploader,

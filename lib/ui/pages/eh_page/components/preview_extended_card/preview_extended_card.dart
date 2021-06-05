@@ -135,18 +135,20 @@ class PreviewExtendedCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 3),
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: fromEhTag(previewModel.tag),
-                ),
-                child: Text(
-                  previewModel.tag,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                  ),
-                ),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 50),
+                child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(color: previewModel.tag.color),
+                    child: Center(
+                      child: Text(
+                        previewModel.tag.string,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                      ),
+                    )),
               ),
             ],
           ),

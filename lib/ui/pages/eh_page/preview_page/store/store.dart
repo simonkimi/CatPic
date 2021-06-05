@@ -146,7 +146,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         lastOpen: DateTime.now().millisecond,
         galleryId: previewModel.gid,
         galleryToken: previewModel.gtoken,
-        tag: previewModel.tag,
+        tag: previewModel.tag.index,
         previewImg: previewModel.previewImg,
         uploadTime: previewModel.uploadTime,
         uploader: previewModel.uploader,
@@ -157,7 +157,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
       await dao.insert(EhHistoryTableCompanion.insert(
         galleryId: previewModel.gid,
         galleryToken: previewModel.gtoken,
-        tag: previewModel.tag,
+        tag: previewModel.tag.index,
         previewImg: previewModel.previewImg,
         uploadTime: previewModel.uploadTime,
         uploader: previewModel.uploader,

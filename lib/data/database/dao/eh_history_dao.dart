@@ -6,9 +6,9 @@ import '../database.dart';
 part 'eh_history_dao.g.dart';
 
 @UseDao(tables: [EhHistoryTable])
-class EhHistoryDao<T extends AppDataBase> extends DatabaseAccessor<AppDataBase>
+class EhHistoryDao extends DatabaseAccessor<AppDataBase>
     with _$EhHistoryDaoMixin {
-  EhHistoryDao(T attachedDatabase) : super(attachedDatabase);
+  EhHistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 
   Future<List<EhHistoryTableData>> getAll() => (select(ehHistoryTable)
         ..orderBy([

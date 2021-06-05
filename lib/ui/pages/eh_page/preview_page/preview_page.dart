@@ -493,10 +493,10 @@ class EhPreviewPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: fromEhTag(previewModel.tag),
+                          color: previewModel.tag.color,
                         ),
                         child: Text(
-                          previewModel.tag,
+                          previewModel.tag.string,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 13,

@@ -37,6 +37,7 @@
   "about": "关于",
   "update": "更新",
   "version": "版本",
+  "none": "无",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -57,7 +58,6 @@
   "trusted_host_auto_failed": "获取主机地址失败",
   "click_again_to_exit": "再按一次退出",
   "cookie_desc": "使用Cookie标识您的登录状态",
-
   "login": "登录",
   "network": "网络",
   "no_website": "还没有网站, 快去添加一个!",
@@ -65,7 +65,7 @@
   "host_empty": "主机不能为空",
   "host_or_ip_empty": "主机和IP不能为空",
   "illegal_ip": "非法IP",
-  "turn_on_host" : "必须先开启自定义主机!",
+  "turn_on_host": "必须先开启自定义主机!",
   "to_add_website": "还没有网站, 点我添加一个!",
   "user_setting": "用户设置",
   "username": "用户名",
@@ -83,7 +83,6 @@
       }
     }
   },
-
   "safe": "安全",
   "explicit": "暴露",
   "questionable": "未知",
@@ -92,12 +91,10 @@
   "score": "评分",
   "source": "来源",
   "rating": "评级",
-
   "general": "标签",
   "copyright": "原作",
   "character": "角色",
   "metadata": "元数据",
-
   "copy": "复制",
   "copy_finish": "已复制 {tag}",
   "favourite_success": "收藏成功",
@@ -110,7 +107,6 @@
     }
   },
   "add_to_tmp": "已添加至候选",
-
   "connecting": "连接中...",
   "tap_to_reload": "点击重新加载",
   "idle_loading": "上拉加载",
@@ -122,7 +118,6 @@
   "jump_page": "跳页",
   "page": "页数",
   "input_page": "请输入页数",
-
   "display": "显示",
   "thumbnail": "缩略图",
   "sample": "大图",
@@ -188,8 +183,6 @@
       }
     }
   },
-
-
   "search_in": "在 {site} 搜索",
   "@search_in": {
     "placeholders": {
@@ -199,7 +192,6 @@
       }
     }
   },
-
   "download_uri": "下载路径",
   "download_manager": "下载管理",
   "saf_desc1": "以SAF模式保存图片, 您必须选择一个目录授权CatPic访问",
@@ -221,7 +213,6 @@
       }
     }
   },
-
   "no_comment": "没有其他评论了",
   "show_more_comment": "还有{num}条评论",
   "@show_more_comment": {
@@ -233,5 +224,40 @@
     }
   },
   "no_preview": "没有其他预览了",
-  "show_more_preview": "显示全部预览"
+  "show_more_preview": "显示全部预览",
+  "doujinshi": "同人志",
+  "manga": "漫画",
+  "artist_cg": "画师CG",
+  "game_cg": "游戏CG",
+  "western": "西方",
+  "non_h": "无H",
+  "image_set": "图片集",
+  "cosplay": "Cosplay",
+  "asian_porn": "亚洲",
+  "misc": "其他",
+
+  "filter": "过滤器",
+  "search_gallery_tag": "搜索标签",
+  "search_torrent": "搜索种子文件名",
+  "search_low_power_tags": "搜索低权重标签",
+  "show_expunged_galleries": "显示已删除的库",
+  "search_page": "搜索页面",
+  "to": "到",
+  "search_description": "搜索描述",
+  "show_only_torrent": "只显示有种子的图库",
+  "search_downvote_tag": "搜索投票移除了的标签",
+  "minimum_rating": "最低评分",
+  "star_num": "{star}星",
+  "@star_num": {
+    "placeholders": {
+      "star": {
+        "type": "String",
+        "example": "3"
+      }
+    }
+  },
+  "disable_default_filter": "禁用默认筛选器",
+  "uploader": "上传者",
+  "tags": "标签",
+  "search_gallery_name": "搜索名称"
 }
