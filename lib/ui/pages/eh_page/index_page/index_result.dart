@@ -32,8 +32,8 @@ class EhIndexResult extends StatelessWidget {
     return EhCompleteBar(
       searchText: searchText,
       store: store,
-      onSubmitted: (value) {
-        store.newSearch(value);
+      onSubmitted: (value, useFilter) {
+        store.applyNewFilter(value.trim(), useFilter);
       },
       body: buildBody(),
     );

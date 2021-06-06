@@ -63,23 +63,23 @@ class EhFilter {
     return {
       'advsearch': '1',
       'f_search': searchText ?? '',
-      'f_sname': filter.searchGalleryName.value ? 'on' : '',
-      'f_stags': filter.searchGalleryName.value ? 'on' : '',
-      'f_storr': filter.searchTorrentFile.value ? 'on' : '',
-      'f_sdt1': filter.searchLowPowerTag.value ? 'on' : '',
-      'f_sh': filter.showExpungedGallery.value ? 'on' : '',
-      'f_sp': filter.betweenPage.value ? 'on' : '',
-      'f_spf': filter.betweenPage.value ? filter.pageStart.toString() : '',
-      'f_spt': filter.betweenPage.value ? filter.pageEnd.toString() : '',
-      'f_sfl': filter.disableLanguage.value ? 'on' : '',
-      'f_sfu': filter.disableUploader.value ? 'on' : '',
-      'f_sft': filter.disableTag.value ? 'on' : '',
-      'f_sdesc': filter.searchGalleryDescription.value ? 'on' : '',
-      'f_sto': filter.onlyShowGalleriesWithTorrents.value ? 'on' : '',
-      'f_sdt2': filter.searchDownvotedTags.value ? 'on' : '',
-      'f_sr': filter.minimumRating.value != -1 ? 'on' : '',
+      'f_sname': filter.searchGalleryName ? 'on' : '',
+      'f_stags': filter.searchGalleryName ? 'on' : '',
+      'f_storr': filter.searchTorrentFile ? 'on' : '',
+      'f_sdt1': filter.searchLowPowerTag ? 'on' : '',
+      'f_sh': filter.showExpungedGallery ? 'on' : '',
+      'f_sp': filter.betweenPage ? 'on' : '',
+      'f_spf': filter.betweenPage ? filter.pageStart.toString() : '',
+      'f_spt': filter.betweenPage ? filter.pageEnd.toString() : '',
+      'f_sfl': filter.disableLanguage ? 'on' : '',
+      'f_sfu': filter.disableUploader ? 'on' : '',
+      'f_sft': filter.disableTag ? 'on' : '',
+      'f_sdesc': filter.searchGalleryDescription ? 'on' : '',
+      'f_sto': filter.onlyShowGalleriesWithTorrents ? 'on' : '',
+      'f_sdt2': filter.searchDownvotedTags ? 'on' : '',
+      'f_sr': filter.minimumRating != -1 ? 'on' : '',
       'f_srdd':
-      filter.minimumRating != -1 ? filter.minimumRating.toString() : '',
+          filter.minimumRating != -1 ? filter.minimumRating.toString() : '',
       'f_cats': EhFilter.tagFilter(
         misc: filter.typeFilter[EhGalleryType.Misc]!.value,
         doujinsh: filter.typeFilter[EhGalleryType.Doujinshi]!.value,
@@ -97,35 +97,41 @@ class EhFilter {
 }
 
 class EhAdvanceFilter {
-  final searchGalleryName = true.obs;
+  final _searchGalleryName = true.obs;
 
-  final searchGalleryTag = true.obs;
+  final _searchGalleryTag = true.obs;
 
-  final searchTorrentFile = false.obs;
+  final _searchTorrentFile = false.obs;
 
-  final searchLowPowerTag = false.obs;
+  final _searchLowPowerTag = false.obs;
 
-  final searchGalleryDescription = false.obs;
+  final _searchGalleryDescription = false.obs;
 
-  final showExpungedGallery = false.obs;
+  final _showExpungedGallery = false.obs;
 
-  final onlyShowGalleriesWithTorrents = false.obs;
+  final _onlyShowGalleriesWithTorrents = false.obs;
 
-  final searchDownvotedTags = false.obs;
+  final _searchDownvotedTags = false.obs;
 
-  final betweenPage = false.obs;
+  final _betweenPage = false.obs;
 
-  final pageStart = 0.obs;
+  final _pageStart = 0.obs;
 
-  final pageEnd = 0.obs;
+  final _pageEnd = 0.obs;
 
-  final minimumRating = (-1).obs;
+  final _minimumRating = (-1).obs;
 
-  final disableLanguage = false.obs;
+  final _disableLanguage = false.obs;
 
-  final disableUploader = false.obs;
+  final _disableUploader = false.obs;
 
-  final disableTag = false.obs;
+  final _disableTag = false.obs;
+
+  final _useAdvance = false.obs;
+
+  bool get useAdvance => _useAdvance.value;
+
+  set useAdvance(bool val) => _useAdvance.value = val;
 
   final typeFilter = <EhGalleryType, Rx<bool>>{
     EhGalleryType.Doujinshi: true.obs,
@@ -139,4 +145,67 @@ class EhAdvanceFilter {
     EhGalleryType.Asian_Porn: true.obs,
     EhGalleryType.Misc: true.obs,
   };
+
+  bool get disableTag => _disableTag.value;
+
+  set disableTag(bool val) => _disableTag.value = val;
+
+  bool get disableUploader => _disableUploader.value;
+
+  set disableUploader(bool val) => _disableUploader.value = val;
+
+  bool get disableLanguage => _disableLanguage.value;
+
+  set disableLanguage(bool val) => _disableLanguage.value = val;
+
+  int get minimumRating => _minimumRating.value;
+
+  set minimumRating(int val) => _minimumRating.value = val;
+
+  int get pageEnd => _pageEnd.value;
+
+  set pageEnd(int val) => _pageEnd.value = val;
+
+  int get pageStart => _pageStart.value;
+
+  set pageStart(int val) => _pageStart.value = val;
+
+  bool get betweenPage => _betweenPage.value;
+
+  set betweenPage(bool val) => _betweenPage.value = val;
+
+  bool get searchDownvotedTags => _searchDownvotedTags.value;
+
+  set searchDownvotedTags(bool val) => _searchDownvotedTags.value = val;
+
+  bool get onlyShowGalleriesWithTorrents =>
+      _onlyShowGalleriesWithTorrents.value;
+
+  set onlyShowGalleriesWithTorrents(bool val) =>
+      _onlyShowGalleriesWithTorrents.value = val;
+
+  bool get searchGalleryDescription => _searchGalleryDescription.value;
+
+  set searchGalleryDescription(bool val) =>
+      _searchGalleryDescription.value = val;
+
+  bool get showExpungedGallery => _showExpungedGallery.value;
+
+  set showExpungedGallery(bool val) => _showExpungedGallery.value = val;
+
+  bool get searchLowPowerTag => _searchLowPowerTag.value;
+
+  set searchLowPowerTag(bool val) => _searchLowPowerTag.value = val;
+
+  bool get searchTorrentFile => _searchTorrentFile.value;
+
+  set searchTorrentFile(bool val) => _searchTorrentFile.value = val;
+
+  bool get searchGalleryName => _searchGalleryName.value;
+
+  set searchGalleryName(bool val) => _searchGalleryName.value = val;
+
+  bool get searchGalleryTag => _searchGalleryTag.value;
+
+  set searchGalleryTag(bool val) => _searchGalleryTag.value = val;
 }

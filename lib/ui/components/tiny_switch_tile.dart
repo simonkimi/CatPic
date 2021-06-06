@@ -6,17 +6,20 @@ class TinySwitchTile extends StatelessWidget {
     required this.title,
     required this.value,
     required this.onChanged,
+    this.disable,
   }) : super(key: key);
 
   final Widget title;
   final bool value;
   final ValueChanged<bool> onChanged;
 
+  final bool? disable;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        onChanged(!value);
+        if (!(disable ?? false)) onChanged(!value);
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -25,8 +28,8 @@ class TinySwitchTile extends StatelessWidget {
           SizedBox(
             height: 40,
             child: Switch(
-              value: true,
-              onChanged: onChanged,
+              value: value,
+              onChanged: (disable ?? false) ? null : onChanged,
             ),
           )
         ],
