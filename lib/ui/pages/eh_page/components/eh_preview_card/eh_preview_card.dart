@@ -22,10 +22,10 @@ class EhPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DarkWidget(
-      child: PostPreviewCard(
-        hasSize: true,
-        body: Obx(
+    return PostPreviewCard(
+      hasSize: true,
+      body: DarkWidget(
+        child: Obx(
           () => model.loadState.value
               ? SizedBox(
                   width: double.infinity,
@@ -48,8 +48,8 @@ class EhPreviewCard extends StatelessWidget {
                 )
               : const SizedBox(),
         ),
-        title: title,
       ),
+      title: title,
     );
   }
 }

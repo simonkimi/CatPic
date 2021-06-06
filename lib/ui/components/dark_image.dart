@@ -57,7 +57,9 @@ class DarkWidget extends StatelessWidget {
       builder: (context) => settingStore.darkMask && isDarkMode(context)
           ? Stack(
               children: [
-                child,
+                Center(
+                  child: child,
+                ),
                 Container(
                   color: Colors.black26,
                   width: width,

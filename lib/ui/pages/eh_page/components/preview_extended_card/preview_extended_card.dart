@@ -222,35 +222,33 @@ class PreviewExtendedCard extends StatelessWidget {
   Widget buildImage(BuildContext context) {
     return Hero(
       tag: '${previewModel.gid}${previewModel.gtoken}',
-      child: DarkWidget(
+      child: SizedBox(
         width: 110,
         height: 150,
-        child: SizedBox(
-          width: 110,
-          height: 150,
-          child: Image(
-            image: DioImageProvider(
-              dio: adapter.dio,
-              url: previewModel.previewImg,
-            ),
-            loadingBuilder: (context, child, loadingProgress) {
-              return loadingProgress == null
-                  ? child
-                  : Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      ),
-                    );
-            },
+        child: Image(
+          image: DioImageProvider(
+            dio: adapter.dio,
+            url: previewModel.previewImg,
           ),
+          loadingBuilder: (context, child, loadingProgress) {
+            return loadingProgress == null
+                ? DarkWidget(
+                    child: child,
+                  )
+                : Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+          },
         ),
       ),
     );
