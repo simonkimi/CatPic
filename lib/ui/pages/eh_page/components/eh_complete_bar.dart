@@ -5,12 +5,15 @@ import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
+import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:get/get.dart';
 import 'package:catpic/utils/utils.dart';
@@ -22,12 +25,14 @@ class EhCompleteBar extends StatefulWidget {
     required this.searchText,
     required this.body,
     this.controller,
+    required this.store,
   }) : super(key: key);
 
   final ValueChanged<String>? onSubmitted;
   final String searchText;
   final Widget body;
   final FloatingSearchBarController? controller;
+  final EhIndexStore store;
 
   @override
   _EhCompleteBarState createState() => _EhCompleteBarState();
@@ -52,18 +57,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
 
   var lastClickBack = DateTime.now();
 
-  var typeFilter = <EhGalleryType, Rx<bool>>{
-    EhGalleryType.Doujinshi: true.obs,
-    EhGalleryType.Manga: true.obs,
-    EhGalleryType.Artist_CG: true.obs,
-    EhGalleryType.Game_CG: true.obs,
-    EhGalleryType.Western: true.obs,
-    EhGalleryType.Non_H: true.obs,
-    EhGalleryType.Image_Set: true.obs,
-    EhGalleryType.Cosplay: true.obs,
-    EhGalleryType.Asian_Porn: true.obs,
-    EhGalleryType.Misc: true.obs,
-  };
+  late final EhAdvanceFilter filter = widget.store.filter;
 
   void onActionPress() {
     if (searchBarController.query.isNotEmpty) {
@@ -256,22 +250,23 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                         childAspectRatio: 5,
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        children: typeFilter.entries
+                        children: filter.typeFilter.entries
                             .map((e) => Obx(() => SelectButton(
                                   activeColor: e.key.color,
-                                  isSelect: typeFilter[e.key]!.value,
+                                  isSelect: filter.typeFilter[e.key]!.value,
                                   onPressed: () {
-                                    typeFilter[e.key]!.value =
-                                        !typeFilter[e.key]!.value;
+                                    filter.typeFilter[e.key]!.value =
+                                        !filter.typeFilter[e.key]!.value;
                                   },
                                   onLongPressed: () {
-                                    final value = !typeFilter[e.key]!.value;
-                                    typeFilter.entries
+                                    final value =
+                                        !filter.typeFilter[e.key]!.value;
+                                    filter.typeFilter.entries
                                         .where((ele) => ele.key != e.key)
                                         .forEach((element) {
                                       element.value.value = value;
                                     });
-                                    typeFilter[e.key]!.value = !value;
+                                    filter.typeFilter[e.key]!.value = !value;
                                     vibrate(duration: 50, amplitude: 100);
                                   },
                                   text: e.key.string,
@@ -283,10 +278,13 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                       Row(
                         children: [
                           Text(I18n.of(context).advance_search),
-                          Switch(
-                            value: true,
-                            onChanged: (value) {},
-                          ),
+                          Obx(() => Switch(
+                                value: widget.store.useAdvance.value,
+                                onChanged: (value) {
+                                  widget.store.useAdvance.value =
+                                      !widget.store.useAdvance.value;
+                                },
+                              )),
                           const Expanded(child: SizedBox()),
                           TextButton(
                             onPressed: () {},
@@ -294,88 +292,132 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                           ),
                         ],
                       ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_gallery_name),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_gallery_tag),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_torrent),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_description),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_low_power_tags),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).show_expunged_galleries),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).show_only_torrent),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).search_downvote_tag),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_gallery_name),
+                            value: filter.searchGalleryName.value,
+                            onChanged: (value) {
+                              print(value);
+                              filter.searchGalleryName.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_gallery_tag),
+                            value: filter.searchGalleryTag.value,
+                            onChanged: (value) {
+                              filter.searchGalleryTag.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_torrent),
+                            value: filter.searchTorrentFile.value,
+                            onChanged: (value) {
+                              filter.searchTorrentFile.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_description),
+                            value: filter.searchGalleryDescription.value,
+                            onChanged: (value) {
+                              filter.searchGalleryDescription.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_low_power_tags),
+                            value: filter.searchLowPowerTag.value,
+                            onChanged: (value) {
+                              filter.searchLowPowerTag.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title:
+                                Text(I18n.of(context).show_expunged_galleries),
+                            value: filter.showExpungedGallery.value,
+                            onChanged: (value) {
+                              filter.showExpungedGallery.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).show_only_torrent),
+                            value: filter.onlyShowGalleriesWithTorrents.value,
+                            onChanged: (value) {
+                              filter.onlyShowGalleriesWithTorrents.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).search_downvote_tag),
+                            value: filter.searchDownvotedTags.value,
+                            onChanged: (value) {
+                              filter.searchDownvotedTags.value = value;
+                            },
+                          )),
                       SizedBox(
                         height: 40,
                         child: Row(
                           children: [
                             Text(I18n.of(context).search_page),
-                            Switch(value: true, onChanged: (value) {}),
+                            Obx(() => Switch(
+                                value: filter.betweenPage.value,
+                                onChanged: (value) {
+                                  filter.betweenPage.value = value;
+                                })),
                             const Expanded(child: SizedBox()),
                             SizedBox(
                               width: 50,
-                              child: TextFormField(
-                                decoration:
-                                    const InputDecoration(isDense: true),
-                              ),
+                              child: Obx(() => TextFormField(
+                                    initialValue: filter.pageStart.toString(),
+                                    decoration:
+                                        const InputDecoration(isDense: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      filter.pageStart.value = int.parse(value);
+                                    },
+                                  )),
                             ),
                             Text(I18n.of(context).to),
                             SizedBox(
                               width: 50,
-                              child: TextFormField(
-                                decoration:
-                                    const InputDecoration(isDense: true),
-                              ),
+                              child: Obx(() => TextFormField(
+                                    initialValue: filter.pageEnd.toString(),
+                                    decoration:
+                                        const InputDecoration(isDense: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                      filter.pageEnd.value = int.parse(value);
+                                    },
+                                  )),
                             ),
                           ],
                         ),
                       ),
-                      TinySelectTile<int>(
-                        title: I18n.of(context).minimum_rating,
-                        onChange: (value) {},
-                        selectedValue: 0,
-                        items: [
-                          SelectTileItem<int>(
-                              title: I18n.of(context).none, value: -1),
-                          SelectTileItem<int>(
-                              title: I18n.of(context).star_num('2'), value: 2),
-                          SelectTileItem<int>(
-                              title: I18n.of(context).star_num('3'), value: 3),
-                          SelectTileItem<int>(
-                              title: I18n.of(context).star_num('4'), value: 4),
-                          SelectTileItem<int>(
-                              title: I18n.of(context).star_num('5'), value: 5),
-                        ],
-                      ),
+                      Obx(() => TinySelectTile<int>(
+                            title: I18n.of(context).minimum_rating,
+                            onChange: (value) {
+                              filter.minimumRating.value = value;
+                            },
+                            selectedValue: filter.minimumRating.value,
+                            items: [
+                              SelectTileItem<int>(
+                                  title: I18n.of(context).none, value: -1),
+                              SelectTileItem<int>(
+                                  title: I18n.of(context).star_num('2'),
+                                  value: 2),
+                              SelectTileItem<int>(
+                                  title: I18n.of(context).star_num('3'),
+                                  value: 3),
+                              SelectTileItem<int>(
+                                  title: I18n.of(context).star_num('4'),
+                                  value: 4),
+                              SelectTileItem<int>(
+                                  title: I18n.of(context).star_num('5'),
+                                  value: 5),
+                            ],
+                          )),
                       const Divider(),
                       Row(
                         children: [
@@ -386,21 +428,27 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                           )
                         ],
                       ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).language),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).uploader),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
-                      TinySwitchTile(
-                        title: Text(I18n.of(context).tags),
-                        value: true,
-                        onChanged: (value) {},
-                      ),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).language),
+                            value: filter.disableLanguage.value,
+                            onChanged: (value) {
+                              filter.disableLanguage.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).uploader),
+                            value: filter.disableUploader.value,
+                            onChanged: (value) {
+                              filter.disableUploader.value = value;
+                            },
+                          )),
+                      Obx(() => TinySwitchTile(
+                            title: Text(I18n.of(context).tags),
+                            value: filter.disableTag.value,
+                            onChanged: (value) {
+                              filter.disableTag.value = value;
+                            },
+                          )),
                       const SizedBox(height: 70),
                     ],
                   ),

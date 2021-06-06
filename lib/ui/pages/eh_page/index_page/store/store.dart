@@ -4,6 +4,7 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
+import 'package:get/get.dart';
 
 part 'store.g.dart';
 
@@ -27,15 +28,34 @@ abstract class EhIndexStoreBase extends ILoadMore<PreViewItemModel> with Store {
   @action
   Future<void> onDataChange() async {}
 
+  final EhAdvanceFilter filter = EhAdvanceFilter();
+
+  EhAdvanceFilter currentFilter = EhAdvanceFilter();
+
+  var useAdvance = false.obs;
+
   @override
   Future<List<PreViewItemModel>> loadPage(int page) async {
+    final params = useAdvance.value
+        ? EhFilter.buildAdvanceFilter(
+            searchText: searchText,
+            filter: currentFilter,
+          )
+        : EhFilter.buildBasicFilter(
+            searchText: searchText,
+            filter: filter,
+          );
+
     final result = await adapter.index(
-      filter: EhFilter.buildAdvanceFilter(
-        searchText: searchText,
-      ),
+      filter: params,
       page: page - 1,
     );
     return result.items;
+  }
+
+  Future<void> applyNewFilter(String tag) async {
+    currentFilter = filter;
+    await newSearch(tag);
   }
 
   Future<void> newSearch(String tag) async {
