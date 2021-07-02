@@ -49,8 +49,11 @@ abstract class DownloadStoreBase with Store {
 
   @action
   Future<void> createDownloadTask(BooruPost booruPost) async {
-    if ((Platform.isAndroid || Platform.isWindows) &&
-        settingStore.downloadUri.isEmpty) {
+    if (Platform.isAndroid && await bridge.getSafUri() == null) {
+      throw DownloadPermissionDenied();
+    }
+
+    if (Platform.isWindows) {
       throw DownloadPermissionDenied();
     }
 
@@ -137,7 +140,7 @@ abstract class DownloadStoreBase with Store {
     final task = DownLoadTask(database);
     downloadingList.add(task);
     try {
-      final downloadPath = settingStore.downloadUri;
+      final downloadPath = await bridge.getSafUri();
       final rsp = await dio.get<Uint8List>(url,
           options: settingStore.dioCacheOptions
               .copyWith(policy: CachePolicy.noCache)
@@ -146,7 +149,7 @@ abstract class DownloadStoreBase with Store {
           cancelToken: task.cancelToken, onReceiveProgress: (count, total) {
         task.progress.value = count / total;
       });
-      await saveFile(rsp.data!, fileName, downloadPath);
+      await saveFile(rsp.data!, fileName, downloadPath!);
       BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));

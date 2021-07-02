@@ -74,9 +74,6 @@ abstract class SettingStoreBase with Store {
   var downloadQuality = ImageQuality.raw; // 下载质量
 
   @observable
-  var downloadUri = ''; // 下载路径
-
-  @observable
   var onlineTag = false;
 
   @observable
@@ -122,7 +119,6 @@ abstract class SettingStoreBase with Store {
     showCardDetail = sp.getBool('showCardDetail') ?? true;
     eachPageItem = sp.getInt('eachPageItem') ?? 50;
     cardSize = sp.getInt('cardSize') ?? CardSize.MIDDLE;
-    downloadUri = sp.getString('downloadUri') ?? '';
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
     downloadQuality = sp.getInt('downloadQuality') ?? ImageQuality.raw;
@@ -231,12 +227,6 @@ abstract class SettingStoreBase with Store {
   void setOnlineTag(bool value) {
     onlineTag = value;
     SpUtil.putBool('onlineTag', value);
-  }
-
-  @action
-  void setDownloadUri(String value) {
-    downloadUri = value;
-    SpUtil.putString('downloadUri', value);
   }
 
   @action

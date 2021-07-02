@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:catpic/data/bridge/android_bridge.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
@@ -112,17 +113,26 @@ class BooruSettingPage extends StatelessWidget {
     return [
       const Divider(),
       SummaryTile(I18n.of(context).download),
-      ListTile(
-        title: Text(I18n.of(context).download_uri),
-        subtitle: Text(settingStore.downloadUri.isNotEmpty
-            ? settingStore.downloadUri
-            : I18n.of(context).not_set),
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (_) => AndroidDownloadPage()));
-        },
-        leading: const Icon(Icons.drive_file_move_outline),
-      )
+      StatefulBuilder(builder: (context, setState) {
+        return ListTile(
+          title: Text(I18n.of(context).download_uri),
+          subtitle: FutureBuilder<String?>(
+            initialData: null,
+            future: getSafUri(),
+            builder: (context, snapshot) {
+              return Text(snapshot.data ?? I18n.of(context).not_set);
+            },
+          ),
+          onTap: () {
+            Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => AndroidDownloadPage()))
+                .whenComplete(() {
+              setState(() => {});
+            });
+          },
+          leading: const Icon(Icons.drive_file_move_outline),
+        );
+      })
     ];
   }
 

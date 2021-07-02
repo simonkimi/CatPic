@@ -3,16 +3,13 @@ import 'package:catpic/data/bridge/android_bridge.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:catpic/main.dart';
 
 class AndroidDownloadPage extends StatelessWidget {
   static const route = 'AndroidDownloadPage';
   Future<void> getSafPath(BuildContext context) async {
-    final uri = await getSAFUri();
+    final uri = await requestSafUri();
     if (uri?.isEmpty ?? false) {
       BotToast.showText(text: '获取授权目录失败');
-    } else {
-      settingStore.setDownloadUri(uri!);
     }
     Navigator.of(context).pop();
   }

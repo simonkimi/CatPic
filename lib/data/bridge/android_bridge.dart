@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 
 const CHANNEL = 'ink.z31.catpic';
 
-Future<String?> getSAFUri() async {
+Future<String?> requestSafUri() async {
   try {
     const platform = MethodChannel(CHANNEL);
-    return await platform.invokeMethod<String>('saf');
+    return await platform.invokeMethod<String>('openSafDialog');
   } on PlatformException {
     return '';
   }
@@ -16,7 +16,7 @@ Future<String?> getSAFUri() async {
 Future<String?> writeFile(Uint8List data, String fileName, String uri) async {
   try {
     const platform = MethodChannel(CHANNEL);
-    return await platform.invokeMethod('save_image', {
+    return await platform.invokeMethod('saveImage', {
       'data': data,
       'fileName': fileName,
       'uri': uri,
@@ -26,3 +26,6 @@ Future<String?> writeFile(Uint8List data, String fileName, String uri) async {
     return '';
   }
 }
+
+Future<String?> getSafUri() =>
+    const MethodChannel(CHANNEL).invokeMethod('getSafUrl');

@@ -20,31 +20,38 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CHANNEL
+                flutterEngine.dartExecutor.binaryMessenger,
+                CHANNEL
         ).setMethodCallHandler { call, result ->
-            if (call.method == "saf") {
-                // 请求SAF路径
-                requestSAFUri()
-                safResult = result
-            } else if (call.method == "save_image") {
-                val data = call.argument<ByteArray>("data")!!
-                val fileName = call.argument<String>("fileName")!!
-                val uri = call.argument<String>("uri")!!
-                savePicture(data, fileName, uri, result)
+
+
+            when (call.method) {
+                "openSafDialog" -> {
+                    requestSAFUri()
+                    safResult = result
+                }
+
+                "saveImage" -> {
+                    val data = call.argument<ByteArray>("data")!!
+                    val fileName = call.argument<String>("fileName")!!
+                    val uri = call.argument<String>("uri")!!
+                    savePicture(data, fileName, uri, result)
+                }
+
+                "getSafUrl" -> result.success(getSafUrl())
             }
         }
     }
 
     private fun savePicture(
-        data: ByteArray,
-        fileName: String,
-        uriStr: String,
-        result: MethodChannel.Result?
+            data: ByteArray,
+            fileName: String,
+            uriStr: String,
+            result: MethodChannel.Result?
     ) {
         val uri = Uri.parse(uriStr)
         val permissions =
-            contentResolver.persistedUriPermissions.filter { it.isReadPermission && it.isWritePermission && it.uri == uri }
+                contentResolver.persistedUriPermissions.filter { it.isReadPermission && it.isWritePermission && it.uri == uri }
         if (permissions.isEmpty()) {
             result?.error("permission", "Permission Denied", null)
         }
@@ -52,9 +59,9 @@ class MainActivity : FlutterActivity() {
             try {
                 val document = DocumentFile.fromTreeUri(this@MainActivity, uri)!!
                 val mime = if (fileName.endsWith("jpg", ignoreCase = true) || fileName.endsWith(
-                        "jpeg",
-                        ignoreCase = true
-                    )
+                                "jpeg",
+                                ignoreCase = true
+                        )
                 ) {
                     "image/jpg"
                 } else if (fileName.endsWith("png", ignoreCase = true)) {
@@ -94,8 +101,15 @@ class MainActivity : FlutterActivity() {
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         contentResolver.takePersistableUriPermission(uri, flag)
         contentResolver.persistedUriPermissions
-            .filter { it.isReadPermission && it.isWritePermission && it.uri != uri }
-            .forEach { contentResolver.releasePersistableUriPermission(it.uri, flag) }
+                .filter { it.isReadPermission && it.isWritePermission && it.uri != uri }
+                .forEach { contentResolver.releasePersistableUriPermission(it.uri, flag) }
+    }
+
+    private fun getSafUrl(): String? {
+        val safUrl = contentResolver.persistedUriPermissions
+                .filter { it.isReadPermission && it.isWritePermission }
+                .map { it.uri.toString() }
+        return if (safUrl.isNotEmpty()) safUrl[0] else null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

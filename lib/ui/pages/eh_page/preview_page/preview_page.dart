@@ -70,8 +70,10 @@ class EhPreviewPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // 构建图片, 标题, 分数, tag, 阅读按钮
               buildPreviewTitle(context),
               const Divider(),
+              // 构建下面的需要加载的数据
               Observer(builder: (context) => buildNeedLoading(context)),
             ],
           ),
@@ -416,7 +418,7 @@ class EhPreviewPage extends StatelessWidget {
               SizedBox(
                 width: 140,
                 child: AspectRatio(
-                  aspectRatio: previewAspectRatio,
+                  aspectRatio: max(previewAspectRatio, 0.5),
                   child: NullableHero(
                     tag: '${previewModel.gid}${previewModel.gtoken}',
                     child: Card(
