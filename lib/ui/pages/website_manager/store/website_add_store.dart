@@ -1,3 +1,5 @@
+import 'package:catpic/network/api/base_client.dart';
+import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
@@ -7,6 +9,7 @@ import 'package:mobx/mobx.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:moor/moor.dart';
+import 'package:get/get.dart' hide Value;
 
 part 'website_add_store.g.dart';
 
@@ -33,6 +36,11 @@ abstract class WebsiteAddStoreBase with Store {
 
   WebsiteTableData? website;
 
+  final pageController = PageController();
+
+  @observable
+  int currentPage = 0;
+
   @observable
   String websiteName;
   @observable
@@ -51,11 +59,20 @@ abstract class WebsiteAddStoreBase with Store {
   String username;
   @observable
   String password;
+  @observable
+  Uint8List? favicon;
 
   ObservableMap<String, String> cookies;
 
   @action
   void setWebsiteName(String value) => websiteName = value;
+
+  @action
+  void setCurrentPage(int page) {
+    pageController.animateToPage(page,
+        duration: 200.milliseconds, curve: Curves.easeOut);
+    currentPage = page;
+  }
 
   @action
   void setWebsiteHost(String value) {
@@ -87,6 +104,18 @@ abstract class WebsiteAddStoreBase with Store {
   @action
   void setPassword(String value) => password = value;
 
+  @action
+  Future<void> requestFavicon() async {
+    favicon = await getFavicon(DioBuilder.buildByBase(
+        host: websiteHost,
+        scheme: scheme,
+        useDoH: useDoH,
+        cookies: cookies.entries.map((e) => '${e.key}=${e.value}').join('; '),
+        websiteType: websiteType,
+        directLink: directLink,
+        onlyHost: onlyHost));
+  }
+
   /// 保存网站
   Future<bool> saveWebsite() async {
     if (websiteHost.isEmpty) {
@@ -114,6 +143,7 @@ abstract class WebsiteAddStoreBase with Store {
               cookies.entries.map((e) => '${e.key}=${e.value}').join('; ')));
     } else {
       final entity = WebsiteTableCompanion(
+          favicon: Value(favicon ?? Uint8List.fromList([])),
           host: Value(websiteHost),
           name: Value(websiteName),
           scheme: Value(scheme),
@@ -127,9 +157,10 @@ abstract class WebsiteAddStoreBase with Store {
               cookies.entries.map((e) => '${e.key}=${e.value}').join('; ')));
       final id = await websiteDao.insert(entity);
       final table = await websiteDao.getById(id);
-      getFavicon(table!).then((favicon) {
-        mainStore.setWebsiteFavicon(id, favicon);
-      });
+      if (favicon == null)
+        getFavicon(DioBuilder.build(table)).then((favicon) {
+          mainStore.setWebsiteFavicon(id, favicon);
+        });
     }
     mainStore.updateList();
     return true;

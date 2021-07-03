@@ -9,16 +9,23 @@ const commonHost = <String, String>{
   'assets.yande.re': '198.98.54.92',
   'e-hentai.org': '104.20.134.21',
   'exhentai.org': '178.175.129.252',
+  'gelbooru.com': '67.202.114.141',
 };
 
 class HostInterceptor extends Interceptor {
   HostInterceptor({
-    required this.websiteEntity,
+    required this.id,
+    required this.onlyHost,
+    required this.host,
     required this.dio,
+    required this.directLink,
   });
 
-  final WebsiteTableData websiteEntity;
+  final int? id;
+  final bool onlyHost;
   final Dio dio;
+  final String host;
+  final bool directLink;
 
   List<HostTableData> hostList = [];
 
@@ -26,8 +33,7 @@ class HostInterceptor extends Interceptor {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final uri = options.uri;
-    if (websiteEntity.onlyHost &&
-        !uri.host.contains(websiteEntity.host.baseHost)) {
+    if (onlyHost && !uri.host.contains(host.baseHost)) {
       return handler.next(options);
     }
 
@@ -38,7 +44,7 @@ class HostInterceptor extends Interceptor {
     final ip = hostTargetData?.ip ?? await doh(uri.host);
     if (ip.isNotEmpty) {
       options.path = uri.replace(host: ip).toString();
-      if (websiteEntity.directLink) {
+      if (directLink) {
         options.headers['Host'] = uri.host;
       }
     }
@@ -58,8 +64,8 @@ class HostInterceptor extends Interceptor {
         commonHost.containsKey(host) ? commonHost[host]! : await getDoH(host);
     if (ip.isNotEmpty) {
       final hostDao = DB().hostDao;
-      await hostDao.insert(HostTableCompanion.insert(
-          host: host, ip: ip, websiteId: websiteEntity.id));
+      await hostDao.insert(
+          HostTableCompanion.insert(host: host, ip: ip, websiteId: id ?? -1));
       hostList = await hostDao.getAll();
       dio.unlock();
       return ip;

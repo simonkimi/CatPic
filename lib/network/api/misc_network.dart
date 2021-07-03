@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:catpic/data/database/database.dart';
-import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
@@ -39,15 +37,14 @@ Future<String> getDoH(String url) async {
   }
 }
 
-Future<Uint8List> getFavicon(WebsiteTableData entity) async {
+Future<Uint8List> getFavicon(Dio dio) async {
   try {
-    print('获取网站图标 ${entity.name}');
-    final dio = DioBuilder.build(entity);
+    print('获取网站图标');
     final req = await dio.get<Uint8List>('favicon.ico',
         options: Options(responseType: ResponseType.bytes));
     print('下载完成, 准备解码');
     if (req.data != null) {
-      MemoryImage(req.data!);
+      MemoryImage(req.data!).evict();
       return req.data!;
     }
     throw Exception();

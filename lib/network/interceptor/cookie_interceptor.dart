@@ -1,14 +1,17 @@
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 
 class CookieInterceptor extends Interceptor {
   CookieInterceptor({
-    required this.websiteEntity,
+    required this.cookies,
+    required this.websiteType,
+    required this.host,
   });
 
-  final WebsiteTableData websiteEntity;
+  final String cookies;
+  final int websiteType;
+  final String host;
 
   @override
   Future<void> onRequest(
@@ -22,14 +25,14 @@ class CookieInterceptor extends Interceptor {
       return MapEntry(data[0].trim(), data.skip(1).join('=').trim());
     }));
 
-    final userCookies = Map.fromEntries(
-        websiteEntity.cookies.split(';').where((e) => e.isNotEmpty).map((e) {
+    final userCookies =
+        Map.fromEntries(cookies.split(';').where((e) => e.isNotEmpty).map((e) {
       final data = e.split('=');
       return MapEntry(data[0].trim(), data.skip(1).join('=').trim());
     }));
     currentCookies.addEntries(userCookies.entries);
-    if (websiteEntity.type == WebsiteType.EHENTAI.index &&
-        options.uri.host.contains(websiteEntity.host.baseHost)) {
+    if (websiteType == WebsiteType.EHENTAI.index &&
+        options.uri.host.contains(host.baseHost)) {
       currentCookies['nw'] = 'always';
     }
     options.headers['Cookie'] =

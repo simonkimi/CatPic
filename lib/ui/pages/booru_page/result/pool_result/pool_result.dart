@@ -43,9 +43,13 @@ class PoolResultFragment extends StatelessWidget {
           builder: (_) {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: store.isLoading && store.poolList.isEmpty
-                  ? LoadingWidget(store: store)
-                  : buildList(),
+              child: () {
+                if (store.isLoading)
+                  return const Center(child: CircularProgressIndicator());
+                if (store.observableList.isEmpty)
+                  return EmptyWidget(store: store);
+                return buildList();
+              }(),
             );
           },
         ),

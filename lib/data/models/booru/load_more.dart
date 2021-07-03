@@ -72,30 +72,25 @@ abstract class ILoadMore<T> {
   }
 
   Future<void> onRefresh() async {
-    print('onRefresh');
-    observableList.clear();
-    page = 0;
-    await _loadNextPage();
-    await onDataChange();
-    // try {
-    //   observableList.clear();
-    //   page = 0;
-    //   await _loadNextPage();
-    //   await onDataChange();
-    // } on DioError catch (e) {
-    //   if (CancelToken.isCancel(e)) return;
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
-    //   print('onRefresh ${e.message} ${e.requestOptions.path}');
-    // } catch (e) {
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   print('onRefresh ${e.toString()}');
-    //   BotToast.showText(text: e.toString());
-    // } finally {
-    //   isLoading = false;
-    // }
+    try {
+      observableList.clear();
+      page = 0;
+      await _loadNextPage();
+      await onDataChange();
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) return;
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
+      print('onRefresh ${e.message} ${e.requestOptions.path}');
+    } catch (e) {
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      print('onRefresh ${e.toString()}');
+      BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
+    }
   }
 
   Future<void> onLoadMore() async {

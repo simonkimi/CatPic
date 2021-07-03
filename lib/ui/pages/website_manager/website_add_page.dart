@@ -159,44 +159,7 @@ class WebsiteAddPage extends StatelessWidget {
 
   /// 构建高级设置
   List<Widget> buildAdvanceSetting(BuildContext context) {
-    return [
-      SummaryTile(I18n.of(context).advanced_settings),
-      SwitchListTile(
-        title: Text(I18n.of(context).use_doh),
-        subtitle: Text(I18n.of(context).use_doh_desc),
-        value: store.useDoH,
-        secondary: const Icon(Icons.list_alt),
-        onChanged: (value) {
-          store.setUseDoH(value);
-          if (!value) {
-            store.setDirectLink(false);
-          }
-        },
-      ),
-      if (store.useDoH)
-        SwitchListTile(
-          title: Text(I18n.of(context).only_host),
-          value: store.onlyHost,
-          secondary: const Icon(Icons.location_on_outlined),
-          onChanged: (value) {
-            store.setOnlyHost(value);
-          },
-        ),
-      SwitchListTile(
-        title: Text(I18n.of(context).direct_link),
-        subtitle: Text(I18n.of(context).direct_link_desc),
-        secondary: const Icon(Icons.airplanemode_active_rounded),
-        value: store.directLink,
-        onChanged: (value) {
-          if (value) {
-            store.setDirectLink(true);
-            store.setUseDoH(true);
-          } else {
-            store.setDirectLink(false);
-          }
-        },
-      ),
-    ];
+    return [];
   }
 
   String getPasswordTitle() {

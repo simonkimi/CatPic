@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:sp_util/sp_util.dart';
@@ -46,7 +47,7 @@ abstract class MainStoreBase with Store {
     }
     // 尝试获取图标
     websiteList.where((e) => e.favicon.isEmpty).forEach((element) {
-      getFavicon(element).then((favicon) {
+      getFavicon(DioBuilder.build(element)).then((favicon) {
         setWebsiteFavicon(element.id, favicon);
       });
     });
