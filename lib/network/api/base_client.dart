@@ -97,5 +97,7 @@ abstract class BaseClient {
     dio = DioBuilder.build(websiteEntity);
   }
 
+  BaseClient.fromDio(this.dio);
+
   late Dio dio;
 }

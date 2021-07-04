@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/entity/website.dart';
+import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +23,13 @@ class WebsiteAddGuide extends StatelessWidget {
 
   final WebsiteTableData? website;
 
-  static const route = 'WebsiteAddPage';
+  static const route = 'WebsiteAddGuide';
   final WebsiteAddStore store;
 
   Future<bool> _back() async {
-    if (store.pageController.page!.toInt() == 0) {
+    if (!(store.cancelToken?.isCancelled ?? true)) store.cancelToken?.cancel();
+    print(store.pageController.page!.toInt());
+    if (store.pageController.page!.toInt() <= 0) {
       return true;
     }
     store.setCurrentPage(store.currentPage - 1);
@@ -52,7 +55,9 @@ class WebsiteAddGuide extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_outlined),
-          onPressed: _back,
+          onPressed: () async {
+            if (await _back()) Navigator.of(context).pop();
+          },
         ),
       ),
       body: Observer(
@@ -74,6 +79,10 @@ class WebsiteAddGuide extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           store.setCurrentPage(2);
+          if (store.isFirstCheckType) {
+            store.checkWebsiteType();
+            store.requestFavicon();
+          }
         },
         child: const Icon(
           Icons.arrow_forward_sharp,
@@ -178,9 +187,7 @@ class WebsiteAddGuide extends StatelessWidget {
           }
           store.setCurrentPage(1);
         },
-        child: const Icon(
-          Icons.arrow_forward_sharp,
-        ),
+        child: const Icon(Icons.arrow_forward_sharp),
       ),
       body: WillPopScope(
         onWillPop: _back,
@@ -209,8 +216,18 @@ class WebsiteAddGuide extends StatelessWidget {
 
   Widget buildCheckProtocol(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: store.isCheckingType
+            ? const CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : const Icon(Icons.arrow_forward_sharp),
+      ),
       body: WillPopScope(
-        onWillPop: _back,
+        onWillPop: () async {
+          return await _back();
+        },
         child: SizedBox(
           width: double.infinity,
           height: double.infinity,
@@ -218,17 +235,78 @@ class WebsiteAddGuide extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(30),
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: SizedBox(),
+                padding: const EdgeInsets.all(50),
+                child: ClipOval(
+                  child: store.isFavLoading
+                      ? const SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 8,
+                          ),
+                        )
+                      : store.favicon != null && store.favicon!.isNotEmpty
+                          ? Image.memory(
+                              store.favicon!,
+                              scale: 0.25,
+                              width: 56,
+                              height: 56,
+                            )
+                          : const SizedBox(
+                              height: 56,
+                              width: 56,
+                            ),
                 ),
               ),
               Text(
-                '请稍后',
-                style: TextStyle(fontSize: 22),
+                store.isCheckingType
+                    ? '请稍后'
+                    : store.websiteType == WebsiteType.UNKNOWN
+                        ? '错误'
+                        : store.websiteType.string,
+                style: const TextStyle(fontSize: 22),
               ),
-              Text('正在识别网站类型'),
+              Text(
+                store.isCheckingType
+                    ? '正在始别网站类型'
+                    : store.websiteType == WebsiteType.UNKNOWN
+                        ? '抱歉, 无法识别网站类型, 请手动指定'
+                        : '已识别网站类型, 可进行下一步',
+              ),
+              const SizedBox(height: 50),
+              ButtonBar(
+                alignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        store.cancelToken?.cancel();
+                        final type = await showSelectDialog(
+                            context: context,
+                            items: [
+                              SelectTileItem<int>(
+                                  value: WebsiteType.GELBOORU,
+                                  title: WebsiteType.GELBOORU.string),
+                              SelectTileItem<int>(
+                                  value: WebsiteType.MOEBOORU,
+                                  title: WebsiteType.MOEBOORU.string),
+                              SelectTileItem<int>(
+                                  value: WebsiteType.DANBOORU,
+                                  title: WebsiteType.DANBOORU.string),
+                            ],
+                            selectedValue: store.websiteType,
+                            title: I18n.of(context).site_type);
+                        if (type != null) {
+                          store.setWebsiteType(type);
+                        }
+                      },
+                      child: Text('手动指定')),
+                  TextButton(
+                      onPressed: () {
+                        store.checkWebsiteType();
+                      },
+                      child: Text('重新检查'))
+                ],
+              )
             ],
           ),
         ),

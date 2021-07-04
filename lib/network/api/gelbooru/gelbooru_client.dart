@@ -7,6 +7,8 @@ import '../base_client.dart';
 class GelbooruClient extends BaseClient {
   GelbooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
+  GelbooruClient.fromDio(Dio dio) : super.fromDio(dio);
+
   /// 获取Posts
   /// [limit] How many posts you want to retrieve. There is a default limit of 100 posts per request.
   /// [pid] The page number.

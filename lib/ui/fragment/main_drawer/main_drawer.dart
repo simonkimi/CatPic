@@ -150,12 +150,11 @@ class MainDrawer extends HookWidget {
     }
 
     return [
-      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI.index)
+      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI)
         buildBooruList(),
-      if (mainStore.websiteEntity?.type == WebsiteType.EHENTAI.index)
-        buildEhList(),
+      if (mainStore.websiteEntity?.type == WebsiteType.EHENTAI) buildEhList(),
       const Divider(),
-      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI.index)
+      if (mainStore.websiteEntity?.type != WebsiteType.EHENTAI)
         buildDownloadTile(context),
       buildSettingTile(context)
     ];
@@ -374,7 +373,7 @@ class MainDrawer extends HookWidget {
       BuildContext context, WebsiteTableData entity) async {
     Navigator.of(context).pop();
     await mainStore.setWebsite(entity);
-    if (entity.type != WebsiteType.EHENTAI.index) {
+    if (entity.type != WebsiteType.EHENTAI) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const BooruPage()),

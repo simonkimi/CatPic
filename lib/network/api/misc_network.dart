@@ -1,9 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:catpic/data/database/entity/website.dart';
+import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
+
+import 'danbooru/danbooru_client.dart';
+import 'gelbooru/gelbooru_client.dart';
+import 'moebooru/moebooru_client.dart';
 
 Future<String> getDoH(String url) async {
   final dio = Dio()
@@ -23,10 +29,7 @@ Future<String> getDoH(String url) async {
       if (req.data != null) {
         final dataJson = json.decode(req.data!) as Map<String, dynamic>;
         for (final host in dataJson['Answer']) {
-          final reg = RegExp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$');
-          if (reg.hasMatch(host['data'] as String)) {
-            return host['data'] as String;
-          }
+          if (host['type'] == 1) return host['data'] as String;
         }
       }
     }
@@ -87,4 +90,53 @@ Future<Map<String, dynamic>> getEhTranslate(String body) async {
     }
   }
   throw Exception('失败');
+}
+
+Future<int> getWebsiteType({
+  required String host,
+  required int scheme,
+  required bool useDoH,
+  required String cookies,
+  required bool directLink,
+  required bool onlyHost,
+  required CancelToken cancelToken,
+}) async {
+  final websiteList = <int>[
+    WebsiteType.GELBOORU,
+    WebsiteType.MOEBOORU,
+    WebsiteType.DANBOORU
+  ];
+
+  for (final type in websiteList) {
+    final dio = DioBuilder.buildByBase(
+        host: host,
+        scheme: scheme,
+        useDoH: useDoH,
+        cookies: cookies,
+        websiteType: type,
+        directLink: directLink,
+        onlyHost: onlyHost);
+
+    try {
+      switch (type) {
+        case WebsiteType.GELBOORU:
+          await GelbooruClient.fromDio(dio)
+              .postsList(limit: 10, pid: 1, tags: '', cancelToken: cancelToken);
+          return WebsiteType.GELBOORU;
+        case WebsiteType.MOEBOORU:
+          await MoebooruClient.fromDio(dio).postsList(
+              limit: 10, page: 1, tags: '', cancelToken: cancelToken);
+          return WebsiteType.MOEBOORU;
+        case WebsiteType.DANBOORU:
+          await DanbooruClient.fromDio(dio).postsList(
+              limit: 10, page: 1, tags: '', cancelToken: cancelToken);
+          return WebsiteType.DANBOORU;
+        default:
+          throw Exception('Unsupported');
+      }
+    } catch (e) {
+      print('not ${type.string}');
+    }
+  }
+  return WebsiteType.UNKNOWN;
 }

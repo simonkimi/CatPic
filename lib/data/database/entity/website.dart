@@ -42,14 +42,15 @@ enum WebsiteScheme {
   HTTPS,
 }
 
-enum WebsiteType {
-  EHENTAI,
-  GELBOORU,
-  MOEBOORU,
-  DANBOORU,
+class WebsiteType {
+  static const EHENTAI = 0;
+  static const GELBOORU = 1;
+  static const MOEBOORU = 2;
+  static const DANBOORU = 3;
+  static const UNKNOWN = -1;
 }
 
-extension WebsiteTypeName on WebsiteType {
+extension WebsiteTypeName on int {
   String get string {
     switch (this) {
       case WebsiteType.EHENTAI:
@@ -60,6 +61,9 @@ extension WebsiteTypeName on WebsiteType {
         return 'Moebooru';
       case WebsiteType.DANBOORU:
         return 'Danbooru';
+      case WebsiteType.UNKNOWN:
+      default:
+        return 'Unknown';
     }
   }
 }

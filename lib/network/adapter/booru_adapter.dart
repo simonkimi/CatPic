@@ -35,14 +35,16 @@ enum SupportPage {
 
 abstract class BooruAdapter extends Adapter {
   factory BooruAdapter.fromWebsite(WebsiteTableData table) {
-    if (table.type == WebsiteType.GELBOORU.index) {
-      return GelbooruAdapter(table);
-    } else if (table.type == WebsiteType.MOEBOORU.index) {
-      return MoebooruAdapter(table);
-    } else if (table.type == WebsiteType.DANBOORU.index) {
-      return DanbooruAdapter(table);
+    switch (table.type) {
+      case WebsiteType.GELBOORU:
+        return GelbooruAdapter(table);
+      case WebsiteType.MOEBOORU:
+        return MoebooruAdapter(table);
+      case WebsiteType.DANBOORU:
+        return DanbooruAdapter(table);
+      default:
+        throw Exception('Unsupported');
     }
-    throw Exception('Unsupported');
   }
 
   List<SupportPage> getSupportPage();

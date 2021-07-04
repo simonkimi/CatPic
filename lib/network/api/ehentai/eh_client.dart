@@ -9,6 +9,8 @@ import '../base_client.dart';
 class EhClient extends BaseClient {
   EhClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
+  EhClient.fromDio(Dio dio) : super.fromDio(dio);
+
   /// 主页
   /// [filter] 过滤器, 由[buildSimpleFilter]和[buildAdvanceFilter]构建
   Future<String> getIndex({

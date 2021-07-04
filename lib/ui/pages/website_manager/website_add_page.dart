@@ -137,19 +137,19 @@ class WebsiteAddPage extends StatelessWidget {
         title: I18n.of(context).site_type,
         items: [
           SelectTileItem(
-            value: WebsiteType.GELBOORU.index,
+            value: WebsiteType.GELBOORU,
             title: WebsiteType.GELBOORU.string,
           ),
           SelectTileItem(
-            value: WebsiteType.MOEBOORU.index,
+            value: WebsiteType.MOEBOORU,
             title: WebsiteType.MOEBOORU.string,
           ),
           SelectTileItem(
-            value: WebsiteType.DANBOORU.index,
+            value: WebsiteType.DANBOORU,
             title: WebsiteType.DANBOORU.string,
           ),
           SelectTileItem(
-            value: WebsiteType.EHENTAI.index,
+            value: WebsiteType.EHENTAI,
             title: WebsiteType.EHENTAI.string,
           ),
         ],
@@ -163,18 +163,17 @@ class WebsiteAddPage extends StatelessWidget {
   }
 
   String getPasswordTitle() {
-    if (store.websiteType == WebsiteType.MOEBOORU.index)
+    if (store.websiteType == WebsiteType.MOEBOORU)
       return I18n.g.password;
-    else if (store.websiteType == WebsiteType.DANBOORU.index)
-      return I18n.g.api_key;
+    else if (store.websiteType == WebsiteType.DANBOORU) return I18n.g.api_key;
     return 'Password';
   }
 
   List<Widget> buildUserSetting(BuildContext context) {
     return [
       SummaryTile(I18n.of(context).user_setting),
-      if (store.websiteType == WebsiteType.DANBOORU.index ||
-          store.websiteType == WebsiteType.MOEBOORU.index)
+      if (store.websiteType == WebsiteType.DANBOORU ||
+          store.websiteType == WebsiteType.MOEBOORU)
         TextInputTile(
           defaultValue: store.username,
           title: Text(I18n.of(context).username),
@@ -186,8 +185,8 @@ class WebsiteAddPage extends StatelessWidget {
             store.setUsername(value);
           },
         ),
-      if (store.websiteType == WebsiteType.DANBOORU.index ||
-          store.websiteType == WebsiteType.MOEBOORU.index)
+      if (store.websiteType == WebsiteType.DANBOORU ||
+          store.websiteType == WebsiteType.MOEBOORU)
         TextInputTile(
           defaultValue: store.password,
           title: Text(getPasswordTitle()),

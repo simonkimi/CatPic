@@ -31,7 +31,7 @@ class CookieInterceptor extends Interceptor {
       return MapEntry(data[0].trim(), data.skip(1).join('=').trim());
     }));
     currentCookies.addEntries(userCookies.entries);
-    if (websiteType == WebsiteType.EHENTAI.index &&
+    if (websiteType == WebsiteType.EHENTAI &&
         options.uri.host.contains(host.baseHost)) {
       currentCookies['nw'] = 'always';
     }

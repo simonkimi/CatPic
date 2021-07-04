@@ -56,7 +56,7 @@ class CatPicApp extends StatelessWidget {
           AppLocalizations.delegate
         ],
         navigatorKey: AppNavigator().key,
-        home: mainStore.websiteEntity?.type == WebsiteType.EHENTAI.index
+        home: mainStore.websiteEntity?.type == WebsiteType.EHENTAI
             ? const EhPage()
             : const BooruPage(),
         builder: BotToastInit(),

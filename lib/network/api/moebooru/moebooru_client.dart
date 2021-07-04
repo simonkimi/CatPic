@@ -10,6 +10,8 @@ import '../base_client.dart';
 class MoebooruClient extends BaseClient {
   MoebooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
+  MoebooruClient.fromDio(Dio dio) : super.fromDio(dio);
+
   /// 获取Posts
   /// [limit] How many posts you want to retrieve. There is a hard limit of 100
   /// [page] The page number.

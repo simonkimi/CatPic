@@ -8,6 +8,8 @@ import '../base_client.dart';
 class DanbooruClient extends BaseClient {
   DanbooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
 
+  DanbooruClient.fromDio(Dio dio) : super.fromDio(dio);
+
   // 获取Posts
   /// [limit] How many posts you want to retrieve. There is a default limit of 100 posts per request.
   /// [pid] The page number.

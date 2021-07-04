@@ -1,4 +1,5 @@
 import 'package:catpic/network/api/base_client.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
@@ -20,7 +21,7 @@ abstract class WebsiteAddStoreBase with Store {
       : websiteName = website?.name ?? '',
         websiteHost = website?.host ?? '',
         scheme = website?.scheme ?? WebsiteScheme.HTTPS.index,
-        websiteType = website?.type ?? WebsiteType.GELBOORU.index,
+        websiteType = website?.type ?? WebsiteType.UNKNOWN,
         useDoH = website?.useDoH ?? false,
         directLink = website?.directLink ?? false,
         onlyHost = website?.onlyHost ?? false,
@@ -36,11 +37,19 @@ abstract class WebsiteAddStoreBase with Store {
 
   WebsiteTableData? website;
 
-  final pageController = PageController();
-
+  // ui
   @observable
   int currentPage = 0;
+  final pageController = PageController();
+  @observable
+  var isFavLoading = false;
+  @observable
+  var isCheckingType = false;
+  @observable
+  var isFirstCheckType = true;
+  CancelToken? cancelToken;
 
+  // 数据库字段
   @observable
   String websiteName;
   @observable
@@ -61,7 +70,6 @@ abstract class WebsiteAddStoreBase with Store {
   String password;
   @observable
   Uint8List? favicon;
-
   ObservableMap<String, String> cookies;
 
   @action
@@ -106,6 +114,9 @@ abstract class WebsiteAddStoreBase with Store {
 
   @action
   Future<void> requestFavicon() async {
+    if (isFavLoading == true || (favicon != null && favicon!.isNotEmpty))
+      return;
+    isFavLoading = true;
     favicon = await getFavicon(DioBuilder.buildByBase(
         host: websiteHost,
         scheme: scheme,
@@ -114,6 +125,25 @@ abstract class WebsiteAddStoreBase with Store {
         websiteType: websiteType,
         directLink: directLink,
         onlyHost: onlyHost));
+    isFavLoading = false;
+  }
+
+  @action
+  Future<void> checkWebsiteType() async {
+    isCheckingType = true;
+    isFirstCheckType = false;
+    websiteType = WebsiteType.UNKNOWN;
+    cancelToken = CancelToken();
+    websiteType = await getWebsiteType(
+      host: websiteHost,
+      cancelToken: cancelToken!,
+      directLink: directLink,
+      onlyHost: onlyHost,
+      cookies: cookies.entries.map((e) => '${e.key}=${e.value}').join('; '),
+      scheme: scheme,
+      useDoH: useDoH,
+    );
+    isCheckingType = false;
   }
 
   /// 保存网站

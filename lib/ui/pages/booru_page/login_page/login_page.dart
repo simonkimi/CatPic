@@ -89,9 +89,9 @@ class BooruLoginPage extends StatelessWidget {
 
   String getPasswordTitle() {
     final site = mainStore.websiteEntity!;
-    if (site.type == WebsiteType.MOEBOORU.index)
+    if (site.type == WebsiteType.MOEBOORU)
       return I18n.g.password;
-    else if (site.type == WebsiteType.DANBOORU.index) return I18n.g.api_key;
+    else if (site.type == WebsiteType.DANBOORU) return I18n.g.api_key;
     return 'Password';
   }
 }
