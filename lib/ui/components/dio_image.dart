@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
@@ -121,7 +122,7 @@ class _DioImageState extends State<DioImage> {
       final rsp = await dio.get<List<int>>(url,
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
-              // .copyWith(policy: CachePolicy.request, keyBuilder: (req) => url)
+              .copyWith(policy: CachePolicy.request, keyBuilder: (req) => url)
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {

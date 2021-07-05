@@ -216,14 +216,17 @@ class WebsiteAddGuide extends StatelessWidget {
 
   Widget buildCheckProtocol(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: store.isCheckingType
-            ? const CircularProgressIndicator(
-                color: Colors.white,
-              )
-            : const Icon(Icons.arrow_forward_sharp),
-      ),
+      floatingActionButton:
+          store.isCheckingType || store.websiteType != WebsiteType.UNKNOWN
+              ? FloatingActionButton(
+                  onPressed: () {},
+                  child: store.isCheckingType
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Icon(Icons.arrow_forward_sharp),
+                )
+              : null,
       body: WillPopScope(
         onWillPop: () async {
           return await _back();

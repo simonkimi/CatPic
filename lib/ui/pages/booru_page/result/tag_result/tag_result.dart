@@ -44,7 +44,7 @@ class TagResultFragment extends StatelessWidget {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: () {
-                if (store.isLoading)
+                if (store.isLoading && store.observableList.isEmpty)
                   return const Center(child: CircularProgressIndicator());
                 if (store.observableList.isEmpty)
                   return EmptyWidget(store: store);
