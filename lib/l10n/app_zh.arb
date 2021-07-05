@@ -38,6 +38,8 @@
   "update": "更新",
   "version": "版本",
   "none": "无",
+  "nickname": "昵称",
+  "error": "错误",
 
   "website_manager": "网站管理",
   "add_website": "添加网站",
@@ -83,6 +85,15 @@
       }
     }
   },
+  "please_wait": "请稍后",
+  "extra_network_desc": "您可能需要一些额外设置才能访问此网站, 否则请保持此页面设置不变",
+  "input_website_desc": "请输入您想访问的网址",
+  "check_website_type_desc": "正在识别网站类型",
+  "check_website_type_fail_desc": "抱歉, 无法识别网站类型, 请手动指定",
+  "check_website_type_success_desc": "已识别网站类型, 可进行下一步",
+  "recheck": "重新检查",
+  "check_by_hand": "手动指定",
+
   "safe": "安全",
   "explicit": "暴露",
   "questionable": "未知",

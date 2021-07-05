@@ -42,6 +42,8 @@ class WebsiteAddGuide extends StatelessWidget {
       I18n.of(context).home,
       I18n.of(context).network,
       I18n.of(context).scheme,
+      I18n.of(context).login,
+      I18n.of(context).nickname,
     ];
 
     return Scaffold(
@@ -163,7 +165,7 @@ class WebsiteAddGuide extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              '您可能需要一些额外设置才能访问此网站, 否则请保持此页面设置不变',
+              I18n.of(context).extra_network_desc,
               style: TextStyle(
                 color: Theme.of(context).textTheme.subtitle2!.color,
               ),
@@ -202,7 +204,7 @@ class WebsiteAddGuide extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                '请输入您想访问的网址',
+                I18n.of(context).input_website_desc,
                 style: TextStyle(
                   color: Theme.of(context).textTheme.subtitle2!.color,
                 ),
@@ -263,51 +265,53 @@ class WebsiteAddGuide extends StatelessWidget {
               ),
               Text(
                 store.isCheckingType
-                    ? '请稍后'
+                    ? I18n.of(context).please_wait
                     : store.websiteType == WebsiteType.UNKNOWN
-                        ? '错误'
+                        ? I18n.of(context).error
                         : store.websiteType.string,
                 style: const TextStyle(fontSize: 22),
               ),
               Text(
                 store.isCheckingType
-                    ? '正在始别网站类型'
+                    ? I18n.of(context).check_website_type_desc
                     : store.websiteType == WebsiteType.UNKNOWN
-                        ? '抱歉, 无法识别网站类型, 请手动指定'
-                        : '已识别网站类型, 可进行下一步',
+                        ? I18n.of(context).check_website_type_fail_desc
+                        : I18n.of(context).check_website_type_success_desc,
               ),
               const SizedBox(height: 50),
               ButtonBar(
                 alignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                      onPressed: () async {
-                        store.cancelToken?.cancel();
-                        final type = await showSelectDialog(
-                            context: context,
-                            items: [
-                              SelectTileItem<int>(
-                                  value: WebsiteType.GELBOORU,
-                                  title: WebsiteType.GELBOORU.string),
-                              SelectTileItem<int>(
-                                  value: WebsiteType.MOEBOORU,
-                                  title: WebsiteType.MOEBOORU.string),
-                              SelectTileItem<int>(
-                                  value: WebsiteType.DANBOORU,
-                                  title: WebsiteType.DANBOORU.string),
-                            ],
-                            selectedValue: store.websiteType,
-                            title: I18n.of(context).site_type);
-                        if (type != null) {
-                          store.setWebsiteType(type);
-                        }
-                      },
-                      child: Text('手动指定')),
+                    onPressed: () async {
+                      store.cancelToken?.cancel();
+                      final type = await showSelectDialog(
+                          context: context,
+                          items: [
+                            SelectTileItem<int>(
+                                value: WebsiteType.GELBOORU,
+                                title: WebsiteType.GELBOORU.string),
+                            SelectTileItem<int>(
+                                value: WebsiteType.MOEBOORU,
+                                title: WebsiteType.MOEBOORU.string),
+                            SelectTileItem<int>(
+                                value: WebsiteType.DANBOORU,
+                                title: WebsiteType.DANBOORU.string),
+                          ],
+                          selectedValue: store.websiteType,
+                          title: I18n.of(context).site_type);
+                      if (type != null) {
+                        store.setWebsiteType(type);
+                      }
+                    },
+                    child: Text(I18n.of(context).check_by_hand),
+                  ),
                   TextButton(
-                      onPressed: () {
-                        store.checkWebsiteType();
-                      },
-                      child: Text('重新检查'))
+                    onPressed: () {
+                      store.checkWebsiteType();
+                    },
+                    child: Text(I18n.of(context).recheck),
+                  )
                 ],
               )
             ],
