@@ -6,7 +6,7 @@ import 'comment_model.dart';
 class DanbooruCommentParser {
   static List<BooruComments> parse(String str) {
     final List<Map<String, dynamic>> comments =
-        jsonDecode(str) as List<Map<String, dynamic>>;
+        (jsonDecode(str) as List<dynamic>).cast();
     return comments
         .map((e) => Root.fromJson(e))
         .where((e) => e.body != null)

@@ -12,7 +12,7 @@ import 'pool_model.dart';
 class DanbooruPoolParser {
   static List<DanbooruPool> parse(String jsonStr) {
     final List<Map<String, dynamic>> json =
-        jsonDecode(jsonStr) as List<Map<String, dynamic>>;
+        (jsonDecode(jsonStr) as List<dynamic>).cast();
 
     return json
         .map((e) => DanbooruPool.fromRoot(PoolList.fromJson(e)))
