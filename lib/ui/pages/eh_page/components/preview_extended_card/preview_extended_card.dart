@@ -142,7 +142,7 @@ class PreviewExtendedCard extends StatelessWidget {
                     decoration: BoxDecoration(color: previewModel.tag.color),
                     child: Center(
                       child: Text(
-                        previewModel.tag.string,
+                        previewModel.tag.translate(context),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,

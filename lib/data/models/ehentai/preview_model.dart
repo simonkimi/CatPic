@@ -1,4 +1,5 @@
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:flutter/material.dart';
 
 class PreViewItemModel {
@@ -102,28 +103,53 @@ extension EhGalleryTypeHelper on EhGalleryType {
     }
   }
 
-  String get string {
+  String translate(BuildContext context) {
+    if (!settingStore.ehTranslate) {
+      switch (this) {
+        case EhGalleryType.Doujinshi:
+          return 'Doujinshi';
+        case EhGalleryType.Manga:
+          return 'Manga';
+        case EhGalleryType.Artist_CG:
+          return 'Artist CG';
+        case EhGalleryType.Game_CG:
+          return 'Game CG';
+        case EhGalleryType.Western:
+          return 'Western';
+        case EhGalleryType.Non_H:
+          return 'Non H';
+        case EhGalleryType.Image_Set:
+          return 'Image Set';
+        case EhGalleryType.Cosplay:
+          return 'Cosplay';
+        case EhGalleryType.Asian_Porn:
+          return 'Asian Porn';
+        case EhGalleryType.Misc:
+          return 'Misc';
+      }
+    }
+
     switch (this) {
       case EhGalleryType.Doujinshi:
-        return I18n.g.doujinshi;
+        return I18n.of(context).doujinshi;
       case EhGalleryType.Manga:
-        return I18n.g.manga;
+        return I18n.of(context).manga;
       case EhGalleryType.Artist_CG:
-        return I18n.g.artist_cg;
+        return I18n.of(context).artist_cg;
       case EhGalleryType.Game_CG:
-        return I18n.g.game_cg;
+        return I18n.of(context).game_cg;
       case EhGalleryType.Western:
-        return I18n.g.western;
+        return I18n.of(context).western;
       case EhGalleryType.Non_H:
-        return I18n.g.non_h;
+        return I18n.of(context).non_h;
       case EhGalleryType.Image_Set:
-        return I18n.g.image_set;
+        return I18n.of(context).image_set;
       case EhGalleryType.Cosplay:
-        return I18n.g.cosplay;
+        return I18n.of(context).cosplay;
       case EhGalleryType.Asian_Porn:
-        return I18n.g.asian_porn;
+        return I18n.of(context).asian_porn;
       case EhGalleryType.Misc:
-        return I18n.g.misc;
+        return I18n.of(context).misc;
     }
   }
 }

@@ -272,7 +272,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                                     filter.typeFilter[e.key]!.value = !value;
                                     vibrate(duration: 50, amplitude: 100);
                                   },
-                                  text: e.key.string,
+                                  text: e.key.translate(context),
                                 )))
                             .toList(),
                       ),
