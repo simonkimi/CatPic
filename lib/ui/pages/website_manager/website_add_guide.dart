@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
+import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/database.dart';
@@ -13,6 +14,14 @@ import 'package:flutter_svg/svg.dart';
 import '../../../i18n.dart';
 import '../../../themes.dart';
 import 'cookie_manager.dart';
+
+class GuidePage {
+  static const int URL = 0;
+  static const int NETWORK = 1;
+  static const int SCHEME = 2;
+  static const int LOGIN = 3;
+  static const int NICKNAME = 4;
+}
 
 class WebsiteAddGuide extends StatelessWidget {
   WebsiteAddGuide({
@@ -70,6 +79,8 @@ class WebsiteAddGuide extends StatelessWidget {
             buildInputSite(context),
             buildNetworkSetting(context),
             buildCheckProtocol(context),
+            buildLoginPage(context),
+            buildInputNickName(context),
           ],
         ),
       ),
@@ -80,7 +91,7 @@ class WebsiteAddGuide extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          store.setCurrentPage(2);
+          store.setCurrentPage(GuidePage.SCHEME);
           if (store.isFirstCheckType) {
             store.checkWebsiteType();
             store.requestFavicon();
@@ -177,7 +188,7 @@ class WebsiteAddGuide extends StatelessWidget {
   }
 
   Widget buildInputSite(BuildContext context) {
-    final inputController = TextEditingController();
+    final inputController = TextEditingController(text: store.websiteHost);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -187,7 +198,7 @@ class WebsiteAddGuide extends StatelessWidget {
             BotToast.showText(text: I18n.g.host_empty);
             return;
           }
-          store.setCurrentPage(1);
+          store.setCurrentPage(GuidePage.NETWORK);
         },
         child: const Icon(Icons.arrow_forward_sharp),
       ),
@@ -221,7 +232,15 @@ class WebsiteAddGuide extends StatelessWidget {
       floatingActionButton:
           store.isCheckingType || store.websiteType != WebsiteType.UNKNOWN
               ? FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (store.websiteType != WebsiteType.UNKNOWN) {
+                      if (store.websiteType != WebsiteType.EHENTAI &&
+                          store.websiteType != WebsiteType.GELBOORU)
+                        store.setCurrentPage(GuidePage.LOGIN);
+                      else
+                        store.setCurrentPage(GuidePage.NICKNAME);
+                    }
+                  },
                   child: store.isCheckingType
                       ? const CircularProgressIndicator(
                           color: Colors.white,
@@ -313,6 +332,102 @@ class WebsiteAddGuide extends StatelessWidget {
                     child: Text(I18n.of(context).recheck),
                   )
                 ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildLoginPage(BuildContext context) {
+    String getPasswordTitle() {
+      if (store.websiteType == WebsiteType.MOEBOORU)
+        return I18n.of(context).password;
+      else if (store.websiteType == WebsiteType.DANBOORU)
+        return I18n.of(context).api_key;
+      return 'Password';
+    }
+
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.arrow_forward_sharp),
+        onPressed: () {
+          store.setCurrentPage(GuidePage.NICKNAME);
+        },
+      ),
+      body: ListView(
+        children: [
+          if (store.websiteType == WebsiteType.DANBOORU ||
+              store.websiteType == WebsiteType.MOEBOORU)
+            TextInputTile(
+              defaultValue: store.username,
+              title: Text(I18n.of(context).username),
+              subtitle: Text(store.username.isEmpty
+                  ? I18n.of(context).not_set
+                  : store.username),
+              onChanged: (value) {
+                store.setUsername(value);
+              },
+            ),
+          if (store.websiteType == WebsiteType.DANBOORU ||
+              store.websiteType == WebsiteType.MOEBOORU)
+            TextInputTile(
+              defaultValue: store.password,
+              title: Text(getPasswordTitle()),
+              subtitle: Text(store.password.isEmpty
+                  ? I18n.of(context).not_set
+                  : store.password),
+              onChanged: (value) {
+                store.setPassword(value);
+              },
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              '一些特殊功能可能要求您登录, 否则您可以跳过此步骤',
+              style: TextStyle(
+                color: Theme.of(context).textTheme.subtitle2!.color,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildInputNickName(BuildContext context) {
+    final inputController = TextEditingController();
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final text = inputController.text;
+          if (text.isEmpty)
+            store.setWebsiteName(store.websiteHost);
+          else
+            store.setWebsiteName(text);
+          store.saveWebsite();
+          Navigator.of(context).pop();
+        },
+        child: const Icon(Icons.check),
+      ),
+      body: WillPopScope(
+        onWillPop: _back,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ListView(
+            children: [
+              const SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(hintText: store.websiteHost),
+                controller: inputController,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '最后一步! 输入此网站昵称! (默认为host)',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.subtitle2!.color,
+                ),
               )
             ],
           ),

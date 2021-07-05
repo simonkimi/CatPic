@@ -101,6 +101,9 @@ Future<int> getWebsiteType({
   required bool onlyHost,
   required CancelToken cancelToken,
 }) async {
+  if (host.contains('e-hentai.org') || host.contains('exhentai.org'))
+    return WebsiteType.EHENTAI;
+
   final websiteList = <int>[
     WebsiteType.GELBOORU,
     WebsiteType.MOEBOORU,

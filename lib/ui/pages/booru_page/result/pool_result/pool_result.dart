@@ -81,6 +81,8 @@ class PoolResultFragment extends StatelessWidget {
             padding: EdgeInsets.only(top: 60 + barHeight, left: 3, right: 3),
             itemCount: store.poolList.length,
             itemBuilder: _itemBuilder,
+            itemExtent: 100.0,
+            cacheExtent: 500,
           ),
         ),
       ),

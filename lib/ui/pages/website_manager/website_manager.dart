@@ -4,6 +4,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/website_item.dart';
 import 'package:catpic/ui/pages/website_manager/website_add_guide.dart';
+import 'package:catpic/ui/pages/website_manager/website_add_page.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -70,7 +71,7 @@ class WebsiteManagerPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => WebsiteAddGuide(website: e),
+                      builder: (context) => WebsiteAddPage(website: e),
                     ),
                   );
                 },

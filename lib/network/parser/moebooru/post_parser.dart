@@ -5,7 +5,7 @@ import 'package:catpic/network/parser/moebooru/post_model.dart';
 class MoebooruPostParse {
   static List<BooruPost> parse(String postJson) {
     final List<Map<String, dynamic>> posts =
-        jsonDecode(postJson) as List<Map<String, dynamic>>;
+        (jsonDecode(postJson) as List<dynamic>).cast();
 
     return posts.map((e) {
       final root = Root.fromJson(e);

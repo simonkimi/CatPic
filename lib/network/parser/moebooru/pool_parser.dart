@@ -13,8 +13,7 @@ import 'pool_model.dart';
 class MoebooruPoolParser {
   static List<MoebooruPool> parse(String jsonStr) {
     final List<Map<String, dynamic>> json =
-        jsonDecode(jsonStr) as List<Map<String, dynamic>>;
-
+        (jsonDecode(jsonStr) as List<dynamic>).cast();
     return json
         .map((e) => MoebooruPool.fromRoot(PoolList.fromJson(e)))
         .toList();
