@@ -88,12 +88,12 @@ abstract class ILoadMore<T> {
       BotToast.showText(text: lastException!);
       print('onRefresh ${e.message} ${e.requestOptions.path}');
     } on RequireLoginException {
-      print('RequireLoginException');
       lastException = I18n.g.requests_login;
     } catch (e) {
+      print(e is RequireLoginException);
       refreshController.loadFailed();
       refreshController.refreshFailed();
-      print('onRefresh ${e.toString()}');
+      print('onRefresh catch ${e.toString()}');
       lastException = e.toString();
       BotToast.showText(text: e.toString());
     } finally {

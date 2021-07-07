@@ -3,27 +3,38 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:catpic/utils/utils.dart';
 
-class RequireLoginException implements Exception {}
+class RequireLoginException implements Exception {
+  @override
+  String toString() => '需要登录';
+}
 
 class PreviewModel {
   PreviewModel({
     required this.maxPage,
     required this.resultCount,
     required this.items,
+    this.exception,
   });
 
   int maxPage;
   int resultCount;
   List<PreViewItemModel> items;
+
+  Exception? exception;
 }
 
 class PreviewParser {
   static PreviewModel parse(String previewHtml) {
     final document = parser.parse(previewHtml);
 
-    if (document.querySelector('#iw') != null &&
+    if (document.querySelector('#iw') != null ||
         document.querySelector('[name=ipb_login_form]') != null) {
-      throw RequireLoginException();
+      return PreviewModel(
+        items: [],
+        maxPage: 0,
+        resultCount: 0,
+        exception: RequireLoginException(),
+      );
     }
 
     final previewList = document

@@ -39,6 +39,7 @@ class EHAdapter extends Adapter {
   }) async {
     final str = await client.getWatched(filter: filter, page: page);
     final model = await compute(PreviewParser.parse, str);
+    if (model.exception != null) throw model.exception!;
     return await previewTranslateHook(model);
   }
 
