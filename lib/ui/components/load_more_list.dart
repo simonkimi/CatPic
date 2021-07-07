@@ -10,10 +10,14 @@ class LoadMoreList extends StatelessWidget {
     Key? key,
     required this.store,
     required this.body,
+    this.enablePullDown = true,
+    this.enablePullUp = true,
   }) : super(key: key);
 
   final ILoadMore store;
   final Widget body;
+  final bool enablePullUp;
+  final bool enablePullDown;
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +26,8 @@ class LoadMoreList extends StatelessWidget {
       showTrackOnHover: true,
       child: FloatingSearchBarScrollNotifier(
         child: SmartRefresher(
-          enablePullUp: true,
-          enablePullDown: true,
+          enablePullUp: enablePullUp,
+          enablePullDown: enablePullDown,
           footer: CustomFooter(
             builder: buildFooter,
           ),
@@ -32,8 +36,8 @@ class LoadMoreList extends StatelessWidget {
             distance: barHeight + 70,
             height: barHeight + 80,
           ),
-          onRefresh: store.onRefresh,
-          onLoading: store.onLoadMore,
+          onRefresh: enablePullDown ? store.onRefresh : null,
+          onLoading: enablePullUp ? store.onLoadMore : null,
           child: body,
         ),
       ),

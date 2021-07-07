@@ -120,6 +120,7 @@ class MainDrawer extends HookWidget {
           children: [
             buildEhIndex(context),
             buildEhWatched(context),
+            buildEhPopular(context),
           ],
         ),
       );
@@ -193,6 +194,25 @@ class MainDrawer extends HookWidget {
               MaterialPageRoute(
                   builder: (context) => const EhPage(
                         searchType: EHSearchType.WATCHED,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildEhPopular(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.local_fire_department),
+      title: Text(I18n.of(context).popular),
+      selected: ehSearchType == EHSearchType.POPULAR,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.POPULAR) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const EhPage(
+                        searchType: EHSearchType.POPULAR,
                       )),
               (route) => false);
         else

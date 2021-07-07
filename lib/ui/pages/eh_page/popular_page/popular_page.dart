@@ -49,6 +49,7 @@ class EhPopularResult extends StatelessWidget {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return LoadMoreList(
       store: store,
+      enablePullUp: false,
       body: ListView.builder(
         cacheExtent: 500,
         controller: store.listScrollController,

@@ -5,6 +5,7 @@ import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/index_result.dart';
 import 'package:catpic/ui/pages/booru_page/result/empty_website/empty_website.dart';
+import 'package:catpic/ui/pages/eh_page/popular_page/popular_page.dart';
 import 'package:catpic/ui/pages/eh_page/watched_page/watched_page.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:catpic/main.dart';
 enum EHSearchType {
   INDEX,
   WATCHED,
+  POPULAR,
 }
 
 class EhPage extends StatefulWidget {
@@ -95,6 +97,11 @@ class _EhPageState extends State<EhPage> {
           return EhWatchedResult(
             key: key,
             searchText: tag,
+            adapter: adapter,
+          );
+        case EHSearchType.POPULAR:
+          return EhPopularResult(
+            key: key,
             adapter: adapter,
           );
       }

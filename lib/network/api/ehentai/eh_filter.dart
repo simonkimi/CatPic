@@ -113,7 +113,7 @@ class EhAdvanceFilter {
     bool useAdvance = false,
     int pageStart = 0,
     int pageEnd = 0,
-    int minimumRating = 0,
+    int minimumRating = -1,
     Map<EhGalleryType, Rx<bool>>? typeFilter,
   })  : _searchGalleryName = searchGalleryName.obs,
         _searchGalleryTag = searchGalleryTag.obs,
