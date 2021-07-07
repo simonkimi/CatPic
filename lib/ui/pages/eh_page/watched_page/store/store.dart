@@ -24,6 +24,10 @@ abstract class EhWatchedStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
   bool isLoading = false;
 
   @override
+  @observable
+  String? lastException;
+
+  @override
   @action
   Future<void> onDataChange() async {}
 

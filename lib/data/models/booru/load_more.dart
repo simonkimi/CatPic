@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart' hide Lock;
@@ -34,6 +35,8 @@ abstract class ILoadMore<T> {
   var pageTail = 0;
 
   final lock = Lock();
+
+  String? lastException;
 
   Future<List<T>> loadPage(int page);
 
@@ -72,29 +75,29 @@ abstract class ILoadMore<T> {
   }
 
   Future<void> onRefresh() async {
-    observableList.clear();
-    page = 0;
-    await _loadNextPage();
-    await onDataChange();
-    // try {
-    //   observableList.clear();
-    //   page = 0;
-    //   await _loadNextPage();
-    //   await onDataChange();
-    // } on DioError catch (e) {
-    //   if (CancelToken.isCancel(e)) return;
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
-    //   print('onRefresh ${e.message} ${e.requestOptions.path}');
-    // } catch (e) {
-    //   refreshController.loadFailed();
-    //   refreshController.refreshFailed();
-    //   print('onRefresh ${e.toString()}');
-    //   BotToast.showText(text: e.toString());
-    // } finally {
-    //   isLoading = false;
-    // }
+    try {
+      observableList.clear();
+      page = 0;
+      await _loadNextPage();
+      await onDataChange();
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) return;
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      lastException = '${I18n.g.network_error}:${e.message}';
+      BotToast.showText(text: lastException!);
+      print('onRefresh ${e.message} ${e.requestOptions.path}');
+    } on RequireLoginException {
+      lastException = I18n.g.requests_login;
+    } catch (e) {
+      refreshController.loadFailed();
+      refreshController.refreshFailed();
+      print('onRefresh ${e.toString()}');
+      lastException = e.toString();
+      BotToast.showText(text: e.toString());
+    } finally {
+      isLoading = false;
+    }
   }
 
   Future<void> onLoadMore() async {
@@ -108,12 +111,16 @@ abstract class ILoadMore<T> {
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) return;
       refreshController.loadFailed();
+      lastException = '${I18n.g.network_error}:${e.message}';
+      BotToast.showText(text: lastException!);
       print('onLoadMore ${e.message} \n ${e.stackTrace}');
-      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
+    } on RequireLoginException {
+      lastException = I18n.g.requests_login;
     } catch (e) {
       print('onLoadMore ${e.toString()}');
       refreshController.loadFailed();
       BotToast.showText(text: e.toString());
+      lastException = e.toString();
     } finally {
       isLoading = false;
     }
@@ -135,11 +142,15 @@ abstract class ILoadMore<T> {
       if (CancelToken.isCancel(e)) return;
       refreshController.refreshFailed();
       print('onLoadMore ${e.message} \n ${e.stackTrace}');
-      BotToast.showText(text: '${I18n.g.network_error}:${e.message}');
+      lastException = '${I18n.g.network_error}:${e.message}';
+      BotToast.showText(text: lastException!);
+    } on RequireLoginException {
+      lastException = I18n.g.requests_login;
     } catch (e) {
       print('onLoadMore ${e.toString()}');
       refreshController.refreshFailed();
       BotToast.showText(text: e.toString());
+      lastException = e.toString();
     } finally {
       isLoading = false;
     }

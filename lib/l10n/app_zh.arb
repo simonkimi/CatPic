@@ -63,6 +63,7 @@
   "click_again_to_exit": "再按一次退出",
   "cookie_desc": "使用Cookie标识您的登录状态",
   "login": "登录",
+  "requests_login": "网站需要您登录, 请填入正确的Cookies",
   "network": "网络",
   "no_website": "还没有网站, 快去添加一个!",
   "host_manager": "主机管理",

@@ -3,17 +3,15 @@ import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
+import 'package:catpic/ui/components/load_more_list.dart';
+import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
-import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/booru_page/post_image_view/post_image_view.dart';
 import 'package:catpic/ui/components/fab.dart';
-import 'package:catpic/ui/pages/booru_page/result/loading/loading.dart';
 import 'package:catpic/ui/pages/booru_page/result/popular_result/store/store.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'package:catpic/i18n.dart';
@@ -91,55 +89,29 @@ class PopularResultFragment extends StatelessWidget {
 
   Scaffold buildBody() {
     return Scaffold(
-      body: Observer(
-        builder: (_) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: () {
-              if (store.isLoading && store.observableList.isEmpty)
-                return const Center(child: CircularProgressIndicator());
-              if (store.observableList.isEmpty)
-                return EmptyWidget(store: store);
-              return buildList();
-            }(),
-          );
-        },
+      body: LoadMoreManager(
+        store: store,
+        body: buildList(),
       ),
       floatingActionButton: FloatActionBubble(loadMoreStore: store),
     );
   }
 
-  Scrollbar buildList() {
+  Widget buildList() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
-    return Scrollbar(
-      showTrackOnHover: true,
-      child: FloatingSearchBarScrollNotifier(
-        child: SmartRefresher(
-          enablePullUp: true,
-          enablePullDown: true,
-          footer: CustomFooter(
-            builder: buildFooter,
-          ),
-          controller: store.refreshController,
-          header: MaterialClassicHeader(
-            distance: barHeight + 70,
-            height: barHeight + 80,
-          ),
-          onRefresh: store.onRefresh,
-          onLoading: store.onLoadMore,
-          child: WaterfallFlow.builder(
-            cacheExtent: 500,
-            controller: store.listScrollController,
-            padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
-            gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-              maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
-            ),
-            itemCount: store.observableList.length,
-            itemBuilder: _itemBuilder,
-          ),
+    return LoadMoreList(
+      store: store,
+      body: WaterfallFlow.builder(
+        cacheExtent: 500,
+        controller: store.listScrollController,
+        padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
+        gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 5,
+          maxCrossAxisExtent: CardSize.of(settingStore.cardSize).toDouble(),
         ),
+        itemCount: store.observableList.length,
+        itemBuilder: _itemBuilder,
       ),
     );
   }
