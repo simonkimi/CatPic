@@ -24,7 +24,9 @@ class LoadMoreManager extends StatelessWidget {
           child: () {
             if (store.isLoading && store.observableList.isEmpty)
               return const Center(child: CircularProgressIndicator());
-            if (store.lastException != null && store.observableList.isEmpty)
+            if (store.lastException != null &&
+                store.lastException!.isNotEmpty &&
+                store.observableList.isEmpty)
               return EmptyWidget(
                   errMsg: store.lastException!, onTap: store.onRefresh);
             if (store.observableList.isEmpty)

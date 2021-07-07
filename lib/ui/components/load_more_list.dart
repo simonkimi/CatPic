@@ -17,10 +17,6 @@ class LoadMoreList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
-  }
-
-  Scrollbar buildList() {
     final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
     return Scrollbar(
       showTrackOnHover: true,
