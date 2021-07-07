@@ -88,6 +88,7 @@ abstract class ILoadMore<T> {
       BotToast.showText(text: lastException!);
       print('onRefresh ${e.message} ${e.requestOptions.path}');
     } on RequireLoginException {
+      print('RequireLoginException');
       lastException = I18n.g.requests_login;
     } catch (e) {
       refreshController.loadFailed();
@@ -115,12 +116,14 @@ abstract class ILoadMore<T> {
       BotToast.showText(text: lastException!);
       print('onLoadMore ${e.message} \n ${e.stackTrace}');
     } on RequireLoginException {
+      print('RequireLoginException');
       lastException = I18n.g.requests_login;
     } catch (e) {
       print('onLoadMore ${e.toString()}');
       refreshController.loadFailed();
       BotToast.showText(text: e.toString());
       lastException = e.toString();
+      refreshController.refreshFailed();
     } finally {
       isLoading = false;
     }
@@ -146,6 +149,8 @@ abstract class ILoadMore<T> {
       BotToast.showText(text: lastException!);
     } on RequireLoginException {
       lastException = I18n.g.requests_login;
+      print('RequireLoginException');
+      refreshController.refreshFailed();
     } catch (e) {
       print('onLoadMore ${e.toString()}');
       refreshController.refreshFailed();

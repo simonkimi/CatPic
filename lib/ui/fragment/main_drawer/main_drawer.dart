@@ -117,7 +117,10 @@ class MainDrawer extends HookWidget {
       return Expanded(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: [buildEhIndex(context)],
+          children: [
+            buildEhIndex(context),
+            buildEhWatched(context),
+          ],
         ),
       );
     }

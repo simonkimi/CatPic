@@ -28,7 +28,9 @@ class LoadMoreManager extends StatelessWidget {
                 store.lastException!.isNotEmpty &&
                 store.observableList.isEmpty)
               return EmptyWidget(
-                  errMsg: store.lastException!, onTap: store.onRefresh);
+                errMsg: store.lastException!,
+                onTap: store.onRefresh,
+              );
             if (store.observableList.isEmpty)
               return EmptyWidget(
                 onTap: store.onRefresh,
