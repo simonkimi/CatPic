@@ -3,8 +3,8 @@ import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
-import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -225,30 +225,11 @@ class PreviewExtendedCard extends StatelessWidget {
       child: SizedBox(
         width: 110,
         height: 150,
-        child: Image(
-          image: DioImageProvider(
-            dio: adapter.dio,
-            url: previewModel.previewImg,
-          ),
-          loadingBuilder: (context, child, loadingProgress) {
-            return loadingProgress == null
-                ? DarkWidget(
-                    child: child,
-                  )
-                : Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-          },
+        child: DioImage(
+          dio: adapter.dio,
+          imageUrl: previewModel.previewImg,
+          imageBuilder: (context, data) =>
+              DarkWidget(child: Image.memory(data)),
         ),
       ),
     );
