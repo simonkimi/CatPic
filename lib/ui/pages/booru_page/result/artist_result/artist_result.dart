@@ -9,6 +9,7 @@ import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/pages/booru_page/result/artist_result/store/artist_result_store.dart';
 import 'package:catpic/ui/components/fab.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,9 +39,13 @@ class ArtistResultFragment extends StatelessWidget {
         store.onNewSearch(value.trim());
       },
       body: Scaffold(
-        body: LoadMoreManager(
-          store: store,
-          body: buildList(),
+        body: Observer(
+          builder: (_) {
+            return LoadMoreManager(
+              store: store,
+              body: buildList(),
+            );
+          },
         ),
         floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),

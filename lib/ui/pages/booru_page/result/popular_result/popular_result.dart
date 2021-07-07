@@ -11,6 +11,7 @@ import 'package:catpic/ui/pages/booru_page/post_image_view/post_image_view.dart'
 import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/popular_result/store/store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -89,9 +90,13 @@ class PopularResultFragment extends StatelessWidget {
 
   Scaffold buildBody() {
     return Scaffold(
-      body: LoadMoreManager(
-        store: store,
-        body: buildList(),
+      body: Observer(
+        builder: (_) {
+          return LoadMoreManager(
+            store: store,
+            body: buildList(),
+          );
+        },
       ),
       floatingActionButton: FloatActionBubble(loadMoreStore: store),
     );

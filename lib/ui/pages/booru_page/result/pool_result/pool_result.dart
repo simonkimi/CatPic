@@ -11,6 +11,7 @@ import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class PoolResultFragment extends StatelessWidget {
@@ -37,9 +38,13 @@ class PoolResultFragment extends StatelessWidget {
         store.onNewSearch(value.trim());
       },
       body: Scaffold(
-        body: LoadMoreManager(
-          store: store,
-          body: buildList(),
+        body: Observer(
+          builder: (_) {
+            return LoadMoreManager(
+              store: store,
+              body: buildList(),
+            );
+          },
         ),
         floatingActionButton: FloatActionBubble(loadMoreStore: store),
       ),

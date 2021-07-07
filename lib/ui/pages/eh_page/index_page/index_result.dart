@@ -7,6 +7,7 @@ import 'package:catpic/ui/pages/eh_page/components/eh_complete_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class EhIndexResult extends StatelessWidget {
   EhIndexResult({
@@ -31,9 +32,13 @@ class EhIndexResult extends StatelessWidget {
       onSubmitted: (value, useFilter) {
         store.applyNewFilter(value.trim(), useFilter);
       },
-      body: LoadMoreManager(
-        store: store,
-        body: buildList(),
+      body: Observer(
+        builder: (_) {
+          return LoadMoreManager(
+            store: store,
+            body: buildList(),
+          );
+        },
       ),
     );
   }
