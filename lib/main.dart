@@ -8,6 +8,7 @@ import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/ui/pages/website_manager/website_add_guide.dart';
 import 'package:catpic/ui/pages/website_manager/website_add_page.dart';
+import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -65,7 +66,9 @@ class CatPicApp extends StatelessWidget {
           DownloadManagerPage.route: (ctx) => DownloadManagerPage(),
           AndroidDownloadPage.route: (ctx) => AndroidDownloadPage(),
           SettingPage.route: (ctx) => SettingPage(),
-          WebsiteAddPage.route: (ctx) => WebsiteAddGuide(),
+          WebsiteAddPage.route: (ctx) => WebsiteAddPage(),
+          WebsiteAddGuide.route: (ctx) => WebsiteAddGuide(),
+          WebsiteManagerPage.route: (ctx) => WebsiteManagerPage(),
         },
       );
     });

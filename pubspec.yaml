@@ -45,7 +45,7 @@ dependencies:
   path_provider: ^2.0.1
   path: ^1.8.0
 
-  # provider
+  # state
   get: ^4.1.4
   flutter_mobx: ^2.0.0
   event_bus: ^2.0.0
