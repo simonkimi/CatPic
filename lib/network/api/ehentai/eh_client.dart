@@ -29,6 +29,18 @@ class EhClient extends BaseClient {
     return (await dio.get<String>('popular')).data!;
   }
 
+  /// 关注
+  Future<String> getWatched({
+    required Map<String, dynamic> filter,
+    required int page,
+  }) async {
+    return (await dio.get<String>('watched', queryParameters: <String, dynamic>{
+      ...filter,
+      'page': page.toString()
+    }))
+        .data!;
+  }
+
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
     return (await dio.get<String>('g/$gid/$gtoken',

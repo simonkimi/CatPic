@@ -179,6 +179,25 @@ class MainDrawer extends HookWidget {
     );
   }
 
+  ListTile buildEhWatched(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.remove_red_eye_outlined),
+      title: Text(I18n.of(context).watched),
+      selected: ehSearchType == EHSearchType.WATCHED,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.WATCHED) ?? true)
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const EhPage(
+                        searchType: EHSearchType.WATCHED,
+                      )),
+              (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
   ListTile buildSettingTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.settings),

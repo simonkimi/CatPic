@@ -1,24 +1,23 @@
-import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/data/models/ehentai/load_more_with_filter.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
+import 'package:catpic/utils/utils.dart';
 
 part 'store.g.dart';
 
-class WatchedPageStore = WatchedPageStoreBase with _$WatchedPageStore;
+class EhWatchedStore = EhWatchedStoreBase with _$EhWatchedStore;
 
-abstract class WatchedPageStoreBase extends ILoadMore<PreViewItemModel>
+abstract class EhWatchedStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
     with Store {
-  WatchedPageStoreBase({
+  EhWatchedStoreBase({
     String searchText = '',
     required this.adapter,
   }) : super(searchText);
 
   final EHAdapter adapter;
-
-  DateTime lastClickBack = DateTime.now();
 
   @override
   @observable
@@ -27,10 +26,6 @@ abstract class WatchedPageStoreBase extends ILoadMore<PreViewItemModel>
   @override
   @action
   Future<void> onDataChange() async {}
-
-  final EhAdvanceFilter filter = EhAdvanceFilter();
-
-  EhAdvanceFilter currentFilter = EhAdvanceFilter();
 
   @override
   Future<List<PreViewItemModel>> loadPage(int page) async {
@@ -44,11 +39,14 @@ abstract class WatchedPageStoreBase extends ILoadMore<PreViewItemModel>
             filter: filter,
           );
 
-    final result = await adapter.index(
+    final result = await adapter.watched(
       filter: params,
       page: page - 1,
     );
-    return result.items;
+    return result.items
+        .where((element) =>
+            observableList.get((e) => e.gid == element.gid) == null)
+        .toList();
   }
 
   Future<void> applyNewFilter(String tag, bool userFilter) async {

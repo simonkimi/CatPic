@@ -3,6 +3,8 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:catpic/utils/utils.dart';
 
+class RequireLoginException implements Exception {}
+
 class PreviewModel {
   PreviewModel({
     required this.maxPage,
@@ -18,6 +20,11 @@ class PreviewModel {
 class PreviewParser {
   static PreviewModel parse(String previewHtml) {
     final document = parser.parse(previewHtml);
+
+    if (document.querySelector('#iw') != null &&
+        document.querySelector('[name=ipb_login_form]') != null) {
+      throw RequireLoginException();
+    }
 
     final previewList = document
         .querySelectorAll('.itg > tbody > tr')

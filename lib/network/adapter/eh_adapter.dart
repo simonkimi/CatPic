@@ -33,6 +33,21 @@ class EHAdapter extends Adapter {
     return await previewTranslateHook(model);
   }
 
+  Future<PreviewModel> watched({
+    required Map<String, dynamic> filter,
+    required int page,
+  }) async {
+    final str = await client.getWatched(filter: filter, page: page);
+    final model = await compute(PreviewParser.parse, str);
+    return await previewTranslateHook(model);
+  }
+
+  Future<PreviewModel> popular() async {
+    final str = await client.getPopular();
+    final model = await compute(PreviewParser.parse, str);
+    return await previewTranslateHook(model);
+  }
+
   Future<GalleryModel> gallery({
     required String gid,
     required String gtoken,

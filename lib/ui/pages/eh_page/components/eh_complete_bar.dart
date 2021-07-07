@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
+import 'package:catpic/data/models/ehentai/load_more_with_filter.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
@@ -10,7 +11,6 @@ import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
-import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,7 +34,7 @@ class EhCompleteBar extends StatefulWidget {
   final String searchText;
   final Widget body;
   final FloatingSearchBarController? controller;
-  final EhIndexStore store;
+  final ILoadMoreWithFilter store;
 
   @override
   _EhCompleteBarState createState() => _EhCompleteBarState();
