@@ -15,7 +15,11 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
   EhIndexStoreBase({
     String searchText = '',
     required this.adapter,
-  }) : super(searchText);
+    EhAdvanceFilter? baseFilter,
+  }) : super(
+          searchText,
+          baseFilter: baseFilter,
+        );
 
   final EHAdapter adapter;
 
@@ -36,9 +40,8 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
           )
         : EhFilter.buildBasicFilter(
             searchText: searchText,
-            filter: filter,
+            filter: currentFilter,
           );
-
     final result = await adapter.index(
       filter: params,
       page: page - 1,
@@ -50,7 +53,9 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
   }
 
   Future<void> applyNewFilter(String tag, bool userFilter) async {
-    currentFilter = userFilter ? filter : EhAdvanceFilter();
+    print('applyNewFilter: $tag');
+    currentFilter = filter.copy();
+    currentFilter.useAdvance = userFilter;
     searchText = tag;
     await newSearch(tag);
   }

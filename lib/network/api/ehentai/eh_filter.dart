@@ -97,54 +97,91 @@ class EhFilter {
 }
 
 class EhAdvanceFilter {
-  final _searchGalleryName = true.obs;
+  EhAdvanceFilter({
+    bool searchGalleryName = false,
+    bool searchGalleryTag = false,
+    bool searchTorrentFile = false,
+    bool searchLowPowerTag = false,
+    bool searchGalleryDescription = false,
+    bool showExpungedGallery = false,
+    bool onlyShowGalleriesWithTorrents = false,
+    bool searchDownvotedTags = false,
+    bool betweenPage = false,
+    bool disableLanguage = false,
+    bool disableUploader = false,
+    bool disableTag = false,
+    bool useAdvance = false,
+    int pageStart = 0,
+    int pageEnd = 0,
+    int minimumRating = 0,
+    Map<EhGalleryType, Rx<bool>>? typeFilter,
+  })  : _searchGalleryName = searchGalleryName.obs,
+        _searchGalleryTag = searchGalleryTag.obs,
+        _searchTorrentFile = searchTorrentFile.obs,
+        _searchLowPowerTag = searchLowPowerTag.obs,
+        _searchGalleryDescription = searchGalleryDescription.obs,
+        _showExpungedGallery = showExpungedGallery.obs,
+        _onlyShowGalleriesWithTorrents = onlyShowGalleriesWithTorrents.obs,
+        _searchDownvotedTags = searchDownvotedTags.obs,
+        _betweenPage = betweenPage.obs,
+        _disableLanguage = disableLanguage.obs,
+        _disableUploader = disableUploader.obs,
+        _disableTag = disableTag.obs,
+        _useAdvance = useAdvance.obs,
+        _pageStart = pageStart.obs,
+        _pageEnd = pageEnd.obs,
+        _minimumRating = minimumRating.obs,
+        typeFilter = typeFilter ??
+            <EhGalleryType, Rx<bool>>{
+              EhGalleryType.Doujinshi: true.obs,
+              EhGalleryType.Manga: true.obs,
+              EhGalleryType.Artist_CG: true.obs,
+              EhGalleryType.Game_CG: true.obs,
+              EhGalleryType.Western: true.obs,
+              EhGalleryType.Non_H: true.obs,
+              EhGalleryType.Image_Set: true.obs,
+              EhGalleryType.Cosplay: true.obs,
+              EhGalleryType.Asian_Porn: true.obs,
+              EhGalleryType.Misc: true.obs,
+            };
 
-  final _searchGalleryTag = true.obs;
+  final Rx<bool> _searchGalleryName;
 
-  final _searchTorrentFile = false.obs;
+  final Rx<bool> _searchGalleryTag;
 
-  final _searchLowPowerTag = false.obs;
+  final Rx<bool> _searchTorrentFile;
 
-  final _searchGalleryDescription = false.obs;
+  final Rx<bool> _searchLowPowerTag;
 
-  final _showExpungedGallery = false.obs;
+  final Rx<bool> _searchGalleryDescription;
 
-  final _onlyShowGalleriesWithTorrents = false.obs;
+  final Rx<bool> _showExpungedGallery;
 
-  final _searchDownvotedTags = false.obs;
+  final Rx<bool> _onlyShowGalleriesWithTorrents;
 
-  final _betweenPage = false.obs;
+  final Rx<bool> _searchDownvotedTags;
 
-  final _pageStart = 0.obs;
+  final Rx<bool> _betweenPage;
 
-  final _pageEnd = 0.obs;
+  final Rx<int> _pageStart;
 
-  final _minimumRating = (-1).obs;
+  final Rx<int> _pageEnd;
 
-  final _disableLanguage = false.obs;
+  final Rx<int> _minimumRating;
 
-  final _disableUploader = false.obs;
+  final Rx<bool> _disableLanguage;
 
-  final _disableTag = false.obs;
+  final Rx<bool> _disableUploader;
 
-  final _useAdvance = false.obs;
+  final Rx<bool> _disableTag;
+
+  final Rx<bool> _useAdvance;
 
   bool get useAdvance => _useAdvance.value;
 
   set useAdvance(bool val) => _useAdvance.value = val;
 
-  final typeFilter = <EhGalleryType, Rx<bool>>{
-    EhGalleryType.Doujinshi: true.obs,
-    EhGalleryType.Manga: true.obs,
-    EhGalleryType.Artist_CG: true.obs,
-    EhGalleryType.Game_CG: true.obs,
-    EhGalleryType.Western: true.obs,
-    EhGalleryType.Non_H: true.obs,
-    EhGalleryType.Image_Set: true.obs,
-    EhGalleryType.Cosplay: true.obs,
-    EhGalleryType.Asian_Porn: true.obs,
-    EhGalleryType.Misc: true.obs,
-  };
+  final Map<EhGalleryType, Rx<bool>> typeFilter;
 
   bool get disableTag => _disableTag.value;
 
@@ -208,4 +245,39 @@ class EhAdvanceFilter {
   bool get searchGalleryTag => _searchGalleryTag.value;
 
   set searchGalleryTag(bool val) => _searchGalleryTag.value = val;
+
+  EhAdvanceFilter copy() => EhAdvanceFilter(
+        betweenPage: betweenPage,
+        disableLanguage: disableLanguage,
+        disableTag: disableTag,
+        disableUploader: disableUploader,
+        minimumRating: minimumRating,
+        onlyShowGalleriesWithTorrents: onlyShowGalleriesWithTorrents,
+        pageEnd: pageEnd,
+        pageStart: pageStart,
+        searchDownvotedTags: searchDownvotedTags,
+        searchGalleryDescription: searchGalleryDescription,
+        searchGalleryName: searchGalleryName,
+        searchGalleryTag: searchGalleryTag,
+        searchLowPowerTag: searchLowPowerTag,
+        searchTorrentFile: searchTorrentFile,
+        showExpungedGallery: showExpungedGallery,
+        useAdvance: useAdvance,
+        typeFilter: <EhGalleryType, Rx<bool>>{
+          EhGalleryType.Doujinshi:
+              typeFilter[EhGalleryType.Doujinshi]!.value.obs,
+          EhGalleryType.Manga: typeFilter[EhGalleryType.Manga]!.value.obs,
+          EhGalleryType.Artist_CG:
+              typeFilter[EhGalleryType.Artist_CG]!.value.obs,
+          EhGalleryType.Game_CG: typeFilter[EhGalleryType.Game_CG]!.value.obs,
+          EhGalleryType.Western: typeFilter[EhGalleryType.Western]!.value.obs,
+          EhGalleryType.Non_H: typeFilter[EhGalleryType.Non_H]!.value.obs,
+          EhGalleryType.Image_Set:
+              typeFilter[EhGalleryType.Image_Set]!.value.obs,
+          EhGalleryType.Cosplay: typeFilter[EhGalleryType.Cosplay]!.value.obs,
+          EhGalleryType.Asian_Porn:
+              typeFilter[EhGalleryType.Asian_Porn]!.value.obs,
+          EhGalleryType.Misc: typeFilter[EhGalleryType.Misc]!.value.obs,
+        },
+      );
 }

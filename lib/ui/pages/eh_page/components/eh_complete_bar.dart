@@ -18,7 +18,8 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:get/get.dart';
 import 'package:catpic/utils/utils.dart';
 
-typedef SearchSubmitted = void Function(String text, bool useFilter);
+typedef SearchSubmitted = void Function(
+    String text, bool useFilter, EhAdvanceFilter filter);
 
 class EhCompleteBar extends StatefulWidget {
   const EhCompleteBar({
@@ -118,7 +119,8 @@ class _EhCompleteBarState extends State<EhCompleteBar>
         onSubmitted: (value) {
           _setSearchHistory(value.trim());
           if (filterDisplaySwitch) backToSearch();
-          widget.onSubmitted?.call(value, filterDisplaySwitch);
+          widget.onSubmitted
+              ?.call(value, filterDisplaySwitch, widget.store.filter);
         },
         onFocusChanged: (isFocus) {
           if (!filterDisplaySwitch) {
@@ -537,7 +539,8 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                 final value = searchBarController.query;
                 _setSearchHistory(value.trim());
                 if (filterDisplaySwitch) backToSearch();
-                widget.onSubmitted?.call(value, filterDisplaySwitch);
+                widget.onSubmitted
+                    ?.call(value, filterDisplaySwitch, widget.store.filter);
               },
               child: const Icon(Icons.search),
             ),

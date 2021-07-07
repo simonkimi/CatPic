@@ -40,7 +40,7 @@ abstract class EhWatchedStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
           )
         : EhFilter.buildBasicFilter(
             searchText: searchText,
-            filter: filter,
+            filter: currentFilter,
           );
 
     final result = await adapter.watched(
@@ -54,7 +54,9 @@ abstract class EhWatchedStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
   }
 
   Future<void> applyNewFilter(String tag, bool userFilter) async {
-    currentFilter = userFilter ? filter : EhAdvanceFilter();
+    print('applyNewFilter: $tag');
+    currentFilter = filter.copy();
+    currentFilter.useAdvance = userFilter;
     searchText = tag;
     await newSearch(tag);
   }

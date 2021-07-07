@@ -1,39 +1,38 @@
 import 'dart:ui' as ui;
 
 import 'package:catpic/network/adapter/eh_adapter.dart';
-import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_complete_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
-import 'package:catpic/ui/pages/eh_page/index_page/store/store.dart';
+import 'package:catpic/ui/pages/eh_page/eh_page.dart';
+import 'package:catpic/ui/pages/eh_page/popular_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class EhIndexResult extends StatelessWidget {
-  EhIndexResult({
+class EhPopularResult extends StatelessWidget {
+  EhPopularResult({
     Key? key,
-    this.searchText = '',
     required this.adapter,
-    EhAdvanceFilter? baseFilter,
-  })  : store = EhIndexStore(
-          adapter: adapter,
-          searchText: searchText,
-          baseFilter: baseFilter,
-        ),
+  })  : store = EhPopularResultStore(adapter),
         super(key: key);
 
-  final String searchText;
   final EHAdapter adapter;
-  final EhIndexStore store;
+  final EhPopularResultStore store;
 
   @override
   Widget build(BuildContext context) {
     return EhCompleteBar(
-      searchText: searchText,
+      searchText: '',
       store: store,
-      onSubmitted: (value, useFilter, _) {
-        store.applyNewFilter(value.trim(), useFilter);
+      onSubmitted: (value, useFilter, filter) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return EhPage(
+            searchText: value.trim(),
+            searchType: EHSearchType.INDEX,
+            baseFilter: filter,
+          );
+        }));
       },
       body: Observer(
         builder: (_) {

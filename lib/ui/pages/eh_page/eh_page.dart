@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/index_page/index_result.dart';
 import 'package:catpic/ui/pages/booru_page/result/empty_website/empty_website.dart';
@@ -20,10 +21,12 @@ class EhPage extends StatefulWidget {
     Key? key,
     this.searchText = '',
     this.searchType = EHSearchType.INDEX,
+    this.baseFilter,
   }) : super(key: key);
 
   final String searchText;
   final EHSearchType searchType;
+  final EhAdvanceFilter? baseFilter;
 
   @override
   _EhPageState createState() => _EhPageState();
@@ -86,6 +89,7 @@ class _EhPageState extends State<EhPage> {
             key: key,
             searchText: tag,
             adapter: adapter,
+            baseFilter: widget.baseFilter,
           );
         case EHSearchType.WATCHED:
           return EhWatchedResult(

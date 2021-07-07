@@ -28,7 +28,7 @@ class EhWatchedResult extends StatelessWidget {
     return EhCompleteBar(
       searchText: searchText,
       store: store,
-      onSubmitted: (value, useFilter) {
+      onSubmitted: (value, useFilter, _) {
         store.applyNewFilter(value.trim(), useFilter);
       },
       body: Observer(
