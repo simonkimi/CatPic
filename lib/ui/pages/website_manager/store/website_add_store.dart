@@ -192,7 +192,7 @@ abstract class WebsiteAddStoreBase with Store {
           mainStore.setWebsiteFavicon(id, favicon);
         });
     }
-    mainStore.updateList();
+    await mainStore.updateList();
     return true;
   }
 }

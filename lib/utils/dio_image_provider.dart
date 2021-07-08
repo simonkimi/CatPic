@@ -12,9 +12,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:path/path.dart' as p;
+import 'utils.dart';
 
 typedef UrlBuilder = Future<String> Function();
 
+@immutable
 class DioImageProvider extends ImageProvider<DioImageProvider> {
   DioImageProvider({
     this.url,
@@ -28,7 +30,17 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   final double scale;
   final UrlBuilder? urlBuilder;
 
-  var _cancelToken = CancelToken();
+  final _cancelToken = CancelToken().wrap;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! DioImageProvider) return false;
+    if (other.urlBuilder != null || urlBuilder != null) return false;
+    return other.url == url && other.dio == dio && other.scale == scale;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 
   @override
   ImageStreamCompleter load(DioImageProvider key, DecoderCallback decode) {
@@ -55,11 +67,11 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   Future<ui.Codec> _loadAsync(DioImageProvider key, DecoderCallback decode,
       StreamController<ImageChunkEvent> chunkEvents) async {
-    _cancelToken = CancelToken();
+    _cancelToken.value = CancelToken();
     try {
       final imageUrl = url ?? await urlBuilder!();
       final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
-          cancelToken: _cancelToken,
+          cancelToken: _cancelToken.value,
           options: settingStore.dioCacheOptions
               .copyWith(
                 policy: CachePolicy.request,
@@ -92,7 +104,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   }
 
   void cancel() {
-    _cancelToken.cancel();
+    _cancelToken.value.cancel();
   }
 }
 

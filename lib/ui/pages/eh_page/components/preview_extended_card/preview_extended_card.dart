@@ -3,8 +3,9 @@ import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
-import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -225,11 +226,29 @@ class PreviewExtendedCard extends StatelessWidget {
       child: SizedBox(
         width: 110,
         height: 150,
-        child: DioImage(
-          dio: adapter.dio,
-          imageUrl: previewModel.previewImg,
-          imageBuilder: (context, data) =>
-              DarkWidget(child: Image.memory(data)),
+        child: ExtendedImage(
+          image: DioImageProvider(
+            dio: adapter.dio,
+            url: previewModel.previewImg,
+          ),
+          enableLoadState: true,
+          loadStateChanged: (state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                return null;
+              case LoadState.completed:
+                return DarkWidget(child: state.completedWidget);
+              case LoadState.failed:
+                return InkWell(
+                  onTap: () {
+                    state.reLoadImage();
+                  },
+                  child: const Center(
+                    child: Icon(Icons.error),
+                  ),
+                );
+            }
+          },
         ),
       ),
     );
