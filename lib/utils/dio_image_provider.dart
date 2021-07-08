@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:path/path.dart' as p;
+import 'package:uuid/uuid.dart';
 import 'utils.dart';
 
 typedef UrlBuilder = Future<String> Function();
@@ -80,7 +81,8 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
           options: settingStore.dioCacheOptions
               .copyWith(
                 policy: CachePolicy.request,
-                keyBuilder: (req) => imageUrl,
+                keyBuilder: (req) =>
+                    const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl),
               )
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),

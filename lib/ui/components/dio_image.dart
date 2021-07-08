@@ -6,6 +6,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 
 import 'package:catpic/main.dart';
+import 'package:uuid/uuid.dart';
 
 typedef ImageWidgetBuilder = Widget Function(
   BuildContext context,
@@ -111,6 +112,9 @@ class _DioImageState extends State<DioImage> {
     fetchData();
   }
 
+  // (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
+  // '${dio.options.baseUrl}s/$token/$galleryPage'
+
   Future<void> fetchData() async {
     setState(() {
       _loadingType = LoadingType.LOADING;
@@ -122,7 +126,10 @@ class _DioImageState extends State<DioImage> {
       final rsp = await dio.get<List<int>>(url,
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
-              .copyWith(policy: CachePolicy.request, keyBuilder: (req) => url)
+              .copyWith(
+                policy: CachePolicy.request,
+                keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL, url),
+              )
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),
           onReceiveProgress: (received, total) {

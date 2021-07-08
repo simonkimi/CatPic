@@ -44,6 +44,7 @@ class PostWaterFlow extends StatelessWidget {
     return LoadMoreList(
       store: store,
       body: WaterfallFlow.builder(
+        cacheExtent: 500,
         controller: store.listScrollController,
         padding: EdgeInsets.only(top: 60 + barHeight, left: 10, right: 10),
         gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
