@@ -36,7 +36,7 @@ message PreviewImage {
 }
 
 
-message GalleryCache  {
+message GalleryModel  {
   string gid = 1;
   string token = 2;
   string title = 3;
