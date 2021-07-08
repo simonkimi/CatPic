@@ -35,7 +35,12 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   @override
   bool operator ==(Object other) {
     if (other is! DioImageProvider) return false;
-    if (other.urlBuilder != null || urlBuilder != null) return false;
+
+    if (other.urlBuilder != null || urlBuilder != null)
+      return other.urlBuilder == urlBuilder &&
+          other.dio == dio &&
+          other.scale == scale;
+
     return other.url == url && other.dio == dio && other.scale == scale;
   }
 
