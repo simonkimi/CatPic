@@ -35,6 +35,8 @@ class WebsiteTable extends Table {
 
   IntColumn get lastOpen =>
       integer().clientDefault(() => DateTime.now().microsecond)();
+
+  BlobColumn get storage => blob().nullable()();
 }
 
 enum WebsiteScheme {

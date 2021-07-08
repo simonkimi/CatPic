@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message EhFavourite {
+  int32 favcat = 1;
+  string tag = 2;
+  int32 count = 3;
+}
+
+message EHStorage {
+  repeated EhFavourite favourite = 1;
+}
