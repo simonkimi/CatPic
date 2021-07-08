@@ -5,7 +5,6 @@ import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -56,21 +55,25 @@ class PreviewExtendedCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildImage(context),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 140),
-                    child: Stack(
-                      children: [
-                        buildCardInfo(context),
-                        buildStar(context),
-                        buildPageAndTime(context),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              buildCardRight(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Expanded buildCardRight(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 140),
+          child: Stack(
+            children: [
+              buildCardInfo(context),
+              buildStar(context),
+              buildPageAndTime(context),
             ],
           ),
         ),
@@ -226,28 +229,34 @@ class PreviewExtendedCard extends StatelessWidget {
       child: SizedBox(
         width: 110,
         height: 150,
-        child: ExtendedImage(
+        child: Image(
           image: DioImageProvider(
             dio: adapter.dio,
             url: previewModel.previewImg,
           ),
-          enableLoadState: true,
-          loadStateChanged: (state) {
-            switch (state.extendedImageLoadState) {
-              case LoadState.loading:
-                return null;
-              case LoadState.completed:
-                return DarkWidget(child: state.completedWidget);
-              case LoadState.failed:
-                return InkWell(
-                  onTap: () {
-                    state.reLoadImage();
-                  },
-                  child: const Center(
-                    child: Icon(Icons.error),
-                  ),
-                );
-            }
+          loadingBuilder: (context, child, loadingProgress) {
+            return loadingProgress == null
+                ? DarkWidget(
+                    child: child,
+                  )
+                : Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+          },
+          errorBuilder: (context, err, stack) {
+            return const Center(
+              child: Icon(Icons.error),
+            );
           },
         ),
       ),

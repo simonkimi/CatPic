@@ -521,49 +521,45 @@ class EhPreviewPage extends StatelessWidget {
               left: 148,
               child: Observer(
                 builder: (context) {
-                  if (store.observableList.isNotEmpty)
-                    return TextButton(
-                      onPressed: () async {
-                        final readPage = (await DB()
-                                .ehHistoryDao
-                                .getById(store.previewModel.gid))
-                            ?.readPage;
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return EhReadPage(
-                            store: store,
-                            startIndex: readPage ?? 0,
-                          );
-                        }));
-                      },
-                      child: Text(I18n.of(context).read),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).primaryColor),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        padding: MaterialStateProperty.all(Platform.isWindows
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 15)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2)),
-                        minimumSize:
-                            MaterialStateProperty.all(const Size(0, 0)),
-                      ),
-                    );
-                  return OutlinedButton(
-                    onPressed: () {},
+                  return TextButton(
+                    onPressed: store.observableList.isNotEmpty
+                        ? () async {
+                            final readPage = (await DB()
+                                    .ehHistoryDao
+                                    .getById(store.previewModel.gid))
+                                ?.readPage;
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return EhReadPage(
+                                store: store,
+                                startIndex: readPage ?? 0,
+                              );
+                            }));
+                          }
+                        : null,
                     child: Text(I18n.of(context).read),
                     style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                          (Set<MaterialState> states) {
+                        return !states.contains(MaterialState.disabled)
+                            ? Theme.of(context).primaryColor
+                            : isDarkMode(context)
+                                ? const Color(0xFF3A3A3C)
+                                : const Color(0xFFD2D1D6);
+                      }),
+                      foregroundColor: MaterialStateProperty.resolveWith(
+                          (Set<MaterialState> states) {
+                        return !states.contains(MaterialState.disabled)
+                            ? Colors.white
+                            : isDarkMode()
+                                ? const Color(0xFF929196)
+                                : const Color(0xFF8C8B8E);
+                      }),
                       padding: MaterialStateProperty.all(Platform.isWindows
                           ? const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 15,
-                            )
+                              horizontal: 20, vertical: 15)
                           : const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 2,
-                            )),
+                              horizontal: 10, vertical: 2)),
                       minimumSize: MaterialStateProperty.all(const Size(0, 0)),
                     ),
                   );
