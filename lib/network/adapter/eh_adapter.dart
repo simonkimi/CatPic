@@ -9,6 +9,7 @@ import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart' as gallery_pb;
 
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);
@@ -55,9 +56,27 @@ class EHAdapter extends Adapter {
     required int page,
     CancelToken? cancelToken,
   }) async {
-    final str =
-        await client.getGallery(gid, gtoken, page.toString(), cancelToken);
-    final model = await compute(GalleryParser.parse, str);
+    GalleryModel? model;
+
+    if (page == 0) {
+      final db = await DB().galleryCacheDao.get(gid);
+      if (db != null) {
+        model =
+            GalleryModel.fromPb(gallery_pb.GalleryModel.fromBuffer(db.data));
+      }
+    }
+
+    if (model == null) {
+      final str =
+          await client.getGallery(gid, gtoken, page.toString(), cancelToken);
+      model = await compute(GalleryParser.parse, str);
+      DB().galleryCacheDao.insert(GalleryCacheTableCompanion.insert(
+            gid: gid,
+            token: gtoken,
+            data: model!.toPb().writeToBuffer(),
+          ));
+    }
+
     for (final tagList in model.tags) {
       tagList.keyTranslate = settingStore.translateMap[tagList.key];
       for (final tag in tagList.value) {

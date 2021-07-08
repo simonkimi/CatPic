@@ -5,7 +5,7 @@ import 'package:mobx/mobx.dart';
 
 part 'store.g.dart';
 
-class EhPopularResultStore = EhPopularResultBase with _$EhPopularResult;
+class EhPopularResultStore = EhPopularResultBase with _$EhPopularResultStore;
 
 abstract class EhPopularResultBase extends ILoadMoreWithFilter<PreViewItemModel>
     with Store {

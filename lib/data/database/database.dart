@@ -13,9 +13,11 @@ import 'package:catpic/data/database/dao/host_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
 
 import 'dao/eh_history_dao.dart';
+import 'dao/gallery_cache_dao.dart';
 import 'dao/translate_dao.dart';
 import 'entity/download.dart';
 import 'entity/eh_translate.dart';
+import 'entity/gallery_cache.dart';
 import 'entity/history.dart';
 import 'entity/host.dart';
 import 'entity/tag.dart';
@@ -48,6 +50,7 @@ LazyDatabase _openConnection() {
   WebsiteTable,
   EhTranslateTable,
   EhHistoryTable,
+  GalleryCacheTable,
 ], daos: [
   DownloadDao,
   HistoryDao,
@@ -56,6 +59,7 @@ LazyDatabase _openConnection() {
   WebsiteDao,
   TranslateDao,
   EhHistoryDao,
+  GalleryCacheDao,
 ])
 class AppDataBase extends _$AppDataBase {
   AppDataBase() : super(_openConnection());
@@ -85,4 +89,6 @@ class DB {
   TranslateDao get translateDao => _database.translateDao;
 
   EhHistoryDao get ehHistoryDao => _database.ehHistoryDao;
+
+  GalleryCacheDao get galleryCacheDao => _database.galleryCacheDao;
 }
