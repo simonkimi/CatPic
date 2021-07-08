@@ -226,7 +226,7 @@ class EhPreviewPage extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(7),
                         child: Text(
                           settingStore.ehTranslate
                               ? e.keyTranslate ?? e.key
@@ -269,7 +269,7 @@ class EhPreviewPage extends StatelessWidget {
                             }));
                           },
                           child: Padding(
-                            padding: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(7),
                             child: Text(
                               settingStore.ehTranslate
                                   ? e.translate ?? e.value
@@ -496,16 +496,25 @@ class EhPreviewPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: previewModel.tag.color,
-                        ),
-                        child: Text(
-                          previewModel.tag.translate(context),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 50),
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: previewModel.tag.color,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                previewModel.tag.translate(context),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
