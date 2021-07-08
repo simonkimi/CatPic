@@ -20,9 +20,13 @@ abstract class ReadStoreBase with Store {
   int currentIndex;
 
   @observable
-  var displayPageSlider = settingStore.toolbarOpen;
+  var displayPageSlider = false;
 
   final pageSliderController = PageSliderController();
+
+  var lastIdleTime = DateTime.now();
+
+  var isIdle = true;
 
   @action
   void setPageSliderDisplay(bool value) {

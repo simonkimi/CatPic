@@ -185,10 +185,6 @@ extension IntHelper on num {
   }
 }
 
-extension DebugHelper<T> on T {
-  void print([String? tag]) => core.print('${tag ?? ''} $this');
-}
-
 class ObjectWrap<T> {
   ObjectWrap(this.value);
 

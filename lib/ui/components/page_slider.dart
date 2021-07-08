@@ -54,7 +54,6 @@ class PageSliderState extends State<PageSlider> {
           Expanded(
             child: Slider(
               onChangeEnd: (value) {
-                print('end: $value');
                 widget.onChange?.call(value.toInt());
               },
               value: value.toDouble(),

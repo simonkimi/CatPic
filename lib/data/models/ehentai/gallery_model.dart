@@ -29,16 +29,17 @@ class GalleryModel extends GalleryBase {
   }) : super(gid: gid, token: token);
 
   final String title;
-  final GalleryBase? parent;
   final bool visible;
   final String fileSize;
   final int favorited;
-  final List<TagModels> tags;
-  List<PreviewImage> previewImages;
   final int maxPageIndex;
-  final List<CommentModel> comments;
   final int imageCount;
   final String language;
+
+  final GalleryBase? parent;
+  final List<TagModels> tags;
+  final List<CommentModel> comments;
+  final List<PreviewImage> previewImages;
 
   @override
   String toString() {
@@ -49,7 +50,10 @@ class GalleryModel extends GalleryBase {
 class TagItem {
   TagItem(this.value, this.parent);
 
+  // tag的类别
   final String parent;
+
+  // tag具体内容
   final String value;
   String? translate;
 }
@@ -60,8 +64,10 @@ class TagModels {
     required this.value,
   });
 
+  // tag类别
   final String key;
   String? keyTranslate;
+  // tags
   final List<TagItem> value;
 
   @override

@@ -94,7 +94,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     return await pageLoadLock[ehPage].synchronized(() async {
       final useCache = pageCache.containsKey(ehPage);
       late final List<PreviewImage> imageList;
-
       if (useCache) {
         imageList = pageCache[ehPage]!;
       } else {

@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+message GalleryBase {
+  string gid = 1;
+  string token = 2;
+}
+
+message TagItem {
+  // tag的类别
+  string parent = 1;
+  // tag具体内容
+  string value = 2;
+}
+
+message TagModels {
+  // tag类别
+  string key = 1;
+  // tags
+  repeated TagItem value = 2;
+}
+
+message CommentModel {
+  string username = 1;
+  string comment = 2;
+  string commentTime = 3;
+  int32 score = 4;
+  repeated string voteUser = 5;
+}
+
+message PreviewImage {
+  int32 height = 1;
+  int32 width = 2;
+  string image = 3;
+  int32 positioning = 4;
+  string target = 5;
+}
+
+
+message GalleryCache  {
+  string gid = 1;
+  string token = 2;
+  string title = 3;
+  bool visible = 4;
+  string fileSize = 5;
+  int32 favorited = 6;
+  int32 maxPageIndex = 7;
+  int32 imageCount = 8;
+  string language = 9;
+  GalleryBase parent = 10;
+  repeated TagModels tags = 11;
+  repeated CommentModel comments = 12;
+  repeated PreviewImage previewImages = 13;
+}
