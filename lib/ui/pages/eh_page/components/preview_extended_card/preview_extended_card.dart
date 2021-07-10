@@ -3,6 +3,7 @@ import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class PreviewExtendedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (_) => buildBody(context));
+    return buildBody(context);
   }
 
   Card buildBody(BuildContext context) {
@@ -224,41 +225,56 @@ class PreviewExtendedCard extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    return Hero(
-      tag: '${previewModel.gid}${previewModel.gtoken}',
-      child: SizedBox(
-        width: 110,
-        height: 150,
-        child: Image(
-          image: DioImageProvider(
-            dio: adapter.dio,
-            url: previewModel.previewImg,
-          ),
-          loadingBuilder: (context, child, loadingProgress) {
-            return loadingProgress == null
-                ? DarkWidget(
-                    child: child,
-                  )
-                : Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-          },
-          errorBuilder: (context, err, stack) {
-            return const Center(
-              child: Icon(Icons.error),
-            );
-          },
-        ),
+    // return Hero(
+    //   tag: '${previewModel.gid}${previewModel.gtoken}',
+    //   child: SizedBox(
+    //     width: 110,
+    //     height: 150,
+    //     child: Image(
+    //       image: DioImageProvider(
+    //         dio: adapter.dio,
+    //         url: previewModel.previewImg,
+    //       ),
+    //       loadingBuilder: (context, child, loadingProgress) {
+    //         return loadingProgress == null
+    //             ? DarkWidget(
+    //                 child: child,
+    //               )
+    //             : Center(
+    //                 child: SizedBox(
+    //                   width: 24,
+    //                   height: 24,
+    //                   child: CircularProgressIndicator(
+    //                     strokeWidth: 2.5,
+    //                     value: loadingProgress.expectedTotalBytes != null
+    //                         ? loadingProgress.cumulativeBytesLoaded /
+    //                             loadingProgress.expectedTotalBytes!
+    //                         : null,
+    //                   ),
+    //                 ),
+    //               );
+    //       },
+    //       errorBuilder: (context, err, stack) {
+    //         return const Center(
+    //           child: Icon(Icons.error),
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // );
+    return SizedBox(
+      width: 110,
+      height: 150,
+      child: DioImage(
+        dio: adapter.dio,
+        imageUrl: previewModel.previewImg,
+        imageBuilder: (context, bytes) {
+          return DarkWidget(
+              child: Hero(
+            tag: '${previewModel.gid}${previewModel.gtoken}',
+            child: Image.memory(bytes),
+          ));
+        },
       ),
     );
   }

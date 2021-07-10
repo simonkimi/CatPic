@@ -72,12 +72,15 @@ class EmptyWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              errMsg,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                errMsg,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             )
           ],

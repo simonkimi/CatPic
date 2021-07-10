@@ -1,8 +1,6 @@
 import 'package:moor/moor.dart';
 
 class GalleryCacheTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-
   TextColumn get gid => text()();
 
   TextColumn get token => text()();
@@ -11,4 +9,7 @@ class GalleryCacheTable extends Table {
       integer().clientDefault(() => DateTime.now().millisecond)();
 
   BlobColumn get data => blob()();
+
+  @override
+  Set<Column> get primaryKey => {gid, token};
 }

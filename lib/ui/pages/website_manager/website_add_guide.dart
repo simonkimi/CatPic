@@ -3,7 +3,7 @@ import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';

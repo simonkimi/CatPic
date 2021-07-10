@@ -1,9 +1,11 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/favourite_model.dart';
 import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
+import 'package:catpic/network/parser/ehentai/favourite_parser.dart';
 import 'package:catpic/network/parser/ehentai/gallery_img_parser.dart';
 import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
@@ -31,7 +33,7 @@ class EHAdapter extends Adapter {
   }) async {
     final str = await client.getIndex(filter: filter, page: page);
     final model = await compute(PreviewParser.parse, str);
-    return await previewTranslateHook(model);
+    return previewTranslateHook(model);
   }
 
   Future<PreviewModel> watched({
@@ -41,13 +43,13 @@ class EHAdapter extends Adapter {
     final str = await client.getWatched(filter: filter, page: page);
     final model = await compute(PreviewParser.parse, str);
     if (model.exception != null) throw model.exception!;
-    return await previewTranslateHook(model);
+    return previewTranslateHook(model);
   }
 
   Future<PreviewModel> popular() async {
     final str = await client.getPopular();
     final model = await compute(PreviewParser.parse, str);
-    return await previewTranslateHook(model);
+    return previewTranslateHook(model);
   }
 
   Future<GalleryModel> gallery({
@@ -96,7 +98,20 @@ class EHAdapter extends Adapter {
     return await compute(GalleryImgParser.parse, str);
   }
 
-  Future<PreviewModel> previewTranslateHook(PreviewModel model) async {
+  Future<EhFavouriteModel> favourite({
+    required int favcat,
+    required int page,
+  }) async {
+    final str = await client.favourite(favcat: favcat, page: page);
+    final previewModel = await compute(PreviewParser.parse, str);
+    if (previewModel.exception != null) throw previewModel.exception!;
+    final favouriteList = await compute(EhFavouriteParser.parse, str);
+    previewTranslateHook(previewModel);
+    return EhFavouriteModel(
+        favourites: favouriteList, previewModel: previewModel);
+  }
+
+  PreviewModel previewTranslateHook(PreviewModel model) {
     for (final item in model.items) {
       for (final tag in item.keyTags) {
         final tagParam = tag.tag.split(':');

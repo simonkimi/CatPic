@@ -26,6 +26,7 @@ class NetworkSettingPage extends StatelessWidget {
   }
 
   Future<int> getCacheSize() async {
+    print('cache: ${settingStore.documentDir}');
     Future<int> getDirSize(Directory dir) async {
       var currentSize = 0;
       for (final child in dir.listSync()) {

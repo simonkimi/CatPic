@@ -59,11 +59,15 @@ abstract class MainStoreBase with Store {
     websiteList = await websiteDao.getAll();
     // 判断当前网站是否被删
     if (websiteEntity != null) {
-      if (websiteList.where((e) => e.id == websiteEntity!.id).isEmpty) {
+      if (websiteList.get((e) => e.id == websiteEntity!.id) == null) {
         await setWebsite(websiteList.isNotEmpty ? websiteList[0] : null);
         return;
+      } else {
+        setWebsiteWithoutNotification(
+            websiteList.get((e) => e.id == websiteEntity!.id)!);
       }
     }
+
     // 判断是有候选网站
     if (websiteEntity == null && websiteList.isNotEmpty) {
       await setWebsite(websiteList[0]);
@@ -84,6 +88,17 @@ abstract class MainStoreBase with Store {
       SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
     }
   }
+
+  @action
+  void setWebsiteWithoutNotification(WebsiteTableData entity) {
+    if ((websiteEntity?.id ?? -1) == (entity.id)) {
+      websiteEntity = entity;
+      websiteIcon = entity.favicon;
+      SpUtil.putInt('last_website', websiteEntity?.id ?? -1);
+    }
+  }
+
+  Uint8List? getStorage() => websiteEntity!.storage;
 
   @action
   Future<void> setWebsiteFavicon(int entityId, Uint8List favicon) async {

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:uuid/uuid.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {
@@ -16,10 +17,13 @@ class EhClient extends BaseClient {
     required Map<String, dynamic> filter,
     required int page,
   }) async {
-    return (await dio.get<String>('', queryParameters: <String, dynamic>{
-      ...filter,
-      'page': page.toString()
-    }))
+    return (await dio.get<String>(
+      '',
+      queryParameters: <String, dynamic>{
+        ...filter,
+        'page': page.toString(),
+      },
+    ))
         .data!;
   }
 
@@ -42,17 +46,11 @@ class EhClient extends BaseClient {
 
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
-    return (await dio.get<String>('g/$gid/$gtoken',
-            queryParameters: <String, String>{'p': page, 'hc': '1'},
-            cancelToken: cancelToken,
-            options: settingStore.dioCacheOptions
-                .copyWith(
-                  policy: CachePolicy.request,
-                  keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
-                      '${dio.options.baseUrl}g/$gid/$gtoken?p=$page'),
-                  priority: CachePriority.high,
-                )
-                .toOptions()))
+    return (await dio.get<String>(
+      'g/$gid/$gtoken',
+      queryParameters: <String, String>{'p': page, 'hc': '1'},
+      cancelToken: cancelToken,
+    ))
         .data!;
   }
 
@@ -65,6 +63,20 @@ class EhClient extends BaseClient {
                       '${dio.options.baseUrl}s/$token/$galleryPage'),
                 )
                 .toOptions()))
+        .data!;
+  }
+
+  Future<String> favourite({
+    required int favcat,
+    required int page,
+  }) async {
+    return (await dio.get<String>(
+      'favorites.php',
+      queryParameters: <String, dynamic>{
+        'page': page.toString(),
+        'favcat': favcat != -1 ? favcat : '',
+      }.trim,
+    ))
         .data!;
   }
 }

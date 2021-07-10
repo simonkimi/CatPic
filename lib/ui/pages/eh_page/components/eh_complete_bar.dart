@@ -11,7 +11,7 @@ import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -548,6 +548,121 @@ class _EhCompleteBarState extends State<EhCompleteBar>
         )
       ],
     );
+  }
+}
+
+class EhCompleteBarWithoutFilter extends StatefulWidget {
+  const EhCompleteBarWithoutFilter({
+    Key? key,
+    this.onSubmitted,
+    required this.searchText,
+    required this.body,
+    this.controller,
+  }) : super(key: key);
+
+  final ValueChanged<String>? onSubmitted;
+  final String searchText;
+  final Widget body;
+  final FloatingSearchBarController? controller;
+
+  @override
+  _EhCompleteBarWithoutFilterState createState() =>
+      _EhCompleteBarWithoutFilterState();
+}
+
+class _EhCompleteBarWithoutFilterState
+    extends State<EhCompleteBarWithoutFilter> {
+  late final FloatingSearchBarController searchBarController =
+      widget.controller ?? FloatingSearchBarController();
+  var searchSuggestion = <SearchSuggestion>[];
+  var lastClickBack = DateTime.now();
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (Scaffold.of(context).isDrawerOpen ||
+            Scaffold.of(context).isEndDrawerOpen) {
+          return true;
+        }
+        if (searchBarController.isOpen) {
+          searchBarController.close();
+          return false;
+        }
+        return true;
+      },
+      child: SearchBar(
+        controller: searchBarController,
+        searchText: widget.searchText,
+        showTmp: false,
+        onSubmitted: (value) {
+          widget.onSubmitted?.call(value);
+        },
+        onFocusChanged: (isFocus) {
+          _onSearchTagChange();
+        },
+        onQueryChanged: (value) {
+          _onSearchTagChange(value);
+        },
+        body: widget.body,
+        candidateBuilder: (BuildContext context, Animation<double> transition) {
+          return Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: searchSuggestion.map((e) {
+                return ListTile(
+                  title: Text(e.title),
+                  subtitle: e.subTitle != null ? Text(e.subTitle!) : null,
+                  onTap: () {
+                    late final String completeTag;
+                    if (e.title.contains(' ')) {
+                      if (e.title.contains(':')) {
+                        final tagParams = e.title.split(':');
+                        completeTag = tagParams[0] + ':"${tagParams[1]}\$"';
+                      } else {
+                        completeTag = '"${e.title}\$"';
+                      }
+                    } else {
+                      completeTag = e.title;
+                    }
+                    final newTag = searchBarController.query.split(' ')
+                      ..removeLast()
+                      ..add(completeTag);
+                    searchBarController.query = newTag.join(' ') + ' ';
+                  },
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _onSearchTagChange([String? tag]) async {
+    final fullTag = tag ?? searchBarController.query;
+
+    final Iterable<HistoryTableData> history = (await DB().historyDao.getAll())
+        .where((e) => e.type == HistoryType.EH)
+        .where((e) => e.history.startsWith(tag ?? ''))
+        .take(20);
+
+    final String lastTag = fullTag.split(' ').last;
+    final List<EhTranslateTableData> complete =
+        lastTag.isEmpty || !settingStore.ehAutoCompute
+            ? <EhTranslateTableData>[]
+            : await DB().translateDao.getByTag(lastTag);
+
+    setState(() {
+      searchSuggestion = <SearchSuggestion>[
+        ...history
+            .map((e) => SearchSuggestion(title: e.history, isHistory: true)),
+        ...complete.take(50).map((e) => SearchSuggestion(
+              title: '${e.namespace.substring(0, 1)}:${e.name}',
+              subTitle: e.translate,
+            ))
+      ];
+    });
   }
 }
 

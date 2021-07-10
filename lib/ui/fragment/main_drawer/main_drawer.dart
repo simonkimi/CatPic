@@ -7,6 +7,7 @@ import 'package:catpic/ui/pages/booru_page/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/booru_page/login_page/login_page.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
+import 'package:catpic/ui/pages/eh_page/favourite_page/favourite_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
@@ -121,6 +122,7 @@ class MainDrawer extends HookWidget {
             buildEhIndex(context),
             buildEhWatched(context),
             buildEhPopular(context),
+            buildEhFavourite(context),
           ],
         ),
       );
@@ -177,6 +179,22 @@ class MainDrawer extends HookWidget {
                         searchType: EHSearchType.INDEX,
                       )),
               (route) => false);
+        else
+          Navigator.of(context).pop();
+      },
+    );
+  }
+
+  ListTile buildEhFavourite(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.favorite),
+      title: Text(I18n.of(context).favourite),
+      selected: ehSearchType == EHSearchType.FAVOURITE,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.FAVOURITE) ?? true)
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => EhFavouritePage()),
+          );
         else
           Navigator.of(context).pop();
       },

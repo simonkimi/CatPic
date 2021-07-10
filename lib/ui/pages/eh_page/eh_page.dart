@@ -16,6 +16,7 @@ enum EHSearchType {
   INDEX,
   WATCHED,
   POPULAR,
+  FAVOURITE,
 }
 
 class EhPage extends StatefulWidget {
@@ -37,8 +38,9 @@ class EhPage extends StatefulWidget {
 class _EhPageState extends State<EhPage> {
   late final String searchText = widget.searchText;
   late final EHSearchType searchType = widget.searchType;
-  late Widget searchBody = buildSearchBody(searchText, searchType);
   late final StreamSubscription<EventSiteChange> _eventSiteChangeListener;
+
+  late Widget searchBody;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _EhPageState extends State<EhPage> {
       print('Event bus EventSiteChange');
       changeSearchBody(searchText, searchType);
     });
+    searchBody = buildSearchBody(searchText, searchType);
     print('EhPageCount: ${mainStore.searchPageCount}');
   }
 
@@ -75,9 +78,8 @@ class _EhPageState extends State<EhPage> {
     if (tag == searchText && type == searchType) {
       return;
     }
-    final widget = buildSearchBody(tag, type);
     setState(() {
-      searchBody = widget;
+      searchBody = buildSearchBody(tag, type);
     });
   }
 
@@ -104,6 +106,9 @@ class _EhPageState extends State<EhPage> {
             key: key,
             adapter: adapter,
           );
+        case EHSearchType.FAVOURITE:
+          // favourite_page
+          throw Exception('Stub!');
       }
     }
     return EmptyWebsiteFragment();
