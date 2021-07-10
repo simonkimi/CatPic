@@ -4,7 +4,6 @@ import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
 part 'store.g.dart';

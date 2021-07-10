@@ -12,7 +12,6 @@ import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:get/get.dart';

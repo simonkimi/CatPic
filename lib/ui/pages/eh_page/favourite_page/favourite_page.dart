@@ -50,7 +50,7 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
   }
 
   Widget buildEndDrawer() {
-    return Drawer();
+    return const Drawer();
   }
 
   Widget buildList() {

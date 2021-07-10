@@ -122,9 +122,10 @@ class PreviewParser {
 
   /// 解析有多少面
   static int parsePages(Element e) {
-    final pageElement = e.querySelectorAll('.gl4c div');
-    if (pageElement.length == 2) {
-      return int.parse(pageElement[1].text.split(' ')[0]);
+    final pageBrotherElement = e.querySelector('.ir');
+    final pageElement = pageBrotherElement?.parent?.children.last;
+    if (pageElement != null) {
+      return int.parse(pageElement.text.split(' ')[0]);
     }
     return 0;
   }

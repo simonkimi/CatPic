@@ -8,6 +8,7 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
@@ -83,22 +84,19 @@ class EhPreviewPage extends StatelessWidget {
   }
 
   Widget buildNeedLoading(BuildContext context) {
-    return store.observableList.isEmpty
-        ? const Padding(
-            padding: EdgeInsets.all(20),
-            child: CircularProgressIndicator(),
-          )
-        : Column(
-            children: [
-              buildInfoBarRow(context),
-              const Divider(),
-              buildTagList(context),
-              const Divider(),
-              buildCommentList(context),
-              const Divider(),
-              buildPreviewList(context),
-            ],
-          );
+    return LoadMoreManager(
+        store: store,
+        body: Column(
+          children: [
+            buildInfoBarRow(context),
+            const Divider(),
+            buildTagList(context),
+            const Divider(),
+            buildCommentList(context),
+            const Divider(),
+            buildPreviewList(context),
+          ],
+        ));
   }
 
   Widget buildPreviewList(BuildContext context) {

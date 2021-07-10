@@ -1,12 +1,13 @@
 import 'dart:ui' as ui;
+
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
-import 'package:flutter/material.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
 import 'package:catpic/data/models/ehentai/gallery_model.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 import 'package:synchronized/synchronized.dart';
@@ -42,6 +43,10 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   final pageCache = <int, List<PreviewImage>>{}.obs;
   late final List<ReadImageModel> readImageList;
   final List<Lock> pageLoadLock;
+
+  @override
+  @observable
+  bool isLoading = false;
 
   @observable
   String fileSize = '';

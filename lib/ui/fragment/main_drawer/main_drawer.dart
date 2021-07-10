@@ -193,7 +193,7 @@ class MainDrawer extends HookWidget {
       onTap: () {
         if (onEHSearchChange?.call(EHSearchType.FAVOURITE) ?? true)
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => EhFavouritePage()),
+            MaterialPageRoute(builder: (context) => const EhFavouritePage()),
           );
         else
           Navigator.of(context).pop();
