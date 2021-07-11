@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package ehentai;
+
 message EhFavourite {
   int32 favcat = 1;
   string tag = 2;

@@ -9,12 +9,12 @@ CatPic是一款图片浏览器, 用户输入网址, 软件便可自动爬取图�
 
 |主页|网站选择|
 |--|--|
-|![Screenshot_2021-02-18-21-50-30-158_ink.z31.catpic.jpg](https://i.loli.net/2021/02/18/TZUVvlkNaFc1mLd.jpg)|![Screenshot_2021-02-18-21-51-52-506_ink.z31.catpic.jpg](https://i.loli.net/2021/02/18/jVRTS1yg9lOsI5h.jpg)|
+|![](https://i.loli.net/2021/02/18/TZUVvlkNaFc1mLd.jpg)|![](https://i.loli.net/2021/02/18/jVRTS1yg9lOsI5h.jpg)|
 
 
 |预览|Tag|
 |--|--|
-|![Screenshot_2021-02-18-21-51-16-994_ink.z31.catpic.jpg](https://i.loli.net/2021/02/18/EwCUdZkAfBDRGTq.jpg)|![Screenshot_2021-02-18-21-51-21-057_ink.z31.catpic.jpg](https://i.loli.net/2021/02/18/1rIFKZ4tShdvoYG.jpg)|
+|![](https://i.loli.net/2021/02/18/EwCUdZkAfBDRGTq.jpg)|![](https://i.loli.net/2021/02/18/1rIFKZ4tShdvoYG.jpg)|
 
 
 

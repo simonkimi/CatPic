@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package ehentai;
+
 message GalleryBase {
   string gid = 1;
   string token = 2;
