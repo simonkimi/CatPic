@@ -114,7 +114,7 @@ class EhAdvanceFilter {
     int pageStart = 0,
     int pageEnd = 0,
     int minimumRating = -1,
-    Map<EhGalleryType, Rx<bool>>? typeFilter,
+    Map<int, Rx<bool>>? typeFilter,
   })  : _searchGalleryName = searchGalleryName.obs,
         _searchGalleryTag = searchGalleryTag.obs,
         _searchTorrentFile = searchTorrentFile.obs,
@@ -132,7 +132,7 @@ class EhAdvanceFilter {
         _pageEnd = pageEnd.obs,
         _minimumRating = minimumRating.obs,
         typeFilter = typeFilter ??
-            <EhGalleryType, Rx<bool>>{
+            <int, Rx<bool>>{
               EhGalleryType.Doujinshi: true.obs,
               EhGalleryType.Manga: true.obs,
               EhGalleryType.Artist_CG: true.obs,
@@ -181,7 +181,7 @@ class EhAdvanceFilter {
 
   set useAdvance(bool val) => _useAdvance.value = val;
 
-  final Map<EhGalleryType, Rx<bool>> typeFilter;
+  final Map<int, Rx<bool>> typeFilter;
 
   bool get disableTag => _disableTag.value;
 
@@ -263,7 +263,7 @@ class EhAdvanceFilter {
         searchTorrentFile: searchTorrentFile,
         showExpungedGallery: showExpungedGallery,
         useAdvance: useAdvance,
-        typeFilter: <EhGalleryType, Rx<bool>>{
+        typeFilter: <int, Rx<bool>>{
           EhGalleryType.Doujinshi:
               typeFilter[EhGalleryType.Doujinshi]!.value.obs,
           EhGalleryType.Manga: typeFilter[EhGalleryType.Manga]!.value.obs,

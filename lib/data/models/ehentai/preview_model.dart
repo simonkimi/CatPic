@@ -1,6 +1,7 @@
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:flutter/material.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart' as pb;
 
 class PreViewItemModel {
   PreViewItemModel({
@@ -21,8 +22,44 @@ class PreViewItemModel {
     this.titleJpn,
   });
 
+  factory PreViewItemModel.fromPb(pb.PreViewItemModel p) {
+    return PreViewItemModel(
+      tag: p.tag,
+      title: p.title,
+      language: p.language,
+      gid: p.gid,
+      previewWidth: p.previewWidth,
+      previewHeight: p.previewHeight,
+      pages: p.pages,
+      stars: p.stars,
+      gtoken: p.gtoken,
+      keyTags: p.keyTags.map((e) => PreviewTag.fromPb(e)).toList(),
+      previewImg: p.previewImg,
+      targetUrl: p.targetUrl,
+      uploader: p.uploader,
+      uploadTime: p.uploadTime,
+    );
+  }
+
+  pb.PreViewItemModel toPb() => pb.PreViewItemModel(
+        uploadTime: uploadTime,
+        uploader: uploader,
+        targetUrl: targetUrl,
+        previewImg: previewImg,
+        keyTags: keyTags.map((e) => e.toPb()),
+        gtoken: gtoken,
+        stars: stars,
+        pages: pages,
+        previewHeight: previewHeight,
+        previewWidth: previewWidth,
+        gid: gid,
+        language: language,
+        title: title,
+        tag: tag,
+      );
+
   final String title;
-  final EhGalleryType tag;
+  final int tag;
   final String uploader;
   final String uploadTime;
   final int pages;
@@ -54,9 +91,21 @@ class PreviewTag {
     this.translate,
   });
 
+  factory PreviewTag.fromPb(pb.PreviewTag p) {
+    return PreviewTag(
+      tag: p.tag,
+      color: p.color,
+    );
+  }
+
   final String tag;
   String? translate;
   final int color;
+
+  pb.PreviewTag toPb() => pb.PreviewTag(
+        color: color,
+        tag: tag,
+      );
 
   @override
   String toString() {
@@ -64,20 +113,20 @@ class PreviewTag {
   }
 }
 
-enum EhGalleryType {
-  Doujinshi,
-  Manga,
-  Artist_CG,
-  Game_CG,
-  Western,
-  Non_H,
-  Image_Set,
-  Cosplay,
-  Asian_Porn,
-  Misc,
+class EhGalleryType {
+  static const Doujinshi = 0;
+  static const Manga = 1;
+  static const Artist_CG = 2;
+  static const Game_CG = 3;
+  static const Western = 4;
+  static const Non_H = 5;
+  static const Image_Set = 6;
+  static const Cosplay = 7;
+  static const Asian_Porn = 8;
+  static const Misc = 9;
 }
 
-extension EhGalleryTypeHelper on EhGalleryType {
+extension EhGalleryTypeHelper on int {
   Color get color {
     switch (this) {
       case EhGalleryType.Doujinshi:
@@ -99,6 +148,7 @@ extension EhGalleryTypeHelper on EhGalleryType {
       case EhGalleryType.Misc:
         return const Color(0xFF999996);
       case EhGalleryType.Game_CG:
+      default:
         return const Color(0xFF4CB051);
     }
   }
@@ -125,6 +175,7 @@ extension EhGalleryTypeHelper on EhGalleryType {
         case EhGalleryType.Asian_Porn:
           return 'Asian Porn';
         case EhGalleryType.Misc:
+        default:
           return 'Misc';
       }
     }
@@ -149,12 +200,13 @@ extension EhGalleryTypeHelper on EhGalleryType {
       case EhGalleryType.Asian_Porn:
         return I18n.of(context).asian_porn;
       case EhGalleryType.Misc:
+      default:
         return I18n.of(context).misc;
     }
   }
 }
 
-EhGalleryType fromEhTag(String tag) {
+int fromEhTag(String tag) {
   switch (tag) {
     case '1':
     case 'Doujinshi':

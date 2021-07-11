@@ -1,3 +1,4 @@
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -31,7 +32,12 @@ class PreviewExtendedCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          DB().galleryHistoryDao.add(EhGalleryHistoryTableCompanion.insert(
+                gid: previewModel.gid,
+                gtoken: previewModel.gtoken,
+                pb: previewModel.toPb().writeToBuffer(),
+              ));
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
