@@ -54,12 +54,15 @@ abstract class ILoadMore<T> {
     await lock.synchronized(() async {
       page += 1;
       isLoading = true;
-      final list = (await loadPage(page)).where((e) => isItemExist(e) == false);
-      observableList.addAll(list);
+      final list = await loadPage(page);
+      final filter = list.where((e) => isItemExist(e) == false);
+      observableList.addAll(filter);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
         refreshController.loadNoData();
+      print(
+          'LoadMore page: $page length: ${list.length} filter: ${filter.length}');
     });
   }
 
@@ -69,7 +72,8 @@ abstract class ILoadMore<T> {
       pageTail -= 1;
       isLoading = true;
       final list = await loadPage(pageTail);
-      observableList.insertAll(0, list);
+      final filter = list.where((e) => isItemExist(e) == false);
+      observableList.insertAll(0, filter);
       refreshController.loadComplete();
       refreshController.refreshCompleted();
       if (list.isEmpty || (list.length < (pageItemCount ?? 0)))

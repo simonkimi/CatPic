@@ -46,10 +46,7 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
       filter: params,
       page: page - 1,
     );
-    return result.items
-        .where((element) =>
-            observableList.get((e) => e.gid == element.gid) == null)
-        .toList();
+    return result.items;
   }
 
   Future<void> applyNewFilter(String tag, bool userFilter) async {
@@ -79,5 +76,7 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
   int? get pageItemCount => 25;
 
   @override
-  bool isItemExist(PreViewItemModel item) => false;
+  bool isItemExist(PreViewItemModel item) =>
+      observableList.get((e) => e.gid == item.gid && e.gtoken == item.gtoken) !=
+      null;
 }

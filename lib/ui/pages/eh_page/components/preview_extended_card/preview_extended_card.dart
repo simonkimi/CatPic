@@ -141,7 +141,7 @@ class PreviewExtendedCard extends StatelessWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 50),
                 child: Container(
-                    padding: const EdgeInsets.all(1),
+                    padding: const EdgeInsets.only(bottom: 1.5),
                     decoration: BoxDecoration(color: previewModel.tag.color),
                     child: Center(
                       child: Text(
@@ -224,7 +224,7 @@ class PreviewExtendedCard extends StatelessWidget {
 
   Widget buildImage(BuildContext context) {
     var language = previewModel.language;
-
+    if (language == 'speechless') language = '';
     if (language.isNotEmpty) {
       language = language.toUpperCase().substring(0, 2);
     }
@@ -250,7 +250,6 @@ class PreviewExtendedCard extends StatelessWidget {
         if (language.isNotEmpty)
           Positioned(
             right: 1,
-            bottom: 1,
             child: Padding(
               padding: const EdgeInsets.all(3),
               child: Container(
