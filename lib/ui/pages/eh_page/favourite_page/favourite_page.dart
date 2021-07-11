@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
@@ -10,6 +11,7 @@ import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/eh_page/favourite_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 
 class EhFavouritePage extends StatefulWidget {
   const EhFavouritePage({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawerEdgeDragWidth: 300,
       drawer: const MainDrawer(
         ehSearchType: EHSearchType.FAVOURITE,
       ),
@@ -50,7 +53,91 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
   }
 
   Widget buildEndDrawer() {
-    return const Drawer();
+    final barHeight = MediaQueryData.fromWindow(ui.window).padding.top;
+    return SizedBox(
+      width: 250,
+      child: Padding(
+        padding: EdgeInsets.only(top: barHeight),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Drawer(
+            child: Column(
+              children: [
+                Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 15.0,
+                        spreadRadius: 1.0,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 15),
+                      Text(
+                        I18n.of(context).favourite_box,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child: Observer(
+                  builder: (_) {
+                    return ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        EhFavourite(
+                            tag: I18n.of(context).favourite_all,
+                            favcat: -1,
+                            count: store.ehFavourite.fold<int>(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue + element.count)),
+                        ...store.ehFavourite
+                      ]
+                          .map((e) => InkWell(
+                                onTap: () {
+                                  store.changeSearchCat(e.favcat);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  height: 50,
+                                  decoration: const BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                    color: Colors.black12,
+                                    width: 0.5,
+                                  ))),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Text(e.tag),
+                                      const Expanded(child: SizedBox()),
+                                      Text(e.count.toString()),
+                                      const SizedBox(width: 10),
+                                    ],
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    );
+                  },
+                )),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildList() {

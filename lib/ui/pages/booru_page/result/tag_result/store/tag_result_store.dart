@@ -30,4 +30,7 @@ abstract class TagResultStoreBase extends ILoadMore<BooruTag> with Store {
   @action
   @override
   Future<void> onDataChange() async {}
+
+  @override
+  bool isItemExist(BooruTag item) => false;
 }

@@ -28,4 +28,7 @@ abstract class EhPopularResultBase extends ILoadMoreWithFilter<PreViewItemModel>
 
   @override
   int get pageItemCount => 50;
+
+  @override
+  bool isItemExist(PreViewItemModel item) => false;
 }

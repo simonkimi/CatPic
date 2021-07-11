@@ -77,4 +77,7 @@ abstract class EhIndexStoreBase extends ILoadMoreWithFilter<PreViewItemModel>
 
   @override
   int? get pageItemCount => 25;
+
+  @override
+  bool isItemExist(PreViewItemModel item) => false;
 }

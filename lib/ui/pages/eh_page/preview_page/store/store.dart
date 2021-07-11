@@ -180,6 +180,9 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   @action
   Future<void> onDataChange() async {}
 
+  @override
+  bool isItemExist(PreviewImage item) => false;
+
   void dispose() {
     cancelToken.cancel();
   }

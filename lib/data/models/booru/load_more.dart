@@ -47,12 +47,14 @@ abstract class ILoadMore<T> {
 
   bool isLoading = false;
 
+  bool isItemExist(T item);
+
   Future<void> _loadNextPage() async {
     isLoading = true;
     await lock.synchronized(() async {
       page += 1;
       isLoading = true;
-      final list = await loadPage(page);
+      final list = (await loadPage(page)).where((e) => isItemExist(e) == false);
       observableList.addAll(list);
       refreshController.loadComplete();
       refreshController.refreshCompleted();

@@ -101,8 +101,10 @@ class EHAdapter extends Adapter {
   Future<EhFavouriteModel> favourite({
     required int favcat,
     required int page,
+    required String searchText,
   }) async {
-    final str = await client.favourite(favcat: favcat, page: page);
+    final str = await client.favourite(
+        favcat: favcat, page: page, searchText: searchText);
     final previewModel = await compute(PreviewParser.parse, str);
     if (previewModel.exception != null) throw previewModel.exception!;
     final favouriteList = await compute(EhFavouriteParser.parse, str);

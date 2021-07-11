@@ -69,12 +69,17 @@ class EhClient extends BaseClient {
   Future<String> favourite({
     required int favcat,
     required int page,
+    required String searchText,
   }) async {
     return (await dio.get<String>(
       'favorites.php',
       queryParameters: <String, dynamic>{
         'page': page.toString(),
         'favcat': favcat != -1 ? favcat : '',
+        'f_search': searchText,
+        'sn': searchText.isNotEmpty ? 'on' : '',
+        'st': searchText.isNotEmpty ? 'on' : '',
+        'sf': searchText.isNotEmpty ? 'on' : '',
       }.trim,
     ))
         .data!;

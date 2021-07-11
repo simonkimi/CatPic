@@ -29,7 +29,7 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
 
   final EHAdapter adapter;
 
-  final currentFavcat = -1;
+  var currentFavcat = -1;
 
   final ObservableList<EhFavourite> ehFavourite;
 
@@ -47,8 +47,12 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
 
   @override
   Future<List<PreViewItemModel>> loadPage(int page) async {
-    final model =
-        await adapter.favourite(favcat: currentFavcat, page: page - 1);
+    final model = await adapter.favourite(
+        favcat: currentFavcat, page: page - 1, searchText: searchText);
+    ehFavourite
+      ..clear()
+      ..addAll(model.favourites);
+    print(ehFavourite.length);
     await storageFav(model.favourites);
     return model.previewModel.items;
   }
@@ -64,6 +68,14 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
     await DB().websiteDao.updateSite(newEntity);
   }
 
+  Future<void> changeSearchCat(int favcat) async {
+    currentFavcat = favcat;
+    await onNewSearch(searchText);
+  }
+
   @override
   int? get pageItemCount => 50;
+
+  @override
+  bool isItemExist(PreViewItemModel item) => false;
 }

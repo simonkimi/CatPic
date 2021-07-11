@@ -30,6 +30,9 @@ abstract class PopularResultStoreBase extends ILoadMore<BooruPost> with Store {
   @observable
   bool isLoading = false;
 
+  @override
+  bool isItemExist(BooruPost item) => false;
+
   @action
   Future<void> setDate(int yearValue, int monthValue, int dayValue) async {
     year = yearValue;

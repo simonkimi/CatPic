@@ -141,14 +141,14 @@ class PreviewExtendedCard extends StatelessWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 50),
                 child: Container(
-                    padding: const EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(1),
                     decoration: BoxDecoration(color: previewModel.tag.color),
                     child: Center(
                       child: Text(
                         previewModel.tag.translate(context),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 13,
+                          fontSize: 11,
                         ),
                       ),
                     )),
@@ -223,57 +223,49 @@ class PreviewExtendedCard extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    // return Hero(
-    //   tag: '${previewModel.gid}${previewModel.gtoken}',
-    //   child: SizedBox(
-    //     width: 110,
-    //     height: 150,
-    //     child: Image(
-    //       image: DioImageProvider(
-    //         dio: adapter.dio,
-    //         url: previewModel.previewImg,
-    //       ),
-    //       loadingBuilder: (context, child, loadingProgress) {
-    //         return loadingProgress == null
-    //             ? DarkWidget(
-    //                 child: child,
-    //               )
-    //             : Center(
-    //                 child: SizedBox(
-    //                   width: 24,
-    //                   height: 24,
-    //                   child: CircularProgressIndicator(
-    //                     strokeWidth: 2.5,
-    //                     value: loadingProgress.expectedTotalBytes != null
-    //                         ? loadingProgress.cumulativeBytesLoaded /
-    //                             loadingProgress.expectedTotalBytes!
-    //                         : null,
-    //                   ),
-    //                 ),
-    //               );
-    //       },
-    //       errorBuilder: (context, err, stack) {
-    //         return const Center(
-    //           child: Icon(Icons.error),
-    //         );
-    //       },
-    //     ),
-    //   ),
-    // );
-    return SizedBox(
-      width: 110,
-      height: 150,
-      child: DioImage(
-        dio: adapter.dio,
-        imageUrl: previewModel.previewImg,
-        imageBuilder: (context, bytes) {
-          return DarkWidget(
-              child: Hero(
-            tag: '${previewModel.gid}${previewModel.gtoken}',
-            child: Image.memory(bytes),
-          ));
-        },
-      ),
+    var language = previewModel.language;
+
+    if (language.isNotEmpty) {
+      language = language.toUpperCase().substring(0, 2);
+    }
+
+    return Stack(
+      children: [
+        SizedBox(
+          width: 110,
+          height: 150,
+          child: DioImage(
+            dio: adapter.dio,
+            imageUrl: previewModel.previewImg,
+            imageBuilder: (context, bytes) {
+              return DarkWidget(
+                child: Hero(
+                  tag: '${previewModel.gid}${previewModel.gtoken}',
+                  child: Image.memory(bytes),
+                ),
+              );
+            },
+          ),
+        ),
+        if (language.isNotEmpty)
+          Positioned(
+            right: 1,
+            bottom: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Container(
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(2)),
+                child: Text(
+                  language,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

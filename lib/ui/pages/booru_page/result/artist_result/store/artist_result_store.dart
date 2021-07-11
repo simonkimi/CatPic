@@ -1,6 +1,6 @@
-import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:mobx/mobx.dart';
 
 part 'artist_result_store.g.dart';
@@ -25,6 +25,9 @@ abstract class ArtistResultStoreBase extends ILoadMore<BooruArtist> with Store {
   @override
   Future<List<BooruArtist>> loadPage(page) =>
       adapter.artistList(name: searchText, page: page);
+
+  @override
+  bool isItemExist(BooruArtist item) => false;
 
   @action
   @override

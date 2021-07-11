@@ -32,6 +32,9 @@ abstract class PostResultStoreBase extends ILoadMore<BooruPost> with Store {
   }
 
   @override
+  bool isItemExist(BooruPost item) => false;
+
+  @override
   Future<List<BooruPost>> loadPage(int page) async {
     final list = await adapter.postList(
       tags: searchText,

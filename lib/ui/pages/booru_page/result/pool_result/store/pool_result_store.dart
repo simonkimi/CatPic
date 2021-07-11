@@ -25,6 +25,9 @@ abstract class PoolResultStoreBase extends ILoadMore<BooruPool> with Store {
         page: page,
       );
 
+  @override
+  bool isItemExist(BooruPool item) => false;
+
   List<BooruPool> get poolList =>
       observableList.where((element) => element.postCount > 0).toList();
 

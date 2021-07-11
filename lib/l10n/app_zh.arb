@@ -275,5 +275,7 @@
   "disable_default_filter": "禁用默认筛选器",
   "uploader": "上传者",
   "tags": "标签",
-  "search_gallery_name": "搜索名称"
+  "search_gallery_name": "搜索名称",
+  "favourite_box": "收藏夹",
+  "favourite_all": "全部收藏"
 }
