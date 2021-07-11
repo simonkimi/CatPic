@@ -90,6 +90,18 @@ class SearchBarState extends State<SearchBar> {
     widget.onQueryChanged?.call(value);
   }
 
+  List<Widget> get leadActions {
+    if (!Platform.isAndroid &&
+        Navigator.of(context).canPop() &&
+        mainStore.searchPageCount > 1)
+      return [
+        FloatingSearchBarAction.back(
+          showIfClosed: true,
+        )
+      ];
+    return [FloatingSearchBarAction.hamburgerToBack()];
+  }
+
   @override
   Widget build(BuildContext context) {
     final isPortrait =
@@ -109,15 +121,10 @@ class SearchBarState extends State<SearchBar> {
       openAxisAlignment: 0.0,
       openWidth: isPortrait ? 600 : 500,
       debounceDelay: const Duration(milliseconds: 100),
+      automaticallyImplyBackButton: false,
+      automaticallyImplyDrawerHamburger: false,
       progress: widget.progress,
-      automaticallyImplyDrawerHamburger:
-          Platform.isAndroid || !Navigator.of(context).canPop(),
-      leadingActions: [
-        if (!Platform.isAndroid &&
-            Navigator.of(context).canPop() &&
-            mainStore.searchPageCount > 1)
-          FloatingSearchBarAction.back(),
-      ],
+      leadingActions: leadActions,
       body: widget.body,
       onQueryChanged: (query) {
         if (controller.isOpen) {
