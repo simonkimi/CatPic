@@ -74,4 +74,16 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
       adapter: adapter,
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    mainStore.addSearchPage();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mainStore.descSearchPage();
+  }
 }

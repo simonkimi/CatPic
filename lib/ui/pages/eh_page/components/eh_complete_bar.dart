@@ -603,6 +603,9 @@ class _EhCompleteBarWithoutFilterState
         onQueryChanged: (value) {
           _onSearchTagChange(value);
         },
+        actions: [
+          FloatingSearchBarAction.searchToClear(showIfClosed: false),
+        ],
         body: widget.body,
         candidateBuilder: (BuildContext context, Animation<double> transition) {
           return Card(

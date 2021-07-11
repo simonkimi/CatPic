@@ -48,6 +48,10 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   @observable
   bool isLoading = false;
 
+  @override
+  @observable
+  String? lastException;
+
   @observable
   String fileSize = '';
   @observable
