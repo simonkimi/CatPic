@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -9,6 +10,7 @@ import 'package:catpic/ui/pages/eh_page/components/eh_complete_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/eh_page/favourite_page/store/store.dart';
+import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
@@ -30,7 +32,7 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawerEdgeDragWidth: 300,
+      drawerEdgeDragWidth: 200,
       drawer: const MainDrawer(
         ehSearchType: EHSearchType.FAVOURITE,
       ),
@@ -156,9 +158,31 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
   Widget _itemBuilder(BuildContext context, int index) {
     if (index >= store.observableList.length) return const SizedBox();
     final item = store.observableList[index];
+    final heroTag = 'favourite${item.gid}${item.gtoken}';
     return PreviewExtendedCard(
       previewModel: item,
       adapter: adapter,
+      heroTag: heroTag,
+      onTap: () {
+        DB().galleryHistoryDao.add(EhGalleryHistoryTableCompanion.insert(
+              gid: item.gid,
+              gtoken: item.gtoken,
+              pb: item.toPb().writeToBuffer(),
+            ));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return EhPreviewPage(
+                imageCount: item.pages,
+                previewAspectRatio: item.previewHeight / item.previewWidth,
+                previewModel: item,
+                heroTag: heroTag,
+                adapter: adapter,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 

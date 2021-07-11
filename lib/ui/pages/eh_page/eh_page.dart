@@ -17,6 +17,7 @@ enum EHSearchType {
   WATCHED,
   POPULAR,
   FAVOURITE,
+  HISTORY,
 }
 
 class EhPage extends StatefulWidget {
@@ -66,6 +67,7 @@ class _EhPageState extends State<EhPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawerEdgeDragWidth: 200,
       drawer: MainDrawer(
         ehSearchType: searchType,
         onEHSearchChange: (newType) => newType != searchType,
@@ -106,8 +108,8 @@ class _EhPageState extends State<EhPage> {
             key: key,
             adapter: adapter,
           );
+        case EHSearchType.HISTORY:
         case EHSearchType.FAVOURITE:
-          // favourite_page
           throw Exception('Stub!');
       }
     }

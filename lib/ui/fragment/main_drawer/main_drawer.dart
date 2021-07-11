@@ -8,6 +8,7 @@ import 'package:catpic/ui/pages/booru_page/login_page/login_page.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:catpic/ui/pages/eh_page/favourite_page/favourite_page.dart';
+import 'package:catpic/ui/pages/eh_page/history_page/history_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
@@ -123,6 +124,7 @@ class MainDrawer extends HookWidget {
             buildEhWatched(context),
             buildEhPopular(context),
             buildEhFavourite(context),
+            buildEhHistory(context),
           ],
         ),
       );
@@ -191,12 +193,32 @@ class MainDrawer extends HookWidget {
       title: Text(I18n.of(context).favourite),
       selected: ehSearchType == EHSearchType.FAVOURITE,
       onTap: () {
-        if (onEHSearchChange?.call(EHSearchType.FAVOURITE) ?? true)
+        if (onEHSearchChange?.call(EHSearchType.FAVOURITE) ?? true) {
+          Navigator.of(context).pop();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const EhFavouritePage()),
           );
-        else
+        } else {
           Navigator.of(context).pop();
+        }
+      },
+    );
+  }
+
+  ListTile buildEhHistory(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.history_sharp),
+      title: Text(I18n.of(context).history),
+      selected: ehSearchType == EHSearchType.HISTORY,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.HISTORY) ?? true) {
+          Navigator.of(context).pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const EhHistoryPage()),
+          );
+        } else {
+          Navigator.of(context).pop();
+        }
       },
     );
   }

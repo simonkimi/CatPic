@@ -10,7 +10,12 @@ class GalleryHistoryDao extends DatabaseAccessor<AppDataBase>
   GalleryHistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 
   Stream<List<EhGalleryHistoryTableData>> all() =>
-      select(ehGalleryHistoryTable).watch();
+      (select(ehGalleryHistoryTable)
+            ..orderBy([
+              (u) => OrderingTerm(
+                  expression: u.lastViewTime, mode: OrderingMode.desc)
+            ]))
+          .watch();
 
   Future<void> updateHistory(EhGalleryHistoryTableData entity) =>
       update(ehGalleryHistoryTable)

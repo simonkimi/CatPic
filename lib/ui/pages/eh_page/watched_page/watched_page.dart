@@ -1,9 +1,11 @@
 import 'dart:ui' as ui;
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_complete_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
+import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:catpic/ui/pages/eh_page/watched_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -62,6 +64,26 @@ class EhWatchedResult extends StatelessWidget {
     return PreviewExtendedCard(
       previewModel: item,
       adapter: adapter,
+      onTap: () {
+        DB().galleryHistoryDao.add(EhGalleryHistoryTableCompanion.insert(
+              gid: item.gid,
+              gtoken: item.gtoken,
+              pb: item.toPb().writeToBuffer(),
+            ));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return EhPreviewPage(
+                imageCount: item.pages,
+                previewAspectRatio: item.previewHeight / item.previewWidth,
+                previewModel: item,
+                heroTag: '${item.gid}${item.gtoken}',
+                adapter: adapter,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

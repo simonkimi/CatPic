@@ -1,11 +1,9 @@
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
@@ -15,10 +13,14 @@ class PreviewExtendedCard extends StatelessWidget {
     Key? key,
     required this.previewModel,
     required this.adapter,
+    required this.onTap,
+    this.heroTag,
   }) : super(key: key);
 
   final PreViewItemModel previewModel;
   final EHAdapter adapter;
+  final VoidCallback onTap;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -32,27 +34,7 @@ class PreviewExtendedCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () async {
-          DB().galleryHistoryDao.add(EhGalleryHistoryTableCompanion.insert(
-                gid: previewModel.gid,
-                gtoken: previewModel.gtoken,
-                pb: previewModel.toPb().writeToBuffer(),
-              ));
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return EhPreviewPage(
-                  imageCount: previewModel.pages,
-                  previewAspectRatio:
-                      previewModel.previewHeight / previewModel.previewWidth,
-                  previewModel: previewModel,
-                  heroTag: '${previewModel.gid}${previewModel.gtoken}',
-                  adapter: adapter,
-                );
-              },
-            ),
-          );
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(0),
           child: Row(
@@ -246,7 +228,7 @@ class PreviewExtendedCard extends StatelessWidget {
             imageBuilder: (context, bytes) {
               return DarkWidget(
                 child: Hero(
-                  tag: '${previewModel.gid}${previewModel.gtoken}',
+                  tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
                   child: Image.memory(bytes),
                 ),
               );

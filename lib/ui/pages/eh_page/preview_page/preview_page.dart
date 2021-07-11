@@ -44,7 +44,6 @@ class EhPreviewPage extends StatelessWidget {
   final EHAdapter adapter;
   final double previewAspectRatio;
   final int imageCount;
-
   final EhGalleryStore store;
 
   @override
@@ -418,7 +417,7 @@ class EhPreviewPage extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: max(previewAspectRatio, 0.5),
                   child: NullableHero(
-                    tag: '${previewModel.gid}${previewModel.gtoken}',
+                    tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
                     child: Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
