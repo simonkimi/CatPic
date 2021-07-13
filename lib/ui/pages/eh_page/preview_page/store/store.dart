@@ -235,6 +235,7 @@ class ReadImageModel {
 
   // 加载page的ImageProvider和基础数据
   Future<void> loadBase(EHAdapter adapter, PreviewImage value) async {
+    previewImage = value;
     imageProvider = DioImageProvider(
         dio: adapter.dio,
         builder: () async {
@@ -242,6 +243,5 @@ class ReadImageModel {
           return DioImageParams(url: model.imgUrl, cacheKey: model.sha);
         });
     state.value = LoadingState.LOADED;
-    previewImage = value;
   }
 }
