@@ -17,6 +17,7 @@ class PreviewExtendedCard extends StatelessWidget {
     required this.onTap,
     this.heroTag,
     this.progress,
+    this.lastWidget,
   }) : super(key: key);
 
   final PreViewItemModel previewModel;
@@ -24,6 +25,7 @@ class PreviewExtendedCard extends StatelessWidget {
   final VoidCallback onTap;
   final String? heroTag;
   final Rx<double>? progress;
+  final Widget? lastWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +76,18 @@ class PreviewExtendedCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildCardInfo(context),
-              SizedBox(
-                height: 35,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    buildStar(context),
-                    buildPageAndTime(context),
-                  ],
-                ),
-              )
+              lastWidget ??
+                  SizedBox(
+                    height: 35,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        buildStar(context),
+                        buildPageAndTime(context),
+                      ],
+                    ),
+                  )
             ],
           ),
         ),

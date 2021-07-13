@@ -83,6 +83,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       final key = cacheKeyBuilder != null
           ? await cacheKeyBuilder!()
           : cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl);
+      print('Dio load key: $key url: $imageUrl');
       final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
           cancelToken: _cancelToken.value,
           options: settingStore.dioCacheOptions
@@ -112,6 +113,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       }
       rethrow;
     } catch (e) {
+      print('DioImageProvider: ${e.toString()}');
       rethrow;
     }
   }

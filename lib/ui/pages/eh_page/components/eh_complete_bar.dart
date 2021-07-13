@@ -45,6 +45,8 @@ class _EhCompleteBarState extends State<EhCompleteBar>
   late final FloatingSearchBarController searchBarController =
       widget.controller ?? FloatingSearchBarController();
 
+  final tmpController = SearchBarTmpController();
+
   late final actionController = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 200),
@@ -112,6 +114,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
         return true;
       },
       child: SearchBar(
+        tmpController: tmpController,
         controller: searchBarController,
         searchText: widget.searchText,
         showTmp: filterDisplaySwitch,
@@ -163,7 +166,7 @@ class _EhCompleteBarState extends State<EhCompleteBar>
                   subtitle: e.subTitle != null ? Text(e.subTitle!) : null,
                   onTap: () {
                     late final String completeTag;
-                    if (e.title.contains(' ')) {
+                    if (e.title.contains(' ') && e.subTitle != null) {
                       if (e.title.contains(':')) {
                         final tagParams = e.title.split(':');
                         completeTag = tagParams[0] + ':"${tagParams[1]}\$"';
@@ -535,11 +538,12 @@ class _EhCompleteBarState extends State<EhCompleteBar>
             padding: const EdgeInsets.only(bottom: 18, right: 18),
             child: FloatingActionButton(
               onPressed: () {
-                final value = searchBarController.query;
+                final value = tmpController.tmp;
+                print('float: $value');
                 _setSearchHistory(value.trim());
                 if (filterDisplaySwitch) backToSearch();
-                widget.onSubmitted
-                    ?.call(value, filterDisplaySwitch, widget.store.filter);
+                widget.onSubmitted?.call(
+                    value.trim(), filterDisplaySwitch, widget.store.filter);
               },
               child: const Icon(Icons.search),
             ),
@@ -617,7 +621,7 @@ class _EhCompleteBarWithoutFilterState
                   subtitle: e.subTitle != null ? Text(e.subTitle!) : null,
                   onTap: () {
                     late final String completeTag;
-                    if (e.title.contains(' ')) {
+                    if (e.title.contains(' ') && e.subTitle != null) {
                       if (e.title.contains(':')) {
                         final tagParams = e.title.split(':');
                         completeTag = tagParams[0] + ':"${tagParams[1]}\$"';
