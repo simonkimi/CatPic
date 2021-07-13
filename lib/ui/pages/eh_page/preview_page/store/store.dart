@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:catpic/utils/utils.dart';
 
 part 'store.g.dart';
 
@@ -216,17 +217,35 @@ class ReadImageModel {
       if (this.model != null) {
         return this.model!;
       }
-      final model = await adapter.galleryImage(previewImage!.target);
+
+      final reg = RegExp(r's/(.+?)/(\d+)-(\d)');
+      final match = reg.firstMatch(previewImage!.target)!;
+      final token = match[1]!;
+      final gid = match[2]!;
+      final page = match[3]!.toInt();
+
+      final model = await adapter.galleryImage(
+        gtoken: token,
+        gid: gid,
+        page: page,
+      );
       this.model = model;
       return model;
     });
   }
 
   Future<void> loadBase(EHAdapter adapter, PreviewImage value) async {
+    final modelBuilder = () async {
+      return await loadModel(adapter);
+    }();
+
     imageProvider = DioImageProvider(
         dio: adapter.dio,
+        cacheKeyBuilder: () async {
+          return (await modelBuilder).sha;
+        },
         urlBuilder: () async {
-          return (await loadModel(adapter)).imgUrl;
+          return (await modelBuilder).imgUrl;
         });
     state.value = LoadingState.LOADED;
     previewImage = value;

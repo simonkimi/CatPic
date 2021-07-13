@@ -88,13 +88,12 @@ class EHAdapter extends Adapter {
     return model;
   }
 
-  Future<GalleryImgModel> galleryImage(String url) async {
-    final reg = RegExp('s/(.+?)/(.+)');
-    final match = reg.firstMatch(url)!;
-    final token = match[1]!;
-    final galleryPage = match[2]!;
-
-    final str = await client.galleryImage(token, galleryPage);
+  Future<GalleryImgModel> galleryImage({
+    required String gid,
+    required String gtoken,
+    required int page,
+  }) async {
+    final str = await client.galleryImage(gid: gid, gtoken: gtoken, page: page);
     return await compute(GalleryImgParser.parse, str);
   }
 

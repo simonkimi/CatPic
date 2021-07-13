@@ -112,19 +112,6 @@ class DisplaySettingPage extends StatelessWidget {
           SelectTileItem(value: CardSize.HUGE, title: I18n.of(context).huge),
         ],
       ),
-      // 加载数量
-      // 预加载
-      SelectTile<int>(
-        leading: const Icon(Icons.last_page_outlined),
-        selectedValue: settingStore.preloadingNumber,
-        onChange: (value) {
-          settingStore.setPreloadingNumber(value);
-        },
-        title: I18n.of(context).preload,
-        items: [0, 1, 3, 5, 7, 9, 11, 13, 15, 17]
-            .map((e) => SelectTileItem(title: e.toString(), value: e))
-            .toList(),
-      ),
     ];
   }
 

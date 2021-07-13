@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
+import 'package:catpic/ui/components/seelct_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -53,13 +54,17 @@ class NetworkSettingPage extends StatelessWidget {
     return [
       const Divider(),
       SummaryTile(I18n.of(context).network),
-      ListTile(
-        title: Text(I18n.of(context).host_manager),
-        leading: const Icon(Icons.home_sharp),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (_) => HostManagerPage()));
+      // 预加载
+      SelectTile<int>(
+        leading: const Icon(Icons.last_page_outlined),
+        selectedValue: settingStore.preloadingNumber,
+        onChange: (value) {
+          settingStore.setPreloadingNumber(value);
         },
+        title: I18n.of(context).preload,
+        items: [0, 1, 3, 5, 7, 9, 11, 13, 15, 17]
+            .map((e) => SelectTileItem(title: e.toString(), value: e))
+            .toList(),
       ),
       StatefulBuilder(builder: (context, setState) {
         return ListTile(
@@ -117,6 +122,14 @@ class NetworkSettingPage extends StatelessWidget {
           },
         );
       }),
+      ListTile(
+        title: Text(I18n.of(context).host_manager),
+        leading: const Icon(Icons.home_sharp),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => HostManagerPage()));
+        },
+      ),
     ];
   }
 

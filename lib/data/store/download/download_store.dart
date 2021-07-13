@@ -17,6 +17,7 @@ import 'package:mobx/mobx.dart';
 import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
 import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:catpic/data/bridge/file_helper.dart';
 
 part 'download_store.g.dart';
 
@@ -140,7 +141,6 @@ abstract class DownloadStoreBase with Store {
     final task = DownLoadTask(database);
     downloadingList.add(task);
     try {
-      final downloadPath = await bridge.getSafUri();
       final rsp = await dio.get<Uint8List>(url,
           options: settingStore.dioCacheOptions
               .copyWith(policy: CachePolicy.noCache)
@@ -149,7 +149,7 @@ abstract class DownloadStoreBase with Store {
           cancelToken: task.cancelToken, onReceiveProgress: (count, total) {
         task.progress.value = count / total;
       });
-      await saveFile(rsp.data!, fileName, downloadPath!);
+      await saveBooruImage(fileName, rsp.data!);
       BotToast.showText(text: I18n.g.download_finish(' # ${database.postId} '));
       print('下载完成 $fileName');
       await dao.replace(task.database.copyWith(status: DownloadStatus.FINISH));
@@ -164,12 +164,5 @@ abstract class DownloadStoreBase with Store {
       await dao.replace(task.database.copyWith(status: DownloadStatus.FAIL));
     }
     downloadingList.remove(task);
-  }
-
-  Future<void> saveFile(
-      Uint8List data, String fileName, String filePath) async {
-    if (Platform.isAndroid) {
-      await bridge.writeFile(data, fileName, filePath);
-    }
   }
 }

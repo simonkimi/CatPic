@@ -106,6 +106,18 @@ abstract class SettingStoreBase with Store {
   @observable
   var ehDatabaseVersion = '';
 
+  @observable
+  var builtinHost = true;
+
+  @observable
+  var allowedMediaScanGallery = false;
+
+  @observable
+  var allowedMediaScanImage = true;
+
+  @observable
+  var downloadProcess = 3;
+
   late CacheOptions dioCacheOptions;
 
   var documentDir = '';
@@ -117,7 +129,7 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     useCardWidget = sp.getBool('useCardWidget') ?? true;
     showCardDetail = sp.getBool('showCardDetail') ?? true;
-    eachPageItem = sp.getInt('eachPageItem') ?? 50;
+    eachPageItem = sp.getInt('eachPageItem') ?? 200;
     cardSize = sp.getInt('cardSize') ?? CardSize.MIDDLE;
     previewQuality = sp.getInt('previewQuality') ?? ImageQuality.preview;
     displayQuality = sp.getInt('displayQuality') ?? ImageQuality.sample;
@@ -130,10 +142,14 @@ abstract class SettingStoreBase with Store {
     documentDir = sp.getString('documentDir') ?? await getDocumentDir();
     theme = sp.getInt('theme') ?? Themes.BLUE;
     dartMode = sp.getInt('dartMode') ?? DarkMode.FOLLOW_SYSTEM;
-    darkMask = sp.getBool('darkMask') ?? false;
+    darkMask = sp.getBool('darkMask') ?? true;
     ehTranslate = sp.getBool('ehTranslate') ?? false;
     ehAutoCompute = sp.getBool('ehAutoCompute') ?? false;
     ehDatabaseVersion = sp.getString('ehDatabaseVersion') ?? '';
+    builtinHost = sp.getBool('builtinHost') ?? true;
+    downloadProcess = sp.getInt('downloadProcess') ?? 3;
+    allowedMediaScanGallery = sp.getBool('allowedMediaScanGallery') ?? false;
+    allowedMediaScanImage = sp.getBool('allowedMediaScanImage') ?? true;
 
     if (ehDatabaseVersion.isNotEmpty) initTranslate();
 
@@ -161,6 +177,18 @@ abstract class SettingStoreBase with Store {
     final sp = SpUtil.getSp()!;
     sp.setString('documentDir', path.path);
     return path.path;
+  }
+
+  @action
+  void setDownloadProcess(int value) {
+    downloadProcess = value;
+    SpUtil.putInt('downloadProcess', value);
+  }
+
+  @action
+  void setBuiltinHost(bool value) {
+    builtinHost = value;
+    SpUtil.putBool('builtinHost', value);
   }
 
   @action

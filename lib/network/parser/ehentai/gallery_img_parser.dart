@@ -19,6 +19,10 @@ class GalleryImgParser {
     final rawImgHeight = int.parse(rawMeta.item2);
     final rawImgSize = rawMeta.item3;
     final rawImgUrl = rawMeta.item4;
+    final sha =
+        Uri.parse(document.querySelector('#i6 > a')?.attributes['href'] ?? '')
+                .queryParameters['f_shash'] ??
+            '';
 
     return GalleryImgModel(
       height: height,
@@ -29,6 +33,7 @@ class GalleryImgParser {
       rawImgSize: rawImgSize,
       rawImgUrl: rawImgUrl,
       rawWidth: rawImgWidth,
+      sha: sha,
     );
   }
 

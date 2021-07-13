@@ -123,6 +123,7 @@ abstract class MainStoreBase with Store {
   Future<void> deleteWebsite(WebsiteTableData entity) async {
     DB().websiteDao.remove(entity);
     DB().downloadDao.onWebsiteDelete(entity.id);
+    DB().ehDownloadDao.onWebsiteDelete(entity.id);
     updateList();
   }
 }

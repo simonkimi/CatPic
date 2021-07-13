@@ -4,14 +4,9 @@ package ehentai;
 
 import 'eh_preview.proto';
 
-message EhImageModel {
-  int32 index = 1;
-  string gtoken = 2;
-}
 
-
-message EhDownload {
+message EhDownloadModel {
   PreViewItemModel model = 1;
-  map<int32, EhImageModel> pages = 2;
+  map<int32, string> pageInfo = 2;
 }
 

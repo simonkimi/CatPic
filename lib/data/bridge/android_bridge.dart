@@ -2,30 +2,53 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
-const CHANNEL = 'ink.z31.catpic';
+const _channel = MethodChannel('ink.z31.catpic');
 
 Future<String?> requestSafUri() async {
   try {
-    const platform = MethodChannel(CHANNEL);
-    return await platform.invokeMethod<String>('openSafDialog');
+    return await _channel.invokeMethod<String>('openSafDialog');
   } on PlatformException {
     return '';
   }
 }
 
-Future<String?> writeFile(Uint8List data, String fileName, String uri) async {
-  try {
-    const platform = MethodChannel(CHANNEL);
-    return await platform.invokeMethod('saveImage', {
-      'data': data,
-      'fileName': fileName,
-      'uri': uri,
-    });
-  } on PlatformException catch (e) {
-    print('PlatformException ${e.toString()}');
-    return '';
-  }
+Future<String?> getSafUri() => _channel.invokeMethod('getSafUrl');
+
+Future<void> safCreateDirectory(String safUrl, String path) => _channel
+    .invokeMethod('safCreateDirectory', {'safUrl': safUrl, 'path': path});
+
+Future<void> safIsFileExist(String safUrl, String path, String fileName) =>
+    _channel.invokeMethod('safIsFileExist',
+        {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+
+Future<void> safIsFile(String safUrl, String path, String fileName) =>
+    _channel.invokeMethod(
+        'safIsFile', {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+
+Future<void> safIsDirectory(String safUrl, String path, String fileName) =>
+    _channel.invokeMethod('safIsDirectory',
+        {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+
+Future<List<String>> safWalk(String safUrl, String path) async {
+  return (await _channel.invokeMethod(
+      'safIsDirectory', {'safUrl': safUrl, 'path': path}) as List<String>?)!;
 }
 
-Future<String?> getSafUri() =>
-    const MethodChannel(CHANNEL).invokeMethod('getSafUrl');
+Future<Uint8List?> safReadFile(String safUrl, String path, String fileName) =>
+    _channel.invokeMethod(
+        'safReadFile', {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+
+Future<void> safWriteFile({
+  required String safUrl,
+  required String path,
+  required String fileName,
+  required String mime,
+  required Uint8List data,
+}) =>
+    _channel.invokeMethod('safIsDirectory', {
+      'safUrl': safUrl,
+      'path': path,
+      'fileName': fileName,
+      'mime': mime,
+      'data': data
+    });

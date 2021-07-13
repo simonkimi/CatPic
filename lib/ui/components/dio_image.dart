@@ -36,6 +36,8 @@ class DioImage extends StatefulWidget {
     this.imageBuilder,
     this.loadingBuilder,
     this.errorBuilder,
+    this.cacheKey,
+    this.cacheKeyBuilder,
   })  : assert(imageUrl != null || imageUrlBuilder != null),
         super(key: key);
 
@@ -48,6 +50,8 @@ class DioImage extends StatefulWidget {
   final ImageWidgetBuilder? imageBuilder;
   final LoadingWidgetBuilder? loadingBuilder;
   final ErrorBuilder? errorBuilder;
+  final String? cacheKey;
+  final UrlBuilder? cacheKeyBuilder;
 
   @override
   _DioImageState createState() => _DioImageState();
@@ -112,9 +116,6 @@ class _DioImageState extends State<DioImage> {
     fetchData();
   }
 
-  // (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
-  // '${dio.options.baseUrl}s/$token/$galleryPage'
-
   Future<void> fetchData() async {
     setState(() {
       _loadingType = LoadingType.LOADING;
@@ -123,12 +124,15 @@ class _DioImageState extends State<DioImage> {
     });
     try {
       final String url = widget.imageUrl ?? await widget.imageUrlBuilder!();
+      final key = widget.cacheKeyBuilder != null
+          ? await widget.cacheKeyBuilder!()
+          : widget.cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, url);
       final rsp = await dio.get<List<int>>(url,
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
               .copyWith(
                 policy: CachePolicy.request,
-                keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL, url),
+                keyBuilder: (req) => key,
               )
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),

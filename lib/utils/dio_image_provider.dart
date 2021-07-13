@@ -24,12 +24,16 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     this.dio,
     this.scale = 1.0,
     this.urlBuilder,
+    this.cacheKey,
+    this.cacheKeyBuilder,
   }) : assert(urlBuilder != null || url != null);
 
   final Dio? dio;
   final String? url;
   final double scale;
   final UrlBuilder? urlBuilder;
+  final String? cacheKey;
+  final UrlBuilder? cacheKeyBuilder;
 
   final _cancelToken = CancelToken().wrap;
 
@@ -76,13 +80,15 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     _cancelToken.value = CancelToken();
     try {
       final imageUrl = url ?? await urlBuilder!();
+      final key = cacheKeyBuilder != null
+          ? await cacheKeyBuilder!()
+          : cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl);
       final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
           cancelToken: _cancelToken.value,
           options: settingStore.dioCacheOptions
               .copyWith(
                 policy: CachePolicy.request,
-                keyBuilder: (req) =>
-                    const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl),
+                keyBuilder: (req) => key,
               )
               .toOptions()
               .copyWith(responseType: ResponseType.bytes),

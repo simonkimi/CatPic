@@ -58,6 +58,7 @@ dependencies:
   synchronized: ^3.0.0
   crypto: ^3.0.1
   vibration: ^1.7.4-nullsafety.0
+  executor: ^2.2.2
 
 
 dev_dependencies:

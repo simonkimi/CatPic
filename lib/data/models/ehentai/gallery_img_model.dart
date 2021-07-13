@@ -8,6 +8,7 @@ class GalleryImgModel {
     required this.height,
     required this.rawWidth,
     required this.rawHeight,
+    required this.sha,
   });
 
   final String imgUrl;
@@ -19,6 +20,8 @@ class GalleryImgModel {
   final int rawHeight;
   final String rawImgUrl;
   final String rawImgSize;
+
+  final String sha;
 
   @override
   String toString() {

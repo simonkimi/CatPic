@@ -72,9 +72,8 @@ class BooruSettingPage extends StatelessWidget {
           title: I18n.of(context).download_quality,
           items: qualityChoice,
         ),
-        if (Platform.isAndroid) ...buildAndroid(context),
         const Divider(),
-        const SummaryTile('杂项'),
+        SummaryTile(I18n.of(context).misc),
         SwitchListTile(
           title: Text(I18n.of(context).auto_complete),
           subtitle: Text(settingStore.autoCompleteUseNetwork
@@ -107,33 +106,6 @@ class BooruSettingPage extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  List<Widget> buildAndroid(BuildContext context) {
-    return [
-      const Divider(),
-      SummaryTile(I18n.of(context).download),
-      StatefulBuilder(builder: (context, setState) {
-        return ListTile(
-          title: Text(I18n.of(context).download_uri),
-          subtitle: FutureBuilder<String?>(
-            initialData: null,
-            future: getSafUri(),
-            builder: (context, snapshot) {
-              return Text(snapshot.data ?? I18n.of(context).not_set);
-            },
-          ),
-          onTap: () {
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => AndroidDownloadPage()))
-                .whenComplete(() {
-              setState(() => {});
-            });
-          },
-          leading: const Icon(Icons.drive_file_move_outline),
-        );
-      })
-    ];
   }
 
   AppBar buildAppBar(BuildContext context) {

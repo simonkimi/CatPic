@@ -185,6 +185,10 @@ extension IntHelper on num {
   }
 }
 
+extension IntFormat on int {
+  String format(int length) => '0' * (length - toString().length) + toString();
+}
+
 class ObjectWrap<T> {
   ObjectWrap(this.value);
 
