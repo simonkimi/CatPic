@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
@@ -23,6 +24,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/main.dart';
 import 'gallery_preview.dart';
+
+enum GalleryAction {
+  REFRESH,
+}
 
 class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
@@ -53,13 +58,44 @@ class EhPreviewPage extends StatelessWidget {
         leading: appBarBackButton(),
         title: Text(previewModel.titleJpn ?? ''),
         actions: [
-          IconButton(
+          PopupMenuButton<GalleryAction>(
             icon: const Icon(
               Icons.more_vert_outlined,
               color: Colors.white,
             ),
-            onPressed: () {},
-          )
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            onSelected: (value) async {
+              switch (value) {
+                case GalleryAction.REFRESH:
+                  DB()
+                      .galleryCacheDao
+                      .remove(previewModel.gid, previewModel.gtoken)
+                      .then((value) {
+                    BotToast.showText(text: I18n.of(context).refresh);
+                    Navigator.of(context).pop();
+                  });
+              }
+            },
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  value: GalleryAction.REFRESH,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.refresh,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(I18n.of(context).refresh),
+                    ],
+                  ),
+                )
+              ];
+            },
+          ),
         ],
       ),
       body: WillPopScope(

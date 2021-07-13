@@ -61,7 +61,7 @@ class EHAdapter extends Adapter {
     GalleryModel? model;
 
     if (page == 0) {
-      final db = await DB().galleryCacheDao.get(gid);
+      final db = await DB().galleryCacheDao.get(gid, gtoken);
       if (db != null) {
         model =
             GalleryModel.fromPb(gallery_pb.GalleryModel.fromBuffer(db.data));
