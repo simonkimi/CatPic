@@ -20,6 +20,7 @@ import 'dao/translate_dao.dart';
 import 'entity/download.dart';
 import 'entity/eh_download.dart';
 import 'entity/eh_gallery_historary.dart';
+import 'entity/eh_image_sha.dart';
 import 'entity/eh_translate.dart';
 import 'entity/gallery_cache.dart';
 import 'entity/history.dart';
@@ -57,6 +58,7 @@ LazyDatabase _openConnection() {
   GalleryCacheTable,
   EhGalleryHistoryTable,
   EhDownloadTable,
+  EhDownloadShaTable,
 ], daos: [
   DownloadDao,
   HistoryDao,
