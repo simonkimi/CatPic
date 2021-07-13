@@ -28,7 +28,7 @@ class SettingPage extends StatelessWidget {
     return ListView(
       cacheExtent: 9999,
       children: [
-        SummaryTile('基础设置'),
+        SummaryTile(I18n.of(context).basic_settings),
         ListTile(
           leading: const Icon(Icons.laptop_chromebook_outlined),
           title: Text(I18n.of(context).display),
@@ -53,7 +53,7 @@ class SettingPage extends StatelessWidget {
                 builder: (context) => const DownloadSettingPage()));
           },
         ),
-        SummaryTile('站点设置'),
+        SummaryTile(I18n.of(context).website_settings),
         ListTile(
           leading: SvgPicture.asset(
             'assets/svg/box.svg',

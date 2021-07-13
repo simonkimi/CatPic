@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
-import 'package:catpic/ui/components/seelct_tile.dart';
+import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';

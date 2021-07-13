@@ -1,6 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:catpic/ui/components/seelct_tile.dart';
+import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:flutter/material.dart';

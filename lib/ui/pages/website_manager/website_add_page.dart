@@ -2,7 +2,7 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
-import 'package:catpic/ui/components/seelct_tile.dart';
+import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:catpic/ui/pages/website_manager/cookie_manager.dart';

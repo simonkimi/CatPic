@@ -8,7 +8,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
-import 'package:catpic/ui/components/seelct_tile.dart';
+import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
 import 'package:flutter/material.dart';
