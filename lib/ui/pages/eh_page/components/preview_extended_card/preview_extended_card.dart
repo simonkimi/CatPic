@@ -7,6 +7,7 @@ import 'package:catpic/ui/components/dio_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:get/get.dart';
 
 class PreviewExtendedCard extends StatelessWidget {
   const PreviewExtendedCard({
@@ -15,12 +16,14 @@ class PreviewExtendedCard extends StatelessWidget {
     required this.adapter,
     required this.onTap,
     this.heroTag,
+    this.progress,
   }) : super(key: key);
 
   final PreViewItemModel previewModel;
   final EHAdapter adapter;
   final VoidCallback onTap;
   final String? heroTag;
+  final Rx<double>? progress;
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +40,23 @@ class PreviewExtendedCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
             children: [
-              buildImage(context),
-              buildCardRight(context),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  buildImage(context),
+                  buildCardRight(context),
+                ],
+              ),
+              if (progress != null)
+                SizedBox(
+                  height: 2.5,
+                  child: LinearProgressIndicator(
+                    value: progress?.value,
+                  ),
+                ),
             ],
           ),
         ),
@@ -55,12 +69,22 @@ class PreviewExtendedCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 140),
-          child: Stack(
+          constraints: const BoxConstraints(minHeight: 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildCardInfo(context),
-              buildStar(context),
-              buildPageAndTime(context),
+              SizedBox(
+                height: 35,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    buildStar(context),
+                    buildPageAndTime(context),
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -68,87 +92,81 @@ class PreviewExtendedCard extends StatelessWidget {
     );
   }
 
-  Positioned buildPageAndTime(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            '${previewModel.pages}P',
-            style: TextStyle(
-                fontSize: 12.5,
-                color: Theme.of(context).textTheme.subtitle2!.color),
-          ),
-          Text(
-            previewModel.uploadTime,
-            style: TextStyle(
+  Widget buildPageAndTime(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          '${previewModel.pages}P',
+          style: TextStyle(
               fontSize: 12.5,
-              color: Theme.of(context).textTheme.subtitle2!.color,
+              color: Theme.of(context).textTheme.subtitle2!.color),
+        ),
+        Text(
+          previewModel.uploadTime,
+          style: TextStyle(
+            fontSize: 12.5,
+            color: Theme.of(context).textTheme.subtitle2!.color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildStar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                RatingBar.builder(
+                  itemSize: 16,
+                  ignoreGestures: true,
+                  initialRating: previewModel.stars,
+                  onRatingUpdate: (value) {},
+                  itemBuilder: (BuildContext context, int index) {
+                    return const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    );
+                  },
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  previewModel.stars.toString(),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.subtitle2!.color),
+                )
+              ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Positioned buildStar(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  RatingBar.builder(
-                    itemSize: 16,
-                    ignoreGestures: true,
-                    initialRating: previewModel.stars,
-                    onRatingUpdate: (value) {},
-                    itemBuilder: (BuildContext context, int index) {
-                      return const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    previewModel.stars.toString(),
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.subtitle2!.color),
-                  )
-                ],
-              ),
-              const SizedBox(height: 3),
-              ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 50),
-                child: Container(
-                    padding: const EdgeInsets.only(bottom: 1.5),
-                    decoration: BoxDecoration(color: previewModel.tag.color),
-                    child: Center(
-                      child: Text(
-                        previewModel.tag.translate(context),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                        ),
+            const SizedBox(height: 3),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 60),
+              child: Container(
+                  padding: const EdgeInsets.only(bottom: 1, top: 1),
+                  decoration: BoxDecoration(color: previewModel.tag.color),
+                  child: Center(
+                    child: Text(
+                      previewModel.tag.translate(context),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
                       ),
-                    )),
-              ),
-            ],
-          ),
-        ],
-      ),
+                    ),
+                  )),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  Column buildCardInfo(BuildContext context) {
+  Widget buildCardInfo(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -168,8 +186,10 @@ class PreviewExtendedCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 3),
-        buildTagWrap(context),
-        const SizedBox(height: 43),
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 50),
+          child: buildTagWrap(context),
+        ),
       ],
     );
   }
@@ -220,8 +240,8 @@ class PreviewExtendedCard extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          width: 110,
-          height: 150,
+          width: 100,
+          height: 130,
           child: DioImage(
             dio: adapter.dio,
             imageUrl: previewModel.previewImg,
@@ -229,7 +249,10 @@ class PreviewExtendedCard extends StatelessWidget {
               return DarkWidget(
                 child: Hero(
                   tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
-                  child: Image.memory(bytes),
+                  child: Image.memory(
+                    bytes,
+                    fit: BoxFit.fitHeight,
+                  ),
                 ),
               );
             },
@@ -243,7 +266,7 @@ class PreviewExtendedCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                    color: Colors.black12,
+                    color: Colors.black38,
                     borderRadius: BorderRadius.circular(2)),
                 child: Text(
                   language,

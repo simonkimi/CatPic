@@ -103,7 +103,7 @@ class MainDrawer extends HookWidget {
       ),
       const Divider(),
       ListTile(
-        leading: const Icon(Icons.settings),
+        leading: const Icon(Icons.settings_outlined),
         title: Text(I18n.of(context).website_manager),
         onTap: () {
           Navigator.of(context).pop();
@@ -170,7 +170,7 @@ class MainDrawer extends HookWidget {
 
   ListTile buildEhIndex(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.home),
+      leading: const Icon(Icons.home_outlined),
       title: Text(I18n.of(context).home),
       selected: ehSearchType == EHSearchType.INDEX,
       onTap: () {
@@ -189,7 +189,7 @@ class MainDrawer extends HookWidget {
 
   ListTile buildEhFavourite(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.favorite),
+      leading: const Icon(Icons.favorite_outline),
       title: Text(I18n.of(context).favourite),
       selected: ehSearchType == EHSearchType.FAVOURITE,
       onTap: () {
@@ -263,7 +263,7 @@ class MainDrawer extends HookWidget {
 
   ListTile buildSettingTile(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.settings),
+      leading: const Icon(Icons.settings_outlined),
       title: Text(I18n.of(context).setting),
       onTap: () {
         Navigator.of(context).pop();

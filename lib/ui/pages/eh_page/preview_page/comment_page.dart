@@ -24,20 +24,25 @@ class EhCommentPage extends StatelessWidget {
   Scrollbar buildBody() {
     return Scrollbar(
       showTrackOnHover: true,
-      child: ListView.separated(
+      child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 60),
         itemCount: store.commentList.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          return Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black12,
+                  width: 0.5,
+                ),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: EhComment(
               model: store.commentList[index],
               displayVote: true,
             ),
           );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider();
         },
       ),
     );

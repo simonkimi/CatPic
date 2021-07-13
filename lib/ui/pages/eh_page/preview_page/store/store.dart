@@ -149,7 +149,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   Future<void> recordHistory() async {
     final dao = DB().ehHistoryDao;
-    final model = await dao.getById(previewModel.gid);
+    final model = await dao.get(previewModel.gid, previewModel.gtoken);
     if (model != null) {
       await dao.updateHistory(model.copyWith(
         lastOpen: DateTime.now().millisecond,
@@ -212,18 +212,17 @@ class ReadImageModel {
 
   final Lock lock = Lock();
 
-  Future<GalleryImgModel> loadModel(EHAdapter adapter) async {
+  // loadBase加载model的网络部分
+  Future<GalleryImgModel> loadModel(EHAdapter adapter, String target) async {
     return await lock.synchronized(() async {
       if (this.model != null) {
         return this.model!;
       }
-
       final reg = RegExp(r's/(.+?)/(\d+)-(\d)');
-      final match = reg.firstMatch(previewImage!.target)!;
+      final match = reg.firstMatch(target)!;
       final token = match[1]!;
       final gid = match[2]!;
       final page = match[3]!.toInt();
-
       final model = await adapter.galleryImage(
         gtoken: token,
         gid: gid,
@@ -234,9 +233,10 @@ class ReadImageModel {
     });
   }
 
+  // 加载page的ImageProvider和基础数据
   Future<void> loadBase(EHAdapter adapter, PreviewImage value) async {
     final modelBuilder = () async {
-      return await loadModel(adapter);
+      return await loadModel(adapter, value.target);
     }();
 
     imageProvider = DioImageProvider(

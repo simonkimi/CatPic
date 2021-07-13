@@ -98,6 +98,94 @@ class EhPreviewPage extends StatelessWidget {
         ));
   }
 
+  Widget buildPreviewTitle(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 150),
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  buildLeftImage(),
+                  const SizedBox(width: 8),
+                  buildRightInfo(context),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Expanded buildRightInfo(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildTitle(),
+              const SizedBox(height: 5),
+              buildUploader(context),
+              const SizedBox(height: 5),
+              buildStarBar(context),
+              const SizedBox(height: 5),
+              buildTypeTag(context),
+            ],
+          ),
+          Observer(
+            builder: (context) {
+              return Row(
+                children: [
+                  buildReadButton(context),
+                  const Expanded(child: SizedBox()),
+                  if (store.observableList.isNotEmpty)
+                    TextButton(
+                      onPressed: () {},
+                      child: const Icon(Icons.favorite_outline),
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(Platform.isWindows
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15)
+                              : const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 2)),
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(0, 0)),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.red)),
+                    ),
+                  if (store.observableList.isNotEmpty)
+                    TextButton(
+                      onPressed: () {},
+                      child: const Icon(Icons.cloud_download_outlined),
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(Platform.isWindows
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15)
+                            : const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 2)),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(0, 0)),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                ],
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Widget buildPreviewList(BuildContext context) {
     return InkWell(
       onTap: () {
@@ -204,7 +292,7 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  Padding buildTagList(BuildContext context) {
+  Widget buildTagList(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       child: Column(
@@ -403,175 +491,146 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  Widget buildPreviewTitle(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Stack(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 140,
-                child: AspectRatio(
-                  aspectRatio: max(previewAspectRatio, 0.5),
-                  child: NullableHero(
-                    tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusDirectional.circular(5),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: ExtendedImage(
-                        fit: BoxFit.fill,
-                        image: DioImageProvider(
-                          dio: adapter.dio,
-                          url: previewModel.previewImg,
-                        ),
-                        enableLoadState: true,
-                        loadStateChanged: (state) {
-                          if (state.extendedImageLoadState ==
-                              LoadState.completed) {
-                            return DarkWidget(child: state.completedWidget);
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+  Widget buildReadButton(BuildContext context) {
+    return TextButton(
+      onPressed: store.observableList.isNotEmpty
+          ? () async {
+              final readPage = (await DB().ehHistoryDao.get(
+                          store.previewModel.gid, store.previewModel.gtoken))
+                      ?.readPage ??
+                  0;
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return EhReadPage(
+                  store: store,
+                  startIndex: readPage,
+                );
+              }));
+            }
+          : null,
+      child: Text(I18n.of(context).read),
+      style: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+          return !states.contains(MaterialState.disabled)
+              ? Theme.of(context).primaryColor
+              : isDarkMode(context)
+                  ? const Color(0xFF3A3A3C)
+                  : const Color(0xFFD2D1D6);
+        }),
+        foregroundColor:
+            MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+          return !states.contains(MaterialState.disabled)
+              ? Colors.white
+              : isDarkMode()
+                  ? const Color(0xFF929196)
+                  : const Color(0xFF8C8B8E);
+        }),
+        padding: MaterialStateProperty.all(Platform.isWindows
+            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+            : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+        minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+    );
+  }
+
+  Text buildTitle() {
+    return Text(
+      previewModel.title,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+    );
+  }
+
+  Text buildUploader(BuildContext context) {
+    return Text(
+      previewModel.uploader,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: Theme.of(context).textTheme.subtitle2!.color),
+    );
+  }
+
+  Row buildStarBar(BuildContext context) {
+    return Row(
+      children: [
+        RatingBar.builder(
+          itemSize: 16,
+          ignoreGestures: true,
+          initialRating: previewModel.stars,
+          onRatingUpdate: (value) {},
+          itemBuilder: (BuildContext context, int index) {
+            return const Icon(
+              Icons.star,
+              color: Colors.amber,
+            );
+          },
+        ),
+        const SizedBox(width: 5),
+        Text(
+          previewModel.stars.toString(),
+          style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).textTheme.subtitle2!.color),
+        )
+      ],
+    );
+  }
+
+  ConstrainedBox buildTypeTag(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 50),
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: previewModel.tag.color,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              previewModel.tag.translate(context),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 200),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        previewModel.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        previewModel.uploader,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color:
-                                Theme.of(context).textTheme.subtitle2!.color),
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          RatingBar.builder(
-                            itemSize: 16,
-                            ignoreGestures: true,
-                            initialRating: previewModel.stars,
-                            onRatingUpdate: (value) {},
-                            itemBuilder: (BuildContext context, int index) {
-                              return const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            previewModel.stars.toString(),
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .subtitle2!
-                                    .color),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 50),
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            color: previewModel.tag.color,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                previewModel.tag.translate(context),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  SizedBox buildLeftImage() {
+    return SizedBox(
+      width: 140,
+      child: AspectRatio(
+        aspectRatio: max(previewAspectRatio, 0.5),
+        child: NullableHero(
+          tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusDirectional.circular(5),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: ExtendedImage(
+              fit: BoxFit.fill,
+              image: DioImageProvider(
+                dio: adapter.dio,
+                url: previewModel.previewImg,
               ),
-            ],
+              enableLoadState: true,
+              loadStateChanged: (state) {
+                if (state.extendedImageLoadState == LoadState.completed) {
+                  return DarkWidget(child: state.completedWidget);
+                }
+                return null;
+              },
+            ),
           ),
-          Positioned(
-              bottom: Platform.isWindows ? 0 : -8,
-              left: 148,
-              child: Observer(
-                builder: (context) {
-                  return TextButton(
-                    onPressed: store.observableList.isNotEmpty
-                        ? () async {
-                            final readPage = (await DB()
-                                    .ehHistoryDao
-                                    .getById(store.previewModel.gid))
-                                ?.readPage;
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return EhReadPage(
-                                store: store,
-                                startIndex: readPage ?? 0,
-                              );
-                            }));
-                          }
-                        : null,
-                    child: Text(I18n.of(context).read),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith(
-                          (Set<MaterialState> states) {
-                        return !states.contains(MaterialState.disabled)
-                            ? Theme.of(context).primaryColor
-                            : isDarkMode(context)
-                                ? const Color(0xFF3A3A3C)
-                                : const Color(0xFFD2D1D6);
-                      }),
-                      foregroundColor: MaterialStateProperty.resolveWith(
-                          (Set<MaterialState> states) {
-                        return !states.contains(MaterialState.disabled)
-                            ? Colors.white
-                            : isDarkMode()
-                                ? const Color(0xFF929196)
-                                : const Color(0xFF8C8B8E);
-                      }),
-                      padding: MaterialStateProperty.all(Platform.isWindows
-                          ? const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15)
-                          : const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2)),
-                      minimumSize: MaterialStateProperty.all(const Size(0, 0)),
-                    ),
-                  );
-                },
-              )),
-        ],
+        ),
       ),
     );
   }

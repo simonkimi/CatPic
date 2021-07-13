@@ -44,7 +44,7 @@ class _EhImageViewerState extends State<EhImageViewer>
   @override
   void initState() {
     super.initState();
-    print('startINdex: ${widget.startIndex}');
+    print('startIndex: ${widget.startIndex}');
     pageController =
         widget.pageController ?? PageController(initialPage: widget.startIndex);
     _doubleClickAnimationController = AnimationController(

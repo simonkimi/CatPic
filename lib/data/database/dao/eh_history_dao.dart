@@ -16,8 +16,10 @@ class EhHistoryDao extends DatabaseAccessor<AppDataBase>
         ]))
       .get();
 
-  Future<EhHistoryTableData?> getById(String id) =>
-      (select(ehHistoryTable)..where((tbl) => tbl.galleryId.equals(id)))
+  Future<EhHistoryTableData?> get(String gid, String token) =>
+      (select(ehHistoryTable)
+            ..where((tbl) =>
+                tbl.galleryId.equals(gid) & tbl.galleryToken.equals(token)))
           .getSingleOrNull();
 
   Future<void> updateHistory(EhHistoryTableData data) =>
