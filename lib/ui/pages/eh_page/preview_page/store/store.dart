@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -28,17 +28,34 @@ class GalleryPreviewImage {
 
 abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   EhGalleryStoreBase({
-    required this.imageCount,
     required this.adapter,
-    required this.previewModel,
-  })  : pageLoadLock = List.filled(imageCount, Lock()),
+    this.previewModel,
+    this.galleryBase,
+  })  : gid = previewModel?.gid ?? galleryBase!.gid,
+        gtoken = previewModel?.gtoken ?? galleryBase!.token,
+        isBasicLoaded = previewModel != null,
+        uploadTime = previewModel?.uploadTime ?? '',
+        uploader = previewModel?.uploader ?? '',
+        tag = previewModel?.tag ?? EhGalleryType.Misc,
+        star = previewModel?.stars ?? 0.0,
+        title = previewModel?.title ?? '',
+        imageCount = previewModel?.pages ?? 0,
+        previewImageUrl = previewModel?.previewImg ?? '',
+        pageLoadLock = previewModel == null
+            ? [Lock()]
+            : List.filled((previewModel.pages / 40).ceil(), Lock()),
         super('') {
     init();
   }
 
-  final int imageCount;
+  int imageCount;
+
   final EHAdapter adapter;
-  final PreViewItemModel previewModel;
+  final PreViewItemModel? previewModel;
+  final GalleryBase? galleryBase;
+
+  final String gid;
+  final String gtoken;
 
   final imageUrlMap = <String, GalleryPreviewImage>{};
   final pageCache = <int, List<PreviewImage>>{}.obs;
@@ -55,12 +72,40 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   @observable
   String fileSize = '';
+
   @observable
   String language = '';
+
   @observable
   int favouriteCount = 0;
+
   @observable
   List<CommentModel> commentList = [];
+
+  @observable
+  String title = '';
+
+  @observable
+  String uploader = '';
+
+  @observable
+  double star = 0.0;
+
+  @observable
+  int starMember = 0;
+
+  @observable
+  String previewImageUrl = '';
+
+  @observable
+  int tag = EhGalleryType.Misc;
+
+  @observable
+  String uploadTime = '';
+
+  @observable
+  bool isBasicLoaded = false;
+
   @observable
   List<TagModels> tagList = [];
 
@@ -101,17 +146,22 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
       [bool loadPreview = true]) async {
     final ehPage = page - 1;
     print('load Page $ehPage');
-    return await pageLoadLock[ehPage].synchronized(() async {
+    return await (pageLoadLock[ehPage]).synchronized(() async {
       final useCache = pageCache.containsKey(ehPage);
       late final List<PreviewImage> imageList;
       if (useCache) {
         imageList = pageCache[ehPage]!;
       } else {
         final galleryModel = await adapter.gallery(
-          gid: previewModel.gid,
-          gtoken: previewModel.gtoken,
+          gid: previewModel?.gid ?? galleryBase!.gid,
+          gtoken: previewModel?.gtoken ?? galleryBase!.token,
           page: ehPage,
         );
+        imageCount = galleryModel.imageCount;
+        if (!isBasicLoaded && pageLoadLock.length == 1) {
+          pageLoadLock
+              .addAll(List.filled((imageCount / 40).ceil() - 1, Lock()));
+        }
         fileSize = galleryModel.fileSize;
         language = galleryModel.language;
         favouriteCount = galleryModel.favorited;
@@ -119,7 +169,14 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         tagList = galleryModel.tags;
         pageCache[ehPage] = galleryModel.previewImages;
         imageList = galleryModel.previewImages;
-        recordHistory();
+        title = galleryModel.title;
+        previewImageUrl = galleryModel.previewImage;
+        star = galleryModel.star;
+        starMember = galleryModel.starMember;
+        tag = galleryModel.tag;
+        uploader = galleryModel.uploader;
+        uploadTime = galleryModel.uploadTime;
+        isBasicLoaded = true;
       }
       if (loadPreview) {
         for (final waitingImg in imageList) {
@@ -145,36 +202,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
       print('load Page $ehPage finish');
       return imageList;
     });
-  }
-
-  Future<void> recordHistory() async {
-    final dao = DB().ehHistoryDao;
-    final model = await dao.get(previewModel.gid, previewModel.gtoken);
-    if (model != null) {
-      await dao.updateHistory(model.copyWith(
-        lastOpen: DateTime.now().millisecond,
-        galleryId: previewModel.gid,
-        galleryToken: previewModel.gtoken,
-        tag: previewModel.tag,
-        previewImg: previewModel.previewImg,
-        uploadTime: previewModel.uploadTime,
-        uploader: previewModel.uploader,
-        star: (previewModel.stars * 10).floor(),
-        pageNumber: previewModel.pages,
-      ));
-    } else {
-      await dao.insert(EhHistoryTableCompanion.insert(
-        galleryId: previewModel.gid,
-        galleryToken: previewModel.gtoken,
-        tag: previewModel.tag,
-        previewImg: previewModel.previewImg,
-        uploadTime: previewModel.uploadTime,
-        uploader: previewModel.uploader,
-        star: (previewModel.stars * 10).floor(),
-        pageNumber: previewModel.pages,
-        readPage: 0,
-      ));
-    }
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -34,22 +35,27 @@ class EhPreviewPage extends StatelessWidget {
     Key? key,
     this.heroTag,
     required this.previewAspectRatio,
-    required this.previewModel,
     required this.adapter,
-    required this.imageCount,
+    this.previewModel,
+    this.galleryBase,
   })  : store = EhGalleryStore(
-          imageCount: imageCount,
           adapter: adapter,
           previewModel: previewModel,
         ),
+        assert(galleryBase != null || previewModel != null),
+        gid = previewModel?.gid ?? galleryBase!.gid,
+        gtoken = previewModel?.gtoken ?? galleryBase!.token,
         super(key: key);
 
-  final PreViewItemModel previewModel;
+  final PreViewItemModel? previewModel;
+  final GalleryBase? galleryBase;
   final String? heroTag;
   final EHAdapter adapter;
   final double previewAspectRatio;
-  final int imageCount;
   final EhGalleryStore store;
+
+  final String gid;
+  final String gtoken;
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +74,7 @@ class EhPreviewPage extends StatelessWidget {
             onSelected: (value) async {
               switch (value) {
                 case GalleryAction.REFRESH:
-                  DB()
-                      .galleryCacheDao
-                      .remove(previewModel.gid, previewModel.gtoken)
-                      .then((value) {
+                  DB().galleryCacheDao.remove(gid, gtoken).then((value) {
                     store.onRefresh();
                   });
               }
@@ -89,22 +92,30 @@ class EhPreviewPage extends StatelessWidget {
           ),
         ],
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          store.dispose();
-          return true;
+      body: Observer(
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async {
+              store.dispose();
+              return true;
+            },
+            child: store.isBasicLoaded
+                ? SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // 构建图片, 标题, 分数, tag, 阅读按钮
+                        buildPreviewTitle(context),
+                        const Divider(),
+                        // 构建下面的需要加载的数据
+                        buildNeedLoading(context),
+                      ],
+                    ),
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          );
         },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 构建图片, 标题, 分数, tag, 阅读按钮
-              buildPreviewTitle(context),
-              const Divider(),
-              // 构建下面的需要加载的数据
-              Observer(builder: (context) => buildNeedLoading(context)),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -550,14 +561,13 @@ class EhPreviewPage extends StatelessWidget {
     return TextButton(
       onPressed: store.observableList.isNotEmpty
           ? () async {
-              final readPage = (await DB().ehHistoryDao.get(
-                          store.previewModel.gid, store.previewModel.gtoken))
-                      ?.readPage ??
-                  0;
+              // final readPage =
+              //     (await DB().galleryHistoryDao.get(gid, gtoken))?.readPage ??
+              //         0;
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return EhReadPage(
                   store: store,
-                  startIndex: readPage,
+                  startIndex: 0,
                 );
               }));
             }
@@ -591,14 +601,14 @@ class EhPreviewPage extends StatelessWidget {
 
   Text buildTitle() {
     return Text(
-      previewModel.title,
+      store.title,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
     );
   }
 
   Text buildUploader(BuildContext context) {
     return Text(
-      previewModel.uploader,
+      store.uploader,
       style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 14,
@@ -612,7 +622,7 @@ class EhPreviewPage extends StatelessWidget {
         RatingBar.builder(
           itemSize: 16,
           ignoreGestures: true,
-          initialRating: previewModel.stars,
+          initialRating: store.star,
           onRatingUpdate: (value) {},
           itemBuilder: (BuildContext context, int index) {
             return const Icon(
@@ -623,7 +633,7 @@ class EhPreviewPage extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          previewModel.stars.toString(),
+          store.star.toString(),
           style: TextStyle(
               fontSize: 12,
               color: Theme.of(context).textTheme.subtitle2!.color),
@@ -638,14 +648,14 @@ class EhPreviewPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: previewModel.tag.color,
+          color: store.tag.color,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              previewModel.tag.translate(context),
+              store.tag.translate(context),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 13,
@@ -663,7 +673,7 @@ class EhPreviewPage extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: max(previewAspectRatio, 0.5),
         child: NullableHero(
-          tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
+          tag: heroTag ?? '$gid$gtoken',
           child: Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -674,7 +684,7 @@ class EhPreviewPage extends StatelessWidget {
               fit: BoxFit.fill,
               image: DioImageProvider(
                 dio: adapter.dio,
-                url: previewModel.previewImg,
+                url: store.previewImageUrl,
               ),
               enableLoadState: true,
               loadStateChanged: (state) {

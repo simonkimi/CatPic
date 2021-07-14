@@ -24,6 +24,13 @@ extension ListHelper<T> on List<T> {
     return this[math.Random().nextInt(length)];
   }
 
+  T? index(int index) {
+    if (length < index && index >= 0) {
+      return this[index]!;
+    }
+    return null;
+  }
+
   List<T> addAsSet(Iterable<T> other) {
     addAll(other.where((e) => !contains(e)));
     return this;
@@ -77,6 +84,8 @@ extension StringHelper on String {
   }
 
   int toInt() => int.tryParse(this) ?? 0;
+
+  double toDouble() => double.tryParse(this) ?? 0.0;
 
   String get baseHost {
     return split('.').reversed.take(2).toList().reversed.join('.');

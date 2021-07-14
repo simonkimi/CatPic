@@ -74,7 +74,6 @@ class EhWatchedResult extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) {
               return EhPreviewPage(
-                imageCount: item.pages,
                 previewAspectRatio: item.previewHeight / item.previewWidth,
                 previewModel: item,
                 heroTag: '${item.gid}${item.gtoken}',

@@ -49,7 +49,8 @@ class EhReadPage extends HookWidget {
     required this.startIndex,
   })  : readStore = ReadStore(
           currentIndex: startIndex,
-          gid: store.previewModel.gid,
+          gid: store.gid,
+          gtoken: store.gtoken,
         ),
         super(key: key);
 

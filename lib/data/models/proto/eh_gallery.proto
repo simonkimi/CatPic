@@ -46,7 +46,7 @@ message GalleryModel  {
   string gid = 1;
   string token = 2;
   string title = 3;
-  bool visible = 4;
+  string visible = 4;
   string fileSize = 5;
   int32 favorited = 6;
   int32 maxPageIndex = 7;
@@ -56,4 +56,13 @@ message GalleryModel  {
   repeated TagModels tags = 11;
   repeated CommentModel comments = 12;
   repeated PreviewImage previewImages = 13;
+  int32 favcat = 14;
+  int32 torrentNum = 15;
+  string japanTitle = 16;
+  string previewImage = 17;
+  string uploader = 18;
+  string uploadTime = 19;
+  double star = 20;
+  int32 starMember = 21;
+  int32 tag = 22;
 }

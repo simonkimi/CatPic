@@ -1,7 +1,9 @@
+import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:catpic/utils/utils.dart';
+import 'package:tuple/tuple.dart';
 
 class GalleryParser {
   static GalleryModel parse(String galleryHtml) {
@@ -22,12 +24,13 @@ class GalleryParser {
     final maxPageIndex = parseMaxPage(document);
     final comments = parseComment(document);
     final title = document.querySelector('#gn')!.text;
+    final japanTitle = document.querySelector('#gj')?.text.trim() ?? '';
+    final uploader = document.querySelector('#gdn')?.text.trim() ?? '';
 
     final visible = document
-            .querySelectorAll('#gdd > table > tbody > tr')[2]
-            .children[1]
-            .text ==
-        'Yes';
+        .querySelectorAll('#gdd > table > tbody > tr')[2]
+        .children[1]
+        .text;
 
     final parent = parseParent(document);
 
@@ -38,15 +41,37 @@ class GalleryParser {
         .replaceAll(' pages', '')
         .toInt();
 
+    final uploadTime = document
+        .querySelectorAll('#gdd > table > tbody > tr')[5]
+        .children[0]
+        .text
+        .trim();
+
     final language = document
         .querySelectorAll('#gdd > table > tbody > tr')[3]
         .children[1]
         .text
         .replaceAll(' ', '');
 
+    final tag = document.querySelector('#gdc > .cs')?.text ?? '';
+
+    final favcat = parseFavCat(document);
+    final torrentNum = parseTorrentNum(document);
+
+    final starMember =
+        document.querySelector('#rating_count')?.text.toInt() ?? 0;
+    final star = document
+            .querySelector('#rating_label')
+            ?.text
+            .replaceAll('Average: ', '')
+            .toDouble() ??
+        0.0;
+
+    final gid = parseGid(document);
+
     return GalleryModel(
-      gid: '',
-      token: '',
+      gid: gid.item1,
+      token: gid.item2,
       title: title,
       tags: tags,
       favorited: favcount,
@@ -58,6 +83,15 @@ class GalleryParser {
       visible: visible,
       imageCount: imageCount,
       language: language,
+      favcat: favcat,
+      torrentNum: torrentNum,
+      japanTitle: japanTitle,
+      uploader: uploader,
+      uploadTime: uploadTime,
+      star: star,
+      starMember: starMember,
+      previewImage: parsePreviewImage(document),
+      tag: fromEhTag(tag),
     );
   }
 
@@ -144,5 +178,36 @@ class GalleryParser {
         voteUser: voteUser,
       );
     }).toList();
+  }
+
+  static int parseFavCat(Element element) {
+    final i = element.querySelector('#id > .i');
+    if (i == null) return -1;
+    final re = RegExp(r'\d+px\s-(\d+)px;');
+    final match = re.firstMatch(i.attributes['style']!)!;
+    return (match[1]!.toInt() - 2) ~/ 19;
+  }
+
+  static int parseTorrentNum(Element element) {
+    final g2 = element.querySelectorAll('#gd5 > .g2');
+    final re = RegExp(r'(\d+)');
+    final match = re.firstMatch(g2[1].text);
+    return match?[1]?.toInt() ?? 0;
+  }
+
+  static Tuple2<String, String> parseGid(Element element) {
+    final g3 = element.querySelector('.g3 > a')!;
+    final reg = RegExp(r'g/(\d+?)/(.+?)');
+    final match = reg.firstMatch(g3.attributes['href']!)!;
+    final gid = match[1]!;
+    final token = match[2]!;
+    return Tuple2(gid, token);
+  }
+
+  static String parsePreviewImage(Element element) {
+    final gd1 = element.querySelector('#gd1 > div')!;
+    final re = RegExp(r'url\((.+?)\)');
+    final match = re.firstMatch(gd1.attributes['style']!)!;
+    return match[1]!;
   }
 }

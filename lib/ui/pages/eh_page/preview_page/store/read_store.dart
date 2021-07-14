@@ -12,9 +12,11 @@ abstract class ReadStoreBase with Store {
   ReadStoreBase({
     required this.currentIndex,
     required this.gid,
+    required this.gtoken,
   });
 
   final String gid;
+  final String gtoken;
 
   @observable
   int currentIndex;
@@ -38,6 +40,6 @@ abstract class ReadStoreBase with Store {
   Future<void> setIndex(int value) async {
     pageSliderController.setValue(value);
     currentIndex = value;
-    await DB().ehHistoryDao.updatePage(gid, value);
+    await DB().ehReadHistoryDao.setPage(gid, gtoken, value);
   }
 }

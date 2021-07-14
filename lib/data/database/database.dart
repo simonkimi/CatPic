@@ -1,6 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'package:catpic/data/database/entity/eh_history.dart';
+import 'package:catpic/data/database/entity/eh_read_history.dart';
 import 'package:catpic/main.dart';
 import 'package:path/path.dart' as p;
 import 'package:moor/ffi.dart';
@@ -13,7 +13,7 @@ import 'package:catpic/data/database/dao/host_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
 
 import 'dao/eh_download_dao.dart';
-import 'dao/eh_history_dao.dart';
+import 'dao/eh_read_history_dao.dart';
 import 'dao/gallery_cache_dao.dart';
 import 'dao/gallery_history_dao.dart';
 import 'dao/translate_dao.dart';
@@ -54,11 +54,11 @@ LazyDatabase _openConnection() {
   TagTable,
   WebsiteTable,
   EhTranslateTable,
-  EhHistoryTable,
   GalleryCacheTable,
   EhGalleryHistoryTable,
   EhDownloadTable,
   EhDownloadShaTable,
+  EhReadHistoryTable,
 ], daos: [
   DownloadDao,
   HistoryDao,
@@ -66,9 +66,9 @@ LazyDatabase _openConnection() {
   TagDao,
   WebsiteDao,
   TranslateDao,
-  EhHistoryDao,
   GalleryCacheDao,
   GalleryHistoryDao,
+  EhReadHistoryDao,
   EhDownloadDao,
 ])
 class AppDataBase extends _$AppDataBase {
@@ -98,11 +98,11 @@ class DB {
 
   TranslateDao get translateDao => _database.translateDao;
 
-  EhHistoryDao get ehHistoryDao => _database.ehHistoryDao;
-
   GalleryCacheDao get galleryCacheDao => _database.galleryCacheDao;
 
   GalleryHistoryDao get galleryHistoryDao => _database.galleryHistoryDao;
 
   EhDownloadDao get ehDownloadDao => _database.ehDownloadDao;
+
+  EhReadHistoryDao get ehReadHistoryDao => _database.ehReadHistoryDao;
 }

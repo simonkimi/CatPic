@@ -173,7 +173,6 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
           MaterialPageRoute(
             builder: (context) {
               return EhPreviewPage(
-                imageCount: item.pages,
                 previewAspectRatio: item.previewHeight / item.previewWidth,
                 previewModel: item,
                 heroTag: heroTag,

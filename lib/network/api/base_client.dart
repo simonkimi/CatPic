@@ -80,7 +80,7 @@ class DioBuilder {
   static Dio buildDio() {
     return Dio()
       ..options.connectTimeout = 1000 * 60
-      ..options.receiveTimeout = 1000 * 60
+      ..options.receiveTimeout = 1000 * 180
       ..options.sendTimeout = 1000 * 60
       ..options.headers = <String, String>{
         'Accept-Encoding': 'gzip, deflate, br',
