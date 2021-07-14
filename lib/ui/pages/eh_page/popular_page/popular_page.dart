@@ -72,7 +72,7 @@ class EhPopularResult extends StatelessWidget {
         DB().galleryHistoryDao.add(EhGalleryHistoryTableCompanion.insert(
               gid: item.gid,
               gtoken: item.gtoken,
-              pb: item.toPb().writeToBuffer(),
+              pb: item.writeToBuffer(),
             ));
         Navigator.of(context).push(
           MaterialPageRoute(

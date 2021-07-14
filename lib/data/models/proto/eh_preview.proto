@@ -5,6 +5,7 @@ package ehentai;
 message PreviewTag {
   string tag = 1;
   int32 color = 2;
+  string translate = 3;
 }
 
 message PreViewItemModel {

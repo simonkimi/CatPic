@@ -1,4 +1,4 @@
-import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:tuple/tuple.dart';

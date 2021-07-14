@@ -174,24 +174,27 @@ class _EhImageViewerState extends State<EhImageViewer>
       height: double.infinity,
       color: Colors.transparent,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              e.toString(),
-              style: const TextStyle(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error,
                 color: Colors.white,
-                fontSize: 20,
-                decoration: TextDecoration.none,
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                e.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

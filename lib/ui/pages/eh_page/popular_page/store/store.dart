@@ -1,5 +1,5 @@
 import 'package:catpic/data/models/ehentai/load_more_with_filter.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:mobx/mobx.dart';
 

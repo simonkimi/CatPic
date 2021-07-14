@@ -1,7 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/favourite_model.dart';
-import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
-import 'package:catpic/data/models/ehentai/gallery_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
@@ -11,7 +10,7 @@ import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:catpic/data/models/gen/eh_gallery.pb.dart' as gallery_pb;
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);
@@ -63,8 +62,7 @@ class EHAdapter extends Adapter {
     if (page == 0) {
       final db = await DB().galleryCacheDao.get(gid, gtoken);
       if (db != null) {
-        model =
-            GalleryModel.fromPb(gallery_pb.GalleryModel.fromBuffer(db.data));
+        model = GalleryModel.fromBuffer(db.data);
       }
     }
 
@@ -75,14 +73,14 @@ class EHAdapter extends Adapter {
       DB().galleryCacheDao.insert(GalleryCacheTableCompanion.insert(
             gid: gid,
             token: gtoken,
-            data: model!.toPb().writeToBuffer(),
+            data: model!.writeToBuffer(),
           ));
     }
 
     for (final tagList in model.tags) {
-      tagList.keyTranslate = settingStore.translateMap[tagList.key];
+      tagList.keyTranslate = settingStore.translateMap[tagList.key] ?? '';
       for (final tag in tagList.value) {
-        tag.translate = settingStore.translateMap[tag.value];
+        tag.translate = settingStore.translateMap[tag.value] ?? '';
       }
     }
     return model;
@@ -122,7 +120,7 @@ class EHAdapter extends Adapter {
           tag.translate =
               '${tagParam[0]}:${settingStore.translateMap[tagParam[1]] ?? tagParam[1]}';
         } else if (tagParam.length == 1) {
-          tag.translate = settingStore.translateMap[tag.tag];
+          tag.translate = settingStore.translateMap[tag.tag] ?? '';
         }
       }
     }

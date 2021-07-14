@@ -1,13 +1,13 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
-import 'package:catpic/data/models/gen/eh_download.pb.dart' as pb;
+import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:executor/executor.dart';
 import 'package:get/get.dart';
@@ -48,12 +48,12 @@ abstract class EhDownloadStoreBase with Store {
 
     // 读取/创建 下载配置文件
     final configBytes = await fh.readFile(basePath, '.catpic');
-    late pb.EhDownloadModel configModel;
+    late EhDownloadModel configModel;
     if (configBytes == null) {
-      configModel = pb.EhDownloadModel(model: model.toPb(), pageInfo: {});
+      configModel = EhDownloadModel(model: model, pageInfo: {});
       await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
     } else {
-      configModel = pb.EhDownloadModel.fromBuffer(configBytes);
+      configModel = EhDownloadModel.fromBuffer(configBytes);
     }
 
     // 读取下载进度
@@ -141,7 +141,7 @@ abstract class EhDownloadStoreBase with Store {
           pageDownload: 0,
           gid: model.gid,
           gtoken: model.gtoken,
-          previewItemPb: model.toPb().writeToBuffer(),
+          previewItemPb: model.writeToBuffer(),
         ));
     startDownload(model, mainStore.websiteEntity!);
   }

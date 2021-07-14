@@ -44,6 +44,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
+  // 单个画廊
   Future<String> getGallery(
       String gid, String gtoken, String page, CancelToken? cancelToken) async {
     return (await dio.get<String>(
@@ -54,6 +55,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
+  // 单张图片
   Future<String> galleryImage({
     required String gtoken,
     required String gid,
@@ -70,6 +72,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
+  // 收藏
   Future<String> favourite({
     required int favcat,
     required int page,

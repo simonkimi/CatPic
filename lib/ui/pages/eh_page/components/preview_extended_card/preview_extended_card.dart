@@ -1,4 +1,5 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
@@ -214,7 +215,11 @@ class PreviewExtendedCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(3),
             child: Text(
-              settingStore.ehTranslate ? e.translate ?? e.tag : e.tag,
+              settingStore.ehTranslate
+                  ? e.translate.isNotEmpty
+                      ? e.translate
+                      : e.tag
+                  : e.tag,
               style: TextStyle(
                 height: 1,
                 fontSize: 11,

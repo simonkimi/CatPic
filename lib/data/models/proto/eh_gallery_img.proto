@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ehentai;
+
+message GalleryImgModel {
+  string imgUrl = 1;
+  string imgSize = 2;
+  int32 width = 3;
+  int32 height = 4;
+  int32 rawWidth = 5;
+  int32 rawHeight = 6;
+  string rawImgUrl = 7;
+  string rawImgSize = 8;
+  string sha = 9;
+}

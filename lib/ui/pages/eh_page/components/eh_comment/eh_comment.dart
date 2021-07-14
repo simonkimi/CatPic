@@ -1,4 +1,4 @@
-import 'package:catpic/data/models/ehentai/gallery_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:flutter/material.dart';
 
 class EhComment extends StatelessWidget {

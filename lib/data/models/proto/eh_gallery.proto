@@ -12,6 +12,8 @@ message TagItem {
   string parent = 1;
   // tag具体内容
   string value = 2;
+  // 翻译
+  string translate = 3;
 }
 
 message TagModels {
@@ -19,6 +21,8 @@ message TagModels {
   string key = 1;
   // tags
   repeated TagItem value = 2;
+  // key的翻译
+  string keyTranslate = 3;
 }
 
 message CommentModel {

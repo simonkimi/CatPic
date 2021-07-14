@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -10,8 +10,6 @@ import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
-
-import 'package:catpic/data/models/gen/eh_preview.pb.dart' as pb;
 
 class EhDownloadPage extends StatelessWidget {
   const EhDownloadPage({Key? key}) : super(key: key);
@@ -42,8 +40,7 @@ class EhDownloadPage extends StatelessWidget {
         builder: (context, snapshot) {
           return ListView(
             children: snapshot.data!.map((e) {
-              final item = PreViewItemModel.fromPb(
-                  pb.PreViewItemModel.fromBuffer(e.previewItemPb));
+              final item = PreViewItemModel.fromBuffer(e.previewItemPb);
               final adapter = EHAdapter(mainStore.websiteEntity!);
               final heroTag = 'download${item.gid}${item.gtoken}';
               return PreviewExtendedCard(
@@ -56,7 +53,7 @@ class EhDownloadPage extends StatelessWidget {
                       .add(EhGalleryHistoryTableCompanion.insert(
                         gid: item.gid,
                         gtoken: item.gtoken,
-                        pb: item.toPb().writeToBuffer(),
+                        pb: item.writeToBuffer(),
                       ));
                   Navigator.of(context).push(
                     MaterialPageRoute(

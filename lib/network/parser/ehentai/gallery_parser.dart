@@ -1,4 +1,4 @@
-import 'package:catpic/data/models/ehentai/gallery_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:catpic/utils/utils.dart';
@@ -81,7 +81,8 @@ class GalleryParser {
       final tags = e.children[1].children.map((e) => e.text).toList();
       title = title.substring(0, title.length - 1);
       return TagModels(
-          key: title, value: tags.map((e) => TagItem(e, title)).toList());
+          key: title,
+          value: tags.map((e) => TagItem(parent: title, value: e)).toList());
     }).toList();
   }
 

@@ -2,9 +2,9 @@ import 'dart:ui' as ui;
 
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
-import 'package:catpic/data/models/ehentai/gallery_img_model.dart';
-import 'package:catpic/data/models/ehentai/gallery_model.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';

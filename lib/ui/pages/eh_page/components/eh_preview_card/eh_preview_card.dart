@@ -1,4 +1,4 @@
-import 'package:catpic/data/models/ehentai/gallery_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_clip/preview_clip.dart';

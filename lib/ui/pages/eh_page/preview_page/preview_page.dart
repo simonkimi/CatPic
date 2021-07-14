@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -56,7 +56,6 @@ class EhPreviewPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: appBarBackButton(),
-        title: Text(previewModel.titleJpn ?? ''),
         actions: [
           PopupMenuButton<GalleryAction>(
             icon: const Icon(
@@ -73,26 +72,18 @@ class EhPreviewPage extends StatelessWidget {
                       .galleryCacheDao
                       .remove(previewModel.gid, previewModel.gtoken)
                       .then((value) {
-                    BotToast.showText(text: I18n.of(context).refresh);
-                    Navigator.of(context).pop();
+                    store.onRefresh();
                   });
               }
             },
             itemBuilder: (context) {
               return [
-                PopupMenuItem(
+                buildPopupMenuItem(
+                  context: context,
+                  icon: Icons.refresh,
                   value: GalleryAction.REFRESH,
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.refresh,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(I18n.of(context).refresh),
-                    ],
-                  ),
-                )
+                  text: I18n.of(context).refresh,
+                ),
               ];
             },
           ),
@@ -114,6 +105,30 @@ class EhPreviewPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  PopupMenuItem<T> buildPopupMenuItem<T>({
+    required BuildContext context,
+    required IconData icon,
+    required String text,
+    required T value,
+  }) {
+    return PopupMenuItem<T>(
+      value: value,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isDarkMode(context)
+                ? const Color(0xFF616161)
+                : const Color(0xFF898989),
+          ),
+          const SizedBox(width: 20),
+          Text(text),
+        ],
       ),
     );
   }
@@ -350,7 +365,9 @@ class EhPreviewPage extends StatelessWidget {
                         padding: const EdgeInsets.all(7),
                         child: Text(
                           settingStore.ehTranslate
-                              ? e.keyTranslate ?? e.key
+                              ? e.keyTranslate.isNotEmpty
+                                  ? e.keyTranslate
+                                  : e.key
                               : e.key,
                           style: const TextStyle(
                             height: 1,
@@ -393,7 +410,9 @@ class EhPreviewPage extends StatelessWidget {
                             padding: const EdgeInsets.all(7),
                             child: Text(
                               settingStore.ehTranslate
-                                  ? e.translate ?? e.value
+                                  ? e.translate.isNotEmpty
+                                      ? e.translate
+                                      : e.value
                                   : e.value,
                               style: const TextStyle(
                                 fontSize: 15,
