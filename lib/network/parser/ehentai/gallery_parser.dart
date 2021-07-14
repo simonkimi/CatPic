@@ -42,8 +42,8 @@ class GalleryParser {
         .toInt();
 
     final uploadTime = document
-        .querySelectorAll('#gdd > table > tbody > tr')[5]
-        .children[0]
+        .querySelectorAll('#gdd > table > tbody > tr')[0]
+        .children[1]
         .text
         .trim();
 
@@ -209,5 +209,24 @@ class GalleryParser {
     final re = RegExp(r'url\((.+?)\)');
     final match = re.firstMatch(gd1.attributes['style']!)!;
     return match[1]!;
+  }
+
+  static List<GalleryUpdate> parseUpdates(Element document) {
+    final update = <GalleryUpdate>[];
+    var pointer = 0;
+    for (final node in document.querySelector('#gnd')!.nodes) {
+      if (node.nodeType == Node.ELEMENT_NODE &&
+          node.attributes.containsKey('href')) {
+        final reg = RegExp(r'g/(\d+)/(.+)/');
+        final match = reg.firstMatch(node.attributes['href']!)!;
+        update.add(GalleryUpdate(gid: match[1]!, token: match[2]!));
+      } else if (node.nodeType == Node.TEXT_NODE) {
+        final reg = RegExp(r'\d+-\d+-\d+\s\d+:\d+');
+        final match = reg.firstMatch(node.text!)!;
+        update[pointer].updateTime = match[0]!;
+        pointer += 1;
+      }
+    }
+    return update;
   }
 }

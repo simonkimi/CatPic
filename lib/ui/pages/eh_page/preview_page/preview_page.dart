@@ -197,6 +197,8 @@ class EhPreviewPage extends StatelessWidget {
               const SizedBox(height: 5),
               buildUploader(context),
               const SizedBox(height: 5),
+              buildUploadTime(context),
+              const SizedBox(height: 5),
               buildStarBar(context),
               const SizedBox(height: 5),
               buildTypeTag(context),
@@ -208,6 +210,22 @@ class EhPreviewPage extends StatelessWidget {
                 children: [
                   buildReadButton(context),
                   const Expanded(child: SizedBox()),
+                  if (store.observableList.isNotEmpty)
+                    TextButton(
+                      onPressed: () {},
+                      child: const Icon(Icons.update),
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(Platform.isWindows
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15)
+                              : const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 2)),
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(0, 0)),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.orange)),
+                    ),
                   if (store.observableList.isNotEmpty)
                     TextButton(
                       onPressed: () {},
@@ -244,6 +262,16 @@ class EhPreviewPage extends StatelessWidget {
             },
           )
         ],
+      ),
+    );
+  }
+
+  Text buildUploadTime(BuildContext context) {
+    return Text(
+      store.uploadTime,
+      style: TextStyle(
+        fontSize: 14,
+        color: Theme.of(context).textTheme.subtitle2!.color,
       ),
     );
   }
@@ -610,9 +638,10 @@ class EhPreviewPage extends StatelessWidget {
     return Text(
       store.uploader,
       style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-          color: Theme.of(context).textTheme.subtitle2!.color),
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        color: Theme.of(context).textTheme.subtitle2!.color,
+      ),
     );
   }
 

@@ -7,6 +7,12 @@ message GalleryBase {
   string token = 2;
 }
 
+message GalleryUpdate {
+  string gid = 1;
+  string token = 2;
+  string updateTime = 3;
+}
+
 message TagItem {
   // tag的类别
   string parent = 1;
@@ -65,4 +71,5 @@ message GalleryModel  {
   double star = 20;
   int32 starMember = 21;
   int32 tag = 22;
+  repeated GalleryUpdate updates = 23;
 }

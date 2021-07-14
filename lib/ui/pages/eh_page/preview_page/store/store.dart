@@ -62,6 +62,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   late final List<ReadImageModel> readImageList;
   final List<Lock> pageLoadLock;
 
+  final updateList = ObservableList<GalleryUpdate>();
+
   @override
   @observable
   bool isLoading = false;
@@ -177,6 +179,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         uploader = galleryModel.uploader;
         uploadTime = galleryModel.uploadTime;
         isBasicLoaded = true;
+        if (updateList.isEmpty && galleryModel.updates.isNotEmpty)
+          updateList.addAll(galleryModel.updates);
       }
       if (loadPreview) {
         for (final waitingImg in imageList) {
