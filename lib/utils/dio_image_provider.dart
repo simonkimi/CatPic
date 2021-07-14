@@ -15,7 +15,17 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 import 'utils.dart';
 
-typedef UrlBuilder = Future<String> Function();
+typedef AsyncBuilder = Future<DioImageParams> Function();
+
+class DioImageParams {
+  const DioImageParams({
+    required this.url,
+    required this.cacheKey,
+  });
+
+  final String url;
+  final String cacheKey;
+}
 
 @immutable
 class DioImageProvider extends ImageProvider<DioImageProvider> {
@@ -23,17 +33,15 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     this.url,
     this.dio,
     this.scale = 1.0,
-    this.urlBuilder,
     this.cacheKey,
-    this.cacheKeyBuilder,
-  }) : assert(urlBuilder != null || url != null);
+    this.builder,
+  }) : assert(builder != null || url != null);
 
   final Dio? dio;
   final String? url;
   final double scale;
-  final UrlBuilder? urlBuilder;
   final String? cacheKey;
-  final UrlBuilder? cacheKeyBuilder;
+  final AsyncBuilder? builder;
 
   final _cancelToken = CancelToken().wrap;
 
@@ -41,8 +49,8 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   bool operator ==(Object other) {
     if (other is! DioImageProvider) return false;
 
-    if (other.urlBuilder != null || urlBuilder != null)
-      return other.urlBuilder == urlBuilder &&
+    if (other.builder != null || builder != null)
+      return other.builder == builder &&
           other.dio == dio &&
           other.scale == scale;
 
@@ -79,12 +87,19 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       StreamController<ImageChunkEvent> chunkEvents) async {
     _cancelToken.value = CancelToken();
     try {
-      final imageUrl = url ?? await urlBuilder!();
-      final key = cacheKeyBuilder != null
-          ? await cacheKeyBuilder!()
-          : cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl);
-      print('Dio load key: $key url: $imageUrl');
-      final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
+      String? imgUrl;
+      String? cacheKey;
+
+      if (builder != null) {
+        final model = await builder!();
+        imgUrl = model.url;
+        cacheKey = model.cacheKey;
+      }
+
+      final key =
+          cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imgUrl ?? url!);
+
+      final rsp = await (dio ?? Dio()).get<List<int>>(imgUrl ?? url!,
           cancelToken: _cancelToken.value,
           options: settingStore.dioCacheOptions
               .copyWith(
@@ -113,7 +128,6 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       }
       rethrow;
     } catch (e) {
-      print('DioImageProvider: ${e.toString()}');
       rethrow;
     }
   }

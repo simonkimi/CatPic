@@ -19,7 +19,6 @@ class MultiImageViewer extends StatefulWidget {
     required this.dio,
     this.onIndexChange,
     required this.itemCount,
-    this.futureItemBuilder,
     this.pageController,
     this.onCenterTap,
   })  : hasVideo = false,
@@ -38,13 +37,11 @@ class MultiImageViewer extends StatefulWidget {
     this.previewBuilder,
     this.onCenterTap,
   })  : hasVideo = true,
-        futureItemBuilder = null,
         super(key: key);
 
   final Dio dio;
   final int index;
   final ValueChanged<int>? onIndexChange;
-  final FutureItemBuilder? futureItemBuilder;
   final ItemBuilder? itemBuilder;
   final int itemCount;
   final bool hasVideo;
@@ -86,7 +83,6 @@ class _MultiImageViewerState extends State<MultiImageViewer>
           (index) => DioImageProvider(
                 dio: widget.dio,
                 url: widget.itemBuilder?.call(index),
-                urlBuilder: () => widget.futureItemBuilder!(index),
               ));
     }
 
