@@ -79,7 +79,7 @@ class PreviewExtendedCard extends StatelessWidget {
               buildCardInfo(context),
               lastWidget ??
                   SizedBox(
-                    height: 35,
+                    height: 37,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -153,7 +153,10 @@ class PreviewExtendedCard extends StatelessWidget {
               constraints: const BoxConstraints(minWidth: 50),
               child: Container(
                   padding: const EdgeInsets.all(1),
-                  decoration: BoxDecoration(color: previewModel.tag.color),
+                  decoration: BoxDecoration(
+                    color: previewModel.tag.color,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
                   child: Center(
                     child: Text(
                       previewModel.tag.translate(context),
@@ -249,7 +252,7 @@ class PreviewExtendedCard extends StatelessWidget {
       children: [
         SizedBox(
           width: 100,
-          height: 130,
+          height: 140,
           child: DioImage(
             dio: adapter.dio,
             url: previewModel.previewImg,

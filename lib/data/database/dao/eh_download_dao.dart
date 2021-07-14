@@ -12,6 +12,10 @@ class EhDownloadDao extends DatabaseAccessor<AppDataBase>
 
   Future<List<EhDownloadTableData>> getAll() => select(ehDownloadTable).get();
 
+  Future<EhDownloadTableData?> get(int id) =>
+      (select(ehDownloadTable)..where((tbl) => tbl.id.equals(id)))
+          .getSingleOrNull();
+
   Stream<List<EhDownloadTableData>> getAllStream() =>
       select(ehDownloadTable).watch();
 

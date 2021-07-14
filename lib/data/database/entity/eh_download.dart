@@ -18,5 +18,5 @@ class EhDownloadTable extends Table {
 
   TextColumn get gtoken => text()();
 
-  BlobColumn get previewItemPb => blob()();
+  BlobColumn get galleryPb => blob()();
 }

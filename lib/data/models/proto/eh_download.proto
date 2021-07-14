@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package ehentai;
 
-import 'eh_preview.proto';
+import 'eh_gallery.proto';
 
 
 message EhDownloadModel {
-  PreViewItemModel model = 1;
+  GalleryModel model = 1;
   map<int32, string> pageInfo = 2;
 }
 

@@ -111,6 +111,9 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   @observable
   List<TagModels> tagList = [];
 
+  @observable
+  int torrentNum = 0;
+
   @override
   int? get pageItemCount => 40;
 
@@ -179,6 +182,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         uploader = galleryModel.uploader;
         uploadTime = galleryModel.uploadTime;
         isBasicLoaded = true;
+        torrentNum = galleryModel.torrentNum;
         if (updateList.isEmpty && galleryModel.updates.isNotEmpty)
           updateList.addAll(galleryModel.updates);
       }

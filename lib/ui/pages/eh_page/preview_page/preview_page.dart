@@ -10,6 +10,7 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/ui/components/icon_text.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/components/nullable_hero.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
@@ -188,6 +189,7 @@ class EhPreviewPage extends StatelessWidget {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -197,11 +199,8 @@ class EhPreviewPage extends StatelessWidget {
               const SizedBox(height: 5),
               buildUploader(context),
               const SizedBox(height: 5),
-              buildUploadTime(context),
-              const SizedBox(height: 5),
-              buildStarBar(context),
-              const SizedBox(height: 5),
               buildTypeTag(context),
+              const SizedBox(height: 5),
             ],
           ),
           Observer(
@@ -472,102 +471,69 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  Row buildInfoBarRow(BuildContext context) {
-    return Row(
-      children: [
-        buildInfoBar(
-          settingStore.ehTranslate
-              ? settingStore
-                      .translateMap[store.language.trim().toLowerCase()] ??
-                  store.language
-              : store.language,
-          Text(
-            I18n.of(context).language,
-            style:
-                TextStyle(color: Theme.of(context).textTheme.subtitle2!.color),
-          ),
-        ),
-        const SizedBox(
-          width: 1,
-          height: 30,
-          child: DecoratedBox(
-            decoration: BoxDecoration(color: Colors.grey),
-          ),
-        ),
-        Expanded(
-          child: Column(
+  Widget buildInfoBarRow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      child: Column(
+        children: [
+          Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    store.imageCount.toString(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                  const Icon(
-                    Icons.image_sharp,
-                    size: 15,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    IconText(
+                      icon: Icons.translate,
+                      text: settingStore.ehTranslate
+                          ? settingStore.translateMap[
+                                  store.language.trim().toLowerCase()] ??
+                              store.language
+                          : store.language,
+                    )
+                  ],
+                ),
               ),
-              Text(
-                I18n.of(context).page,
-                style: TextStyle(
-                    color: Theme.of(context).textTheme.subtitle2!.color),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconText(
+                      text: store.pageItemCount.toString(),
+                      icon: Icons.image_outlined,
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconText(
+                      text: store.fileSize,
+                      icon: Icons.file_copy_outlined,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-        ),
-        const SizedBox(
-          width: 1,
-          height: 30,
-          child: DecoratedBox(
-            decoration: BoxDecoration(color: Colors.grey),
-          ),
-        ),
-        buildInfoBar(
-          store.fileSize,
-          Text(
-            I18n.of(context).size,
-            style: TextStyle(
-              color: Theme.of(context).textTheme.subtitle2!.color,
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 1,
-          height: 30,
-          child: DecoratedBox(
-            decoration: BoxDecoration(color: Colors.grey),
-          ),
-        ),
-        Expanded(
-          child: Column(
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    store.favouriteCount.toString(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const Icon(
-                    Icons.favorite,
-                    size: 15,
-                  ),
-                ],
+              IconText(
+                icon: Icons.favorite,
+                iconColor: Colors.red,
+                text: store.favouriteCount.toString(),
               ),
-              Text(
-                I18n.of(context).favourite,
-                style: TextStyle(
-                    color: Theme.of(context).textTheme.subtitle2!.color),
-              ),
+              Text(store.uploadTime),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -628,7 +594,7 @@ class EhPreviewPage extends StatelessWidget {
   Text buildTitle() {
     return Text(
       store.title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
 
@@ -636,8 +602,7 @@ class EhPreviewPage extends StatelessWidget {
     return Text(
       store.uploader,
       style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 14,
+        fontSize: 16,
         color: Theme.of(context).textTheme.subtitle2!.color,
       ),
     );
@@ -676,6 +641,7 @@ class EhPreviewPage extends StatelessWidget {
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           color: store.tag.color,
+          borderRadius: BorderRadius.circular(3),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

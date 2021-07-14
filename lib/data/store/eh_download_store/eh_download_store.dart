@@ -1,6 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:dio/dio.dart';
@@ -27,30 +27,31 @@ abstract class EhDownloadStoreBase with Store {
   final pageParseExec = Executor(concurrency: 3);
 
   Future<void> startDownload(
-    PreViewItemModel model,
+    EhDownloadTableData database,
     WebsiteTableData entity,
   ) async {
     final adapter = EHAdapter(entity);
     // 创建下载任务
     final task = EhDownloadTask(
-      gid: model.gid,
-      gtoken: model.gtoken,
+      gid: database.gid,
+      gtoken: database.gtoken,
       finishPage: <int>{}.obs,
-      pageCount: model.pages.obs,
+      pageCount: database.pageTotal.obs,
       state: EhDownloadState.PARSE_PAGE.obs,
     );
 
     if (downloadingList.contains(task)) return;
 
     // 创建下载文件夹
-    final basePath = 'gallery/${model.gid}-${model.gtoken}';
+    final basePath = 'gallery/${database.gid}-${database.gtoken}';
     await fh.createDir(basePath);
 
     // 读取/创建 下载配置文件
     final configBytes = await fh.readFile(basePath, '.catpic');
     late EhDownloadModel configModel;
     if (configBytes == null) {
-      configModel = EhDownloadModel(model: model, pageInfo: {});
+      configModel = EhDownloadModel(
+          model: GalleryModel.fromBuffer(database.galleryPb), pageInfo: {});
       await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
     } else {
       configModel = EhDownloadModel.fromBuffer(configBytes);
@@ -66,7 +67,7 @@ abstract class EhDownloadStoreBase with Store {
     task.finishPage.addAll(existImages);
 
     // 解析配置, 解析图片下载地址
-    final futures = List.generate(model.pages, (index) => index)
+    final futures = List.generate(database.pageTotal, (index) => index)
         .where((e) => !configModel.pageInfo.containsKey(e))
         .map((e) => (e / 40).floor())
         .toSet()
@@ -75,8 +76,8 @@ abstract class EhDownloadStoreBase with Store {
               while (retry-- > 0) {
                 try {
                   final gallery = await adapter.gallery(
-                      gid: model.gid,
-                      gtoken: model.gtoken,
+                      gid: database.gid,
+                      gtoken: database.gtoken,
                       page: e,
                       cancelToken: task.cancelToken);
                   for (final imgEntity
@@ -96,7 +97,7 @@ abstract class EhDownloadStoreBase with Store {
 
     // 开始下载图片
     task.state.value = EhDownloadState.WORKING;
-    final pictureFutures = List.generate(model.pages, (index) => index)
+    final pictureFutures = List.generate(database.pageTotal, (index) => index)
         .where((e) => !task.finishPage.contains(e))
         .toSet()
         .map((e) => imageDownloadExec.scheduleTask(() async {
@@ -104,7 +105,7 @@ abstract class EhDownloadStoreBase with Store {
               while (retry-- > 0) {
                 try {
                   final imageModel = await adapter.galleryImage(
-                    gid: model.gid,
+                    gid: database.gid,
                     gtoken: configModel.pageInfo[e]!,
                     page: e + 1,
                   );
@@ -132,18 +133,21 @@ abstract class EhDownloadStoreBase with Store {
   }
 
   Future<void> createDownloadTask(
-    PreViewItemModel model,
+    GalleryModel model,
   ) async {
-    await DB().ehDownloadDao.insert(EhDownloadTableCompanion.insert(
-          websiteId: mainStore.websiteEntity!.id,
-          status: DownloadStatus.PENDING,
-          pageTotal: model.pages,
-          pageDownload: 0,
-          gid: model.gid,
-          gtoken: model.gtoken,
-          previewItemPb: model.writeToBuffer(),
-        ));
-    startDownload(model, mainStore.websiteEntity!);
+    final dao = DB().ehDownloadDao;
+    final id = await dao.insert(EhDownloadTableCompanion.insert(
+      websiteId: mainStore.websiteEntity!.id,
+      status: DownloadStatus.PENDING,
+      pageTotal: model.imageCount,
+      pageDownload: 0,
+      gid: model.gid,
+      gtoken: model.token,
+      galleryPb: model.writeToBuffer(),
+    ));
+
+    final database = await dao.get(id);
+    startDownload(database!, mainStore.websiteEntity!);
   }
 
   Future<Uint8List> _download({
