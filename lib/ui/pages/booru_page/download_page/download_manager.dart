@@ -9,6 +9,7 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dio_image.dart';
 import 'package:catpic/ui/pages/booru_page/post_image_view/post_image_view.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
@@ -262,7 +263,7 @@ class DownloadManagerPage extends StatelessWidget {
   Widget buildCardImage(Dio dio, String url) {
     return DioImage(
       dio: dio,
-      imageUrlBuilder: () => Future.value(url),
+      builder: () => Future.value(DioImageParams(url: url)),
     );
   }
 }

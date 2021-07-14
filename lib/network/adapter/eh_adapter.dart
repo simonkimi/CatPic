@@ -94,7 +94,7 @@ class EHAdapter extends Adapter {
     required int page,
   }) async {
     final str = await client.galleryImage(gid: gid, gtoken: gtoken, page: page);
-    return await compute(GalleryImgParser.parse, str);
+    return compute(GalleryImgParser.parse, str);
   }
 
   Future<EhFavouriteModel> favourite({

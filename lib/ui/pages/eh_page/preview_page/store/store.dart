@@ -218,7 +218,7 @@ class ReadImageModel {
       if (this.model != null) {
         return this.model!;
       }
-      final reg = RegExp(r's/(.+?)/(\d+)-(\d)');
+      final reg = RegExp(r's/(.+?)/(\d+)-(\d+)');
       final match = reg.firstMatch(target)!;
       final token = match[1]!;
       final gid = match[2]!;

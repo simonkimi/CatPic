@@ -143,7 +143,7 @@ class PopularResultFragment extends StatelessWidget {
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: DioImage(
-        imageUrl: post.getPreviewImg(),
+        url: post.getPreviewImg(),
         dio: store.adapter.dio,
         imageBuilder: (context, imgData) {
           return InkWell(

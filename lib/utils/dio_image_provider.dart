@@ -19,12 +19,12 @@ typedef AsyncBuilder = Future<DioImageParams> Function();
 
 class DioImageParams {
   const DioImageParams({
-    required this.url,
-    required this.cacheKey,
+    this.url,
+    this.cacheKey,
   });
 
-  final String url;
-  final String cacheKey;
+  final String? url;
+  final String? cacheKey;
 }
 
 @immutable

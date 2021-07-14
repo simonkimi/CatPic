@@ -247,7 +247,7 @@ class PreviewExtendedCard extends StatelessWidget {
           height: 130,
           child: DioImage(
             dio: adapter.dio,
-            imageUrl: previewModel.previewImg,
+            url: previewModel.previewImg,
             imageBuilder: (context, bytes) {
               return DarkWidget(
                 child: Hero(

@@ -81,7 +81,7 @@ class PostWaterFlow extends StatelessWidget {
       title: '# ${post.id}',
       subTitle: '${post.width} x ${post.height}',
       body: DioImage(
-        imageUrl: post.getPreviewImg(),
+        url: post.getPreviewImg(),
         dio: dio,
         imageBuilder: (context, imgData) {
           return InkWell(

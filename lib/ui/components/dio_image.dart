@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ typedef ImageWidgetBuilder = Widget Function(
   Uint8List imgData,
 );
 
-typedef UrlBuilder = Future<String> Function();
+typedef AsyncBuilder = Future<DioImageParams> Function();
 
 typedef LoadingWidgetBuilder = Widget Function(
   BuildContext context,
@@ -30,20 +31,19 @@ class DioImage extends StatefulWidget {
   const DioImage({
     Key? key,
     required this.dio,
-    this.imageUrl,
-    this.imageUrlBuilder,
+    this.url,
     this.duration,
     this.imageBuilder,
     this.loadingBuilder,
     this.errorBuilder,
     this.cacheKey,
-    this.cacheKeyBuilder,
-  })  : assert(imageUrl != null || imageUrlBuilder != null),
+    this.builder,
+  })  : assert(url != null || builder != null),
         super(key: key);
 
   final Dio dio;
-  final String? imageUrl;
-  final UrlBuilder? imageUrlBuilder;
+  final String? url;
+  final AsyncBuilder? builder;
 
   final Duration? duration;
 
@@ -51,7 +51,6 @@ class DioImage extends StatefulWidget {
   final LoadingWidgetBuilder? loadingBuilder;
   final ErrorBuilder? errorBuilder;
   final String? cacheKey;
-  final UrlBuilder? cacheKeyBuilder;
 
   @override
   _DioImageState createState() => _DioImageState();
@@ -123,11 +122,19 @@ class _DioImageState extends State<DioImage> {
           expectedTotalBytes: null, cumulativeBytesLoaded: 0);
     });
     try {
-      final String url = widget.imageUrl ?? await widget.imageUrlBuilder!();
-      final key = widget.cacheKeyBuilder != null
-          ? await widget.cacheKeyBuilder!()
-          : widget.cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, url);
-      final rsp = await dio.get<List<int>>(url,
+      String? imgUrl;
+      String? cacheKey;
+
+      if (widget.builder != null) {
+        final model = await widget.builder!();
+        imgUrl = model.url;
+        cacheKey = model.cacheKey;
+      }
+
+      final key = cacheKey ??
+          const Uuid().v5(Uuid.NAMESPACE_URL, imgUrl ?? widget.url!);
+
+      final rsp = await dio.get<List<int>>(imgUrl ?? widget.url!,
           cancelToken: cancelToken,
           options: settingStore.dioCacheOptions
               .copyWith(

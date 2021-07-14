@@ -10,6 +10,7 @@ import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/pool_result/store/pool_result_store.dart';
 import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -86,10 +87,10 @@ class PoolResultFragment extends StatelessWidget {
                 width: 60,
                 child: DioImage(
                   dio: adapter.dio,
-                  imageUrlBuilder: () async {
+                  builder: () async {
                     await pool.fetchPosts(adapter.client);
-                    return (await pool.fromIndex(adapter.client, 0))
-                        .getPreviewImg();
+                    final booruPost = await pool.fromIndex(adapter.client, 0);
+                    return DioImageParams(url: booruPost.getPreviewImg());
                   },
                   errorBuilder:
                       (BuildContext context, Object? err, Function reload) {
