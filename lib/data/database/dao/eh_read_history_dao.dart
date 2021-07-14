@@ -14,7 +14,7 @@ class EhReadHistoryDao extends DatabaseAccessor<AppDataBase>
             ..where((tbl) => tbl.gtoken.equals(gtoken) & tbl.gid.equals(gid)))
           .getSingleOrNull();
 
-  Future<int> getPage(String gid, String gtoken, int page) async {
+  Future<int> getPage(String gid, String gtoken) async {
     final table = await get(gid, gtoken);
     if (table == null) {
       await add(gid, gtoken);
