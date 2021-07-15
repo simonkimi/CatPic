@@ -72,7 +72,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
-  // 收藏
+  // 收藏列表
   Future<String> favourite({
     required int favcat,
     required int page,
@@ -88,6 +88,29 @@ class EhClient extends BaseClient {
         'st': searchText.isNotEmpty ? 'on' : '',
         'sf': searchText.isNotEmpty ? 'on' : '',
       }.trim,
+    ))
+        .data!;
+  }
+
+  Future<String> addToFavourite({
+    required String gid,
+    required String gtoken,
+    required String favnote,
+    required int favcat,
+  }) async {
+    return (await dio.post<String>(
+      'gallerypopups.php',
+      queryParameters: {
+        'gid': gid,
+        't': gtoken,
+        'act': 'addfav',
+        'update': '1',
+      },
+      data: FormData.fromMap({
+        'favcat': favcat != -1 ? favcat.toString() : 'delfav',
+        'favnote': favnote,
+        'apply': favcat != -1 ? 'Add to Favorites' : 'Apply Changes',
+      }),
     ))
         .data!;
   }

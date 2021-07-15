@@ -107,7 +107,9 @@ class EHAdapter extends Adapter {
     final favouriteList = await compute(EhFavouriteParser.parse, str);
     previewTranslateHook(previewModel);
     return EhFavouriteModel(
-        favourites: favouriteList, previewModel: previewModel);
+      favourites: favouriteList,
+      previewModel: previewModel,
+    );
   }
 
   PreviewModel previewTranslateHook(PreviewModel model) {
@@ -125,5 +127,23 @@ class EHAdapter extends Adapter {
       }
     }
     return model;
+  }
+
+  Future<bool> addToFavourite({
+    required String gid,
+    required String gtoken,
+    required int favcat,
+  }) async {
+    try {
+      await client.addToFavourite(
+        gid: gid,
+        gtoken: gtoken,
+        favnote: 'favnote',
+        favcat: favcat,
+      );
+      return true;
+    } on Exception {
+      return false;
+    }
   }
 }

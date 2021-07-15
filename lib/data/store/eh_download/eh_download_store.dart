@@ -147,7 +147,7 @@ abstract class EhDownloadStoreBase with Store {
     ));
 
     final database = await dao.get(id);
-    startDownload(database!, mainStore.websiteEntity!);
+    // startDownload(database!, mainStore.websiteEntity!);
   }
 
   Future<Uint8List> _download({

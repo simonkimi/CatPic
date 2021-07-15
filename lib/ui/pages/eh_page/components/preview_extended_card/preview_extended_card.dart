@@ -19,6 +19,7 @@ class PreviewExtendedCard extends StatelessWidget {
     this.heroTag,
     this.progress,
     this.lastWidget,
+    this.controllerWidget,
   }) : super(key: key);
 
   final PreViewItemModel previewModel;
@@ -27,6 +28,7 @@ class PreviewExtendedCard extends StatelessWidget {
   final String? heroTag;
   final Rx<double>? progress;
   final Widget? lastWidget;
+  final Widget? controllerWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +87,7 @@ class PreviewExtendedCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         buildStar(context),
-                        buildPageAndTime(context),
+                        controllerWidget ?? buildPageAndTime(context),
                       ],
                     ),
                   )

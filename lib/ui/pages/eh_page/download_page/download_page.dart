@@ -26,11 +26,12 @@ class EhDownloadPage extends StatelessWidget {
         leading: Platform.isAndroid
             ? Builder(
                 builder: (context) => IconButton(
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      icon: const Icon(Icons.menu),
-                    ))
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(Icons.menu),
+                ),
+              )
             : appBarBackButton(),
       ),
       drawer: const MainDrawer(),
@@ -40,7 +41,7 @@ class EhDownloadPage extends StatelessWidget {
         builder: (context, snapshot) {
           return ListView(
             children: snapshot.data!.map((e) {
-              final item = PreViewItemModel.fromBuffer(e.previewItemPb);
+              final item = PreViewItemModel.fromBuffer(e.galleryPb);
               final adapter = EHAdapter(mainStore.websiteEntity!);
               final heroTag = 'download${item.gid}${item.gtoken}';
               return PreviewExtendedCard(
