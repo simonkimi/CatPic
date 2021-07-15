@@ -47,13 +47,15 @@ class PreviewExtendedCard extends StatelessWidget {
           padding: const EdgeInsets.all(0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  buildImage(context),
-                  buildCardRight(context),
-                ],
+              IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    buildImage(context),
+                    buildCardRight(context),
+                  ],
+                ),
               ),
               if (progress != null)
                 SizedBox(
@@ -73,26 +75,21 @@ class PreviewExtendedCard extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(5),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildCardInfo(context),
-              lastWidget ??
-                  SizedBox(
-                    height: 37,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        buildStar(context),
-                        controllerWidget ?? buildPageAndTime(context),
-                      ],
-                    ),
-                  )
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildCardInfo(context),
+            const Expanded(child: SizedBox()),
+            lastWidget ??
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    buildStar(context),
+                    controllerWidget ?? buildPageAndTime(context),
+                  ],
+                )
+          ],
         ),
       ),
     );
@@ -195,10 +192,7 @@ class PreviewExtendedCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 3),
-        ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 50),
-          child: buildTagWrap(context),
-        ),
+        buildTagWrap(context),
       ],
     );
   }
@@ -253,8 +247,8 @@ class PreviewExtendedCard extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          width: 100,
-          height: 140,
+          width: 90,
+          height: 135,
           child: DioImage(
             dio: adapter.dio,
             url: previewModel.previewImg,
@@ -264,6 +258,8 @@ class PreviewExtendedCard extends StatelessWidget {
                   tag: heroTag ?? '${previewModel.gid}${previewModel.gtoken}',
                   child: Image.memory(
                     bytes,
+                    width: 90,
+                    height: 135,
                     fit: BoxFit.fitHeight,
                   ),
                 ),

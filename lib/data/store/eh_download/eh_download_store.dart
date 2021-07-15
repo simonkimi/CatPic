@@ -1,6 +1,8 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:dio/dio.dart';
@@ -132,22 +134,46 @@ abstract class EhDownloadStoreBase with Store {
     await Future.wait(pictureFutures);
   }
 
-  Future<void> createDownloadTask(
-    GalleryModel model,
+  Future<bool> createDownloadTask(
+    String gid,
+    String token,
+    int websiteId,
   ) async {
     final dao = DB().ehDownloadDao;
+    final existModel = await dao.getByGid(gid, token);
+
+    final websiteEntity = await DB().websiteDao.getById(websiteId);
+    if (websiteEntity == null) {
+      return false;
+    }
+
+    if (existModel != null) {
+      BotToast.showText(text: I18n.g.download_exist);
+      return false;
+    }
+
+    final adapter = EHAdapter(websiteEntity);
+    final model = await adapter.gallery(gid: gid, gtoken: token, page: 0);
+
+    print(model.gid);
+    print(model.token);
+
+    print(model.gid == gid);
+    print(model.token == token);
+
     final id = await dao.insert(EhDownloadTableCompanion.insert(
-      websiteId: mainStore.websiteEntity!.id,
+      gid: model.gid,
+      gtoken: model.token,
+      websiteId: websiteId,
       status: DownloadStatus.PENDING,
       pageTotal: model.imageCount,
       pageDownload: 0,
-      gid: model.gid,
-      gtoken: model.token,
       galleryPb: model.writeToBuffer(),
     ));
 
     final database = await dao.get(id);
     // startDownload(database!, mainStore.websiteEntity!);
+    return true;
   }
 
   Future<Uint8List> _download({

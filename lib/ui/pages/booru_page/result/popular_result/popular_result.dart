@@ -22,7 +22,7 @@ import 'package:catpic/themes.dart';
 class PopularResultFragment extends StatelessWidget {
   PopularResultFragment({
     Key? key,
-    required BooruAdapter adapter,
+    required this.adapter,
   })  : store = PopularResultStore(
           adapter: adapter,
           searchText: '',
@@ -30,6 +30,7 @@ class PopularResultFragment extends StatelessWidget {
         super(key: key);
 
   final PopularResultStore store;
+  final BooruAdapter adapter;
 
   final retryList = <Function>[];
 
@@ -130,7 +131,7 @@ class PopularResultFragment extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => PostImageViewPage.count(
             favicon: mainStore.websiteEntity?.favicon,
-            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
+            adapter: adapter,
             postList: store.postList,
             index: index,
           ),

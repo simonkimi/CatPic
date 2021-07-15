@@ -1,15 +1,20 @@
 import 'dart:io';
 
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:catpic/data/models/ehentai/preview_model.dart';
+
+import '../../../../themes.dart';
 
 class EhDownloadPage extends StatelessWidget {
   const EhDownloadPage({Key? key}) : super(key: key);
@@ -33,48 +38,151 @@ class EhDownloadPage extends StatelessWidget {
                 ),
               )
             : appBarBackButton(),
+        actions: [
+          IconButton(
+              onPressed: () {
+                DB().ehDownloadDao.deleteAll();
+              },
+              icon: const Icon(Icons.delete)),
+        ],
       ),
       drawer: const MainDrawer(),
       body: StreamBuilder<List<EhDownloadTableData>>(
         stream: DB().ehDownloadDao.getAllStream(),
         initialData: const [],
         builder: (context, snapshot) {
-          return ListView(
-            children: snapshot.data!.map((e) {
-              final item = PreViewItemModel.fromBuffer(e.galleryPb);
-              final adapter = EHAdapter(mainStore.websiteEntity!);
-              final heroTag = 'download${item.gid}${item.gtoken}';
-              return PreviewExtendedCard(
-                heroTag: heroTag,
-                previewModel: item,
-                adapter: adapter,
-                onTap: () {
-                  DB()
-                      .galleryHistoryDao
-                      .add(EhGalleryHistoryTableCompanion.insert(
-                        gid: item.gid,
-                        gtoken: item.gtoken,
-                        pb: item.writeToBuffer(),
-                      ));
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return EhPreviewPage(
-                          previewAspectRatio:
-                              item.previewHeight / item.previewWidth,
-                          previewModel: item,
-                          heroTag: heroTag,
-                          adapter: adapter,
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          );
+          return Observer(builder: (context) {
+            return buildCardBody(snapshot, context);
+          });
         },
       ),
+    );
+  }
+
+  ListView buildCardBody(
+    AsyncSnapshot<List<EhDownloadTableData>> snapshot,
+    BuildContext context,
+  ) {
+    return ListView(
+      children: snapshot.data!.map((e) {
+        final item = GalleryModel.fromBuffer(e.galleryPb);
+        final adapter = EHAdapter(mainStore.websiteEntity!);
+        final heroTag = 'download${item.gid}${item.token}';
+        final model = PreViewItemModel(
+          previewHeight: item.previewHeight,
+          previewWidth: item.previewWidth,
+          title: item.title,
+          gid: item.gid,
+          gtoken: item.token,
+          tag: item.tag,
+          uploadTime: item.uploadTime,
+          uploader: item.uploader,
+          pages: item.imageCount,
+          language: item.language,
+          stars: item.star,
+          previewImg: item.previewImage,
+          keyTags: adapter.translateKeyTag(item.tags
+              .map((e) => e.value)
+              .reduce((value, element) => value..addAll(element))
+              .take(11)
+              .map((e) => PreviewTag(
+                    tag: '${e.parent.substring(0, 1)}:${e.value}',
+                    translate: e.translate,
+                  ))
+              .toList()),
+        );
+        return PreviewExtendedCard(
+          heroTag: heroTag,
+          previewModel: model,
+          adapter: adapter,
+          onTap: () {},
+          controllerWidget: Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '已完成',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).textTheme.subtitle2!.color,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Icon(Icons.play_arrow),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
+                    minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    foregroundColor: MaterialStateProperty.all(
+                      isDarkMode(context)
+                          ? const Color(0xFFFDFDFD)
+                          : Colors.black,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget buildStar(BuildContext context, int tag, double star) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                RatingBar.builder(
+                  itemSize: 16,
+                  ignoreGestures: true,
+                  initialRating: star,
+                  onRatingUpdate: (value) {},
+                  itemBuilder: (BuildContext context, int index) {
+                    return const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    );
+                  },
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  star.toString(),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.subtitle2!.color),
+                )
+              ],
+            ),
+            const SizedBox(height: 3),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 50),
+              child: Container(
+                  padding: const EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: tag.color,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Center(
+                    child: Text(
+                      tag.translate(context),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                      ),
+                    ),
+                  )),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

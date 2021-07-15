@@ -16,7 +16,6 @@ message PreViewItemModel {
   int32 pages = 5;
   double stars = 6;
   string language = 7;
-  string targetUrl = 8;
   string previewImg = 9;
   repeated PreviewTag keyTags = 10;
   int32 previewHeight = 11;

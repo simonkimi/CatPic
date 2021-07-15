@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'dart:math';
+
+import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/eh_storage.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/app_bar.dart';
@@ -24,7 +28,8 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:catpic/main.dart';
+import 'package:catpic/utils/utils.dart';
+
 import 'gallery_preview.dart';
 
 enum GalleryAction {
@@ -226,36 +231,8 @@ class EhPreviewPage extends StatelessWidget {
                               MaterialStateProperty.all(Colors.orange)),
                     ),
                   if (store.observableList.isNotEmpty)
-                    TextButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.favorite_outline),
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(Platform.isWindows
-                              ? const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 15)
-                              : const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 2)),
-                          minimumSize:
-                              MaterialStateProperty.all(const Size(0, 0)),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.red)),
-                    ),
-                  if (store.observableList.isNotEmpty)
-                    TextButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.cloud_download_outlined),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(Platform.isWindows
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 15)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 2)),
-                        minimumSize:
-                            MaterialStateProperty.all(const Size(0, 0)),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
+                    buildFavouriteButton(context),
+                  if (store.observableList.isNotEmpty) buildDownloadButton(),
                 ],
               );
             },
@@ -264,6 +241,124 @@ class EhPreviewPage extends StatelessWidget {
       ),
     );
   }
+
+  StatefulBuilder buildDownloadButton() {
+    return StatefulBuilder(builder: (context, setState) {
+      return FutureBuilder<EhDownloadTableData?>(
+        future: DB().ehDownloadDao.getByGid(store.gid, store.gtoken),
+        builder: (context, snapshot) {
+          return TextButton(
+            onPressed: () {
+              if (snapshot.data == null) {
+                ehDownloadStore
+                    .createDownloadTask(
+                  store.gid,
+                  store.gtoken,
+                  adapter.website.id,
+                )
+                    .then((value) {
+                  if (value)
+                    BotToast.showText(text: I18n.of(context).download_start);
+                  setState(() {});
+                });
+              }
+            },
+            child: Icon(snapshot.data == null
+                ? Icons.cloud_download_outlined
+                : Icons.cloud_download),
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(Platform.isWindows
+                  ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+                  : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+              minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  TextButton buildFavouriteButton(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        if (store.favcat != -1) {
+          final result = await store.onFavouriteClick(-1);
+          if (result) {
+            BotToast.showText(text: I18n.of(context).favourite_del);
+          }
+        } else {
+          final result = await getFavcat(context);
+          if (result != null) {
+            final rsp = await store.onFavouriteClick(result);
+            if (rsp) {
+              BotToast.showText(
+                  text: I18n.of(context).favourite_to(store
+                          .storage.favouriteList
+                          .get((e) => e.favcat == store.favcat)
+                          ?.tag ??
+                      ''));
+            }
+          }
+        }
+      },
+      child: Icon(store.favcat == -1 ? Icons.favorite_outline : Icons.favorite),
+      style: ButtonStyle(
+          padding: MaterialStateProperty.all(Platform.isWindows
+              ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+              : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+          minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor: MaterialStateProperty.all(store.favcat.favcatColor)),
+    );
+  }
+
+  Future<int?> getFavcat(BuildContext context) => showDialog<int>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Text(
+                  I18n.of(context).favourite,
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
+              const Divider(height: 0),
+              ...store.storage.favouriteList.map((e) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop(e.favcat);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.favorite,
+                          color: e.favcat.favcatColor,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(e.tag),
+                        const Expanded(child: SizedBox()),
+                        Text(e.count.toString()),
+                      ],
+                    ),
+                  ),
+                );
+              })
+            ],
+          ),
+        );
+      });
 
   Text buildUploadTime(BuildContext context) {
     return Text(
@@ -527,7 +622,12 @@ class EhPreviewPage extends StatelessWidget {
               IconText(
                 icon: Icons.favorite,
                 iconColor: Colors.red,
-                text: store.favouriteCount.toString(),
+                text: store.favouriteCount.toString() +
+                    ' ' +
+                    (store.storage.favouriteList
+                            .get((e) => e.favcat == store.favcat)
+                            ?.tag ??
+                        ''),
               ),
               Text(store.uploadTime),
             ],
@@ -627,14 +727,15 @@ class EhPreviewPage extends StatelessWidget {
         Text(
           store.star.toString(),
           style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).textTheme.subtitle2!.color),
+            fontSize: 12,
+            color: Theme.of(context).textTheme.subtitle2!.color,
+          ),
         )
       ],
     );
   }
 
-  ConstrainedBox buildTypeTag(BuildContext context) {
+  Widget buildTypeTag(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 50),
       child: Container(

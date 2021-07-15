@@ -20,12 +20,14 @@ import 'package:catpic/themes.dart' as theme;
 import 'package:sqlite3/open.dart';
 
 import 'data/database/database.dart';
+import 'data/store/eh_download/eh_download_store.dart';
 import 'data/store/main/main_store.dart';
 import 'navigator.dart';
 
 final downloadStore = DownloadStore();
 final mainStore = MainStore();
 final settingStore = SettingStore();
+final ehDownloadStore = EhDownloadStore();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

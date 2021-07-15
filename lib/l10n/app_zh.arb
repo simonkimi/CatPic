@@ -97,6 +97,7 @@
   "check_website_type_success_desc": "已识别网站类型, 可进行下一步",
   "recheck": "重新检查",
   "check_by_hand": "手动指定",
+  "input_nickname": "最后一步! 请输入此网站昵称",
 
   "safe": "安全",
   "explicit": "暴露",
@@ -278,5 +279,15 @@
   "tags": "标签",
   "search_gallery_name": "搜索名称",
   "favourite_box": "收藏夹",
-  "favourite_all": "全部收藏"
+  "favourite_all": "全部收藏",
+  "favourite_to": "已收藏到 {tag}",
+  "@favourite_to": {
+    "placeholders": {
+      "tag": {
+        "type": "String",
+        "example": "oppai"
+      }
+    }
+  },
+  "favourite_del": "已取消收藏"
 }

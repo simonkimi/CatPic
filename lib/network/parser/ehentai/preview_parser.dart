@@ -74,27 +74,26 @@ class PreviewParser {
       final language = parseLanguage(element);
 
       final imgSize = parseImg(element);
-      final targetUrl =
-          element.querySelector('.gl3c a')?.attributes['href'] ?? '';
-      final gidAndgtoken = parseToken(targetUrl);
+
+      final gidAndgtoken = parseToken(element);
 
       final keyTags = parseTag(element);
 
       return PreViewItemModel(
-          gid: gidAndgtoken[0],
-          gtoken: gidAndgtoken[1],
-          pages: pages,
-          previewImg: previewImg,
-          stars: stars,
-          tag: fromEhTag(tag),
-          targetUrl: targetUrl,
-          title: title,
-          uploader: uploader,
-          uploadTime: uploadTime,
-          language: language,
-          keyTags: keyTags,
-          previewWidth: imgSize[0],
-          previewHeight: imgSize[1]);
+        gid: gidAndgtoken[0],
+        gtoken: gidAndgtoken[1],
+        pages: pages,
+        previewImg: previewImg,
+        stars: stars,
+        tag: fromEhTag(tag),
+        title: title,
+        uploader: uploader,
+        uploadTime: uploadTime,
+        language: language,
+        keyTags: keyTags,
+        previewWidth: imgSize[0],
+        previewHeight: imgSize[1],
+      );
     }).toList();
     return PreviewModel(
       items: items,
@@ -112,7 +111,9 @@ class PreviewParser {
   }
 
   /// 解析gid和gtoken
-  static List<String> parseToken(String targetUrl) {
+  static List<String> parseToken(Element document) {
+    final targetUrl =
+        document.querySelector('.gl3c a')?.attributes['href'] ?? '';
     if (targetUrl.isNotEmpty) {
       final re = RegExp(r'/g/(\w+)/(\w+)/');
       final match = re.firstMatch(targetUrl)!;

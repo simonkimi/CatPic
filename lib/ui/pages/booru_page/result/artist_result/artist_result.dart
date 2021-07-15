@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/entity/history.dart';
 import 'package:catpic/i18n.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
@@ -97,7 +96,7 @@ class ArtistResultFragment extends StatelessWidget {
                     ));
                   },
                   child: Text(
-                    I18n.of(context).search_in(mainStore.websiteEntity!.name),
+                    I18n.of(context).search_in(adapter.website.name),
                   ),
                 ),
               )

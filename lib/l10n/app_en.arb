@@ -96,6 +96,8 @@
   "check_website_type_success_desc": "The site type has been identified, you can proceed to the next step",
   "recheck": "Recheck",
   "check_by_hand": "Manual Assignment",
+  "input_nickname": "The last step! Please enter a nickname for this site",
+
   "safe": "Safe",
   "explicit": "Explicit",
   "questionable": "Questionable",
@@ -277,5 +279,15 @@
   "tags": "Tags",
   "search_gallery_name": "Search Gallery Name",
   "favourite_box": "Favourites",
-  "favourite_all": "All"
+  "favourite_all": "All Favourites",
+  "favourite_to": "Collected to {tag}",
+  "@favourite_to": {
+    "placeholders": {
+      "tag": {
+        "type": "String",
+        "example": "oppai"
+      }
+    }
+  },
+  "favourite_del": "Collection canceled"
 }

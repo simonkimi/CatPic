@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
@@ -67,7 +66,7 @@ class PostWaterFlow extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => PostImageViewPage.count(
             favicon: mainStore.websiteEntity?.favicon,
-            adapter: BooruAdapter.fromWebsite(mainStore.websiteEntity!),
+            adapter: store.adapter,
             postList: store.postList,
             onAddTag: onAddTag,
             index: index,

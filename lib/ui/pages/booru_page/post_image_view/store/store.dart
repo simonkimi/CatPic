@@ -18,7 +18,7 @@ abstract class PostImageViewStoreBase with Store {
   PostImageViewStoreBase({
     required this.currentIndex,
     required List<BooruPost> postList,
-    required this.adapter,
+    this.adapter,
   }) : postList = ObservableList.of(postList);
 
   final pageSliderController = PageSliderController();
@@ -65,7 +65,7 @@ abstract class PostImageViewStoreBase with Store {
       for (final tagStr in tags) {
         if (tagStr.isNotEmpty) {
           await dao.insert(TagTableCompanion.insert(
-            website: mainStore.websiteEntity!.id,
+            website: adapter!.website.id,
             tag: tagStr,
           ));
         }

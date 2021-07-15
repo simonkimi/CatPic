@@ -11,6 +11,7 @@ import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);
@@ -59,11 +60,9 @@ class EHAdapter extends Adapter {
   }) async {
     GalleryModel? model;
 
-    if (page == 0) {
-      final db = await DB().galleryCacheDao.get(gid, gtoken);
-      if (db != null) {
-        model = GalleryModel.fromBuffer(db.data);
-      }
+    final db = await DB().galleryCacheDao.getByGid(gid, gtoken, page);
+    if (db != null) {
+      model = GalleryModel.fromBuffer(db.data);
     }
 
     if (model == null) {
@@ -74,6 +73,7 @@ class EHAdapter extends Adapter {
             gid: gid,
             token: gtoken,
             data: model!.writeToBuffer(),
+            page: page,
           ));
     }
 
@@ -114,19 +114,24 @@ class EHAdapter extends Adapter {
 
   PreviewModel previewTranslateHook(PreviewModel model) {
     for (final item in model.items) {
-      for (final tag in item.keyTags) {
-        final tagParam = tag.tag.split(':');
-        if (tagParam.length == 2) {
-          if (tagParam[0] == 'f') tagParam[0] = '♀';
-          if (tagParam[0] == 'm') tagParam[0] = '♂';
-          tag.translate =
-              '${tagParam[0]}:${settingStore.translateMap[tagParam[1]] ?? tagParam[1]}';
-        } else if (tagParam.length == 1) {
-          tag.translate = settingStore.translateMap[tag.tag] ?? '';
-        }
-      }
+      translateKeyTag(item.keyTags);
     }
     return model;
+  }
+
+  List<PreviewTag> translateKeyTag(List<PreviewTag> keyTags) {
+    for (final tag in keyTags) {
+      final tagParam = tag.tag.split(':');
+      if (tagParam.length == 2) {
+        if (tagParam[0] == 'f') tagParam[0] = '♀';
+        if (tagParam[0] == 'm') tagParam[0] = '♂';
+        tag.translate =
+            '${tagParam[0]}:${settingStore.translateMap[tagParam[1]] ?? tagParam[1]}';
+      } else if (tagParam.length == 1) {
+        tag.translate = settingStore.translateMap[tag.tag] ?? '';
+      }
+    }
+    return keyTags;
   }
 
   Future<bool> addToFavourite({
@@ -135,12 +140,13 @@ class EHAdapter extends Adapter {
     required int favcat,
   }) async {
     try {
-      await client.addToFavourite(
+      final data = await client.addToFavourite(
         gid: gid,
         gtoken: gtoken,
         favnote: 'favnote',
         favcat: favcat,
       );
+      print(data);
       return true;
     } on Exception {
       return false;

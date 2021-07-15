@@ -4,6 +4,7 @@ import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
+import 'package:catpic/data/models/ehentai/eh_storage.dart';
 import 'package:mobx/mobx.dart';
 
 part 'store.g.dart';
@@ -15,16 +16,9 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
   EhFavouriteStoreBase({
     required String searchText,
     required this.adapter,
-  })  : ehFavourite = (() {
-          final storage = EHStorage.fromBuffer(mainStore.getStorage() ?? []);
-          if (storage.favourite.length != 10) {
-            return ObservableList.of(List.generate(
-                10,
-                (index) => EhFavourite(
-                    favcat: index, count: 0, tag: 'Favorites $index')));
-          }
-          return ObservableList.of(storage.favourite);
-        }()),
+  })  : ehFavourite = ObservableList.of(
+            EHStorage.fromBuffer(adapter.websiteEntity.storage ?? [])
+                .favouriteList),
         super(searchText);
 
   final EHAdapter adapter;
@@ -58,8 +52,8 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
   }
 
   Future<void> storageFav(List<EhFavourite> fav) async {
-    final entity = mainStore.websiteEntity!;
-    final storage = EHStorage.fromBuffer(mainStore.getStorage() ?? []);
+    final entity = adapter.websiteEntity;
+    final storage = EHStorage.fromBuffer(entity.storage ?? []);
     storage.favourite
       ..clear()
       ..addAll(fav);

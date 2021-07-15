@@ -18,6 +18,7 @@ enum EHSearchType {
   POPULAR,
   FAVOURITE,
   HISTORY,
+  DOWNLOAD,
 }
 
 class EhPage extends StatefulWidget {
@@ -110,6 +111,7 @@ class _EhPageState extends State<EhPage> {
           );
         case EHSearchType.HISTORY:
         case EHSearchType.FAVOURITE:
+        case EHSearchType.DOWNLOAD:
           throw Exception('Stub!');
       }
     }

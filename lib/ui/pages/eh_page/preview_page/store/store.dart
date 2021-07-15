@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
-
+import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
@@ -64,6 +65,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   final updateList = ObservableList<GalleryUpdate>();
 
+  GalleryModel? galleryModel;
+
   @override
   @observable
   bool isLoading = false;
@@ -116,6 +119,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   @override
   int? get pageItemCount => 40;
+
+  @observable
+  int favcat = -1;
+
+  EHStorage get storage => EHStorage.fromBuffer(adapter.website.storage ?? []);
 
   void init() {
     readImageList = List.generate(imageCount, (index) {
@@ -183,6 +191,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         uploadTime = galleryModel.uploadTime;
         isBasicLoaded = true;
         torrentNum = galleryModel.torrentNum;
+        favcat = galleryModel.favcat;
         if (updateList.isEmpty && galleryModel.updates.isNotEmpty)
           updateList.addAll(galleryModel.updates);
       }
@@ -210,6 +219,16 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
       print('load Page $ehPage finish');
       return imageList;
     });
+  }
+
+  Future<bool> onFavouriteClick(int favcat) async {
+    final result =
+        await adapter.addToFavourite(gid: gid, gtoken: gtoken, favcat: favcat);
+    if (result) {
+      this.favcat = favcat;
+      DB().galleryCacheDao.updateFavcat(gid, gtoken, favcat);
+    }
+    return result;
   }
 
   @override

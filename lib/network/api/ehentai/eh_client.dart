@@ -104,12 +104,12 @@ class EhClient extends BaseClient {
         'gid': gid,
         't': gtoken,
         'act': 'addfav',
-        'update': '1',
       },
       data: FormData.fromMap({
         'favcat': favcat != -1 ? favcat.toString() : 'delfav',
         'favnote': favnote,
         'apply': favcat != -1 ? 'Add to Favorites' : 'Apply Changes',
+        'update': '1',
       }),
     ))
         .data!;

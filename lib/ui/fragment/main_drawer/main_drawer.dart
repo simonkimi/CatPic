@@ -5,6 +5,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/booru_page/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/booru_page/login_page/login_page.dart';
+import 'package:catpic/ui/pages/eh_page/download_page/download_page.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:catpic/ui/pages/eh_page/favourite_page/favourite_page.dart';
@@ -125,6 +126,7 @@ class MainDrawer extends HookWidget {
             buildEhPopular(context),
             buildEhFavourite(context),
             buildEhHistory(context),
+            buildEhDownload(context),
           ],
         ),
       );
@@ -197,6 +199,24 @@ class MainDrawer extends HookWidget {
           Navigator.of(context).pop();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const EhFavouritePage()),
+          );
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+    );
+  }
+
+  ListTile buildEhDownload(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.download_rounded),
+      title: Text(I18n.of(context).download),
+      selected: ehSearchType == EHSearchType.DOWNLOAD,
+      onTap: () {
+        if (onEHSearchChange?.call(EHSearchType.DOWNLOAD) ?? true) {
+          Navigator.of(context).pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const EhDownloadPage()),
           );
         } else {
           Navigator.of(context).pop();

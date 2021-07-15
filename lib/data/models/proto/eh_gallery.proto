@@ -72,4 +72,6 @@ message GalleryModel {
   int32 starMember = 21;
   int32 tag = 22;
   repeated GalleryUpdate updates = 23;
+  int32 previewWidth = 24;
+  int32 previewHeight = 25;
 }

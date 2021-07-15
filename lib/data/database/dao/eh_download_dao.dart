@@ -16,6 +16,12 @@ class EhDownloadDao extends DatabaseAccessor<AppDataBase>
       (select(ehDownloadTable)..where((tbl) => tbl.id.equals(id)))
           .getSingleOrNull();
 
+  Future<EhDownloadTableData?> getByGid(String gid, String gtoken) =>
+      (select(ehDownloadTable)
+            ..where((tbl) =>
+                tbl.gid.equals(gid.trim()) & tbl.gtoken.equals(gtoken.trim())))
+          .getSingleOrNull();
+
   Stream<List<EhDownloadTableData>> getAllStream() =>
       select(ehDownloadTable).watch();
 
@@ -34,4 +40,6 @@ class EhDownloadDao extends DatabaseAccessor<AppDataBase>
             tbl.status.equals(DownloadStatus.PENDING)))
       .write(const EhDownloadTableCompanion(
           status: Value(DownloadStatus.UNREACHABLE)));
+
+  Future<void> deleteAll() => delete(ehDownloadTable).go();
 }

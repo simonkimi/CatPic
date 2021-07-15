@@ -69,6 +69,8 @@ class GalleryParser {
 
     final gid = parseGid(document);
 
+    final previewSize = parsePreviewImageSize(document);
+
     return GalleryModel(
       gid: gid.item1,
       token: gid.item2,
@@ -92,6 +94,8 @@ class GalleryParser {
       starMember: starMember,
       previewImage: parsePreviewImage(document),
       tag: fromEhTag(tag),
+      previewWidth: previewSize.item1,
+      previewHeight: previewSize.item2,
     );
   }
 
@@ -181,7 +185,7 @@ class GalleryParser {
   }
 
   static int parseFavCat(Element element) {
-    final i = element.querySelector('#id > .i');
+    final i = element.querySelector('#fav > .i');
     if (i == null) return -1;
     final re = RegExp(r'\d+px\s-(\d+)px;');
     final match = re.firstMatch(i.attributes['style']!)!;
@@ -197,7 +201,7 @@ class GalleryParser {
 
   static Tuple2<String, String> parseGid(Element element) {
     final g3 = element.querySelector('.g3 > a')!;
-    final reg = RegExp(r'g/(\d+?)/(.+?)');
+    final reg = RegExp(r'g/(\d+)/(.+)/');
     final match = reg.firstMatch(g3.attributes['href']!)!;
     final gid = match[1]!;
     final token = match[2]!;
@@ -228,5 +232,12 @@ class GalleryParser {
       }
     }
     return update;
+  }
+
+  static Tuple2<int, int> parsePreviewImageSize(Element document) {
+    final gd1 = document.querySelector('#gd1 > div')!;
+    final re = RegExp(r'width:(\d+)px;\sheight:(\d+)px;');
+    final match = re.firstMatch(gd1.attributes['style']!)!;
+    return Tuple2(match[1]!.toInt(), match[2]!.toInt());
   }
 }

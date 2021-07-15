@@ -423,7 +423,7 @@ class WebsiteAddGuide extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                '最后一步! 输入此网站昵称! (默认为host)',
+                I18n.of(context).input_nickname,
                 style: TextStyle(
                   color: Theme.of(context).textTheme.subtitle2!.color,
                 ),
