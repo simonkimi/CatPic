@@ -60,9 +60,9 @@ class PreviewExtendedCard extends StatelessWidget {
               if (progress != null)
                 SizedBox(
                   height: 2.5,
-                  child: LinearProgressIndicator(
-                    value: progress?.value,
-                  ),
+                  child: Obx(() => LinearProgressIndicator(
+                        value: progress?.value,
+                      )),
                 ),
             ],
           ),

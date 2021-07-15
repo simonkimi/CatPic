@@ -44,11 +44,13 @@ Future<void> writeFile(String path, String fileName, Uint8List data) async {
   if (Platform.isAndroid) {
     final saf = await getSafUri();
     await safWriteFile(
-        safUrl: saf!,
-        path: path,
-        data: data,
-        fileName: fileName,
-        mime: MIME[fileName.split('.').last] ?? 'application/octet-stream');
+      safUrl: saf!,
+      path: path,
+      data: data,
+      fileName: fileName,
+      mime: MIME[fileName.split('.').last] ?? 'application/octet-stream',
+    );
+    return;
   }
   throw UnsupportedError('');
 }

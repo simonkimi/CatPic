@@ -5,6 +5,7 @@ import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/utils/debug.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,7 @@ part 'eh_download_store.g.dart';
 class EhDownloadStore = EhDownloadStoreBase with _$EhDownloadStore;
 
 abstract class EhDownloadStoreBase with Store {
+  @observable
   var downloadingList = ObservableList<EhDownloadTask>();
 
   final imageDownloadExec = Executor(concurrency: 3);
@@ -32,6 +34,7 @@ abstract class EhDownloadStoreBase with Store {
     EhDownloadTableData database,
     WebsiteTableData entity,
   ) async {
+    startTimeLine();
     final adapter = EHAdapter(entity);
     // 创建下载任务
     final task = EhDownloadTask(
@@ -40,20 +43,23 @@ abstract class EhDownloadStoreBase with Store {
       finishPage: <int>{}.obs,
       pageCount: database.pageTotal.obs,
       state: EhDownloadState.PARSE_PAGE.obs,
+      progress: 0.0.obs,
     );
+    printTimeLine('EhDownloadTask');
 
     if (downloadingList.contains(task)) return;
-
+    downloadingList.add(task);
+    printTimeLine('downloadingList.add');
+    final databaseGallery = GalleryModel.fromBuffer(database.galleryPb);
     // 创建下载文件夹
-    final basePath = 'gallery/${database.gid}-${database.gtoken}';
+    final basePath =
+        'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_')}';
     await fh.createDir(basePath);
-
     // 读取/创建 下载配置文件
     final configBytes = await fh.readFile(basePath, '.catpic');
     late EhDownloadModel configModel;
     if (configBytes == null) {
-      configModel = EhDownloadModel(
-          model: GalleryModel.fromBuffer(database.galleryPb), pageInfo: {});
+      configModel = EhDownloadModel(model: databaseGallery, pageInfo: {});
       await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
     } else {
       configModel = EhDownloadModel.fromBuffer(configBytes);
@@ -205,12 +211,12 @@ abstract class EhDownloadStoreBase with Store {
   }
 }
 
-enum EhDownloadState {
-  WAITING,
-  PARSE_PAGE,
-  WORKING,
-  FINISH,
-  ERROR,
+class EhDownloadState {
+  static const int WAITING = 0;
+  static const int PARSE_PAGE = 1;
+  static const int WORKING = 2;
+  static const int FINISH = 3;
+  static const int ERROR = 4;
 }
 
 @immutable
@@ -221,11 +227,13 @@ class EhDownloadTask {
     required this.finishPage,
     required this.gid,
     required this.gtoken,
+    required this.progress,
   });
 
-  final Rx<EhDownloadState> state;
+  final Rx<int> state;
   final Rx<int> pageCount;
   final RxSet<int> finishPage;
+  final Rx<double> progress;
   final CancelToken cancelToken = CancelToken();
   final String gid;
   final String gtoken;

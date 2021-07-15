@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/store/eh_download/eh_download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -9,11 +9,12 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
-
+import 'package:catpic/utils/utils.dart';
 import '../../../../themes.dart';
 
 class EhDownloadPage extends StatelessWidget {
@@ -51,9 +52,7 @@ class EhDownloadPage extends StatelessWidget {
         stream: DB().ehDownloadDao.getAllStream(),
         initialData: const [],
         builder: (context, snapshot) {
-          return Observer(builder: (context) {
-            return buildCardBody(snapshot, context);
-          });
+          return buildCardBody(snapshot, context);
         },
       ),
     );
@@ -64,8 +63,8 @@ class EhDownloadPage extends StatelessWidget {
     BuildContext context,
   ) {
     return ListView(
-      children: snapshot.data!.map((e) {
-        final item = GalleryModel.fromBuffer(e.galleryPb);
+      children: snapshot.data!.map((database) {
+        final item = GalleryModel.fromBuffer(database.galleryPb);
         final adapter = EHAdapter(mainStore.websiteEntity!);
         final heroTag = 'download${item.gid}${item.token}';
         final model = PreViewItemModel(
@@ -91,10 +90,14 @@ class EhDownloadPage extends StatelessWidget {
                   ))
               .toList()),
         );
+        final task = ehDownloadStore.downloadingList
+            .get((e) => e.gid == item.gid && e.gtoken == item.token);
+
         return PreviewExtendedCard(
           heroTag: heroTag,
           previewModel: model,
           adapter: adapter,
+          progress: task?.progress,
           onTap: () {},
           controllerWidget: Padding(
             padding: const EdgeInsets.only(right: 5),
@@ -102,14 +105,20 @@ class EhDownloadPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '已完成',
+                  task != null
+                      ? '${task.finishPage.length}/${task.pageCount.value}'
+                      : database.status == EhDownloadState.FINISH
+                          ? '完成'
+                          : '未完成',
                   style: TextStyle(
                     fontSize: 13,
                     color: Theme.of(context).textTheme.subtitle2!.color,
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ehDownloadStore.startDownload(database, adapter.website);
+                  },
                   child: const Icon(Icons.play_arrow),
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(

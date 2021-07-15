@@ -45,7 +45,7 @@ Future<void> safWriteFile({
   required String mime,
   required Uint8List data,
 }) =>
-    _channel.invokeMethod('safIsDirectory', {
+    _channel.invokeMethod('safWriteFile', {
       'safUrl': safUrl,
       'path': path,
       'fileName': fileName,

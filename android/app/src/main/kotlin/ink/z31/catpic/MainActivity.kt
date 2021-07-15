@@ -23,8 +23,6 @@ class MainActivity : FlutterActivity() {
                 flutterEngine.dartExecutor.binaryMessenger,
                 CHANNEL
         ).setMethodCallHandler { call, result ->
-
-
             try {
                 when (call.method) {
                     "openSafDialog" -> {
@@ -38,6 +36,7 @@ class MainActivity : FlutterActivity() {
                         val safUrl = call.argument<String>("safUrl")!!
                         val path = call.argument<String>("path")!!
                         safCreateDirectory(safUrl, path)
+                        result.success(null)
                     }
 
                     "safIsFileExist" -> {
@@ -74,8 +73,9 @@ class MainActivity : FlutterActivity() {
                         val mime = call.argument<String>("mime")!!
                         val data = call.argument<ByteArray>("data")!!
                         safWriteFile(safUrl, path, fileName, mime, data)
+                        result.success(null)
                     }
-                    
+
                     "safReadFile" -> {
                         val safUrl = call.argument<String>("safUrl")!!
                         val path = call.argument<String>("path")!!
@@ -102,7 +102,6 @@ class MainActivity : FlutterActivity() {
         }
         return null
     }
-
 
     private fun safCreateDirectory(safUrl: String, path: String): DocumentFile {
         val document = checkSaf(safUrl)
@@ -138,20 +137,24 @@ class MainActivity : FlutterActivity() {
         return tmpDocumentFile
     }
 
+
     private fun safIsFileExist(safUrl: String, path: String, fileName: String): Boolean {
         val documentFile = safDocumentFileDir(safUrl, path)
         return documentFile?.findFile(fileName) != null
     }
+
 
     private fun safIsFile(safUrl: String, path: String, fileName: String): Boolean {
         val documentFile = safDocumentFileDir(safUrl, path)
         return documentFile?.findFile(fileName) != null && documentFile.isFile
     }
 
+
     private fun safIsDirectory(safUrl: String, path: String, fileName: String): Boolean {
         val documentFile = safDocumentFileDir(safUrl, path)
         return documentFile?.findFile(fileName) != null && documentFile.isDirectory
     }
+
 
     private fun safWalk(safUrl: String, path: String): List<String> {
         val documentFile = safDocumentFileDir(safUrl, path)
@@ -204,7 +207,6 @@ class MainActivity : FlutterActivity() {
         return DocumentFile.fromTreeUri(this, Uri.parse(safUrl)) ?: throw Exception("SAF目录不存在")
     }
 
-
     private fun uriRegister(uri: Uri?) {
         if (uri == null) return
         val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION or
@@ -214,7 +216,6 @@ class MainActivity : FlutterActivity() {
                 .filter { it.isReadPermission && it.isWritePermission && it.uri != uri }
                 .forEach { contentResolver.releasePersistableUriPermission(it.uri, flag) }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
