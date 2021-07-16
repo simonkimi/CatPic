@@ -61,6 +61,9 @@ class _EhImageViewerState extends State<EhImageViewer>
   Future<void> onPageIndexChange(int index) async {
     widget.onIndexChange?.call(index);
     final int preloadNum = settingStore.preloadingNumber;
+    if (store.readImageList.length <= index) {
+      return;
+    }
 
     if (store.readImageList[index].imageProvider == null) {
       await store.loadPage(

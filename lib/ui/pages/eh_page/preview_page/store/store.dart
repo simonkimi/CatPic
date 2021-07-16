@@ -8,6 +8,7 @@ import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
@@ -56,7 +57,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   final imageUrlMap = <String, GalleryPreviewImage>{};
   final pageCache = <int, List<PreviewImage>>{}.obs;
-  late final List<ReadImageModel> readImageList;
+  var readImageList = ObservableList<ReadImageModel>();
   final List<Lock> pageLoadLock;
 
   final updateList = ObservableList<GalleryUpdate>();
@@ -127,17 +128,19 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   void init() {
     pageLoadLock.addAll(
         List.filled((imageCount / imageCountInOnePage).ceil() - 1, Lock()));
-    readImageList = List.generate(imageCount, (index) {
-      final base = (index / imageCountInOnePage).floor();
-      // base是在gallery里的页数
-      if (pageCache.containsKey(base)) {
-        return ReadImageModel(
-          previewImage: pageCache[base]![index % imageCountInOnePage],
-          adapter: adapter,
-        );
-      }
-      return ReadImageModel(adapter: adapter);
-    });
+    readImageList
+      ..clear()
+      ..addAll(List.generate(imageCount, (index) {
+        final base = (index / imageCountInOnePage).floor();
+        // base是在gallery里的页数
+        if (pageCache.containsKey(base)) {
+          return ReadImageModel(
+            previewImage: pageCache[base]![index % imageCountInOnePage],
+            adapter: adapter,
+          );
+        }
+        return ReadImageModel(adapter: adapter);
+      }));
     pageCache.listen((value) {
       value.forEach((base, value) {
         if (readImageList[base * imageCountInOnePage].state.value ==
@@ -151,9 +154,15 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     });
   }
 
+  void reset() {
+    imageCountInOnePage = -1;
+    onRefresh();
+  }
+
   @override
-  Future<void> onRefresh() {
+  Future<void> onRefresh() async {
     pageCache.clear();
+    await DB().galleryCacheDao.remove(gid, gtoken);
     return super.onRefresh();
   }
 
@@ -180,8 +189,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
           init();
         }
         if (page != galleryModel.currentPage) {
-          // TODO 缓存过期警告
           print('缓存过期警告!');
+          reset();
         }
         fileSize = galleryModel.fileSize;
         language = galleryModel.language;
