@@ -75,4 +75,5 @@ message GalleryModel {
   int32 previewWidth = 24;
   int32 previewHeight = 25;
   int32 imageCountInOnePage = 26;
+  int32 currentPage = 27;
 }

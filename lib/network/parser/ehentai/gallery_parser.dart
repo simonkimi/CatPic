@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:html/dom.dart';
@@ -96,6 +98,8 @@ class GalleryParser {
       tag: fromEhTag(tag),
       previewWidth: previewSize.item1,
       previewHeight: previewSize.item2,
+      imageCountInOnePage: max(previewImages.length, 40),
+      currentPage: document.querySelector('.ptds > a')!.text.toInt(),
     );
   }
 

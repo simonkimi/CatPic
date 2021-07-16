@@ -64,7 +64,7 @@ class _EhImageViewerState extends State<EhImageViewer>
 
     if (store.readImageList[index].imageProvider == null) {
       await store.loadPage(
-        (index / 40).floor() + 1,
+        (index / store.imageCountInOnePage).floor() + 1,
         false,
       );
     }
@@ -72,7 +72,11 @@ class _EhImageViewerState extends State<EhImageViewer>
     store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
       if (e.imageProvider == null) {
         store
-            .loadPage((store.readImageList.indexOf(e) / 40).floor() + 1, false)
+            .loadPage(
+                (store.readImageList.indexOf(e) / store.imageCountInOnePage)
+                        .floor() +
+                    1,
+                false)
             .then((value) {
           e.imageProvider?.resolve(const ImageConfiguration());
         });

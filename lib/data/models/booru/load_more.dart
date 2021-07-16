@@ -50,20 +50,25 @@ abstract class ILoadMore<T> {
   bool isItemExist(T item);
 
   Future<void> _loadNextPage() async {
-    isLoading = true;
-    await lock.synchronized(() async {
-      page += 1;
+    try {
       isLoading = true;
-      final list = await loadPage(page);
-      final filter = list.where((e) => isItemExist(e) == false);
-      observableList.addAll(filter);
-      refreshController.loadComplete();
-      refreshController.refreshCompleted();
-      if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
-        refreshController.loadNoData();
-      print(
-          'LoadMore page: $page length: ${list.length} filter: ${filter.length}');
-    });
+      await lock.synchronized(() async {
+        final tmpPage = page + 1;
+        isLoading = true;
+        final list = await loadPage(tmpPage);
+        final filter = list.where((e) => isItemExist(e) == false);
+        observableList.addAll(filter);
+        refreshController.loadComplete();
+        refreshController.refreshCompleted();
+        if (list.isEmpty || (list.length < (pageItemCount ?? 0)))
+          refreshController.loadNoData();
+        print(
+            'LoadMore page: $tmpPage length: ${list.length} filter: ${filter.length}');
+        page = tmpPage;
+      });
+    } on Exception {
+      rethrow;
+    }
   }
 
   Future<void> _loadPreviousPage() async {

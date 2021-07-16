@@ -80,7 +80,7 @@ abstract class EhDownloadStoreBase with Store {
     // 解析配置, 解析图片下载地址
     final needParsePages = List.generate(database.pageTotal, (index) => index)
         .where((e) => !configModel.pageInfo.containsKey(e))
-        .map((e) => (e / 40).floor())
+        .map((e) => (e / databaseGallery.imageCountInOnePage).floor())
         .toSet();
     print(needParsePages);
     // final futures = needParsePages.map((e) => pageParseExec.scheduleTask(() async {

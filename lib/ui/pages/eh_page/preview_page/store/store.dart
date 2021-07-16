@@ -42,12 +42,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
         title = previewModel?.title ?? '',
         imageCount = previewModel?.pages ?? 0,
         previewImageUrl = previewModel?.previewImg ?? '',
-        pageLoadLock = previewModel == null
-            ? [Lock()]
-            : List.filled((previewModel.pages / 40).ceil(), Lock()),
-        super('') {
-    init();
-  }
+        pageLoadLock = [Lock()],
+        super('');
 
   int imageCount;
 
@@ -123,14 +119,20 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   @observable
   int favcat = -1;
 
+  @observable
+  int imageCountInOnePage = -1;
+
   EHStorage get storage => EHStorage.fromBuffer(adapter.website.storage ?? []);
 
   void init() {
+    pageLoadLock.addAll(
+        List.filled((imageCount / imageCountInOnePage).ceil() - 1, Lock()));
     readImageList = List.generate(imageCount, (index) {
-      final base = (index / 40).floor();
+      final base = (index / imageCountInOnePage).floor();
+      // base是在gallery里的页数
       if (pageCache.containsKey(base)) {
         return ReadImageModel(
-          previewImage: pageCache[base]![index % 40],
+          previewImage: pageCache[base]![index % imageCountInOnePage],
           adapter: adapter,
         );
       }
@@ -138,9 +140,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
     });
     pageCache.listen((value) {
       value.forEach((base, value) {
-        if (readImageList[base * 40].state.value == LoadingState.NONE) {
+        if (readImageList[base * imageCountInOnePage].state.value ==
+            LoadingState.NONE) {
           value.asMap().forEach((key, value) {
-            readImageList[base * 40 + key].loadBase(adapter, value);
+            readImageList[base * imageCountInOnePage + key]
+                .loadBase(adapter, value);
           });
         }
       });
@@ -171,9 +175,13 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
           page: ehPage,
         );
         imageCount = galleryModel.imageCount;
-        if (!isBasicLoaded && pageLoadLock.length == 1) {
-          pageLoadLock
-              .addAll(List.filled((imageCount / 40).ceil() - 1, Lock()));
+        if (imageCountInOnePage == -1) {
+          imageCountInOnePage = galleryModel.imageCountInOnePage;
+          init();
+        }
+        if (page != galleryModel.currentPage) {
+          // TODO 缓存过期警告
+          print('缓存过期警告!');
         }
         fileSize = galleryModel.fileSize;
         language = galleryModel.language;
