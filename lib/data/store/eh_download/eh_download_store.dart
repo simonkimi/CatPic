@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -75,69 +78,72 @@ abstract class EhDownloadStoreBase with Store {
     task.finishPage.addAll(existImages);
 
     // 解析配置, 解析图片下载地址
-    final futures = List.generate(database.pageTotal, (index) => index)
+    final needParsePages = List.generate(database.pageTotal, (index) => index)
         .where((e) => !configModel.pageInfo.containsKey(e))
         .map((e) => (e / 40).floor())
-        .toSet()
-        .map((e) => pageParseExec.scheduleTask(() async {
-              var retry = 3;
-              while (retry-- > 0) {
-                try {
-                  final gallery = await adapter.gallery(
-                      gid: database.gid,
-                      gtoken: database.gtoken,
-                      page: e,
-                      cancelToken: task.cancelToken);
-                  for (final imgEntity
-                      in gallery.previewImages.asMap().entries) {
-                    final reg = RegExp('s/(.+?)/(.+)');
-                    final match = reg.firstMatch(imgEntity.value.target)!;
-                    final token = match[1]!;
-                    configModel.pageInfo[e * 40 + imgEntity.key] = token;
-                  }
-                  return;
-                } on DioError catch (e) {
-                  if (CancelToken.isCancel(e)) return;
-                }
-              }
-            }));
-    await Future.wait(futures);
+        .toSet();
+    print(needParsePages);
+    // final futures = needParsePages.map((e) => pageParseExec.scheduleTask(() async {
+    //           var retry = 3;
+    //           while (retry-- > 0) {
+    //             try {
+    //               final gallery = await adapter.gallery(
+    //                 gid: database.gid,
+    //                 gtoken: database.gtoken,
+    //                 page: e,
+    //                 cancelToken: task.cancelToken,
+    //               );
+    //               for (final imgEntity
+    //                   in gallery.previewImages.asMap().entries) {
+    //                 final reg = RegExp('s/(.+?)/(.+)');
+    //                 final match = reg.firstMatch(imgEntity.value.target)!;
+    //                 final token = match[1]!;
+    //                 configModel.pageInfo[e * 40 + imgEntity.key] = token;
+    //               }
+    //               return;
+    //             } on DioError catch (e) {
+    //               if (CancelToken.isCancel(e)) return;
+    //             }
+    //           }
+    //         }));
+    // await Future.wait(futures);
 
-    // 开始下载图片
-    task.state.value = EhDownloadState.WORKING;
-    final pictureFutures = List.generate(database.pageTotal, (index) => index)
-        .where((e) => !task.finishPage.contains(e))
-        .toSet()
-        .map((e) => imageDownloadExec.scheduleTask(() async {
-              var retry = 3;
-              while (retry-- > 0) {
-                try {
-                  final imageModel = await adapter.galleryImage(
-                    gid: database.gid,
-                    gtoken: configModel.pageInfo[e]!,
-                    page: e + 1,
-                  );
-                  final data = await _download(
-                    imageUrl: imageModel.imgUrl,
-                    dio: adapter.dio,
-                    cacheKey: imageModel.sha,
-                    cancelToken: task.cancelToken,
-                  );
-
-                  await fh.writeFile(
-                      basePath,
-                      '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
-                      data);
-
-                  return;
-                } on StateError {
-                  return;
-                } on DioError catch (e) {
-                  if (CancelToken.isCancel(e)) return;
-                }
-              }
-            }));
-    await Future.wait(pictureFutures);
+    // // 开始下载图片
+    // task.state.value = EhDownloadState.WORKING;
+    // final pictureFutures = List.generate(database.pageTotal, (index) => index)
+    //     .where((e) => !task.finishPage.contains(e))
+    //     .toSet()
+    //     .map((e) => imageDownloadExec.scheduleTask(() async {
+    //           var retry = 3;
+    //           while (retry-- > 0) {
+    //             try {
+    //               final imageModel = await adapter.galleryImage(
+    //                 gid: database.gid,
+    //                 gtoken: configModel.pageInfo[e]!,
+    //                 page: e + 1,
+    //               );
+    //               final data = await _download(
+    //                 imageUrl: imageModel.imgUrl,
+    //                 dio: adapter.dio,
+    //                 cacheKey: imageModel.sha,
+    //                 cancelToken: task.cancelToken,
+    //                 task: task,
+    //               );
+    //
+    //               await fh.writeFile(
+    //                   basePath,
+    //                   '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
+    //                   data);
+    //
+    //               return;
+    //             } on StateError {
+    //               return;
+    //             } on DioError catch (e) {
+    //               if (CancelToken.isCancel(e)) return;
+    //             }
+    //           }
+    //         }));
+    // await Future.wait(pictureFutures);
   }
 
   Future<bool> createDownloadTask(
@@ -161,12 +167,6 @@ abstract class EhDownloadStoreBase with Store {
     final adapter = EHAdapter(websiteEntity);
     final model = await adapter.gallery(gid: gid, gtoken: token, page: 0);
 
-    print(model.gid);
-    print(model.token);
-
-    print(model.gid == gid);
-    print(model.token == token);
-
     final id = await dao.insert(EhDownloadTableCompanion.insert(
       gid: model.gid,
       gtoken: model.token,
@@ -178,7 +178,7 @@ abstract class EhDownloadStoreBase with Store {
     ));
 
     final database = await dao.get(id);
-    // startDownload(database!, mainStore.websiteEntity!);
+    // startDownload(database!, adapter.website);
     return true;
   }
 
@@ -187,27 +187,36 @@ abstract class EhDownloadStoreBase with Store {
     required String imageUrl,
     CancelToken? cancelToken,
     String? cacheKey,
+    required EhDownloadTask task,
   }) async {
-    final rsp = await (dio ?? Dio()).get<List<int>>(
-      imageUrl,
-      cancelToken: cancelToken,
-      options: settingStore.dioCacheOptions
-          .copyWith(
-            policy: CachePolicy.request,
-            keyBuilder: (req) =>
-                cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl),
-          )
-          .toOptions()
-          .copyWith(responseType: ResponseType.bytes),
-    );
-    if (rsp.data == null) {
-      throw StateError('$imageUrl is empty and cannot be loaded as an image.');
+    final speed = DownloadSpeed();
+    task.speedList.add(speed);
+    try {
+      final rsp = await (dio ?? Dio()).get<List<int>>(
+        imageUrl,
+        cancelToken: cancelToken,
+        options: settingStore.dioCacheOptions
+            .copyWith(
+              policy: CachePolicy.request,
+              keyBuilder: (req) =>
+                  cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imageUrl),
+            )
+            .toOptions()
+            .copyWith(responseType: ResponseType.bytes),
+      );
+      if (rsp.data == null) {
+        throw StateError(
+            '$imageUrl is empty and cannot be loaded as an image.');
+      }
+      final bytes = Uint8List.fromList(rsp.data!);
+      if (bytes.lengthInBytes == 0) {
+        throw StateError(
+            '$imageUrl is empty and cannot be loaded as an image.');
+      }
+      return bytes;
+    } finally {
+      task.speedList.remove(speed);
     }
-    final bytes = Uint8List.fromList(rsp.data!);
-    if (bytes.lengthInBytes == 0) {
-      throw StateError('$imageUrl is empty and cannot be loaded as an image.');
-    }
-    return bytes;
   }
 }
 
@@ -237,6 +246,7 @@ class EhDownloadTask {
   final CancelToken cancelToken = CancelToken();
   final String gid;
   final String gtoken;
+  final List<DownloadSpeed> speedList = [];
 
   @override
   int get hashCode => gid.hashCode + gtoken.hashCode;
@@ -246,5 +256,24 @@ class EhDownloadTask {
     if (other is! EhDownloadTask) return false;
 
     return other.gtoken == gtoken && other.gid == gid;
+  }
+
+  Stream<int> get speed => Stream.periodic(
+      1.seconds,
+      (data) => speedList.fold(
+          0,
+          (previousValue, element) =>
+              previousValue += element.getTimeReceived()));
+}
+
+@immutable
+class DownloadSpeed {
+  final received = 0.wrap;
+  final receivedRecord = 0.wrap;
+
+  int getTimeReceived() {
+    final r = received.value - receivedRecord.value;
+    received.value = receivedRecord.value;
+    return r;
   }
 }

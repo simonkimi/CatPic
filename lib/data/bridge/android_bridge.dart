@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -27,11 +28,14 @@ Future<void> safIsFile(String safUrl, String path, String fileName) =>
 
 Future<void> safIsDirectory(String safUrl, String path, String fileName) =>
     _channel.invokeMethod('safIsDirectory',
-        {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+        {'safIsDirectory': safUrl, 'path': path, 'fileName': fileName});
 
 Future<List<String>> safWalk(String safUrl, String path) async {
-  return (await _channel.invokeMethod(
-      'safIsDirectory', {'safUrl': safUrl, 'path': path}) as List<String>?)!;
+  final data = await _channel.invokeMethod('safWalk', {
+    'safUrl': safUrl,
+    'path': path,
+  }) as String;
+  return (jsonDecode(data)['path']! as List<dynamic>).cast();
 }
 
 Future<Uint8List?> safReadFile(String safUrl, String path, String fileName) =>

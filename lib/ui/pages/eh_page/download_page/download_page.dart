@@ -9,7 +9,6 @@ import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
-import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -52,7 +51,8 @@ class EhDownloadPage extends StatelessWidget {
         stream: DB().ehDownloadDao.getAllStream(),
         initialData: const [],
         builder: (context, snapshot) {
-          return buildCardBody(snapshot, context);
+          return Observer(
+              builder: (context) => buildCardBody(snapshot, context));
         },
       ),
     );

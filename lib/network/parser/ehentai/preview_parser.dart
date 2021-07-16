@@ -11,13 +11,11 @@ class RequireLoginException implements Exception {
 
 class PreviewModel {
   PreviewModel({
-    required this.maxPage,
     required this.resultCount,
     required this.items,
     this.exception,
   });
 
-  int maxPage;
   int resultCount;
   List<PreViewItemModel> items;
 
@@ -32,7 +30,6 @@ class PreviewParser {
         document.querySelector('[name=ipb_login_form]') != null) {
       return PreviewModel(
         items: [],
-        maxPage: 0,
         resultCount: 0,
         exception: RequireLoginException(),
       );
@@ -42,12 +39,6 @@ class PreviewParser {
         .querySelectorAll('.itg > tbody > tr')
         .where((element) => element.querySelector('.gl1c') != null)
         .toList();
-
-    final pageIndicator =
-        document.querySelectorAll('.ptb td').reversed.toList();
-
-    final maxPage =
-        pageIndicator.isNotEmpty ? pageIndicator[1].text.toInt() : 0;
 
     final resultIndicator = document.querySelector('.ido .ip');
 
@@ -97,7 +88,6 @@ class PreviewParser {
     }).toList();
     return PreviewModel(
       items: items,
-      maxPage: maxPage,
       resultCount: resultCount,
     );
   }

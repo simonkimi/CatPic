@@ -3,6 +3,8 @@ package ink.z31.catpic
 import android.content.Intent
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.google.gson.Gson
+import ink.z31.catpic.message.SafWalkMessage
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -63,7 +65,8 @@ class MainActivity : FlutterActivity() {
                     "safWalk" -> {
                         val safUrl = call.argument<String>("safUrl")!!
                         val path = call.argument<String>("path")!!
-                        result.success(safWalk(safUrl, path))
+                        val gson = Gson().toJson(SafWalkMessage(path = safWalk(safUrl, path)))
+                        result.success(gson)
                     }
 
                     "safWriteFile" -> {
