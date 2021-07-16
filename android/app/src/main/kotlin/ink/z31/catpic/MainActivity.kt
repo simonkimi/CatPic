@@ -35,55 +35,69 @@ class MainActivity : FlutterActivity() {
                     "getSafUrl" -> result.success(getSafUrl())
 
                     "safCreateDirectory" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        safCreateDirectory(safUrl, path)
-                        result.success(null)
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            safCreateDirectory(safUrl, path)
+                            result.success(null)
+                        }
                     }
 
                     "safIsFileExist" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val fileName = call.argument<String>("fileName")!!
-                        result.success(safIsFileExist(safUrl, path, fileName))
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            result.success(safIsFileExist(safUrl, path, fileName))
+                        }
                     }
 
                     "safIsFile" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val fileName = call.argument<String>("fileName")!!
-                        result.success(safIsFile(safUrl, path, fileName))
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            result.success(safIsFile(safUrl, path, fileName))
+                        }
                     }
 
                     "safIsDirectory" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val fileName = call.argument<String>("fileName")!!
-                        result.success(safIsDirectory(safUrl, path, fileName))
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            result.success(safIsDirectory(safUrl, path, fileName))
+                        }
                     }
 
                     "safWalk" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val gson = Gson().toJson(SafWalkMessage(path = safWalk(safUrl, path)))
-                        result.success(gson)
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val gson = Gson().toJson(SafWalkMessage(path = safWalk(safUrl, path)))
+                            result.success(gson)
+                        }
                     }
 
                     "safWriteFile" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val fileName = call.argument<String>("fileName")!!
-                        val mime = call.argument<String>("mime")!!
-                        val data = call.argument<ByteArray>("data")!!
-                        safWriteFile(safUrl, path, fileName, mime, data)
-                        result.success(null)
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            val mime = call.argument<String>("mime")!!
+                            val data = call.argument<ByteArray>("data")!!
+                            safWriteFile(safUrl, path, fileName, mime, data)
+                            result.success(null)
+                        }
                     }
 
                     "safReadFile" -> {
-                        val safUrl = call.argument<String>("safUrl")!!
-                        val path = call.argument<String>("path")!!
-                        val fileName = call.argument<String>("fileName")!!
-                        result.success(safReadFile(safUrl, path, fileName))
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            result.success(safReadFile(safUrl, path, fileName))
+                        }
                     }
                 }
             } catch (e: Exception) {

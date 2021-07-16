@@ -57,12 +57,15 @@ class EHAdapter extends Adapter {
     required String gtoken,
     required int page,
     CancelToken? cancelToken,
+    bool useCache = true,
   }) async {
     GalleryModel? model;
 
-    final db = await DB().galleryCacheDao.getByGid(gid, gtoken, page);
-    if (db != null) {
-      model = GalleryModel.fromBuffer(db.data);
+    if (useCache) {
+      final db = await DB().galleryCacheDao.getByGid(gid, gtoken, page);
+      if (db != null) {
+        model = GalleryModel.fromBuffer(db.data);
+      }
     }
 
     if (model == null) {

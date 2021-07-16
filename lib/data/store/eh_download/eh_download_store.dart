@@ -7,7 +7,6 @@ import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
-import 'package:catpic/utils/debug.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +38,6 @@ abstract class EhDownloadStoreBase with Store {
     await DB()
         .ehDownloadDao
         .replace(database.copyWith(status: EhDownloadState.WAITING));
-    startTimeLine();
     final adapter = EHAdapter(entity);
     // 创建下载任务
     final task = EhDownloadTask(
@@ -50,11 +48,9 @@ abstract class EhDownloadStoreBase with Store {
       state: EhDownloadState.PARSE_PAGE.obs,
       progress: 0.0.obs,
     );
-    printTimeLine('EhDownloadTask');
 
     if (downloadingList.contains(task)) return;
     downloadingList.add(task);
-    printTimeLine('downloadingList.add');
     final databaseGallery = GalleryModel.fromBuffer(database.galleryPb);
     // 创建下载文件夹
     final basePath =
@@ -100,7 +96,8 @@ abstract class EhDownloadStoreBase with Store {
                     final reg = RegExp('s/(.+?)/(.+)');
                     final match = reg.firstMatch(imgEntity.value.target)!;
                     final token = match[1]!;
-                    configModel.pageInfo[e * 40 + imgEntity.key] = token;
+                    configModel.pageInfo[e * gallery.imageCountInOnePage +
+                        imgEntity.key] = token;
                   }
                   return;
                 } on DioError catch (e) {
@@ -295,7 +292,6 @@ class DownloadSpeed {
 
   int getTimeReceived() {
     final r = received.value - receivedRecord.value;
-    print(r);
     receivedRecord.value = received.value;
     return r;
   }
