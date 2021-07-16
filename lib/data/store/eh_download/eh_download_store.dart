@@ -4,7 +4,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -37,6 +36,9 @@ abstract class EhDownloadStoreBase with Store {
     EhDownloadTableData database,
     WebsiteTableData entity,
   ) async {
+    await DB()
+        .ehDownloadDao
+        .replace(database.copyWith(status: EhDownloadState.WAITING));
     startTimeLine();
     final adapter = EHAdapter(entity);
     // 创建下载任务
@@ -74,76 +76,92 @@ abstract class EhDownloadStoreBase with Store {
             e.startsWith('0') &&
             (e.endsWith('.jpg') || e.endsWith('.png')) &&
             e.split('.').first.isNum)
-        .map((e) => e.toInt());
+        .map((e) => e.split('.').first.toInt() - 1);
     task.finishPage.addAll(existImages);
-
+    task.progress.value = task.finishPage.length / task.pageCount.value;
     // 解析配置, 解析图片下载地址
     final needParsePages = List.generate(database.pageTotal, (index) => index)
         .where((e) => !configModel.pageInfo.containsKey(e))
         .map((e) => (e / databaseGallery.imageCountInOnePage).floor())
         .toSet();
-    print(needParsePages);
-    // final futures = needParsePages.map((e) => pageParseExec.scheduleTask(() async {
-    //           var retry = 3;
-    //           while (retry-- > 0) {
-    //             try {
-    //               final gallery = await adapter.gallery(
-    //                 gid: database.gid,
-    //                 gtoken: database.gtoken,
-    //                 page: e,
-    //                 cancelToken: task.cancelToken,
-    //               );
-    //               for (final imgEntity
-    //                   in gallery.previewImages.asMap().entries) {
-    //                 final reg = RegExp('s/(.+?)/(.+)');
-    //                 final match = reg.firstMatch(imgEntity.value.target)!;
-    //                 final token = match[1]!;
-    //                 configModel.pageInfo[e * 40 + imgEntity.key] = token;
-    //               }
-    //               return;
-    //             } on DioError catch (e) {
-    //               if (CancelToken.isCancel(e)) return;
-    //             }
-    //           }
-    //         }));
-    // await Future.wait(futures);
+    final futures =
+        needParsePages.map((e) => pageParseExec.scheduleTask(() async {
+              var retry = 3;
+              while (retry-- > 0) {
+                try {
+                  final gallery = await adapter.gallery(
+                    gid: database.gid,
+                    gtoken: database.gtoken,
+                    page: e,
+                    cancelToken: task.cancelToken,
+                  );
+                  for (final imgEntity
+                      in gallery.previewImages.asMap().entries) {
+                    final reg = RegExp('s/(.+?)/(.+)');
+                    final match = reg.firstMatch(imgEntity.value.target)!;
+                    final token = match[1]!;
+                    configModel.pageInfo[e * 40 + imgEntity.key] = token;
+                  }
+                  return;
+                } on DioError catch (e) {
+                  if (CancelToken.isCancel(e)) return;
+                }
+              }
+            }));
+    await Future.wait(futures);
+    await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
 
-    // // 开始下载图片
-    // task.state.value = EhDownloadState.WORKING;
-    // final pictureFutures = List.generate(database.pageTotal, (index) => index)
-    //     .where((e) => !task.finishPage.contains(e))
-    //     .toSet()
-    //     .map((e) => imageDownloadExec.scheduleTask(() async {
-    //           var retry = 3;
-    //           while (retry-- > 0) {
-    //             try {
-    //               final imageModel = await adapter.galleryImage(
-    //                 gid: database.gid,
-    //                 gtoken: configModel.pageInfo[e]!,
-    //                 page: e + 1,
-    //               );
-    //               final data = await _download(
-    //                 imageUrl: imageModel.imgUrl,
-    //                 dio: adapter.dio,
-    //                 cacheKey: imageModel.sha,
-    //                 cancelToken: task.cancelToken,
-    //                 task: task,
-    //               );
-    //
-    //               await fh.writeFile(
-    //                   basePath,
-    //                   '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
-    //                   data);
-    //
-    //               return;
-    //             } on StateError {
-    //               return;
-    //             } on DioError catch (e) {
-    //               if (CancelToken.isCancel(e)) return;
-    //             }
-    //           }
-    //         }));
-    // await Future.wait(pictureFutures);
+    // 开始下载图片
+    task.state.value = EhDownloadState.WORKING;
+    final pictureFutures = List.generate(database.pageTotal, (index) => index)
+        .where((e) => !task.finishPage.contains(e))
+        .toSet()
+        .map((e) => imageDownloadExec.scheduleTask(() async {
+              if (task.canceled.value) return;
+              var retry = 3;
+              while (retry-- > 0) {
+                try {
+                  final imageModel = await adapter.galleryImage(
+                    gid: database.gid,
+                    gtoken: configModel.pageInfo[e]!,
+                    page: e + 1,
+                  );
+                  final data = await _download(
+                    imageUrl: imageModel.imgUrl,
+                    dio: adapter.dio,
+                    cacheKey: imageModel.sha,
+                    cancelToken: task.cancelToken,
+                    task: task,
+                  );
+                  await fh.writeFile(
+                    basePath,
+                    '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
+                    data,
+                  );
+                  task.finishPage.add(e);
+                  task.progress.value =
+                      task.finishPage.length / task.pageCount.value;
+                  return;
+                } on StateError {
+                  return;
+                } on DioError catch (e) {
+                  if (CancelToken.isCancel(e)) return;
+                }
+              }
+            }));
+    await Future.wait(pictureFutures);
+    // 下载完成后解析下载完成的数量
+    final downloadedImageSize = (await fh.walk(basePath))
+        .where((e) =>
+            e.startsWith('0') &&
+            (e.endsWith('.jpg') || e.endsWith('.png')) &&
+            e.split('.').first.isNum)
+        .length;
+    if (downloadedImageSize == database.pageTotal)
+      await DB()
+          .ehDownloadDao
+          .replace(database.copyWith(status: EhDownloadState.FINISH));
+    if (downloadingList.contains(task)) downloadingList.remove(task);
   }
 
   Future<bool> createDownloadTask(
@@ -178,8 +196,14 @@ abstract class EhDownloadStoreBase with Store {
     ));
 
     final database = await dao.get(id);
-    // startDownload(database!, adapter.website);
+    startDownload(database!, adapter.website);
     return true;
+  }
+
+  void cancelTask(EhDownloadTask task) {
+    downloadingList.remove(task);
+    task.cancel();
+    task.canceled.value = true;
   }
 
   Future<Uint8List> _download({
@@ -191,9 +215,7 @@ abstract class EhDownloadStoreBase with Store {
   }) async {
     final speed = DownloadSpeed();
     task.speedList.add(speed);
-    try {
-      final rsp = await (dio ?? Dio()).get<List<int>>(
-        imageUrl,
+    final rsp = await (dio ?? Dio()).get<List<int>>(imageUrl,
         cancelToken: cancelToken,
         options: settingStore.dioCacheOptions
             .copyWith(
@@ -203,20 +225,18 @@ abstract class EhDownloadStoreBase with Store {
             )
             .toOptions()
             .copyWith(responseType: ResponseType.bytes),
-      );
-      if (rsp.data == null) {
-        throw StateError(
-            '$imageUrl is empty and cannot be loaded as an image.');
-      }
-      final bytes = Uint8List.fromList(rsp.data!);
-      if (bytes.lengthInBytes == 0) {
-        throw StateError(
-            '$imageUrl is empty and cannot be loaded as an image.');
-      }
-      return bytes;
-    } finally {
-      task.speedList.remove(speed);
+        onReceiveProgress: (int count, int total) {
+      speed.received.value = count;
+    });
+    if (rsp.data == null) {
+      throw StateError('$imageUrl is empty and cannot be loaded as an image.');
     }
+    final bytes = Uint8List.fromList(rsp.data!);
+    speed.received.value = bytes.length;
+    if (bytes.lengthInBytes == 0) {
+      throw StateError('$imageUrl is empty and cannot be loaded as an image.');
+    }
+    return bytes;
   }
 }
 
@@ -247,6 +267,7 @@ class EhDownloadTask {
   final String gid;
   final String gtoken;
   final List<DownloadSpeed> speedList = [];
+  final Rx<bool> canceled = false.obs;
 
   @override
   int get hashCode => gid.hashCode + gtoken.hashCode;
@@ -254,16 +275,17 @@ class EhDownloadTask {
   @override
   bool operator ==(Object other) {
     if (other is! EhDownloadTask) return false;
-
+    if (other.canceled.value || canceled.value) return false;
     return other.gtoken == gtoken && other.gid == gid;
   }
 
   Stream<int> get speed => Stream.periodic(
       1.seconds,
-      (data) => speedList.fold(
-          0,
-          (previousValue, element) =>
-              previousValue += element.getTimeReceived()));
+      (data) => speedList.fold(0, (previousValue, element) {
+            return previousValue + element.getTimeReceived();
+          }));
+
+  void cancel() => cancelToken.cancel();
 }
 
 @immutable
@@ -273,7 +295,8 @@ class DownloadSpeed {
 
   int getTimeReceived() {
     final r = received.value - receivedRecord.value;
-    received.value = receivedRecord.value;
+    print(r);
+    receivedRecord.value = received.value;
     return r;
   }
 }

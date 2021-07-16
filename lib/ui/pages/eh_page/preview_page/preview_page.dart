@@ -595,7 +595,7 @@ class EhPreviewPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconText(
-                      text: store.pageItemCount.toString(),
+                      text: store.imageCount.toString(),
                       icon: Icons.image_outlined,
                     )
                   ],

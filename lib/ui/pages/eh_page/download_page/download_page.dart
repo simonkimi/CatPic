@@ -1,6 +1,9 @@
 import 'dart:io';
+
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/store/eh_download/eh_download_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
@@ -8,12 +11,12 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
-import 'package:catpic/utils/utils.dart';
+import 'package:get/get.dart';
+
 import '../../../../themes.dart';
 
 class EhDownloadPage extends StatelessWidget {
@@ -90,8 +93,12 @@ class EhDownloadPage extends StatelessWidget {
                   ))
               .toList()),
         );
-        final task = ehDownloadStore.downloadingList
-            .get((e) => e.gid == item.gid && e.gtoken == item.token);
+        final task = ehDownloadStore.downloadingList.get(
+          (e) =>
+              e.gid == item.gid &&
+              e.gtoken == item.token &&
+              e.canceled.value == false,
+        );
 
         return PreviewExtendedCard(
           heroTag: heroTag,
@@ -104,33 +111,76 @@ class EhDownloadPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  task != null
-                      ? '${task.finishPage.length}/${task.pageCount.value}'
-                      : database.status == EhDownloadState.FINISH
-                          ? '完成'
-                          : '未完成',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).textTheme.subtitle2!.color,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    ehDownloadStore.startDownload(database, adapter.website);
-                  },
-                  child: const Icon(Icons.play_arrow),
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
-                    minimumSize: MaterialStateProperty.all(const Size(0, 0)),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    foregroundColor: MaterialStateProperty.all(
-                      isDarkMode(context)
-                          ? const Color(0xFFFDFDFD)
-                          : Colors.black,
+                if (task != null)
+                  Obx(() => Text(
+                      task.state.value == EhDownloadState.PARSE_PAGE
+                          ? '解析中'
+                          : '${task.finishPage.length}/${task.pageCount.value}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).textTheme.subtitle2!.color,
+                      )))
+                else
+                  Text(
+                    database.status == EhDownloadState.FINISH ? '完成' : '未完成',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).textTheme.subtitle2!.color,
                     ),
                   ),
+                Row(
+                  children: [
+                    if (task != null)
+                      StreamBuilder<int>(
+                        stream: task.speed,
+                        builder: (context, snapshot) {
+                          final byteSpeed = snapshot.data ?? 0;
+                          var speed = byteSpeed / 1024;
+                          var b = 'KB/s';
+                          if (speed > 1024) {
+                            speed /= 1024;
+                            b = 'MB/s';
+                          }
+                          return Text('${speed.toStringAsFixed(2)} $b',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .color,
+                              ));
+                        },
+                      ),
+                    const SizedBox(width: 5),
+                    TextButton(
+                      onPressed: () {
+                        if (task == null) {
+                          ehDownloadStore.startDownload(
+                            database,
+                            adapter.website,
+                          );
+                        } else {
+                          ehDownloadStore.cancelTask(task);
+                        }
+                      },
+                      child: task == null
+                          ? const Icon(Icons.play_arrow)
+                          : const Icon(Icons.pause),
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0)),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(0, 0)),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        foregroundColor: MaterialStateProperty.all(
+                          isDarkMode(context)
+                              ? const Color(0xFFFDFDFD)
+                              : Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
