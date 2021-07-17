@@ -99,11 +99,25 @@ class MainActivity : FlutterActivity() {
                             result.success(safReadFile(safUrl, path, fileName))
                         }
                     }
+
+                    "safDelFile" -> {
+                        Thread().run {
+                            val safUrl = call.argument<String>("safUrl")!!
+                            val path = call.argument<String>("path")!!
+                            val fileName = call.argument<String>("fileName")!!
+                            result.success(safDelFile(safUrl, path, fileName))
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 result.error("", e.toString(), null)
             }
         }
+    }
+
+    private fun safDelFile(safUrl: String, path: String, fileName: String) {
+        val documentFile = safDocumentFileDir(safUrl, path)
+        documentFile?.findFile(fileName)?.delete()
     }
 
     private fun safReadFile(safUrl: String, path: String, fileName: String): ByteArray? {

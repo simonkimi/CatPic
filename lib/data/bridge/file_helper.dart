@@ -62,3 +62,19 @@ Future<List<String>> walk(String path) async {
   }
   throw UnsupportedError('');
 }
+
+Future<bool> isFileExist(String path, String fileName) async {
+  if (Platform.isAndroid) {
+    final saf = await getSafUri();
+    return await safIsFileExist(saf!, path, fileName);
+  }
+  throw UnsupportedError('');
+}
+
+Future<void> delFile(String path, String fileName) async {
+  if (Platform.isAndroid) {
+    final saf = await getSafUri();
+    return await safDelFile(saf!, path, fileName);
+  }
+  throw UnsupportedError('');
+}

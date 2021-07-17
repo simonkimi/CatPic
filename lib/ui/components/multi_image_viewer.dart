@@ -75,7 +75,9 @@ class _MultiImageViewerState extends State<MultiImageViewer>
             url: widget.itemBuilder!(index),
           );
         return DioImageProvider(
-            dio: widget.dio, url: widget.itemBuilder!(index));
+          dio: widget.dio,
+          url: widget.itemBuilder!(index),
+        );
       });
     } else {
       contentProvider = List.generate(

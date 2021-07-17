@@ -39,7 +39,8 @@ message CommentModel {
   repeated string voteUser = 5;
 }
 
-message PreviewImage {
+// 画廊下面的小图片
+message GalleryPreviewImageModel {
   int32 height = 1;
   int32 width = 2;
   string image = 3;
@@ -48,6 +49,7 @@ message PreviewImage {
 }
 
 
+// 画廊主页面
 message GalleryModel {
   string gid = 1;
   string token = 2;
@@ -61,7 +63,7 @@ message GalleryModel {
   GalleryBase parent = 10;
   repeated TagModels tags = 11;
   repeated CommentModel comments = 12;
-  repeated PreviewImage previewImages = 13;
+  repeated GalleryPreviewImageModel previewImages = 13;
   int32 favcat = 14;
   int32 torrentNum = 15;
   string japanTitle = 16;
@@ -76,4 +78,6 @@ message GalleryModel {
   int32 previewHeight = 25;
   int32 imageCountInOnePage = 26;
   int32 currentPage = 27;
+  int32 startImageIndex = 28;
+  int32 endImageIndex = 29;
 }

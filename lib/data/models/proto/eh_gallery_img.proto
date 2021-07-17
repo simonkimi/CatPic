@@ -12,4 +12,5 @@ message GalleryImgModel {
   string rawImgUrl = 7;
   string rawImgSize = 8;
   string sha = 9;
+  string galleryToken = 10;
 }

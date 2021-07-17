@@ -5,6 +5,7 @@ package ehentai;
 import 'eh_gallery.proto';
 
 
+
 message EhDownloadModel {
   GalleryModel model = 1;
   map<int32, string> pageInfo = 2;

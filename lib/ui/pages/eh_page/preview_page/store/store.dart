@@ -8,7 +8,6 @@ import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
@@ -28,7 +27,8 @@ class GalleryPreviewImage {
   final RxBool loadState;
 }
 
-abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
+abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
+    with Store {
   EhGalleryStoreBase({
     required this.adapter,
     this.previewModel,
@@ -56,7 +56,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   final String gtoken;
 
   final imageUrlMap = <String, GalleryPreviewImage>{};
-  final pageCache = <int, List<PreviewImage>>{}.obs;
+  final pageCache = <int, List<GalleryPreviewImageModel>>{}.obs;
   var readImageList = ObservableList<ReadImageModel>();
   final List<Lock> pageLoadLock;
 
@@ -168,13 +168,13 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
 
   @override
   @action
-  Future<List<PreviewImage>> loadPage(int page,
+  Future<List<GalleryPreviewImageModel>> loadPage(int page,
       [bool loadPreview = true]) async {
     final ehPage = page - 1;
     print('load Page $ehPage');
     return await (pageLoadLock[ehPage]).synchronized(() async {
       final useCache = pageCache.containsKey(ehPage);
-      late final List<PreviewImage> imageList;
+      late final List<GalleryPreviewImageModel> imageList;
       if (useCache) {
         imageList = pageCache[ehPage]!;
       } else {
@@ -188,6 +188,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
           imageCountInOnePage = galleryModel.imageCountInOnePage;
           init();
         }
+        // TODO: 缓存过期还需要其他判断方法
         if (page != galleryModel.currentPage) {
           print('缓存过期警告!');
           reset();
@@ -253,7 +254,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<PreviewImage> with Store {
   Future<void> onDataChange() async {}
 
   @override
-  bool isItemExist(PreviewImage item) => false;
+  bool isItemExist(GalleryPreviewImageModel item) => false;
 
   void dispose() {
     cancelToken.cancel();
@@ -275,7 +276,7 @@ class ReadImageModel {
   }
 
   final Rx<LoadingState> state;
-  PreviewImage? previewImage;
+  GalleryPreviewImageModel? previewImage;
   GalleryImgModel? model;
   final EHAdapter adapter;
 
@@ -305,7 +306,8 @@ class ReadImageModel {
   }
 
   // 加载page的ImageProvider和基础数据
-  Future<void> loadBase(EHAdapter adapter, PreviewImage value) async {
+  Future<void> loadBase(
+      EHAdapter adapter, GalleryPreviewImageModel value) async {
     previewImage = value;
     imageProvider = DioImageProvider(
         dio: adapter.dio,

@@ -51,114 +51,127 @@ abstract class EhDownloadStoreBase with Store {
 
     if (downloadingList.contains(task)) return;
     downloadingList.add(task);
-    final databaseGallery = GalleryModel.fromBuffer(database.galleryPb);
-    // 创建下载文件夹
-    final basePath =
-        'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_')}';
-    await fh.createDir(basePath);
-    // 读取/创建 下载配置文件
-    final configBytes = await fh.readFile(basePath, '.catpic');
-    late EhDownloadModel configModel;
-    if (configBytes == null) {
-      configModel = EhDownloadModel(model: databaseGallery, pageInfo: {});
-      await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
-    } else {
-      configModel = EhDownloadModel.fromBuffer(configBytes);
-    }
+    try {
+      final databaseGallery = GalleryModel.fromBuffer(database.galleryPb);
+      // 查看是否有同名的
+      final existPath = (await fh.walk('Gallery'))
+          .where((e) => e.startsWith('${database.gid}-'))
+          .toList();
+      late String basePath;
+      if (existPath.isNotEmpty) {
+        basePath = existPath[0];
+      }
+      // 创建下载文件夹
+      basePath =
+          'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_').replaceAll('|', '丨')}';
+      await fh.createDir(basePath);
+      // 读取/创建 下载配置文件
+      final configBytes = await fh.readFile(basePath, '.catpic');
+      late EhDownloadModel configModel;
+      if (configBytes == null) {
+        configModel = EhDownloadModel(model: databaseGallery, pageInfo: {});
+        await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
+      } else {
+        configModel = EhDownloadModel.fromBuffer(configBytes);
+      }
 
-    // 读取下载进度
-    final existImages = (await fh.walk(basePath))
-        .where((e) =>
-            e.startsWith('0') &&
-            (e.endsWith('.jpg') || e.endsWith('.png')) &&
-            e.split('.').first.isNum)
-        .map((e) => e.split('.').first.toInt() - 1);
-    task.finishPage.addAll(existImages);
-    task.progress.value = task.finishPage.length / task.pageCount.value;
-    // 解析配置, 解析图片下载地址
-    final needParsePages = List.generate(database.pageTotal, (index) => index)
-        .where((e) => !configModel.pageInfo.containsKey(e))
-        .map((e) => (e / databaseGallery.imageCountInOnePage).floor())
-        .toSet();
-    final futures =
-        needParsePages.map((e) => pageParseExec.scheduleTask(() async {
-              var retry = 3;
-              while (retry-- > 0) {
-                try {
-                  final gallery = await adapter.gallery(
-                    gid: database.gid,
-                    gtoken: database.gtoken,
-                    page: e,
-                    cancelToken: task.cancelToken,
-                  );
-                  for (final imgEntity
-                      in gallery.previewImages.asMap().entries) {
-                    final reg = RegExp('s/(.+?)/(.+)');
-                    final match = reg.firstMatch(imgEntity.value.target)!;
-                    final token = match[1]!;
-                    configModel.pageInfo[e * gallery.imageCountInOnePage +
-                        imgEntity.key] = token;
+      // 读取下载进度
+      final existImages = (await fh.walk(basePath))
+          .where((e) =>
+              e.startsWith('0') &&
+              (e.endsWith('.jpg') || e.endsWith('.png')) &&
+              e.split('.').first.isNum)
+          .map((e) => e.split('.').first.toInt() - 1);
+      task.finishPage.addAll(existImages);
+      task.progress.value = task.finishPage.length / task.pageCount.value;
+
+      // 解析配置, 解析图片下载地址
+      final needParsePages = List.generate(database.pageTotal, (index) => index)
+          .where((e) => !configModel.pageInfo.containsKey(e))
+          .map((e) => (e / databaseGallery.imageCountInOnePage).floor())
+          .toSet();
+      final futures =
+          needParsePages.map((e) => pageParseExec.scheduleTask(() async {
+                var retry = 3;
+                while (retry-- > 0) {
+                  try {
+                    final gallery = await adapter.gallery(
+                      gid: database.gid,
+                      gtoken: database.gtoken,
+                      page: e,
+                      cancelToken: task.cancelToken,
+                    );
+                    for (final imgEntity
+                        in gallery.previewImages.asMap().entries) {
+                      final reg = RegExp('s/(.+?)/(.+)');
+                      final match = reg.firstMatch(imgEntity.value.target)!;
+                      final token = match[1]!;
+                      configModel.pageInfo[e * gallery.imageCountInOnePage +
+                          imgEntity.key] = token;
+                    }
+                    return;
+                  } on DioError catch (e) {
+                    if (CancelToken.isCancel(e)) return;
                   }
-                  return;
-                } on DioError catch (e) {
-                  if (CancelToken.isCancel(e)) return;
                 }
-              }
-            }));
-    await Future.wait(futures);
-    await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
+              }));
+      await Future.wait(futures);
+      await fh.writeFile(basePath, '.catpic', configModel.writeToBuffer());
 
-    // 开始下载图片
-    task.state.value = EhDownloadState.WORKING;
-    final pictureFutures = List.generate(database.pageTotal, (index) => index)
-        .where((e) => !task.finishPage.contains(e))
-        .toSet()
-        .map((e) => imageDownloadExec.scheduleTask(() async {
-              if (task.canceled.value) return;
-              var retry = 3;
-              while (retry-- > 0) {
-                try {
-                  final imageModel = await adapter.galleryImage(
-                    gid: database.gid,
-                    gtoken: configModel.pageInfo[e]!,
-                    page: e + 1,
-                  );
-                  final data = await _download(
-                    imageUrl: imageModel.imgUrl,
-                    dio: adapter.dio,
-                    cacheKey: imageModel.sha,
-                    cancelToken: task.cancelToken,
-                    task: task,
-                  );
-                  await fh.writeFile(
-                    basePath,
-                    '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
-                    data,
-                  );
-                  task.finishPage.add(e);
-                  task.progress.value =
-                      task.finishPage.length / task.pageCount.value;
-                  return;
-                } on StateError {
-                  return;
-                } on DioError catch (e) {
-                  if (CancelToken.isCancel(e)) return;
+      // 开始下载图片
+      task.state.value = EhDownloadState.WORKING;
+      final pictureFutures = List.generate(database.pageTotal, (index) => index)
+          .where((e) => !task.finishPage.contains(e))
+          .where((e) => configModel.pageInfo.containsKey(e))
+          .toSet()
+          .map((e) => imageDownloadExec.scheduleTask(() async {
+                if (task.canceled.value) return;
+                var retry = 3;
+                while (retry-- > 0) {
+                  try {
+                    final imageModel = await adapter.galleryImage(
+                      gid: database.gid,
+                      gtoken: configModel.pageInfo[e]!,
+                      page: e + 1,
+                    );
+                    final data = await _download(
+                      imageUrl: imageModel.imgUrl,
+                      dio: adapter.dio,
+                      cacheKey: imageModel.sha,
+                      cancelToken: task.cancelToken,
+                      task: task,
+                    );
+                    await fh.writeFile(
+                      basePath,
+                      '${(e + 1).format(9)}.${imageModel.imgUrl.split('.').last}',
+                      data,
+                    );
+                    task.finishPage.add(e);
+                    task.progress.value =
+                        task.finishPage.length / task.pageCount.value;
+                    return;
+                  } on StateError {
+                    return;
+                  } on DioError catch (e) {
+                    if (CancelToken.isCancel(e)) return;
+                  }
                 }
-              }
-            }));
-    await Future.wait(pictureFutures);
-    // 下载完成后解析下载完成的数量
-    final downloadedImageSize = (await fh.walk(basePath))
-        .where((e) =>
-            e.startsWith('0') &&
-            (e.endsWith('.jpg') || e.endsWith('.png')) &&
-            e.split('.').first.isNum)
-        .length;
-    if (downloadedImageSize == database.pageTotal)
-      await DB()
-          .ehDownloadDao
-          .replace(database.copyWith(status: EhDownloadState.FINISH));
-    if (downloadingList.contains(task)) downloadingList.remove(task);
+              }));
+      await Future.wait(pictureFutures);
+      // 下载完成后解析下载完成的数量
+      final downloadedImageSize = (await fh.walk(basePath))
+          .where((e) =>
+              e.startsWith('0') &&
+              (e.endsWith('.jpg') || e.endsWith('.png')) &&
+              e.split('.').first.isNum)
+          .length;
+      if (downloadedImageSize == database.pageTotal)
+        await DB()
+            .ehDownloadDao
+            .replace(database.copyWith(status: EhDownloadState.FINISH));
+    } finally {
+      if (downloadingList.contains(task)) downloadingList.remove(task);
+    }
   }
 
   Future<bool> createDownloadTask(

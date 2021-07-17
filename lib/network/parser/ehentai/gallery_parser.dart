@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:html/dom.dart';
@@ -10,7 +8,6 @@ import 'package:tuple/tuple.dart';
 class GalleryParser {
   static GalleryModel parse(String galleryHtml) {
     final document = parser.parse(galleryHtml).body!;
-    final tags = parseTags(document);
     final favcount = int.tryParse(document
                 .querySelector('#favcount')
                 ?.text
@@ -22,19 +19,12 @@ class GalleryParser {
         .children[1]
         .text;
 
-    final previewImages = parsePreview(document);
-    final maxPageIndex = parseMaxPage(document);
-    final comments = parseComment(document);
-    final title = document.querySelector('#gn')!.text;
-    final japanTitle = document.querySelector('#gj')?.text.trim() ?? '';
     final uploader = document.querySelector('#gdn')?.text.trim() ?? '';
 
     final visible = document
         .querySelectorAll('#gdd > table > tbody > tr')[2]
         .children[1]
         .text;
-
-    final parent = parseParent(document);
 
     final imageCount = document
         .querySelectorAll('#gdd > table > tbody > tr')[5]
@@ -55,11 +45,6 @@ class GalleryParser {
         .text
         .replaceAll(' ', '');
 
-    final tag = document.querySelector('#gdc > .cs')?.text ?? '';
-
-    final favcat = parseFavCat(document);
-    final torrentNum = parseTorrentNum(document);
-
     final starMember =
         document.querySelector('#rating_count')?.text.toInt() ?? 0;
     final star = document
@@ -73,33 +58,38 @@ class GalleryParser {
 
     final previewSize = parsePreviewImageSize(document);
 
+    final startEndPage = parseStartEndPage(document);
+
     return GalleryModel(
       gid: gid.item1,
       token: gid.item2,
-      title: title,
-      tags: tags,
+      title: document.querySelector('#gn')!.text,
+      tags: parseTags(document),
       favorited: favcount,
       fileSize: fileSize,
-      previewImages: previewImages,
-      maxPageIndex: maxPageIndex,
-      comments: comments,
-      parent: parent,
+      previewImages: parsePreview(document),
+      maxPageIndex: parseMaxPage(document),
+      comments: parseComment(document),
+      parent: parseParent(document),
       visible: visible,
       imageCount: imageCount,
       language: language,
-      favcat: favcat,
-      torrentNum: torrentNum,
-      japanTitle: japanTitle,
+      favcat: parseFavCat(document),
+      torrentNum: parseTorrentNum(document),
+      japanTitle: document.querySelector('#gj')?.text.trim() ?? '',
       uploader: uploader,
       uploadTime: uploadTime,
       star: star,
       starMember: starMember,
       previewImage: parsePreviewImage(document),
-      tag: fromEhTag(tag),
+      tag: fromEhTag(document.querySelector('#gdc > .cs')?.text ?? ''),
       previewWidth: previewSize.item1,
       previewHeight: previewSize.item2,
-      imageCountInOnePage: max(previewImages.length, 40),
       currentPage: document.querySelector('.ptds > a')!.text.toInt(),
+      imageCountInOnePage: parseImageCountPage(document),
+      startImageIndex: startEndPage.item1,
+      endImageIndex: startEndPage.item2,
+      updates: parseUpdates(document),
     );
   }
 
@@ -129,7 +119,7 @@ class GalleryParser {
   }
 
   /// 解析预览 [0]: 预览URL, [1]: 指向地址
-  static List<PreviewImage> parsePreview(Element element) {
+  static List<GalleryPreviewImageModel> parsePreview(Element element) {
     final imgContainer = element.querySelectorAll('.gdtm');
     return imgContainer.map((e) {
       final style = e.children[0].attributes['style'];
@@ -137,7 +127,7 @@ class GalleryParser {
           r'width:(\d+)px; height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
       final data = re.firstMatch(style!)!;
       final aElement = e.querySelector('a')!;
-      return PreviewImage(
+      return GalleryPreviewImageModel(
         width: int.tryParse(data[1] ?? '') ?? 0,
         height: int.tryParse(data[2] ?? '') ?? 0,
         image: data[3]!,
@@ -243,5 +233,17 @@ class GalleryParser {
     final re = RegExp(r'width:(\d+)px;\sheight:(\d+)px;');
     final match = re.firstMatch(gd1.attributes['style']!)!;
     return Tuple2(match[1]!.toInt(), match[2]!.toInt());
+  }
+
+  static Tuple2<int, int> parseStartEndPage(Element document) {
+    final gpc = document.querySelector('.gpc')!;
+    final re = RegExp(r'(\d+)\s-\s(\d+)');
+    final match = re.firstMatch(gpc.text)!;
+    return Tuple2(match[1]!.toInt() - 1, match[2]!.toInt() - 1);
+  }
+
+  static int parseImageCountPage(Element document) {
+    final gdo2 = document.querySelector('#gdo2 > .ths')!;
+    return gdo2.text.replaceAll(' rows', '').toInt() * 10;
   }
 }

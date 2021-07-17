@@ -18,9 +18,10 @@ Future<String?> getSafUri() => _channel.invokeMethod('getSafUrl');
 Future<void> safCreateDirectory(String safUrl, String path) => _channel
     .invokeMethod('safCreateDirectory', {'safUrl': safUrl, 'path': path});
 
-Future<void> safIsFileExist(String safUrl, String path, String fileName) =>
-    _channel.invokeMethod('safIsFileExist',
-        {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+Future<bool> safIsFileExist(String safUrl, String path, String fileName) async {
+  return await _channel.invokeMethod('safIsFileExist',
+      {'safUrl': safUrl, 'path': path, 'fileName': fileName}) as bool;
+}
 
 Future<void> safIsFile(String safUrl, String path, String fileName) =>
     _channel.invokeMethod(
@@ -41,6 +42,10 @@ Future<List<String>> safWalk(String safUrl, String path) async {
 Future<Uint8List?> safReadFile(String safUrl, String path, String fileName) =>
     _channel.invokeMethod(
         'safReadFile', {'safUrl': safUrl, 'path': path, 'fileName': fileName});
+
+Future<void> safDelFile(String safUrl, String path, String fileName) =>
+    _channel.invokeMethod(
+        'safDelFile', {'safUrl': safUrl, 'path': path, 'fileName': fileName});
 
 Future<void> safWriteFile({
   required String safUrl,

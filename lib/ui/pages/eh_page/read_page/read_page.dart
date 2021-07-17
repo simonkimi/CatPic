@@ -1,8 +1,7 @@
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/page_slider.dart';
-import 'package:catpic/ui/pages/eh_page/components/eh_image_viewer/eh_image_viewer.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/store/read_store.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/eh_image_viewer.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:catpic/utils/utils.dart';
@@ -11,10 +10,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class BackAppBar extends HookWidget implements PreferredSizeWidget {
   const BackAppBar({
     Key? key,
-    required this.readStore,
+    required this.store,
   }) : super(key: key);
 
-  final ReadStore readStore;
+  final EhReadStore store;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
             .animate(appBarController);
 
     return Observer(builder: (context) {
-      appBarController.byValue(readStore.displayPageSlider);
+      appBarController.byValue(store.displayPageSlider);
       return SlideTransition(
         position: appBarHideAni,
         child: AppBar(
@@ -47,23 +46,17 @@ class EhReadPage extends HookWidget {
     Key? key,
     required this.store,
     required this.startIndex,
-  })  : readStore = ReadStore(
-          currentIndex: startIndex,
-          gid: store.gid,
-          gtoken: store.gtoken,
-        ),
-        super(key: key);
+  }) : super(key: key);
 
-  final EhGalleryStore store;
+  final EhReadStore store;
   final int startIndex;
 
-  final ReadStore readStore;
   final pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackAppBar(readStore: readStore),
+      appBar: BackAppBar(store: store),
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: buildImg(),
@@ -79,14 +72,13 @@ class EhReadPage extends HookWidget {
       color: Colors.black,
       child: EhImageViewer(
         store: store,
-        readStore: readStore,
         startIndex: startIndex,
         pageController: pageController,
         onCenterTap: () {
-          readStore.setPageSliderDisplay(!readStore.displayPageSlider);
+          store.setPageSliderDisplay(!store.displayPageSlider);
         },
         onIndexChange: (value) {
-          readStore.setIndex(value);
+          store.setIndex(value);
         },
       ),
     );
@@ -101,7 +93,7 @@ class EhReadPage extends HookWidget {
             .animate(pageSliderController);
 
     return Observer(builder: (_) {
-      pageSliderController.byValue(readStore.displayPageSlider);
+      pageSliderController.byValue(store.displayPageSlider);
       return SlideTransition(
         position: pageSliderHideAni,
         child: BottomAppBar(
@@ -112,11 +104,11 @@ class EhReadPage extends HookWidget {
               padding: const EdgeInsets.only(bottom: 20, top: 20),
               child: Observer(builder: (_) {
                 return PageSlider(
-                  value: readStore.currentIndex + 1,
+                  value: store.currentIndex + 1,
                   count: store.imageCount,
-                  controller: readStore.pageSliderController,
+                  controller: store.pageSliderController,
                   onChange: (int value) {
-                    readStore.setIndex(value - 1);
+                    store.setIndex(value - 1);
                     pageController.jumpToPage(value - 1);
                   },
                 );

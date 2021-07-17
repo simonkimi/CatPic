@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:catpic/main.dart';
+import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -27,6 +28,16 @@ class DioImageParams {
   final String? cacheKey;
 }
 
+class FileParams {
+  const FileParams({
+    required this.basePath,
+    required this.fileName,
+  });
+
+  final String basePath;
+  final String fileName;
+}
+
 @immutable
 class DioImageProvider extends ImageProvider<DioImageProvider> {
   DioImageProvider({
@@ -35,6 +46,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     this.scale = 1.0,
     this.cacheKey,
     this.builder,
+    this.fileParams,
   }) : assert(builder != null || url != null);
 
   final Dio? dio;
@@ -42,6 +54,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
   final double scale;
   final String? cacheKey;
   final AsyncBuilder? builder;
+  final FileParams? fileParams;
 
   final _cancelToken = CancelToken().wrap;
 
@@ -87,6 +100,22 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       StreamController<ImageChunkEvent> chunkEvents) async {
     _cancelToken.value = CancelToken();
     try {
+      // 尝试从文件里读取
+      if (fileParams != null) {
+        final fileData = await fh.readFile(
+          fileParams!.basePath,
+          fileParams!.fileName,
+        );
+        // TODO: 检测是否为509图片
+        if (fileData != null && fileData.isNotEmpty) {
+          try {
+            return await decode(fileData);
+          } on Exception {
+            fh.delFile(fileParams!.basePath, fileParams!.fileName);
+          }
+        }
+      }
+
       String? imgUrl;
       String? cacheKey;
 
@@ -121,7 +150,12 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       if (bytes.lengthInBytes == 0) {
         throw StateError('$url is empty and cannot be loaded as an image.');
       }
-      return await decode(bytes);
+      final data = await decode(bytes);
+      if (fileParams != null) {
+        fh.writeFile(fileParams!.basePath, fileParams!.fileName, bytes);
+      }
+
+      return data;
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         throw StateError('Load cancel');

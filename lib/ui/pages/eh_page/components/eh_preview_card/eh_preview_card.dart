@@ -17,7 +17,7 @@ class EhPreviewCard extends StatelessWidget {
   }) : super(key: key);
 
   final GalleryPreviewImage model;
-  final PreviewImage image;
+  final GalleryPreviewImageModel image;
   final String title;
 
   @override

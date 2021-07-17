@@ -1,5 +1,4 @@
-import 'package:catpic/ui/pages/eh_page/preview_page/store/read_store.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
@@ -13,15 +12,13 @@ class EhImageViewer extends StatefulWidget {
     required this.store,
     this.pageController,
     required this.startIndex,
-    required this.readStore,
     this.onCenterTap,
     this.onIndexChange,
   }) : super(key: key);
 
-  final EhGalleryStore store;
+  final EhReadStore store;
   final PageController? pageController;
   final int startIndex;
-  final ReadStore readStore;
   final VoidCallback? onCenterTap;
   final ValueChanged<int>? onIndexChange;
 
@@ -38,8 +35,7 @@ class _EhImageViewerState extends State<EhImageViewer>
 
   late final PageController pageController;
 
-  late final EhGalleryStore store = widget.store;
-  late final ReadStore readStore = widget.readStore;
+  late final EhReadStore store = widget.store;
 
   @override
   void initState() {
@@ -65,22 +61,15 @@ class _EhImageViewerState extends State<EhImageViewer>
       return;
     }
 
-    if (store.readImageList[index].imageProvider == null) {
-      await store.loadPage(
-        (index / store.imageCountInOnePage).floor() + 1,
-        false,
-      );
+    final imageModel = store.readImageList[index];
+
+    if (imageModel.imageProvider == null) {
+      imageModel.requestLoad();
     }
 
     store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
       if (e.imageProvider == null) {
-        store
-            .loadPage(
-                (store.readImageList.indexOf(e) / store.imageCountInOnePage)
-                        .floor() +
-                    1,
-                false)
-            .then((value) {
+        e.requestLoad().then((value) {
           e.imageProvider?.resolve(const ImageConfiguration());
         });
       } else {
@@ -99,11 +88,11 @@ class _EhImageViewerState extends State<EhImageViewer>
       if (left < tap && tap < right) {
         widget.onCenterTap?.call();
       } else if (tap < left) {
-        if (readStore.currentIndex - 1 >= 0)
-          pageController.jumpToPage(readStore.currentIndex - 1);
+        if (store.currentIndex - 1 >= 0)
+          pageController.jumpToPage(store.currentIndex - 1);
       } else {
-        if (readStore.currentIndex + 1 < store.imageCount)
-          pageController.jumpToPage(readStore.currentIndex + 1);
+        if (store.currentIndex + 1 < store.imageCount)
+          pageController.jumpToPage(store.currentIndex + 1);
       }
     };
 

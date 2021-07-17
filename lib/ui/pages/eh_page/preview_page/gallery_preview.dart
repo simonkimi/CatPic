@@ -3,7 +3,7 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
-import 'package:catpic/ui/pages/eh_page/preview_page/read_page.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -75,12 +75,13 @@ class GalleryPreview extends StatelessWidget {
     final galleryPreviewImage = store.imageUrlMap[image.image]!;
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return EhReadPage(
-            store: store,
-            startIndex: index,
-          );
-        }));
+        // TODO 加载数据
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        //   return EhReadPage(
+        //     store: store,
+        //     startIndex: index,
+        //   );
+        // }));
       },
       child: EhPreviewCard(
         image: image,
