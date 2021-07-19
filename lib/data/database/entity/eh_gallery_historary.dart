@@ -9,6 +9,7 @@ class EhGalleryHistoryTable extends Table {
   IntColumn get lastViewTime =>
       integer().clientDefault(() => DateTime.now().millisecond)();
 
+  /// [PreViewItemModel]
   BlobColumn get pb => blob()();
 
   @override
