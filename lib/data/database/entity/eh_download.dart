@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 
+// EH下载记录数据库
 class EhDownloadTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 

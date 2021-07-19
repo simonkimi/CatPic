@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 
+// EH下载图片的sha的记录
 class EhDownloadShaTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 

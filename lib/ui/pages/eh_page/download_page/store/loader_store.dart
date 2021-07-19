@@ -2,7 +2,6 @@ import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.da
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:get/get.dart';
 import 'package:synchronized/synchronized.dart';
@@ -27,9 +26,13 @@ abstract class DownloadLoaderStoreBase with Store {
   final int imageCount;
   late final EhReadStore store;
 
+  // 是否加载基础数据, (下载默认不加载基础数据, 只有翻页到对应页面后, 才会尝试加载基础数据)
+  var isLoadBase = false;
+
   // 下载里已经缓存的galleryID
   final Map<int, String> parsedGallery = {};
-  final pageCache = <int, List<GalleryPreviewImageModel>>{}.obs;
+
+  // 加载页面时的锁
   final List<Lock> pageLoadLock;
 
   Future<void> loadImageFromDisk() async {
@@ -47,7 +50,5 @@ abstract class DownloadLoaderStoreBase with Store {
 
   Future<void> loadPage(int index) async {}
 
-  Future<void> requestLoad(int index) async {
-    // 调用此方法, 说明既没有文件, 也没有被解析配置, 需要加载对应数据
-  }
+  Future<void> requestLoad(int index) async {}
 }

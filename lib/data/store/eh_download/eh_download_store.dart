@@ -131,7 +131,7 @@ abstract class EhDownloadStoreBase with Store {
                   try {
                     final imageModel = await adapter.galleryImage(
                       gid: database.gid,
-                      gtoken: configModel.pageInfo[e]!,
+                      shaToken: configModel.pageInfo[e]!,
                       page: e + 1,
                     );
                     final data = await _download(

@@ -91,12 +91,13 @@ class EHAdapter extends Adapter {
 
   Future<GalleryImgModel> galleryImage({
     required String gid,
-    required String gtoken,
+    required String shaToken,
     required int page,
   }) async {
-    final str = await client.galleryImage(gid: gid, gtoken: gtoken, page: page);
+    final str =
+        await client.galleryImage(gid: gid, shaToken: shaToken, page: page);
     final img = await compute(GalleryImgParser.parse, str);
-    img.galleryToken = gtoken;
+    img.shaToken = shaToken;
     return img;
   }
 

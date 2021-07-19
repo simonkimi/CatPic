@@ -21,7 +21,6 @@ import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/comment_page.dart';
-import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';

@@ -57,16 +57,16 @@ class EhClient extends BaseClient {
 
   // 单张图片
   Future<String> galleryImage({
-    required String gtoken,
+    required String shaToken,
     required String gid,
     required int page,
   }) async {
-    return (await dio.get<String>('s/$gtoken/$gid-$page',
+    return (await dio.get<String>('s/$shaToken/$gid-$page',
             options: settingStore.dioCacheOptions
                 .copyWith(
                   policy: CachePolicy.request,
                   keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
-                      '${dio.options.baseUrl}s/$gtoken/$gid-$page'),
+                      '${dio.options.baseUrl}s/$shaToken/$gid-$page'),
                 )
                 .toOptions()))
         .data!;

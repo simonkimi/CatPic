@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 
+// Eh翻译记录
 class EhTranslateTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 

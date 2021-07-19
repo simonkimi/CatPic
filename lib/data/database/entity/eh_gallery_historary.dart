@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 
+// EH历史记录数据库
 class EhGalleryHistoryTable extends Table {
   TextColumn get gid => text()();
 

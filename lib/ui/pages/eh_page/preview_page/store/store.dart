@@ -188,8 +188,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
           imageCountInOnePage = galleryModel.imageCountInOnePage;
           init();
         }
-        // TODO: 缓存过期还需要其他判断方法
-        if (page != galleryModel.currentPage) {
+        if (imageCountInOnePage != galleryModel.currentPage) {
           print('缓存过期警告!');
           reset();
         }
@@ -292,11 +291,11 @@ class ReadImageModel {
       }
       final reg = RegExp(r's/(.+?)/(\d+)-(\d+)');
       final match = reg.firstMatch(target)!;
-      final token = match[1]!;
+      final shaToken = match[1]!;
       final gid = match[2]!;
       final page = match[3]!.toInt();
       final model = await adapter.galleryImage(
-        gtoken: token,
+        shaToken: shaToken,
         gid: gid,
         page: page,
       );
