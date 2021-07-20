@@ -64,12 +64,12 @@ class _EhImageViewerState extends State<EhImageViewer>
     final imageModel = store.readImageList[index];
 
     if (imageModel.imageProvider == null) {
-      imageModel.requestLoad();
+      imageModel.requestLoad(true);
     }
 
     store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
       if (e.imageProvider == null) {
-        e.requestLoad().then((value) {
+        e.requestLoad(true).then((value) {
           e.imageProvider?.resolve(const ImageConfiguration());
         });
       } else {

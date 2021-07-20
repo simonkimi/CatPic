@@ -57,28 +57,15 @@ class EHAdapter extends Adapter {
     required String gtoken,
     required int page,
     CancelToken? cancelToken,
-    bool useCache = true,
   }) async {
-    GalleryModel? model;
-
-    if (useCache) {
-      final db = await DB().galleryCacheDao.getByGid(gid, gtoken, page);
-      if (db != null) {
-        model = GalleryModel.fromBuffer(db.data);
-      }
-    }
-
-    if (model == null) {
-      final str =
-          await client.getGallery(gid, gtoken, page.toString(), cancelToken);
-      model = await compute(GalleryParser.parse, str);
-      DB().galleryCacheDao.insert(GalleryCacheTableCompanion.insert(
-            gid: gid,
-            token: gtoken,
-            data: model!.writeToBuffer(),
-            page: page,
-          ));
-    }
+    final str =
+        await client.getGallery(gid, gtoken, page.toString(), cancelToken);
+    final model = await compute(GalleryParser.parse, str);
+    DB().galleryCacheDao.insert(GalleryCacheTableCompanion.insert(
+          gid: gid,
+          token: gtoken,
+          data: model.writeToBuffer(),
+        ));
 
     for (final tagList in model.tags) {
       tagList.keyTranslate = settingStore.translateMap[tagList.key] ?? '';

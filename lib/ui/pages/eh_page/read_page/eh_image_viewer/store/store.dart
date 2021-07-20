@@ -8,8 +8,8 @@ part 'store.g.dart';
 
 enum LoadingState { NONE, LOADED, ERROR }
 
-typedef RequestLoadFunc = Future<void> Function(int);
-typedef VoidFuture = Future<void> Function();
+typedef RequestLoadFunc = Future<void> Function(int index, bool isAuto);
+typedef ValueFuture<T> = Future<void> Function(T isAuto);
 
 class EhReadStore = EhReadStoreBase with _$EhReadStore;
 
@@ -22,8 +22,8 @@ abstract class EhReadStoreBase with Store {
             imageCount,
             (index) => ReadImgModel(
                   index: index,
-                  requestLoad: () async {
-                    requestLoad(index);
+                  requestLoad: (bool isAuto) async {
+                    requestLoad(index, isAuto);
                   },
                 ));
 
@@ -63,9 +63,10 @@ class ReadImgModel {
     required this.requestLoad,
   });
 
-  final VoidFuture requestLoad;
+  final ValueFuture<bool> requestLoad;
   final Rx<LoadingState> state = LoadingState.NONE.obs;
   final int index;
+  Exception? lastException;
   ImageProvider? imageProvider;
 
   final Lock lock = Lock();

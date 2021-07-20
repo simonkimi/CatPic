@@ -46,6 +46,7 @@ message GalleryPreviewImageModel {
   string image = 3;
   int32 positioning = 4;
   string target = 5;
+  int32 index = 6;
 }
 
 

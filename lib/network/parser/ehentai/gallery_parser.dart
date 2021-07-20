@@ -127,13 +127,14 @@ class GalleryParser {
           r'width:(\d+)px; height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
       final data = re.firstMatch(style!)!;
       final aElement = e.querySelector('a')!;
+      final imgElement = aElement.querySelector('img')!;
       return GalleryPreviewImageModel(
-        width: int.tryParse(data[1] ?? '') ?? 0,
-        height: int.tryParse(data[2] ?? '') ?? 0,
-        image: data[3]!,
-        positioning: int.parse(data[4]!),
-        target: aElement.attributes['href']!,
-      );
+          width: int.tryParse(data[1] ?? '') ?? 0,
+          height: int.tryParse(data[2] ?? '') ?? 0,
+          image: data[3]!,
+          positioning: int.parse(data[4]!),
+          target: aElement.attributes['href']!,
+          index: imgElement.attributes['alt']!.toInt() - 1);
     }).toList();
   }
 

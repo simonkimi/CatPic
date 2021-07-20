@@ -26,13 +26,9 @@ class GalleryCacheDao extends DatabaseAccessor<AppDataBase>
             ..where((tbl) => tbl.gid.equals(gid) & tbl.token.equals(gtoken)))
           .get();
 
-  Future<GalleryCacheTableData?> getByGid(
-          String gid, String gtoken, int page) =>
+  Future<GalleryCacheTableData?> getByGid(String gid, String gtoken) =>
       (select(galleryCacheTable)
-            ..where((tbl) =>
-                tbl.gid.equals(gid) &
-                tbl.token.equals(gtoken) &
-                tbl.page.equals(page)))
+            ..where((tbl) => tbl.gid.equals(gid) & tbl.token.equals(gtoken)))
           .getSingleOrNull();
 
   Future<void> remove(String gid, String gtoken) => (delete(galleryCacheTable)
