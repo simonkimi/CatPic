@@ -9,11 +9,11 @@ part 'store.g.dart';
 enum LoadingState { NONE, LOADED, ERROR }
 
 typedef RequestLoadFunc = Future<void> Function(int index, bool isAuto);
-typedef ValueFuture<T> = Future<void> Function(T isAuto);
+typedef LoadFuture<T> = Future<void> Function(T isAuto);
 
-class EhReadStore = EhReadStoreBase with _$EhReadStore;
+class EhReadStore<T> = EhReadStoreBase<T> with _$EhReadStore;
 
-abstract class EhReadStoreBase with Store {
+abstract class EhReadStoreBase<T> with Store {
   EhReadStoreBase({
     required this.imageCount,
     required this.requestLoad,
@@ -22,13 +22,13 @@ abstract class EhReadStoreBase with Store {
             imageCount,
             (index) => ReadImgModel(
                   index: index,
-                  requestLoad: (bool isAuto) async {
+                  loadFunc: (bool isAuto) async {
                     requestLoad(index, isAuto);
                   },
                 ));
 
   final int imageCount;
-  final List<ReadImgModel> readImageList;
+  final List<ReadImgModel<T>> readImageList;
   final RequestLoadFunc requestLoad;
 
   @observable
@@ -57,17 +57,28 @@ abstract class EhReadStoreBase with Store {
   }
 }
 
-class ReadImgModel {
+class ReadImgModel<T> {
   ReadImgModel({
     required this.index,
-    required this.requestLoad,
+    required this.loadFunc,
   });
 
-  final ValueFuture<bool> requestLoad;
+  final LoadFuture<bool> loadFunc;
   final Rx<LoadingState> state = LoadingState.NONE.obs;
   final int index;
-  Exception? lastException;
+
+  T? extra;
+  Object? lastException;
   ImageProvider? imageProvider;
 
   final Lock lock = Lock();
+
+  Future<void> requestLoad(bool isAuto) async {
+    loadFunc(isAuto).catchError((err) {
+      lastException = err;
+      imageProvider = null;
+      extra = null;
+      state.value = LoadingState.ERROR;
+    });
+  }
 }

@@ -20,22 +20,24 @@ typedef AsyncBuilder = Future<DioImageParams> Function();
 
 class DioImageParams {
   const DioImageParams({
-    this.url,
+    required this.url,
     this.cacheKey,
   });
 
-  final String? url;
+  final String url;
   final String? cacheKey;
 }
 
 class FileParams {
   const FileParams({
     required this.basePath,
-    required this.fileName,
+    this.fileName,
+    this.fileNameStart,
   });
 
   final String basePath;
-  final String fileName;
+  final String? fileName;
+  final String? fileNameStart;
 }
 
 @immutable
@@ -102,16 +104,28 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     try {
       // 尝试从文件里读取
       if (fileParams != null) {
+        final basePath = fileParams!.basePath;
+        String? fileName;
+        if (fileParams!.fileNameStart != null) {
+          final files = await fh.walk(basePath);
+          final start = files
+              .where((e) => e.startsWith('${fileParams!.fileNameStart!}.'));
+          if (start.isNotEmpty) fileName = start.first;
+        } else {
+          fileName = fileParams!.fileName!;
+        }
+
         final fileData = await fh.readFile(
           fileParams!.basePath,
-          fileParams!.fileName,
+          fileName!,
         );
+
         // TODO: 检测是否为509图片
         if (fileData != null && fileData.isNotEmpty) {
           try {
             return await decode(fileData);
           } on Exception {
-            fh.delFile(fileParams!.basePath, fileParams!.fileName);
+            fh.delFile(fileParams!.basePath, fileName);
           }
         }
       }
@@ -151,8 +165,16 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
         throw StateError('$url is empty and cannot be loaded as an image.');
       }
       final data = await decode(bytes);
+
       if (fileParams != null) {
-        fh.writeFile(fileParams!.basePath, fileParams!.fileName, bytes);
+        if (fileParams!.fileName != null) {
+          fh.writeFile(fileParams!.basePath, fileParams!.fileName!, bytes);
+        } else {
+          final fileName = fileParams!.fileNameStart! +
+              '.' +
+              (imgUrl ?? url!).split('.').last;
+          fh.writeFile(fileParams!.basePath, fileName, bytes);
+        }
       }
 
       return data;

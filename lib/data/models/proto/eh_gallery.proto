@@ -41,12 +41,14 @@ message CommentModel {
 
 // 画廊下面的小图片
 message GalleryPreviewImageModel {
-  int32 height = 1;
-  int32 width = 2;
-  string image = 3;
-  int32 positioning = 4;
-  string target = 5;
-  int32 index = 6;
+  string gid = 1;
+  string shaToken = 2;
+  bool isLarge = 3;
+  int32 height = 4;
+  int32 width = 6;
+  string imageUrl = 7;
+  int32 positioning = 8;
+  int32 page = 9;
 }
 
 

@@ -103,11 +103,8 @@ abstract class EhDownloadStoreBase with Store {
                     );
                     for (final imgEntity
                         in gallery.previewImages.asMap().entries) {
-                      final reg = RegExp('s/(.+?)/(.+)');
-                      final match = reg.firstMatch(imgEntity.value.target)!;
-                      final token = match[1]!;
                       configModel.pageInfo[e * gallery.imageCountInOnePage +
-                          imgEntity.key] = token;
+                          imgEntity.key] = imgEntity.value.shaToken;
                     }
                     return;
                   } on DioError catch (e) {

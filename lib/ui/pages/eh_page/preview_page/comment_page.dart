@@ -26,7 +26,7 @@ class EhCommentPage extends StatelessWidget {
       showTrackOnHover: true,
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 60),
-        itemCount: store.commentList.length,
+        itemCount: store.galleryModel!.comments.length,
         itemBuilder: (context, index) {
           return Container(
             decoration: const BoxDecoration(
@@ -39,7 +39,7 @@ class EhCommentPage extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: EhComment(
-              model: store.commentList[index],
+              model: store.galleryModel!.comments[index],
               displayVote: true,
             ),
           );

@@ -1,10 +1,13 @@
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
+import 'package:catpic/ui/components/dark_image.dart';
+import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/eh_page/components/eh_preview_card/eh_preview_card.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -72,20 +75,45 @@ class GalleryPreview extends StatelessWidget {
 
   Widget _itemBuilder(BuildContext context, int index) {
     final image = store.observableList[index];
-    final galleryPreviewImage = store.imageUrlMap[image.image]!;
     return InkWell(
       onTap: () {
-        // TODO 加载数据
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        //   return EhReadPage(
-        //     store: store,
-        //     startIndex: index,
-        //   );
-        // }));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return EhReadPage(
+            store: store.readStore,
+            startIndex: index,
+          );
+        }));
       },
-      child: EhPreviewCard(
-        image: image,
-        model: galleryPreviewImage,
+      child: PostPreviewCard(
+        hasSize: true,
+        body: DarkWidget(
+          child: image.isLarge
+              ? ExtendedImage(
+                  image: DioImageProvider(
+                    dio: store.adapter.dio,
+                    url: image.imageUrl,
+                  ),
+                )
+              : ExtendedImage(
+                  image: store.normalImageMap[image.imageUrl]!,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState == LoadState.completed) {
+                      return ExtendedRawImage(
+                        image: state.extendedImageInfo?.image,
+                        width: 100,
+                        height: image.height + .0,
+                        fit: BoxFit.fill,
+                        sourceRect: Rect.fromLTWH(
+                          image.positioning + .0,
+                          0,
+                          100,
+                          image.height + .0,
+                        ),
+                      );
+                    }
+                  },
+                ),
+        ),
         title: (index + 1).toString(),
       ),
     );

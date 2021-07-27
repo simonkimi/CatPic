@@ -72,7 +72,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
-  // 收藏列表
+  // 获取收藏列表
   Future<String> favourite({
     required int favcat,
     required int page,
@@ -92,6 +92,7 @@ class EhClient extends BaseClient {
         .data!;
   }
 
+  // 添加进收藏
   Future<String> addToFavourite({
     required String gid,
     required String gtoken,

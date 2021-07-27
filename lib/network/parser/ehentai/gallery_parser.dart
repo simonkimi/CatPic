@@ -18,33 +18,27 @@ class GalleryParser {
         .querySelectorAll('#gdd > table > tbody > tr')[4]
         .children[1]
         .text;
-
     final uploader = document.querySelector('#gdn')?.text.trim() ?? '';
-
     final visible = document
         .querySelectorAll('#gdd > table > tbody > tr')[2]
         .children[1]
         .text;
-
     final imageCount = document
         .querySelectorAll('#gdd > table > tbody > tr')[5]
         .children[1]
         .text
         .replaceAll(' pages', '')
         .toInt();
-
     final uploadTime = document
         .querySelectorAll('#gdd > table > tbody > tr')[0]
         .children[1]
         .text
         .trim();
-
     final language = document
         .querySelectorAll('#gdd > table > tbody > tr')[3]
         .children[1]
         .text
         .replaceAll(' ', '');
-
     final starMember =
         document.querySelector('#rating_count')?.text.toInt() ?? 0;
     final star = document
@@ -53,11 +47,8 @@ class GalleryParser {
             .replaceAll('Average: ', '')
             .toDouble() ??
         0.0;
-
     final gid = parseGid(document);
-
     final previewSize = parsePreviewImageSize(document);
-
     final startEndPage = parseStartEndPage(document);
 
     return GalleryModel(
@@ -67,7 +58,9 @@ class GalleryParser {
       tags: parseTags(document),
       favorited: favcount,
       fileSize: fileSize,
-      previewImages: parsePreview(document),
+      previewImages: document.querySelector('#gdo4  > .ths')!.text == 'Large'
+          ? parseLargePreview(document)
+          : parseNormalPreview(document),
       maxPageIndex: parseMaxPage(document),
       comments: parseComment(document),
       parent: parseParent(document),
@@ -119,7 +112,7 @@ class GalleryParser {
   }
 
   /// 解析预览 [0]: 预览URL, [1]: 指向地址
-  static List<GalleryPreviewImageModel> parsePreview(Element element) {
+  static List<GalleryPreviewImageModel> parseNormalPreview(Element element) {
     final imgContainer = element.querySelectorAll('.gdtm');
     return imgContainer.map((e) {
       final style = e.children[0].attributes['style'];
@@ -127,14 +120,49 @@ class GalleryParser {
           r'width:(\d+)px; height:(\d+)px;\sbackground:transparent\surl\((\S+)\)\s-?(\d+)px');
       final data = re.firstMatch(style!)!;
       final aElement = e.querySelector('a')!;
-      final imgElement = aElement.querySelector('img')!;
+
+      final reg = RegExp(r's/(.+?)/(\d+)-(\d+)');
+      final match = reg.firstMatch(aElement.attributes['href']!)!;
+      final shaToken = match[1]!;
+      final gid = match[2]!;
+      final page = match[3]!.toInt();
+
       return GalleryPreviewImageModel(
-          width: int.tryParse(data[1] ?? '') ?? 0,
-          height: int.tryParse(data[2] ?? '') ?? 0,
-          image: data[3]!,
-          positioning: int.parse(data[4]!),
-          target: aElement.attributes['href']!,
-          index: imgElement.attributes['alt']!.toInt() - 1);
+        width: data[1]?.toInt() ?? 0,
+        height: data[2]?.toInt() ?? 0,
+        imageUrl: data[3]!,
+        positioning: data[4]?.toInt() ?? 0,
+        page: page,
+        gid: gid,
+        shaToken: shaToken,
+      );
+    }).toList();
+  }
+
+  static List<GalleryPreviewImageModel> parseLargePreview(Element document) {
+    final container = document.querySelectorAll('.gdtl');
+    return container.map((e) {
+      final aElement = e.querySelector('a')!;
+      final reg = RegExp(r's/(.+?)/(\d+)-(\d+)');
+      final match = reg.firstMatch(aElement.attributes['href']!)!;
+      final shaToken = match[1]!;
+      final gid = match[2]!;
+      final page = match[3]!.toInt();
+
+      final height = e.attributes['style']!
+          .replaceAll('height:', '')
+          .replaceAll('px', '')
+          .toInt();
+
+      return GalleryPreviewImageModel(
+        width: 239,
+        shaToken: shaToken,
+        gid: gid,
+        page: page,
+        isLarge: true,
+        imageUrl: e.querySelector('img')?.attributes['src'],
+        height: height,
+      );
     }).toList();
   }
 
@@ -245,6 +273,9 @@ class GalleryParser {
 
   static int parseImageCountPage(Element document) {
     final gdo2 = document.querySelector('#gdo2 > .ths')!;
-    return gdo2.text.replaceAll(' rows', '').toInt() * 10;
+    final gdo4 = document.querySelector('#gdo4  > .ths')!;
+    final rows = gdo2.text.replaceAll(' rows', '').toInt();
+    final columns = gdo4.text == 'Large' ? 5 : 10;
+    return rows * columns;
   }
 }

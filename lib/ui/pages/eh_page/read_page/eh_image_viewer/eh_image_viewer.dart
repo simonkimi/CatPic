@@ -73,7 +73,7 @@ class _EhImageViewerState extends State<EhImageViewer>
           e.imageProvider?.resolve(const ImageConfiguration());
         });
       } else {
-        e.imageProvider!.resolve(const ImageConfiguration());
+        e.imageProvider?.resolve(const ImageConfiguration());
       }
     });
   }
@@ -105,8 +105,9 @@ class _EhImageViewerState extends State<EhImageViewer>
         return Obx(() {
           if (galleryImage.state.value == LoadingState.NONE) {
             return buildLoadingPage(index, 0);
-          }
-          if (galleryImage.state.value == LoadingState.LOADED) {
+          } else if (galleryImage.state.value == LoadingState.ERROR) {
+            return buildErrorPage(galleryImage.lastException);
+          } else if (galleryImage.state.value == LoadingState.LOADED) {
             return GestureDetector(
               key: UniqueKey(),
               onTapUp: onTapUp,
@@ -182,7 +183,7 @@ class _EhImageViewerState extends State<EhImageViewer>
               ),
               const SizedBox(height: 20),
               Text(
-                e.toString(),
+                e?.toString() ?? I18n.of(context).network_error,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,

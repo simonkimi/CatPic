@@ -1,241 +1,221 @@
-import 'dart:ui' as ui;
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/gen/eh_storage.pb.dart';
-import 'package:catpic/data/models/booru/load_more.dart';
-import 'package:catpic/data/models/ehentai/preview_model.dart';
-import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
-import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
+import 'package:catpic/utils/async.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:mobx/mobx.dart';
-import 'package:synchronized/synchronized.dart';
+import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
+import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 
 part 'store.g.dart';
 
 class EhGalleryStore = EhGalleryStoreBase with _$EhGalleryStore;
 
-class GalleryPreviewImage {
-  GalleryPreviewImage()
-      : progress = 0.0.obs,
-        loadState = false.obs;
-  ui.Image? imageData;
-  final RxDouble progress;
-  final RxBool loadState;
-}
-
+// 主要存放数据是Gallery下面小图片的数据
 abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     with Store {
   EhGalleryStoreBase({
+    required this.gid,
+    required this.gtoken,
     required this.adapter,
+    required this.isDownload,
     this.previewModel,
-    this.galleryBase,
-  })  : gid = previewModel?.gid ?? galleryBase!.gid,
-        gtoken = previewModel?.gtoken ?? galleryBase!.token,
-        isBasicLoaded = previewModel != null,
-        uploadTime = previewModel?.uploadTime ?? '',
-        uploader = previewModel?.uploader ?? '',
-        tag = previewModel?.tag ?? EhGalleryType.Misc,
-        star = previewModel?.stars ?? 0.0,
-        title = previewModel?.title ?? '',
-        imageCount = previewModel?.pages ?? 0,
-        previewImageUrl = previewModel?.previewImg ?? '',
-        pageLoadLock = [Lock()],
-        super('');
-
-  int imageCount;
-
-  final EHAdapter adapter;
-  final PreViewItemModel? previewModel;
-  final GalleryBase? galleryBase;
+  })  : pageLoader = [
+          AsyncLoader(() => adapter.gallery(
+                gid: gid,
+                gtoken: gtoken,
+                page: 0,
+              ))
+        ],
+        super('') {
+    if (isDownload) {
+      loadImageFromDisk();
+    }
+  }
 
   final String gid;
   final String gtoken;
+  final EHAdapter adapter;
+  final bool isDownload;
+  late String basePath;
 
-  final imageUrlMap = <String, GalleryPreviewImage>{};
-  final pageCache = <int, List<GalleryPreviewImageModel>>{}.obs;
-  var readImageList = ObservableList<ReadImageModel>();
-  final List<Lock> pageLoadLock;
-
-  final updateList = ObservableList<GalleryUpdate>();
-
+  PreViewItemModel? previewModel;
   GalleryModel? galleryModel;
 
-  @override
-  @observable
-  bool isLoading = false;
+  // 存放普通图片数据, URL相同的公用一个Provider
+  final normalImageMap = <String, DioImageProvider>{};
 
-  @override
-  @observable
-  String? lastException;
+  // 下载里已经缓存的galleryToken, 后期解析的也会添加到这里来
+  final Map<int, String> parsedGallery = {};
 
-  @observable
-  String fileSize = '';
+  // 阅读的Store
+  late final EhReadStore<GalleryImgModel> readStore;
 
-  @observable
-  String language = '';
+  // 加载页面的加载器
+  final List<AsyncLoader<GalleryModel>> pageLoader;
 
-  @observable
-  int favouriteCount = 0;
-
-  @observable
-  List<CommentModel> commentList = [];
-
-  @observable
-  String title = '';
-
-  @observable
-  String uploader = '';
-
-  @observable
-  double star = 0.0;
-
-  @observable
-  int starMember = 0;
-
-  @observable
-  String previewImageUrl = '';
-
-  @observable
-  int tag = EhGalleryType.Misc;
-
-  @observable
-  String uploadTime = '';
-
-  @observable
-  bool isBasicLoaded = false;
-
-  @observable
-  List<TagModels> tagList = [];
-
-  @observable
-  int torrentNum = 0;
-
-  @override
-  int? get pageItemCount => 40;
-
+  // 收藏
   @observable
   int favcat = -1;
 
-  @observable
-  int imageCountInOnePage = -1;
-
-  EHStorage get storage => EHStorage.fromBuffer(adapter.website.storage ?? []);
-
-  void init() {
-    pageLoadLock.addAll(
-        List.filled((imageCount / imageCountInOnePage).ceil() - 1, Lock()));
-    readImageList
-      ..clear()
-      ..addAll(List.generate(imageCount, (index) {
-        final base = (index / imageCountInOnePage).floor();
-        // base是在gallery里的页数
-        if (pageCache.containsKey(base)) {
-          return ReadImageModel(
-            previewImage: pageCache[base]![index % imageCountInOnePage],
-            adapter: adapter,
-          );
-        }
-        return ReadImageModel(adapter: adapter);
-      }));
-    pageCache.listen((value) {
-      value.forEach((base, value) {
-        if (readImageList[base * imageCountInOnePage].state.value ==
-            LoadingState.NONE) {
-          value.asMap().forEach((key, value) {
-            readImageList[base * imageCountInOnePage + key]
-                .loadBase(adapter, value);
-          });
-        }
-      });
-    });
-  }
-
-  void reset() {
-    imageCountInOnePage = -1;
-    onRefresh();
-  }
-
   @override
-  Future<void> onRefresh() async {
-    pageCache.clear();
-    await DB().galleryCacheDao.remove(gid, gtoken);
-    return super.onRefresh();
-  }
-
-  @override
-  @action
-  Future<List<GalleryPreviewImageModel>> loadPage(int page,
-      [bool loadPreview = true]) async {
+  Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
     final ehPage = page - 1;
-    print('load Page $ehPage');
-    return await (pageLoadLock[ehPage]).synchronized(() async {
-      final useCache = pageCache.containsKey(ehPage);
-      late final List<GalleryPreviewImageModel> imageList;
-      if (useCache) {
-        imageList = pageCache[ehPage]!;
-      } else {
-        final galleryModel = await adapter.gallery(
-          gid: previewModel?.gid ?? galleryBase!.gid,
-          gtoken: previewModel?.gtoken ?? galleryBase!.token,
-          page: ehPage,
+    final loader = pageLoader[ehPage];
+    final galleryModel = await loader.load();
+
+    for (final img in galleryModel.previewImages) {
+      // 图片地址解析
+      if (!parsedGallery.containsKey(ehPage)) {
+        parsedGallery[ehPage] = img.shaToken;
+        loadReadModel(page: ehPage, shaToken: img.shaToken);
+      }
+      // 缩略图解析
+      if (!img.isLarge && !normalImageMap.containsKey(img.imageUrl)) {
+        normalImageMap[img.imageUrl] = DioImageProvider(
+          url: img.imageUrl,
+          dio: adapter.dio,
         );
-        imageCount = galleryModel.imageCount;
-        if (imageCountInOnePage == -1) {
-          imageCountInOnePage = galleryModel.imageCountInOnePage;
-          init();
-        }
-        if (imageCountInOnePage != galleryModel.currentPage) {
-          print('缓存过期警告!');
-          reset();
-        }
-        fileSize = galleryModel.fileSize;
-        language = galleryModel.language;
-        favouriteCount = galleryModel.favorited;
-        commentList = galleryModel.comments;
-        tagList = galleryModel.tags;
-        pageCache[ehPage] = galleryModel.previewImages;
-        imageList = galleryModel.previewImages;
-        title = galleryModel.title;
-        previewImageUrl = galleryModel.previewImage;
-        star = galleryModel.star;
-        starMember = galleryModel.starMember;
-        tag = galleryModel.tag;
-        uploader = galleryModel.uploader;
-        uploadTime = galleryModel.uploadTime;
-        isBasicLoaded = true;
-        torrentNum = galleryModel.torrentNum;
-        favcat = galleryModel.favcat;
-        if (updateList.isEmpty && galleryModel.updates.isNotEmpty)
-          updateList.addAll(galleryModel.updates);
       }
-      if (loadPreview) {
-        for (final waitingImg in imageList) {
-          if (!imageUrlMap.containsKey(waitingImg.image)) {
-            final loadingImage = GalleryPreviewImage();
-            // 加载预览图
-            DioImageProvider(
-              url: waitingImg.image,
-              dio: adapter.dio,
-            ).resolve(const ImageConfiguration()).addListener(
-                    ImageStreamListener(
-                        (ImageInfo image, bool synchronousCall) {
-                  loadingImage.imageData = image.image;
-                  loadingImage.loadState.value = true;
-                }, onChunk: (ImageChunkEvent event) {
-                  loadingImage.progress.value = event.cumulativeBytesLoaded /
-                      (event.expectedTotalBytes ?? 1);
-                }));
-            imageUrlMap[waitingImg.image] = loadingImage;
-          }
+    }
+
+    return galleryModel.previewImages;
+  }
+
+  // 加载基础数据
+  Future<GalleryModel> loadBaseModel() async {
+    try {
+      final baseLoader = pageLoader[0];
+      if (baseLoader.hasError()) {
+        baseLoader.reset();
+      }
+      final baseModel = await baseLoader.load();
+      if (galleryModel != null) return baseModel;
+      galleryModel ??= baseModel;
+      final page =
+          (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
+      pageLoader.addAll(List.generate(
+          page - 1,
+          (index) => AsyncLoader(() => adapter.gallery(
+                gid: gid,
+                gtoken: gtoken,
+                page: index + 1,
+              ))));
+
+      readStore = EhReadStore<GalleryImgModel>(
+        imageCount: baseModel.imageCount,
+        requestLoad: requestLoadReadImage,
+        currentIndex: 0,
+      );
+
+      previewModel ??= PreViewItemModel(
+        gtoken: gtoken,
+        gid: gid,
+        title: baseModel.title,
+        tag: baseModel.tag,
+        keyTags: [],
+        previewImg: baseModel.previewImage,
+        stars: baseModel.star,
+        language: baseModel.language,
+        pages: baseModel.imageCount,
+        uploader: baseModel.uploader,
+        uploadTime: baseModel.uploadTime,
+        previewWidth: baseModel.previewWidth,
+        previewHeight: baseModel.previewHeight,
+      );
+
+      return baseModel;
+    } catch (e) {
+      lastException = e.toString();
+      rethrow;
+    }
+  }
+
+  // 如果是已经下载了的, 则尝试从下载里拿数据
+  Future<void> loadImageFromDisk() async {
+    final existPath =
+        (await fh.walk('Gallery')).where((e) => e.startsWith('$gid-')).toList();
+    if (existPath.isNotEmpty) {
+      basePath = existPath[0];
+      // 解析图片的galleryId数据
+      final catpic = EhDownloadModel.fromBuffer(
+          await fh.readFile(basePath, '.catpic') ?? []);
+      parsedGallery.addEntries(catpic.pageInfo.entries);
+      // 将已经解析了id的, 直接加入数据库
+      for (final shaE in catpic.pageInfo.entries) {
+        loadReadModel(page: shaE.key, shaToken: shaE.value);
+      }
+    }
+  }
+
+  // 阅读里, 需要加载页面
+  Future<void> requestLoadReadImage(int index, bool isAuto) async {
+    if (!parsedGallery.containsKey(index)) {
+      // 如果坐标索引没有被解析的话
+      final baseModel = await loadBaseModel();
+
+      final page = (index / baseModel.imageCountInOnePage).floor();
+      final loader = pageLoader[page];
+
+      if (loader.hasError() && !isAuto) {
+        loader.reset();
+      }
+
+      final model = await loader.load();
+      for (final img in model.previewImages) {
+        if (!parsedGallery.containsKey(img.page - 1)) {
+          parsedGallery[img.page - 1] = img.shaToken;
+          loadReadModel(page: img.page - 1, shaToken: img.shaToken);
         }
       }
-      print('load Page $ehPage finish');
-      return imageList;
-    });
+    } else {
+      // 如果此页面已经被解析了的话, 重新加载此页面
+      final imgModel = readStore.readImageList[index];
+      imgModel.imageProvider = null;
+      imgModel.lastException = null;
+      imgModel.state.value = LoadingState.NONE;
+      loadReadModel(page: index, shaToken: parsedGallery[index]!);
+    }
+  }
+
+  void loadReadModel({
+    required int page,
+    required String shaToken,
+  }) {
+    final entity = readStore.readImageList[page - 1];
+    if (entity.state.value == LoadingState.NONE) {
+      entity.imageProvider = DioImageProvider(
+          dio: adapter.dio,
+          fileParams: isDownload
+              ? FileParams(
+                  basePath: basePath,
+                  fileNameStart: page.format(9),
+                )
+              : null,
+          builder: () async {
+            final galleryImage = await adapter.galleryImage(
+              gid: gid,
+              shaToken: shaToken,
+              page: page,
+            );
+            entity.extra = galleryImage;
+            return DioImageParams(
+              url: galleryImage.imgUrl,
+              cacheKey: galleryImage.sha,
+            );
+          });
+      entity.state.value = LoadingState.LOADED;
+    }
+  }
+
+  void dispose() {
+    // TODO Dispose
   }
 
   Future<bool> onFavouriteClick(int favcat) async {
@@ -248,6 +228,16 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     return result;
   }
 
+  EHStorage get storage => EHStorage.fromBuffer(adapter.website.storage ?? []);
+
+  @override
+  @observable
+  bool isLoading = false;
+
+  @override
+  @observable
+  String? lastException;
+
   @override
   @action
   Future<void> onDataChange() async {}
@@ -255,65 +245,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   @override
   bool isItemExist(GalleryPreviewImageModel item) => false;
 
-  void dispose() {
-    cancelToken.cancel();
-  }
-}
-
-enum LoadingState { NONE, LOADED, ERROR }
-
-class ReadImageModel {
-  ReadImageModel({
-    required this.adapter,
-    this.previewImage,
-  }) : state = previewImage != null
-            ? LoadingState.LOADED.obs
-            : LoadingState.NONE.obs {
-    if (previewImage != null) {
-      loadBase(adapter, previewImage!);
-    }
-  }
-
-  final Rx<LoadingState> state;
-  GalleryPreviewImageModel? previewImage;
-  GalleryImgModel? model;
-  final EHAdapter adapter;
-
-  DioImageProvider? imageProvider;
-
-  final Lock lock = Lock();
-
-  // loadBase加载model的网络部分
-  Future<GalleryImgModel> loadModel(EHAdapter adapter, String target) async {
-    return await lock.synchronized(() async {
-      if (this.model != null) {
-        return this.model!;
-      }
-      final reg = RegExp(r's/(.+?)/(\d+)-(\d+)');
-      final match = reg.firstMatch(target)!;
-      final shaToken = match[1]!;
-      final gid = match[2]!;
-      final page = match[3]!.toInt();
-      final model = await adapter.galleryImage(
-        shaToken: shaToken,
-        gid: gid,
-        page: page,
-      );
-      this.model = model;
-      return model;
-    });
-  }
-
-  // 加载page的ImageProvider和基础数据
-  Future<void> loadBase(
-      EHAdapter adapter, GalleryPreviewImageModel value) async {
-    previewImage = value;
-    imageProvider = DioImageProvider(
-        dio: adapter.dio,
-        builder: () async {
-          final model = await loadModel(adapter, value.target);
-          return DioImageParams(url: model.imgUrl, cacheKey: model.sha);
-        });
-    state.value = LoadingState.LOADED;
-  }
+  @override
+  int? get pageItemCount => null;
 }
