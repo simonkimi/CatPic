@@ -12,6 +12,7 @@ import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
+import 'package:get/get.dart';
 
 part 'store.g.dart';
 
@@ -53,6 +54,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   // 下载里已经缓存的galleryToken, 后期解析的也会添加到这里来
   final Map<int, String> parsedGallery = {};
+  final Map<int, String> downloadedFileName = {};
 
   // 阅读的Store
   late final EhReadStore<GalleryImgModel> readStore;
@@ -69,7 +71,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     final ehPage = page - 1;
     final loader = pageLoader[ehPage];
     final galleryModel = await loader.load();
-
     for (final img in galleryModel.previewImages) {
       // 图片地址解析
       if (!parsedGallery.containsKey(ehPage)) {
@@ -151,6 +152,13 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       for (final shaE in catpic.pageInfo.entries) {
         loadReadModel(page: shaE.key, shaToken: shaE.value);
       }
+      // 下载好了的图片
+      final files = await fh.walk(basePath);
+      downloadedFileName.addEntries(files
+          .map((e) => e.split('.'))
+          .where((e) =>
+              e.length == 2 && e[0].isNum && (e[1] == 'jpg' || e[1] == 'png'))
+          .map((e) => MapEntry(e[0].toInt(), e.join('.'))));
     }
   }
 
@@ -195,7 +203,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
           fileParams: isDownload
               ? FileParams(
                   basePath: basePath,
-                  fileNameStart: page.format(9),
+                  fileName: downloadedFileName[page] ?? page.format(9),
                 )
               : null,
           builder: () async {

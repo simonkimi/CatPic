@@ -31,13 +31,11 @@ class DioImageParams {
 class FileParams {
   const FileParams({
     required this.basePath,
-    this.fileName,
-    this.fileNameStart,
+    required this.fileName,
   });
 
   final String basePath;
-  final String? fileName;
-  final String? fileNameStart;
+  final String fileName;
 }
 
 @immutable
@@ -104,22 +102,11 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     try {
       // 尝试从文件里读取
       if (fileParams != null) {
-        final basePath = fileParams!.basePath;
-        String? fileName;
-        if (fileParams!.fileNameStart != null) {
-          final files = await fh.walk(basePath);
-          final start = files
-              .where((e) => e.startsWith('${fileParams!.fileNameStart!}.'));
-          if (start.isNotEmpty) fileName = start.first;
-        } else {
-          fileName = fileParams!.fileName!;
-        }
-
+        final fileName = fileParams!.fileName;
         final fileData = await fh.readFile(
           fileParams!.basePath,
-          fileName!,
+          fileName,
         );
-
         // TODO: 检测是否为509图片
         if (fileData != null && fileData.isNotEmpty) {
           try {
@@ -167,14 +154,10 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       final data = await decode(bytes);
 
       if (fileParams != null) {
-        if (fileParams!.fileName != null) {
-          fh.writeFile(fileParams!.basePath, fileParams!.fileName!, bytes);
-        } else {
-          final fileName = fileParams!.fileNameStart! +
-              '.' +
-              (imgUrl ?? url!).split('.').last;
-          fh.writeFile(fileParams!.basePath, fileName, bytes);
-        }
+        var filename = fileParams!.fileName;
+        if (!filename.contains('.'))
+          filename += '.' + (imgUrl ?? url!).split('.').last;
+        fh.writeFile(fileParams!.basePath, filename, bytes);
       }
 
       return data;

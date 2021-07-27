@@ -688,14 +688,13 @@ class EhPreviewPage extends StatelessWidget {
     return TextButton(
       onPressed: store.observableList.isNotEmpty
           ? () async {
-              // TODO 加载数据
-              // final readPage = await DB().ehReadHistoryDao.getPage(gid, gtoken);
-              // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              //   return EhReadPage(
-              //     store: store,
-              //     startIndex: readPage,
-              //   );
-              // }));
+              final readPage = await DB().ehReadHistoryDao.getPage(gid, gtoken);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return EhReadPage(
+                  store: store.readStore,
+                  startIndex: readPage,
+                );
+              }));
             }
           : null,
       child: Text(I18n.of(context).read),

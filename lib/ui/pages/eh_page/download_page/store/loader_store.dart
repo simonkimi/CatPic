@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/utils/async.dart';
@@ -11,6 +10,7 @@ import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:synchronized/synchronized.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:get/get.dart';
 
 part 'loader_store.g.dart';
 
@@ -44,6 +44,7 @@ abstract class DownloadLoaderStoreBase with Store {
 
   // 下载里已经缓存的galleryID
   final Map<int, String> parsedGallery = {};
+  final Map<int, String> downloadedFileName = {};
   late String basePath;
 
   // 加载页面结果
@@ -62,6 +63,13 @@ abstract class DownloadLoaderStoreBase with Store {
       for (final shaE in catpic.pageInfo.entries) {
         loadModel(page: shaE.key, shaToken: shaE.value);
       }
+      // 下载好了的图片
+      final files = await fh.walk(basePath);
+      downloadedFileName.addEntries(files
+          .map((e) => e.split('.'))
+          .where((e) =>
+              e.length == 2 && e[0].isNum && (e[1] == 'jpg' || e[1] == 'png'))
+          .map((e) => MapEntry(e[0].toInt(), e.join('.'))));
     }
   }
 
@@ -75,7 +83,7 @@ abstract class DownloadLoaderStoreBase with Store {
           dio: adapter.dio,
           fileParams: FileParams(
             basePath: basePath,
-            fileNameStart: page.format(9),
+            fileName: downloadedFileName[page] ?? page.format(9),
           ),
           builder: () async {
             final galleryImage = await adapter.galleryImage(
