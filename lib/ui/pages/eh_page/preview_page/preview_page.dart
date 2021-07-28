@@ -219,7 +219,7 @@ class EhPreviewPage extends StatelessWidget {
                 children: [
                   buildReadButton(context),
                   const Expanded(child: SizedBox()),
-                  if (store.observableList.isNotEmpty)
+                  if (store.isLoaded)
                     TextButton(
                       onPressed: () {},
                       child: const Icon(Icons.update),
@@ -235,9 +235,8 @@ class EhPreviewPage extends StatelessWidget {
                           foregroundColor:
                               MaterialStateProperty.all(Colors.orange)),
                     ),
-                  if (store.observableList.isNotEmpty)
-                    buildFavouriteButton(context),
-                  if (store.observableList.isNotEmpty) buildDownloadButton(),
+                  if (store.isLoaded) buildFavouriteButton(context),
+                  if (store.isLoaded) buildDownloadButton(),
                 ],
               );
             },
@@ -284,7 +283,7 @@ class EhPreviewPage extends StatelessWidget {
     });
   }
 
-  TextButton buildFavouriteButton(BuildContext context) {
+  Widget buildFavouriteButton(BuildContext context) {
     return TextButton(
       onPressed: () async {
         if (store.favcat != -1) {
@@ -307,7 +306,19 @@ class EhPreviewPage extends StatelessWidget {
           }
         }
       },
-      child: Icon(store.favcat == -1 ? Icons.favorite_outline : Icons.favorite),
+      child: store.isFavLoading
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          : Icon(store.favcat == -1 ? Icons.favorite_outline : Icons.favorite),
       style: ButtonStyle(
           padding: MaterialStateProperty.all(Platform.isWindows
               ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
@@ -697,7 +708,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Widget buildReadButton(BuildContext context) {
     return TextButton(
-      onPressed: store.observableList.isNotEmpty
+      onPressed: store.isLoaded
           ? () async {
               final readPage = await DB().ehReadHistoryDao.getPage(gid, gtoken);
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {

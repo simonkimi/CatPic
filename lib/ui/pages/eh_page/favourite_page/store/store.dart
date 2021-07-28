@@ -59,6 +59,7 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
       ..addAll(fav);
     final newEntity = entity.copyWith(storage: storage.writeToBuffer());
     mainStore.setWebsiteWithoutNotification(newEntity);
+    adapter.updateWebsite(newEntity);
     await DB().websiteDao.updateSite(newEntity);
   }
 

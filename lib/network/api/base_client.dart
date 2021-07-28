@@ -99,5 +99,9 @@ abstract class BaseClient {
 
   BaseClient.fromDio(this.dio);
 
+  void updateWebsite(WebsiteTableData websiteEntity) {
+    dio = DioBuilder.build(websiteEntity);
+  }
+
   late Dio dio;
 }

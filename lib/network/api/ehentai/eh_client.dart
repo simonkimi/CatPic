@@ -107,7 +107,7 @@ class EhClient extends BaseClient {
         'act': 'addfav',
       },
       data: FormData.fromMap({
-        'favcat': favcat != -1 ? favcat.toString() : 'delfav',
+        'favcat': favcat != -1 ? favcat.toString() : 'favdel',
         'favnote': favnote,
         'apply': favcat != -1 ? 'Add to Favorites' : 'Apply Changes',
         'update': '1',

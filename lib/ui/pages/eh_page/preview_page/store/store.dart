@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -67,6 +68,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   // 收藏
   @observable
   int favcat = -1;
+  @observable
+  bool isFavLoading = false;
 
   @override
   Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
@@ -117,7 +120,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
         requestLoad: requestLoadReadImage,
         currentIndex: 0,
       );
-
+      favcat = baseModel.favcat;
       previewModel ??= PreViewItemModel(
         gtoken: gtoken,
         gid: gid,
@@ -233,16 +236,22 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   @action
   Future<bool> onFavouriteClick(int favcat) async {
-    final result =
-        await adapter.addToFavourite(gid: gid, gtoken: gtoken, favcat: favcat);
-    if (result) {
-      this.favcat = favcat;
-      DB().galleryCacheDao.updateFavcat(gid, gtoken, favcat);
+    isFavLoading = true;
+    try {
+      final result = await adapter.addToFavourite(
+          gid: gid, gtoken: gtoken, favcat: favcat);
+      if (result) {
+        this.favcat = favcat;
+        DB().galleryCacheDao.updateFavcat(gid, gtoken, favcat);
+      }
+      return result;
+    } finally {
+      isFavLoading = false;
     }
-    return result;
   }
 
-  EHStorage get storage => EHStorage.fromBuffer(adapter.website.storage ?? []);
+  EHStorage get storage =>
+      EHStorage.fromBuffer(adapter.websiteEntity.storage ?? []);
 
   @override
   @observable
@@ -261,4 +270,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   @override
   int? get pageItemCount => null;
+
+  @computed
+  bool get isLoaded => galleryModel != null;
 }

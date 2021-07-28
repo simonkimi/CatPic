@@ -16,7 +16,12 @@ import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);
 
-  final WebsiteTableData websiteEntity;
+  WebsiteTableData websiteEntity;
+
+  void updateWebsite(WebsiteTableData websiteTableData) {
+    websiteEntity = websiteEntity;
+    client.updateWebsite(websiteEntity);
+  }
 
   @override
   final EhClient client;
@@ -133,13 +138,12 @@ class EHAdapter extends Adapter {
     required int favcat,
   }) async {
     try {
-      final data = await client.addToFavourite(
+      await client.addToFavourite(
         gid: gid,
         gtoken: gtoken,
-        favnote: 'favnote',
+        favnote: '',
         favcat: favcat,
       );
-      print(data);
       return true;
     } on Exception {
       return false;
