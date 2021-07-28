@@ -115,10 +115,7 @@ class EhPreviewPage extends StatelessWidget {
                         buildPreviewTitle(context),
                         const Divider(),
                         // 构建下面的需要加载的数据
-                        if (store.galleryModel != null)
-                          buildNeedLoading(context),
-                        if (store.galleryModel == null)
-                          const Center(child: CircularProgressIndicator())
+                        buildNeedLoading(context),
                       ],
                     ),
                   )
@@ -157,18 +154,21 @@ class EhPreviewPage extends StatelessWidget {
 
   Widget buildNeedLoading(BuildContext context) {
     return LoadMoreManager(
-        store: store,
-        body: Column(
-          children: [
-            buildInfoBarRow(context),
-            const Divider(),
-            buildTagList(context),
-            const Divider(),
-            buildCommentList(context),
-            const Divider(),
-            buildPreviewList(context),
-          ],
-        ));
+      store: store,
+      body: store.isLoaded
+          ? Column(
+              children: [
+                buildInfoBarRow(context),
+                const Divider(),
+                buildTagList(context),
+                const Divider(),
+                buildCommentList(context),
+                const Divider(),
+                buildPreviewList(context),
+              ],
+            )
+          : const SizedBox(),
+    );
   }
 
   Widget buildPreviewTitle(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -255,7 +254,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   @override
   @observable
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   @observable

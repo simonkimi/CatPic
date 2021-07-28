@@ -5,12 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:catpic/i18n.dart';
 
 class LoadMoreManager extends StatelessWidget {
-  const LoadMoreManager(
-      {Key? key,
-      required this.store,
-      required this.body,
-      this.isLoading = false})
-      : super(key: key);
+  const LoadMoreManager({
+    Key? key,
+    required this.store,
+    required this.body,
+    this.isLoading = false,
+  }) : super(key: key);
 
   final ILoadMore store;
   final bool isLoading;
@@ -23,8 +23,11 @@ class LoadMoreManager extends StatelessWidget {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: () {
-            if ((store.isLoading && store.observableList.isEmpty) || isLoading)
-              return const Center(child: CircularProgressIndicator());
+            if (store.isLoading && store.observableList.isEmpty)
+              return const Padding(
+                padding: EdgeInsets.all(30),
+                child: Center(child: CircularProgressIndicator()),
+              );
             if (store.lastException != null &&
                 store.lastException!.isNotEmpty &&
                 store.observableList.isEmpty)
