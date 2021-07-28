@@ -58,6 +58,10 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
 
   final _cancelToken = CancelToken().wrap;
 
+  void dispose() {
+    _cancelToken.value.cancel();
+  }
+
   @override
   bool operator ==(Object other) {
     if (other is! DioImageProvider) return false;
@@ -125,11 +129,11 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
         imgUrl = model.url;
         cacheKey = model.cacheKey;
       }
+      imgUrl ??= url;
+      if (imgUrl == null) throw StateError('imgUrl is null');
 
-      final key =
-          cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imgUrl ?? url!);
-
-      final rsp = await (dio ?? Dio()).get<List<int>>(imgUrl ?? url!,
+      final key = cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imgUrl);
+      final rsp = await (dio ?? Dio()).get<List<int>>(imgUrl,
           cancelToken: _cancelToken.value,
           options: settingStore.dioCacheOptions
               .copyWith(
@@ -151,12 +155,12 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       if (bytes.lengthInBytes == 0) {
         throw StateError('$url is empty and cannot be loaded as an image.');
       }
+
       final data = await decode(bytes);
 
       if (fileParams != null) {
         var filename = fileParams!.fileName;
-        if (!filename.contains('.'))
-          filename += '.' + (imgUrl ?? url!).split('.').last;
+        if (!filename.contains('.')) filename += '.' + imgUrl.split('.').last;
         fh.writeFile(fileParams!.basePath, filename, bytes);
       }
 
@@ -169,10 +173,6 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
     } catch (e) {
       rethrow;
     }
-  }
-
-  void cancel() {
-    _cancelToken.value.cancel();
   }
 }
 
@@ -256,7 +256,7 @@ class DioVideoProvider {
     }
   }
 
-  void cancel() {
+  void dispose() {
     _cancelToken.cancel();
   }
 }

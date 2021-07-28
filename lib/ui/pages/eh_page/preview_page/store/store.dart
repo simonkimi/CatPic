@@ -46,7 +46,9 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   final bool isDownload;
   late String basePath;
 
+  @observable
   PreViewItemModel? previewModel;
+  @observable
   GalleryModel? galleryModel;
 
   // 存放普通图片数据, URL相同的公用一个Provider
@@ -68,14 +70,15 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   @override
   Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
+    if (galleryModel == null) await loadBaseModel();
     final ehPage = page - 1;
     final loader = pageLoader[ehPage];
-    final galleryModel = await loader.load();
-    for (final img in galleryModel.previewImages) {
+    final model = await loader.load();
+    for (final img in model.previewImages) {
       // 图片地址解析
       if (!parsedGallery.containsKey(ehPage)) {
         parsedGallery[ehPage] = img.shaToken;
-        loadReadModel(page: ehPage, shaToken: img.shaToken);
+        loadReadModel(index: img.page - 1, shaToken: img.shaToken);
       }
       // 缩略图解析
       if (!img.isLarge && !normalImageMap.containsKey(img.imageUrl)) {
@@ -85,11 +88,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
         );
       }
     }
-
-    return galleryModel.previewImages;
+    return model.previewImages;
   }
 
   // 加载基础数据
+  @action
   Future<GalleryModel> loadBaseModel() async {
     try {
       final baseLoader = pageLoader[0];
@@ -150,7 +153,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       parsedGallery.addEntries(catpic.pageInfo.entries);
       // 将已经解析了id的, 直接加入数据库
       for (final shaE in catpic.pageInfo.entries) {
-        loadReadModel(page: shaE.key, shaToken: shaE.value);
+        loadReadModel(index: shaE.key, shaToken: shaE.value);
       }
       // 下载好了的图片
       final files = await fh.walk(basePath);
@@ -179,7 +182,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       for (final img in model.previewImages) {
         if (!parsedGallery.containsKey(img.page - 1)) {
           parsedGallery[img.page - 1] = img.shaToken;
-          loadReadModel(page: img.page - 1, shaToken: img.shaToken);
+          loadReadModel(index: img.page - 1, shaToken: img.shaToken);
         }
       }
     } else {
@@ -188,29 +191,29 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       imgModel.imageProvider = null;
       imgModel.lastException = null;
       imgModel.state.value = LoadingState.NONE;
-      loadReadModel(page: index, shaToken: parsedGallery[index]!);
+      loadReadModel(index: index, shaToken: parsedGallery[index]!);
     }
   }
 
   void loadReadModel({
-    required int page,
+    required int index,
     required String shaToken,
   }) {
-    final entity = readStore.readImageList[page - 1];
+    final entity = readStore.readImageList[index];
     if (entity.state.value == LoadingState.NONE) {
       entity.imageProvider = DioImageProvider(
           dio: adapter.dio,
           fileParams: isDownload
               ? FileParams(
                   basePath: basePath,
-                  fileName: downloadedFileName[page] ?? page.format(9),
+                  fileName: downloadedFileName[index] ?? index.format(9),
                 )
               : null,
           builder: () async {
             final galleryImage = await adapter.galleryImage(
               gid: gid,
               shaToken: shaToken,
-              page: page,
+              page: index + 1,
             );
             entity.extra = galleryImage;
             return DioImageParams(
@@ -223,9 +226,12 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   }
 
   void dispose() {
-    // TODO Dispose
+    for (final e in readStore.readImageList) {
+      e.dispose();
+    }
   }
 
+  @action
   Future<bool> onFavouriteClick(int favcat) async {
     final result =
         await adapter.addToFavourite(gid: gid, gtoken: gtoken, favcat: favcat);

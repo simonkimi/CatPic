@@ -1,6 +1,6 @@
 import 'package:catpic/ui/components/page_slider.dart';
+import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -69,7 +69,7 @@ class ReadImgModel<T> {
 
   T? extra;
   Object? lastException;
-  ImageProvider? imageProvider;
+  DioImageProvider? imageProvider;
 
   final Lock lock = Lock();
 
@@ -80,5 +80,9 @@ class ReadImgModel<T> {
       extra = null;
       state.value = LoadingState.ERROR;
     });
+  }
+
+  void dispose() {
+    imageProvider?.dispose();
   }
 }

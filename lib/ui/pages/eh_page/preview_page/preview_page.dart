@@ -107,7 +107,7 @@ class EhPreviewPage extends StatelessWidget {
               store.dispose();
               return true;
             },
-            child: store.galleryModel != null
+            child: store.previewModel != null
                 ? SingleChildScrollView(
                     child: Column(
                       children: [
@@ -115,7 +115,10 @@ class EhPreviewPage extends StatelessWidget {
                         buildPreviewTitle(context),
                         const Divider(),
                         // 构建下面的需要加载的数据
-                        buildNeedLoading(context),
+                        if (store.galleryModel != null)
+                          buildNeedLoading(context),
+                        if (store.galleryModel == null)
+                          const Center(child: CircularProgressIndicator())
                       ],
                     ),
                   )
@@ -364,7 +367,7 @@ class EhPreviewPage extends StatelessWidget {
 
   Text buildUploadTime(BuildContext context) {
     return Text(
-      store.galleryModel!.uploadTime,
+      store.previewModel!.uploadTime,
       style: TextStyle(
         fontSize: 14,
         color: Theme.of(context).textTheme.subtitle2!.color,
@@ -396,7 +399,7 @@ class EhPreviewPage extends StatelessWidget {
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
             ),
-            itemCount: min(store.observableList.length, 40),
+            itemCount: min(store.observableList.length, 80),
             itemBuilder: (context, index) {
               final image = store.observableList[index];
               return InkWell(
@@ -411,34 +414,42 @@ class EhPreviewPage extends StatelessWidget {
                 },
                 child: PostPreviewCard(
                   hasSize: true,
-                  body: DarkWidget(
-                    child: image.isLarge
-                        ? ExtendedImage(
-                            image: DioImageProvider(
-                              dio: store.adapter.dio,
-                              url: image.imageUrl,
-                            ),
-                          )
-                        : ExtendedImage(
-                            image: store.normalImageMap[image.imageUrl]!,
-                            loadStateChanged: (state) {
-                              if (state.extendedImageLoadState ==
-                                  LoadState.completed) {
-                                return ExtendedRawImage(
-                                  image: state.extendedImageInfo?.image,
-                                  width: 100,
-                                  height: image.height + .0,
-                                  fit: BoxFit.fill,
-                                  sourceRect: Rect.fromLTWH(
-                                    image.positioning + .0,
-                                    0,
-                                    100,
-                                    image.height + .0,
+                  body: Center(
+                    child: Container(
+                      child: DarkWidget(
+                        child: AspectRatio(
+                          aspectRatio: 100 / image.height,
+                          child: image.isLarge
+                              ? ExtendedImage(
+                                  image: DioImageProvider(
+                                    dio: store.adapter.dio,
+                                    url: image.imageUrl,
                                   ),
-                                );
-                              }
-                            },
-                          ),
+                                )
+                              : ExtendedImage(
+                                  image: store.normalImageMap[image.imageUrl]!,
+                                  loadStateChanged: (state) {
+                                    if (state.extendedImageLoadState ==
+                                        LoadState.completed) {
+                                      return ExtendedRawImage(
+                                        image: state.extendedImageInfo?.image,
+                                        width: 200,
+                                        height: image.height * 2,
+                                        fit: BoxFit.fill,
+                                        sourceRect: Rect.fromLTWH(
+                                          image.positioning + .0,
+                                          0,
+                                          100,
+                                          image.height + .0,
+                                        ),
+                                        scale: 0.5,
+                                      );
+                                    }
+                                  },
+                                ),
+                        ),
+                      ),
+                    ),
                   ),
                   title: (index + 1).toString(),
                 ),
@@ -662,7 +673,7 @@ class EhPreviewPage extends StatelessWidget {
                             ?.tag ??
                         ''),
               ),
-              Text(store.galleryModel!.uploadTime),
+              Text(store.previewModel!.uploadTime),
             ],
           ),
         ],
@@ -726,14 +737,14 @@ class EhPreviewPage extends StatelessWidget {
 
   Text buildTitle() {
     return Text(
-      store.galleryModel!.title,
+      store.previewModel!.title,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
 
   Text buildUploader(BuildContext context) {
     return Text(
-      store.galleryModel!.uploader,
+      store.previewModel!.uploader,
       style: TextStyle(
         fontSize: 16,
         color: Theme.of(context).textTheme.subtitle2!.color,
@@ -747,7 +758,7 @@ class EhPreviewPage extends StatelessWidget {
         RatingBar.builder(
           itemSize: 16,
           ignoreGestures: true,
-          initialRating: store.galleryModel!.star,
+          initialRating: store.previewModel!.stars,
           onRatingUpdate: (value) {},
           itemBuilder: (BuildContext context, int index) {
             return const Icon(
@@ -758,7 +769,7 @@ class EhPreviewPage extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          store.galleryModel!.star.toString(),
+          store.previewModel!.stars.toString(),
           style: TextStyle(
             fontSize: 12,
             color: Theme.of(context).textTheme.subtitle2!.color,
@@ -774,7 +785,7 @@ class EhPreviewPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: store.galleryModel!.tag.color,
+          color: store.previewModel!.tag.color,
           borderRadius: BorderRadius.circular(3),
         ),
         child: Row(
@@ -782,7 +793,7 @@ class EhPreviewPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              store.galleryModel!.tag.translate(context),
+              store.previewModel!.tag.translate(context),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 13,
@@ -811,7 +822,7 @@ class EhPreviewPage extends StatelessWidget {
               fit: BoxFit.fill,
               image: DioImageProvider(
                 dio: adapter.dio,
-                url: store.galleryModel!.previewImage,
+                url: store.previewModel!.previewImg,
               ),
               enableLoadState: true,
               loadStateChanged: (state) {

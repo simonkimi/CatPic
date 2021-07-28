@@ -241,7 +241,9 @@ class GalleryParser {
   static List<GalleryUpdate> parseUpdates(Element document) {
     final update = <GalleryUpdate>[];
     var pointer = 0;
-    for (final node in document.querySelector('#gnd')!.nodes) {
+    final updatesNode = document.querySelector('#gnd');
+    if (updatesNode == null) return [];
+    for (final node in updatesNode.nodes) {
       if (node.nodeType == Node.ELEMENT_NODE &&
           node.attributes.containsKey('href')) {
         final reg = RegExp(r'g/(\d+)/(.+)/');

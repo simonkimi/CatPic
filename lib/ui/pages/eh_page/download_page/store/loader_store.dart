@@ -61,7 +61,7 @@ abstract class DownloadLoaderStoreBase with Store {
       parsedGallery.addEntries(catpic.pageInfo.entries);
       // 将已经解析了id的, 直接加入数据库
       for (final shaE in catpic.pageInfo.entries) {
-        loadModel(page: shaE.key, shaToken: shaE.value);
+        loadModel(index: shaE.key, shaToken: shaE.value);
       }
       // 下载好了的图片
       final files = await fh.walk(basePath);
@@ -74,22 +74,22 @@ abstract class DownloadLoaderStoreBase with Store {
   }
 
   void loadModel({
-    required int page,
+    required int index,
     required String shaToken,
   }) {
-    final entity = store.readImageList[page - 1];
+    final entity = store.readImageList[index];
     if (entity.state.value == LoadingState.NONE) {
       entity.imageProvider = DioImageProvider(
           dio: adapter.dio,
           fileParams: FileParams(
             basePath: basePath,
-            fileName: downloadedFileName[page] ?? page.format(9),
+            fileName: downloadedFileName[index] ?? index.format(9),
           ),
           builder: () async {
             final galleryImage = await adapter.galleryImage(
               gid: gid,
               shaToken: shaToken,
-              page: page,
+              page: index + 1,
             );
             entity.extra = galleryImage;
             return DioImageParams(
@@ -119,7 +119,7 @@ abstract class DownloadLoaderStoreBase with Store {
     for (final img in model.previewImages) {
       if (!parsedGallery.containsKey(img.page - 1)) {
         parsedGallery[img.page - 1] = img.shaToken;
-        loadModel(page: img.page, shaToken: img.shaToken);
+        loadModel(index: img.page - 1, shaToken: img.shaToken);
       }
     }
   }

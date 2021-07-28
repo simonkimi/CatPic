@@ -104,10 +104,10 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     super.dispose();
     _doubleClickAnimationController.dispose();
     contentProvider.whereType<DioVideoProvider>().forEach((element) {
-      element.cancel();
+      element.dispose();
     });
     contentProvider.whereType<DioImageProvider>().forEach((element) {
-      element.cancel();
+      element.dispose();
     });
     videoPlayerControllerMap.forEach((key, value) {
       value.pause();
