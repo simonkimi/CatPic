@@ -64,18 +64,35 @@ class _EhImageViewerState extends State<EhImageViewer>
     final imageModel = store.readImageList[index];
 
     if (imageModel.imageProvider == null) {
-      imageModel.requestLoad(true);
+      imageModel.requestLoad(true).then((value) {
+        imageModel.imageProvider?.resolve(const ImageConfiguration());
+      });
     }
 
-    store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
-      if (e.imageProvider == null) {
-        e.requestLoad(true).then((value) {
+    if (preloadNum != 0) {
+      // 向后预加载${preloadNum}张图片
+      store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
+        if (e.imageProvider == null) {
+          e.requestLoad(true).then((value) {
+            e.imageProvider?.resolve(const ImageConfiguration());
+          });
+        } else {
           e.imageProvider?.resolve(const ImageConfiguration());
-        });
-      } else {
-        e.imageProvider?.resolve(const ImageConfiguration());
+        }
+      });
+
+      // 向前预加载一张图片
+      if (index > 1) {
+        final e = store.readImageList[index - 1];
+        if (e.imageProvider == null) {
+          e.requestLoad(true).then((value) {
+            e.imageProvider?.resolve(const ImageConfiguration());
+          });
+        } else {
+          e.imageProvider?.resolve(const ImageConfiguration());
+        }
       }
-    });
+    }
   }
 
   @override
