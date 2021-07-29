@@ -1,7 +1,7 @@
 import 'dart:io';
-
+import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
+import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
-
 import 'android_bridge.dart';
 
 const MIME = <String, String>{
@@ -12,6 +12,21 @@ const MIME = <String, String>{
   'png': 'image/png',
   'mp4': 'video/mp4',
 };
+
+Future<bool> hasDownloadPermission() async {
+  if (Platform.isAndroid) {
+    return (await getSafUri()) != null;
+  }
+  throw UnsupportedError('');
+}
+
+void requestDownloadPath(BuildContext context) {
+  if (Platform.isAndroid) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => AndroidDownloadPage()));
+  }
+  throw UnsupportedError('');
+}
 
 Future<void> saveBooruImage(String fileName, Uint8List data) async {
   if (Platform.isAndroid) {
@@ -30,6 +45,7 @@ Future<void> createDir(String path) async {
     final saf = await getSafUri();
     await safCreateDirectory(saf!, path);
   }
+  throw UnsupportedError('');
 }
 
 Future<Uint8List?> readFile(String path, String fileName) async {

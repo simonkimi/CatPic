@@ -28,7 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
-
+import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'gallery_preview.dart';
 
 enum GalleryAction {
@@ -251,19 +251,20 @@ class EhPreviewPage extends StatelessWidget {
         future: DB().ehDownloadDao.getByGid(store.gid, store.gtoken),
         builder: (context, snapshot) {
           return TextButton(
-            onPressed: () {
+            onPressed: () async {
               if (snapshot.data == null) {
-                ehDownloadStore
-                    .createDownloadTask(
-                  store.gid,
-                  store.gtoken,
-                  adapter.website.id,
-                )
-                    .then((value) {
+                if (await fh.hasDownloadPermission()) {
+                  final value = await ehDownloadStore.createDownloadTask(
+                    store.gid,
+                    store.gtoken,
+                    adapter.website.id,
+                  );
                   if (value)
                     BotToast.showText(text: I18n.of(context).download_start);
                   setState(() {});
-                });
+                } else {
+                  fh.requestDownloadPath(context);
+                }
               }
             },
             child: Icon(snapshot.data == null

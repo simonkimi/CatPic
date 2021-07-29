@@ -34,10 +34,14 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
               ))
         ],
         super('') {
-    DB().ehDownloadDao.getByGid(gid, gtoken).then((value) {
-      if (value != null) {
-        isDownload = true;
-        loadImageFromDisk();
+    fh.hasDownloadPermission().then((value) {
+      if (value) {
+        DB().ehDownloadDao.getByGid(gid, gtoken).then((value) {
+          if (value != null) {
+            isDownload = true;
+            loadImageFromDisk();
+          }
+        });
       }
     });
   }

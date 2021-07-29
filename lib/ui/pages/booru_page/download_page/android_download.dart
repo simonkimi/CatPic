@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 class AndroidDownloadPage extends StatelessWidget {
   static const route = 'AndroidDownloadPage';
+
   Future<void> getSafPath(BuildContext context) async {
     final uri = await requestSafUri();
     if (uri?.isEmpty ?? false) {
