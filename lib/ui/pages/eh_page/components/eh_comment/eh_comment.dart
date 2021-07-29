@@ -45,6 +45,13 @@ class EhComment extends StatelessWidget {
                 text: model.comment,
                 minLines: 1,
                 maxLines: 10,
+                onOpen: (link) async {
+                  if (await canLaunch(link.url)) {
+                    await launch(link.url);
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
               ),
             if (displayVote)
               Column(
@@ -53,8 +60,6 @@ class EhComment extends StatelessWidget {
                   SelectableLinkify(
                     text: model.comment,
                     options: const LinkifyOptions(humanize: false),
-                    minLines: 1,
-                    maxLines: 10,
                     onOpen: (link) async {
                       if (await canLaunch(link.url)) {
                         await launch(link.url);
