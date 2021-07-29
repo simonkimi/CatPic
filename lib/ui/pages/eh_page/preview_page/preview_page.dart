@@ -48,7 +48,6 @@ class EhPreviewPage extends StatelessWidget {
           gtoken: previewModel?.gtoken ?? galleryBase!.token,
           adapter: adapter,
           previewModel: previewModel,
-          isDownload: false,
         ),
         assert(galleryBase != null || previewModel != null),
         gid = previewModel?.gid ?? galleryBase!.gid,

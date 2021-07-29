@@ -25,7 +25,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     required this.gid,
     required this.gtoken,
     required this.adapter,
-    required this.isDownload,
     this.previewModel,
   })  : pageLoader = [
           AsyncLoader(() => adapter.gallery(
@@ -35,15 +34,17 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
               ))
         ],
         super('') {
-    if (isDownload) {
-      loadImageFromDisk();
-    }
+    DB().ehDownloadDao.getByGid(gid, gtoken).then((value) {
+      if (value != null) {
+        isDownload = true;
+        loadImageFromDisk();
+      }
+    });
   }
 
   final String gid;
   final String gtoken;
   final EHAdapter adapter;
-  final bool isDownload;
   late String basePath;
 
   @observable
@@ -57,6 +58,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   // 下载里已经缓存的galleryToken, 后期解析的也会添加到这里来
   final Map<int, String> parsedGallery = {};
   final Map<int, String> downloadedFileName = {};
+  bool isDownload = false;
 
   // 阅读的Store
   late final EhReadStore<GalleryImgModel> readStore;
