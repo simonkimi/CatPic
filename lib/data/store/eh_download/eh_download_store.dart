@@ -156,13 +156,16 @@ abstract class EhDownloadStoreBase with Store {
               }));
       await Future.wait(pictureFutures);
       // 下载完成后解析下载完成的数量
-      final downloadedImageSize = (await fh.walk(basePath))
+      final downloadedFile = {}..addEntries((await fh.walk(basePath))
+          .map((e) => e.split('.'))
           .where((e) =>
-              e.startsWith('0') &&
-              (e.endsWith('.jpg') || e.endsWith('.png')) &&
-              e.split('.').first.isNum)
-          .length;
-      if (downloadedImageSize == database.pageTotal)
+              e.length == 2 && e[0].isNum && (e[1] == 'jpg' || e[1] == 'png'))
+          .map((e) => MapEntry(e[0].toInt() - 1, e.join('.'))));
+
+      final isFinish = List.generate(database.pageTotal, (index) => index)
+          .every((e) => downloadedFile.containsKey(e));
+
+      if (isFinish)
         await DB()
             .ehDownloadDao
             .replace(database.copyWith(status: EhDownloadState.FINISH));

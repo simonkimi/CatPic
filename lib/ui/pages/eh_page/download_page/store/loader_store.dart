@@ -29,18 +29,19 @@ abstract class DownloadLoaderStoreBase with Store {
                   gtoken: gtoken,
                   page: index,
                 ))) {
-    store = EhReadStore<GalleryImgModel>(
+    readStore = EhReadStore<GalleryImgModel>(
       imageCount: imageCount,
       requestLoad: requestLoad,
       currentIndex: 0,
     );
+    loadImageFromDisk();
   }
 
   final int imageCount;
   final EHAdapter adapter;
   final String gid;
   final String gtoken;
-  late final EhReadStore<GalleryImgModel> store;
+  late final EhReadStore<GalleryImgModel> readStore;
 
   // 下载里已经缓存的galleryID
   final Map<int, String> parsedGallery = {};
@@ -54,22 +55,22 @@ abstract class DownloadLoaderStoreBase with Store {
     final existPath =
         (await fh.walk('Gallery')).where((e) => e.startsWith('$gid-')).toList();
     if (existPath.isNotEmpty) {
-      basePath = existPath[0];
+      basePath = 'Gallery/${existPath[0]}';
       // 解析图片的galleryId数据
       final catpic = EhDownloadModel.fromBuffer(
           await fh.readFile(basePath, '.catpic') ?? []);
       parsedGallery.addEntries(catpic.pageInfo.entries);
-      // 将已经解析了id的, 直接加入数据库
-      for (final shaE in catpic.pageInfo.entries) {
-        loadModel(index: shaE.key, shaToken: shaE.value);
-      }
       // 下载好了的图片
       final files = await fh.walk(basePath);
       downloadedFileName.addEntries(files
           .map((e) => e.split('.'))
           .where((e) =>
               e.length == 2 && e[0].isNum && (e[1] == 'jpg' || e[1] == 'png'))
-          .map((e) => MapEntry(e[0].toInt(), e.join('.'))));
+          .map((e) => MapEntry(e[0].toInt() - 1, e.join('.'))));
+      // 将已经解析了id的, 直接加入数据库
+      for (final shaE in catpic.pageInfo.entries) {
+        loadModel(index: shaE.key, shaToken: shaE.value);
+      }
     }
   }
 
@@ -77,7 +78,7 @@ abstract class DownloadLoaderStoreBase with Store {
     required int index,
     required String shaToken,
   }) {
-    final entity = store.readImageList[index];
+    final entity = readStore.readImageList[index];
     if (entity.state.value == LoadingState.NONE) {
       entity.imageProvider = DioImageProvider(
           dio: adapter.dio,

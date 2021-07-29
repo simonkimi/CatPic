@@ -24,6 +24,7 @@ void requestDownloadPath(BuildContext context) {
   if (Platform.isAndroid) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => AndroidDownloadPage()));
+    return;
   }
   throw UnsupportedError('');
 }
@@ -44,6 +45,7 @@ Future<void> createDir(String path) async {
   if (Platform.isAndroid) {
     final saf = await getSafUri();
     await safCreateDirectory(saf!, path);
+    return;
   }
   throw UnsupportedError('');
 }

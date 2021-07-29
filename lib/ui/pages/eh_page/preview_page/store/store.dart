@@ -33,18 +33,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
                 page: 0,
               ))
         ],
-        super('') {
-    fh.hasDownloadPermission().then((value) {
-      if (value) {
-        DB().ehDownloadDao.getByGid(gid, gtoken).then((value) {
-          if (value != null) {
-            isDownload = true;
-            loadImageFromDisk();
-          }
-        });
-      }
-    });
-  }
+        super('');
 
   final String gid;
   final String gtoken;
@@ -112,6 +101,21 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       galleryModel ??= baseModel;
       final page =
           (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
+
+      readStore = EhReadStore<GalleryImgModel>(
+        imageCount: baseModel.imageCount,
+        requestLoad: requestLoadReadImage,
+        currentIndex: 0,
+      );
+
+      // 加载下载数据
+      if (await fh.hasDownloadPermission()) {
+        final model = await DB().ehDownloadDao.getByGid(gid, gtoken);
+        if (model != null) {
+          isDownload = true;
+          await loadImageFromDisk();
+        }
+      }
       pageLoader.addAll(List.generate(
           page - 1,
           (index) => AsyncLoader(() => adapter.gallery(
@@ -120,11 +124,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
                 page: index + 1,
               ))));
 
-      readStore = EhReadStore<GalleryImgModel>(
-        imageCount: baseModel.imageCount,
-        requestLoad: requestLoadReadImage,
-        currentIndex: 0,
-      );
       favcat = baseModel.favcat;
       previewModel ??= PreViewItemModel(
         gtoken: gtoken,
@@ -154,22 +153,22 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     final existPath =
         (await fh.walk('Gallery')).where((e) => e.startsWith('$gid-')).toList();
     if (existPath.isNotEmpty) {
-      basePath = existPath[0];
+      basePath = 'Gallery/${existPath[0]}';
       // 解析图片的galleryId数据
       final catpic = EhDownloadModel.fromBuffer(
           await fh.readFile(basePath, '.catpic') ?? []);
       parsedGallery.addEntries(catpic.pageInfo.entries);
-      // 将已经解析了id的, 直接加入数据库
-      for (final shaE in catpic.pageInfo.entries) {
-        loadReadModel(index: shaE.key, shaToken: shaE.value);
-      }
       // 下载好了的图片
       final files = await fh.walk(basePath);
       downloadedFileName.addEntries(files
           .map((e) => e.split('.'))
           .where((e) =>
               e.length == 2 && e[0].isNum && (e[1] == 'jpg' || e[1] == 'png'))
-          .map((e) => MapEntry(e[0].toInt(), e.join('.'))));
+          .map((e) => MapEntry(e[0].toInt() - 1, e.join('.'))));
+      // 将已经解析了id的, 直接加入数据库
+      for (final shaE in catpic.pageInfo.entries) {
+        loadReadModel(index: shaE.key, shaToken: shaE.value);
+      }
     }
   }
 

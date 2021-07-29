@@ -111,6 +111,7 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
           fileParams!.basePath,
           fileName,
         );
+        print('加载图片: ${fileParams!.basePath} $fileName ${fileData?.length}');
         // TODO: 检测是否为509图片
         if (fileData != null && fileData.isNotEmpty) {
           try {

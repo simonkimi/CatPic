@@ -11,11 +11,13 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/eh_page/components/preview_extended_card/preview_extended_card.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'store/loader_store.dart';
 
 import '../../../../themes.dart';
 
@@ -55,7 +57,8 @@ class EhDownloadPage extends StatelessWidget {
         initialData: const [],
         builder: (context, snapshot) {
           return Observer(
-              builder: (context) => buildCardBody(snapshot, context));
+            builder: (context) => buildCardBody(snapshot, context),
+          );
         },
       ),
     );
@@ -105,7 +108,22 @@ class EhDownloadPage extends StatelessWidget {
           previewModel: model,
           adapter: adapter,
           progress: task?.progress,
-          onTap: () {},
+          onTap: () async {
+            final loaderStore = DownloadLoaderStore(
+              gid: item.gid,
+              gtoken: item.token,
+              adapter: adapter,
+              imageCount: model.pages,
+            );
+            final readPage =
+                await DB().ehReadHistoryDao.getPage(item.gid, item.token);
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return EhReadPage(
+                store: loaderStore.readStore,
+                startIndex: readPage,
+              );
+            }));
+          },
           controllerWidget: Padding(
             padding: const EdgeInsets.only(right: 5),
             child: Column(
