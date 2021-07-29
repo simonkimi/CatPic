@@ -36,6 +36,7 @@ dependencies:
   video_player: ^2.1.1
   pull_to_refresh: 2.0.0
   url_launcher: ^6.0.3
+  flutter_linkify: ^5.0.2
 
   # database
   sp_util: ^2.0.3
