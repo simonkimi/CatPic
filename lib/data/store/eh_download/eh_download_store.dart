@@ -54,16 +54,17 @@ abstract class EhDownloadStoreBase with Store {
     try {
       final databaseGallery = GalleryModel.fromBuffer(database.galleryPb);
       // 查看是否有同名的
+      late String basePath;
       final existPath = (await fh.walk('Gallery'))
           .where((e) => e.startsWith('${database.gid}-'))
           .toList();
-      late String basePath;
       if (existPath.isNotEmpty) {
         basePath = existPath[0];
+      } else {
+        basePath =
+            'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_').replaceAll('|', '丨')}';
       }
       // 创建下载文件夹
-      basePath =
-          'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_').replaceAll('|', '丨')}';
       await fh.createDir(basePath);
       // 读取/创建 下载配置文件
       final configBytes = await fh.readFile(basePath, '.catpic');

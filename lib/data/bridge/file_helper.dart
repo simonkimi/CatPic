@@ -33,7 +33,7 @@ Future<void> saveBooruImage(String fileName, Uint8List data) async {
   if (Platform.isAndroid) {
     await safWriteFile(
       safUrl: (await getSafUri())!,
-      path: 'image',
+      path: 'Image',
       fileName: fileName,
       mime: MIME[fileName.split('.').last] ?? 'application/octet-stream',
       data: data,

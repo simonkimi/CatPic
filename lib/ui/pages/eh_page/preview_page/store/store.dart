@@ -213,7 +213,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
           fileParams: isDownload
               ? FileParams(
                   basePath: basePath,
-                  fileName: downloadedFileName[index] ?? index.format(9),
+                  fileName: downloadedFileName[index] ?? (index + 1).format(9),
                 )
               : null,
           builder: () async {

@@ -84,7 +84,7 @@ abstract class DownloadLoaderStoreBase with Store {
           dio: adapter.dio,
           fileParams: FileParams(
             basePath: basePath,
-            fileName: downloadedFileName[index] ?? index.format(9),
+            fileName: downloadedFileName[index] ?? (index + 1).format(9),
           ),
           builder: () async {
             final galleryImage = await adapter.galleryImage(
