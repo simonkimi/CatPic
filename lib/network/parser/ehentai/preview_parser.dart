@@ -32,7 +32,6 @@ class PreviewParser {
     }
 
     final view = document.querySelector('option[selected=selected]')?.text;
-    print(view);
     switch (view) {
       case 'Minimal':
         return parseMinimal(document);
