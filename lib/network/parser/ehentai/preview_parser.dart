@@ -1,4 +1,5 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -16,7 +17,7 @@ class PreviewModel {
 
   List<PreViewItemModel> items;
 
-  Exception? exception;
+  Object? exception;
 }
 
 class PreviewParser {
@@ -30,14 +31,27 @@ class PreviewParser {
       );
     }
 
-    // TODO 解析不同样式
-    return parseCompact(document);
+    final view = document.querySelector('option[selected=selected]')?.text;
+    print(view);
+    switch (view) {
+      case 'Minimal':
+        return parseMinimal(document);
+      case 'Minimal+':
+        return parseMinimalPlus(document);
+      case 'Extended':
+        return parseExtended(document);
+      case 'Thumbnail':
+        return parseThumbnail(document);
+      case 'Compact':
+      default:
+        return parseCompact(document);
+    }
   }
 
   static PreviewModel parseMinimal(Element document) {
     final previewList = document
         .querySelectorAll('.itg > tbody > tr')
-        .where((element) => element.querySelector('.gl1c') != null)
+        .where((element) => element.querySelector('.glcat') != null)
         .toList();
 
     final items = previewList.map((element) {
@@ -74,7 +88,7 @@ class PreviewParser {
   static PreviewModel parseMinimalPlus(Element document) {
     final previewList = document
         .querySelectorAll('.itg > tbody > tr')
-        .where((element) => element.querySelector('.gl1c') != null)
+        .where((element) => element.querySelector('.gl1m') != null)
         .toList();
 
     final items = previewList.map((element) {
@@ -109,20 +123,62 @@ class PreviewParser {
     );
   }
 
+  static PreviewModel parseThumbnail(Element document) {
+    final previewList = document.querySelectorAll('.gl1t').toList();
+
+    print(previewList.length);
+
+    final items = previewList.map((element) {
+      final title = element.querySelector('.glink')?.text ?? 'Error';
+      final pages = parsePages(element);
+      final stars = parseStar(element);
+      final tag = element.querySelector('.cs')?.text ?? '';
+      final uploadTime = element.querySelector('[id^=posted]')?.text ?? '';
+      final keyTags = parseTag(element);
+      final previewImg = parsePreview(element.querySelector('.gl3t img'));
+      final gidAndgtoken = parseToken(element);
+      final imgSize = parseImg(element);
+      return PreViewItemModel(
+        gid: gidAndgtoken[0],
+        gtoken: gidAndgtoken[1],
+        pages: pages,
+        previewImg: previewImg,
+        stars: stars,
+        tag: fromEhTag(tag),
+        title: title,
+        uploader: '',
+        uploadTime: uploadTime,
+        language: '',
+        keyTags: keyTags,
+        previewWidth: imgSize[0],
+        previewHeight: imgSize[1],
+      );
+    }).toList();
+    return PreviewModel(
+      items: items,
+    );
+  }
+
   static PreviewModel parseExtended(Element document) {
     final previewList = document
         .querySelectorAll('.itg > tbody > tr')
-        .where((element) => element.querySelector('.gl1c') != null)
+        .where((element) => element.querySelector('.gl1e') != null)
         .toList();
 
     final items = previewList.map((element) {
       final title = element.querySelector('.glink')?.text ?? 'Error';
       final uploader = element.querySelector('.gl3e a')?.text ?? 'Error';
-      final pages = parsePages(element);
+      final pages = element
+              .querySelector('.gl3e')
+              ?.children[4]
+              .text
+              .split(' ')[0]
+              .toInt() ??
+          0;
       final stars = parseStar(element);
       final tag = element.querySelector('.gl1c')?.text ?? '';
       final uploadTime = element.querySelector('[id^=posted]')?.text ?? '';
-      final previewImg = parsePreview(element.querySelector('.glthumb img'));
+      final previewImg = parsePreview(element.querySelector('.gl1e img'));
       final language = parseLanguage(element);
       final imgSize = parseImg(element);
       final gidAndgtoken = parseToken(element);
@@ -200,8 +256,10 @@ class PreviewParser {
 
   /// 解析gid和gtoken
   static List<String> parseToken(Element document) {
-    final targetUrl =
-        document.querySelector('.gl3c a')?.attributes['href'] ?? '';
+    final targetUrl = document.querySelector('.glname a')?.attributes['href'] ??
+        document.querySelector('.gl3t a')?.attributes['href'] ??
+        document.querySelector('.gl1e a')?.attributes['href'] ??
+        '';
     if (targetUrl.isNotEmpty) {
       final re = RegExp(r'/g/(\w+)/(\w+)/');
       final match = re.firstMatch(targetUrl)!;
@@ -213,7 +271,7 @@ class PreviewParser {
   /// 解析有多少面
   static int parsePages(Element e) {
     final pageBrotherElement = e.querySelector('.ir');
-    final pageElement = pageBrotherElement?.parent?.children.last;
+    final pageElement = pageBrotherElement?.parent?.children[1];
     if (pageElement != null) {
       return int.parse(pageElement.text.split(' ')[0]);
     }
@@ -265,7 +323,8 @@ class PreviewParser {
 
   /// 解析预览图长宽
   static List<int> parseImg(Element e) {
-    final imgElement = e.querySelector('.glthumb img');
+    final imgElement =
+        e.querySelector('.glthumb img') ?? e.querySelector('.gl3t img');
     if (imgElement != null) {
       final styleText = imgElement.attributes['style'];
       final re = RegExp(r'height:(\d+?)px;width:(\d+?)px');

@@ -37,7 +37,9 @@ class EHAdapter extends Adapter {
     required int page,
   }) async {
     final str = await client.getIndex(filter: filter, page: page);
-    final model = await compute(PreviewParser.parse, str);
+    // final model = await compute(PreviewParser.parse, str);
+    final model = PreviewParser.parse(str);
+    if (model.exception != null) throw model.exception!;
     return previewTranslateHook(model);
   }
 
