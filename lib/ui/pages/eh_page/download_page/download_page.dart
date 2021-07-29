@@ -17,9 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'store/loader_store.dart';
 
 import '../../../../themes.dart';
+import 'store/loader_store.dart';
 
 class EhDownloadPage extends StatelessWidget {
   const EhDownloadPage({Key? key}) : super(key: key);
