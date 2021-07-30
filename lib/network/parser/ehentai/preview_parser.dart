@@ -276,10 +276,11 @@ class PreviewParser {
 
   /// 解析几颗星
   static double parseStar(Element e) {
-    final starElement = e.querySelectorAll('.ir').first;
-    if (starElement != null) {
+    final starElement = e.querySelectorAll('.ir');
+    if (starElement.isNotEmpty) {
+      final star = starElement[0];
       final re = RegExp(r':-?(\d+)px\s-?(\d+)px');
-      final style = starElement.attributes['style']!;
+      final style = star.attributes['style']!;
       final starData = re.firstMatch(style);
       final num1 = int.tryParse(starData?[1] ?? '') ?? 0;
       final num2 = int.tryParse(starData?[2] ?? '') ?? 1;
