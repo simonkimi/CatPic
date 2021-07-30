@@ -26,6 +26,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     required this.gtoken,
     required this.adapter,
     this.previewModel,
+    this.previewAspectRatio,
   })  : pageLoader = [
           AsyncLoader(() => adapter.gallery(
                 gid: gid,
@@ -44,6 +45,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   PreViewItemModel? previewModel;
   @observable
   GalleryModel? galleryModel;
+  @observable
+  double? previewAspectRatio;
 
   // 存放普通图片数据, URL相同的公用一个Provider
   final normalImageMap = <String, DioImageProvider>{};
@@ -140,6 +143,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
         previewWidth: baseModel.previewWidth,
         previewHeight: baseModel.previewHeight,
       );
+
+      previewAspectRatio ??= baseModel.previewWidth / baseModel.previewHeight;
 
       return baseModel;
     } catch (e) {

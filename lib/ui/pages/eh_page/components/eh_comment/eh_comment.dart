@@ -1,4 +1,5 @@
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,11 +25,30 @@ class EhComment extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  model.username,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.subtitle2!.color,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      model.username,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.subtitle2!.color,
+                      ),
+                    ),
+                    if (model.score != -99999 && displayVote)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            (model.score >= 0 ? '   +' : '   ') +
+                                model.score.toString(),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color:
+                                  Theme.of(context).textTheme.subtitle2!.color,
+                            ),
+                          )
+                        ],
+                      ),
+                  ],
                 ),
                 Text(
                   model.commentTime,
@@ -36,54 +56,27 @@ class EhComment extends StatelessWidget {
                     fontSize: 13,
                     color: Theme.of(context).textTheme.subtitle2!.color,
                   ),
-                ),
+                )
               ],
             ),
             const SizedBox(height: 5),
-            if (!displayVote)
-              SelectableLinkify(
-                text: model.comment,
-                minLines: 1,
-                maxLines: 10,
-                onOpen: (link) async {
-                  if (await canLaunch(link.url)) {
-                    await launch(link.url);
-                  } else {
-                    throw 'Could not launch $link';
-                  }
-                },
-              ),
-            if (displayVote)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SelectableLinkify(
-                    text: model.comment,
-                    options: const LinkifyOptions(humanize: false),
-                    onOpen: (link) async {
-                      if (await canLaunch(link.url)) {
-                        await launch(link.url);
-                      } else {
-                        throw 'Could not launch $link';
-                      }
-                    },
-                  ),
-                  if (model.score != -99999)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          (model.score >= 0 ? '   +' : '   ') +
-                              model.score.toString(),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(context).textTheme.subtitle2!.color,
-                          ),
-                        )
-                      ],
-                    )
-                ],
-              )
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectableLinkify(
+                  text: model.comment,
+                  options: const LinkifyOptions(humanize: false),
+                  onOpen: (link) async {
+                    // TODO 打开同站
+                    if (await canLaunch(link.url)) {
+                      await launch(link.url);
+                    } else {
+                      throw 'Could not launch $link';
+                    }
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ),

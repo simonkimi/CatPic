@@ -29,6 +29,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
+import 'package:uuid/uuid.dart';
 import 'gallery_preview.dart';
 
 enum GalleryAction {
@@ -39,7 +40,7 @@ class EhPreviewPage extends StatelessWidget {
   EhPreviewPage({
     Key? key,
     this.heroTag,
-    required this.previewAspectRatio,
+    this.previewAspectRatio,
     required this.adapter,
     this.previewModel,
     this.galleryBase,
@@ -48,6 +49,7 @@ class EhPreviewPage extends StatelessWidget {
           gtoken: previewModel?.gtoken ?? galleryBase!.token,
           adapter: adapter,
           previewModel: previewModel,
+          previewAspectRatio: previewAspectRatio,
         ),
         assert(galleryBase != null || previewModel != null),
         gid = previewModel?.gid ?? galleryBase!.gid,
@@ -58,7 +60,7 @@ class EhPreviewPage extends StatelessWidget {
   final GalleryBase? galleryBase;
   final String? heroTag;
   final EHAdapter adapter;
-  final double previewAspectRatio;
+  final double? previewAspectRatio;
   final EhGalleryStore store;
 
   final String gid;
@@ -106,21 +108,24 @@ class EhPreviewPage extends StatelessWidget {
               store.dispose();
               return true;
             },
-            child: store.previewModel != null
-                ? SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // 构建图片, 标题, 分数, tag, 阅读按钮
-                        buildPreviewTitle(context),
-                        const Divider(),
-                        // 构建下面的需要加载的数据
-                        buildNeedLoading(context),
-                      ],
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: store.previewModel != null
+                  ? SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // 构建图片, 标题, 分数, tag, 阅读按钮
+                          buildPreviewTitle(context),
+                          const Divider(),
+                          // 构建下面的需要加载的数据
+                          buildNeedLoading(context),
+                        ],
+                      ),
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+            ),
           );
         },
       ),
@@ -218,22 +223,9 @@ class EhPreviewPage extends StatelessWidget {
                 children: [
                   buildReadButton(context),
                   const Expanded(child: SizedBox()),
-                  if (store.isLoaded)
-                    TextButton(
-                      onPressed: () {},
-                      child: const Icon(Icons.update),
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(Platform.isWindows
-                              ? const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 15)
-                              : const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 2)),
-                          minimumSize:
-                              MaterialStateProperty.all(const Size(0, 0)),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.orange)),
-                    ),
+                  if (store.isLoaded &&
+                      (store.galleryModel?.updates.isNotEmpty ?? false))
+                    buildUpdatesButton(context),
                   if (store.isLoaded) buildFavouriteButton(context),
                   if (store.isLoaded) buildDownloadButton(),
                 ],
@@ -242,6 +234,31 @@ class EhPreviewPage extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  TextButton buildUpdatesButton(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        final gallery = await showUpdateMenu(context);
+        if (gallery != null) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return EhPreviewPage(
+              adapter: adapter,
+              heroTag: const Uuid().v4(),
+              galleryBase: GalleryBase(gid: gallery.gid, token: gallery.token),
+            );
+          }));
+        }
+      },
+      child: const Icon(Icons.update),
+      style: ButtonStyle(
+          padding: MaterialStateProperty.all(Platform.isWindows
+              ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+              : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+          minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor: MaterialStateProperty.all(Colors.orange)),
     );
   }
 
@@ -376,6 +393,43 @@ class EhPreviewPage extends StatelessWidget {
         );
       });
 
+  Future<GalleryUpdate?> showUpdateMenu(BuildContext context) =>
+      showDialog<GalleryUpdate>(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      child: Text(
+                        I18n.of(context).update,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    const Divider(height: 0),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: store.galleryModel!.updates.map((e) {
+                        return ListTile(
+                          title: Text(e.title),
+                          subtitle: Text(e.updateTime),
+                          onTap: () {
+                            Navigator.of(context).pop(e);
+                          },
+                        );
+                      }).toList(),
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+
   Text buildUploadTime(BuildContext context) {
     return Text(
       store.previewModel!.uploadTime,
@@ -497,7 +551,10 @@ class EhPreviewPage extends StatelessWidget {
             ? Column(
                 children: [
                   ...store.galleryModel!.comments.take(2).map((e) {
-                    return EhComment(model: e);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: EhComment(model: e),
+                    );
                   }).toList(),
                   Padding(
                     padding: const EdgeInsets.all(10),
@@ -820,7 +877,7 @@ class EhPreviewPage extends StatelessWidget {
     return SizedBox(
       width: 140,
       child: AspectRatio(
-        aspectRatio: max(previewAspectRatio, 0.5),
+        aspectRatio: max(store.previewAspectRatio!, 0.5),
         child: NullableHero(
           tag: heroTag ?? '$gid$gtoken',
           child: Card(

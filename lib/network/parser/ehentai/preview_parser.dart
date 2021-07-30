@@ -124,9 +124,6 @@ class PreviewParser {
 
   static PreviewModel parseThumbnail(Element document) {
     final previewList = document.querySelectorAll('.gl1t').toList();
-
-    print(previewList.length);
-
     final items = previewList.map((element) {
       final title = element.querySelector('.glink')?.text ?? 'Error';
       final pages = parsePages(element);

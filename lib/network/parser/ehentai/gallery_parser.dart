@@ -248,7 +248,11 @@ class GalleryParser {
           node.attributes.containsKey('href')) {
         final reg = RegExp(r'g/(\d+)/(.+)/');
         final match = reg.firstMatch(node.attributes['href']!)!;
-        update.add(GalleryUpdate(gid: match[1]!, token: match[2]!));
+        update.add(GalleryUpdate(
+          gid: match[1]!,
+          token: match[2]!,
+          title: node.text,
+        ));
       } else if (node.nodeType == Node.TEXT_NODE) {
         final reg = RegExp(r'\d+-\d+-\d+\s\d+:\d+');
         final match = reg.firstMatch(node.text!)!;
