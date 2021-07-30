@@ -122,9 +122,14 @@ class EhPreviewPage extends StatelessWidget {
                         ],
                       ),
                     )
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                  : store.lastException == null
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : EmptyWidget(
+                          onTap: store.loadBaseModel,
+                          errMsg: store.lastException!.toString(),
+                        ),
             ),
           );
         },
