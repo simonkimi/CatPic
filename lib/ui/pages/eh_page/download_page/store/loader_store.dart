@@ -21,6 +21,7 @@ abstract class DownloadLoaderStoreBase with Store {
     required this.gtoken,
     required this.imageCount,
     required this.adapter,
+    required this.model,
   }) : pageLoader = List.generate(
             (imageCount / 40).ceil(),
             (index) => AsyncLoader(() => adapter.gallery(
@@ -41,6 +42,7 @@ abstract class DownloadLoaderStoreBase with Store {
   final String gid;
   final String gtoken;
   late final EhReadStore readStore;
+  final GalleryModel model;
 
   // 下载里已经缓存的galleryID
   final Map<int, String> parsedGallery = {};
@@ -49,6 +51,9 @@ abstract class DownloadLoaderStoreBase with Store {
 
   // 加载页面结果
   final List<AsyncLoader<GalleryModel>> pageLoader;
+
+  // 存放普通图片数据, URL相同的公用一个Provider
+  final normalImageMap = <String, DioImageProvider>{};
 
   Future<void> loadImageFromDisk() async {
     final existPath =
@@ -68,12 +73,38 @@ abstract class DownloadLoaderStoreBase with Store {
           .map((e) => MapEntry(e[0].toInt() - 1, e.join('.'))));
       // 将已经解析了id的, 直接加入数据库
       for (final shaE in catpic.pageInfo.entries) {
-        loadModel(index: shaE.key, shaToken: shaE.value);
+        loadReadModel(index: shaE.key, shaToken: shaE.value);
       }
+      // 将已经下载的图片, 直接加入预览库
+      for (final downloaded in downloadedFileName.entries) {
+        final entity = readStore.previewImageList[downloaded.key];
+        entity.imageProvider = DioImageProvider(
+            dio: adapter.dio,
+            builder: () async {
+              final galleryImage = await adapter.galleryImage(
+                gid: gid,
+                shaToken: parsedGallery[downloaded.key]!,
+                page: downloaded.key,
+              );
+              return DioImageParams(
+                url: galleryImage.imgUrl,
+                cacheKey: galleryImage.sha,
+              );
+            },
+            fileParams: FileParams(
+              basePath: basePath,
+              fileName: downloaded.value,
+            ));
+      }
+    } else {
+      // 没有这个文件夹, 可能被删了
+      basePath =
+          'Gallery/$gid-${model.title.replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_')}';
+      await fh.createDir(basePath);
     }
   }
 
-  void loadModel({
+  void loadReadModel({
     required int index,
     required String shaToken,
   }) {
@@ -102,25 +133,64 @@ abstract class DownloadLoaderStoreBase with Store {
   }
 
   Future<void> requestLoad(int index, bool isAuto) async {
-    final baseLoader = pageLoader[0];
-    if (baseLoader.hasError() && !isAuto) {
-      baseLoader.reset();
-    }
-    final baseModel = await baseLoader.load();
+    final needParseGallery = !parsedGallery.containsKey(index);
+    final needParsedPreview =
+        readStore.previewImageList[index].state.value == LoadingState.NONE;
 
-    final page = (index / baseModel.imageCountInOnePage).floor();
-    final loader = pageLoader[page];
-
-    if (loader.hasError() && !isAuto) {
-      loader.reset();
-    }
-
-    final model = await loader.load();
-    for (final img in model.previewImages) {
-      if (!parsedGallery.containsKey(img.page - 1)) {
-        parsedGallery[img.page - 1] = img.shaToken;
-        loadModel(index: img.page - 1, shaToken: img.shaToken);
+    if (needParseGallery || needParsedPreview) {
+      final baseLoader = pageLoader[0];
+      if (baseLoader.hasError() && !isAuto) {
+        baseLoader.reset();
       }
+      final baseModel = await baseLoader.load();
+
+      final page = (index / baseModel.imageCountInOnePage).floor();
+      final loader = pageLoader[page];
+
+      if (loader.hasError() && !isAuto) {
+        loader.reset();
+      }
+
+      // 大图数据
+      final model = await loader.load();
+      for (final img in model.previewImages) {
+        if (!parsedGallery.containsKey(img.page - 1)) {
+          parsedGallery[img.page - 1] = img.shaToken;
+          loadReadModel(index: img.page - 1, shaToken: img.shaToken);
+        }
+      }
+
+      // 预览数据
+      for (final img in model.previewImages) {
+        loadPreviewModel(index: img.page - 1, img: img);
+      }
+    }
+  }
+
+  void loadPreviewModel({
+    required int index,
+    required GalleryPreviewImageModel img,
+  }) {
+    final entity = readStore.previewImageList[img.page - 1];
+    if (entity.state.value == LoadingState.NONE) {
+      if (img.isLarge) {
+        // 如果是大图, 则直接把数据存进去
+        entity.imageProvider = DioImageProvider(
+          url: img.imageUrl,
+          dio: adapter.dio,
+        );
+      } else {
+        // 如果是普通, 则存入全局map
+        if (!normalImageMap.containsKey(img.imageUrl)) {
+          normalImageMap[img.imageUrl] = DioImageProvider(
+            url: img.imageUrl,
+            dio: adapter.dio,
+          );
+        }
+        entity.imageProvider = normalImageMap[img.imageUrl];
+      }
+      entity.state.value = LoadingState.LOADED;
+      entity.extra = img;
     }
   }
 }

@@ -110,6 +110,7 @@ class EhDownloadPage extends StatelessWidget {
           progress: task?.progress,
           onTap: () async {
             final loaderStore = DownloadLoaderStore(
+              model: item,
               gid: item.gid,
               gtoken: item.token,
               adapter: adapter,

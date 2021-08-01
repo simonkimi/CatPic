@@ -1,3 +1,1 @@
-cd ..
-flutter format .
-cd wtools
+cd .. && flutter format . && cd wtools

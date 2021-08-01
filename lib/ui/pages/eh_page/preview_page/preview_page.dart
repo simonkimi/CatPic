@@ -530,7 +530,7 @@ class EhPreviewPage extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Text(
               store.galleryModel!.imageCount <=
-                      store.galleryModel!.imageCountInOnePage
+                      min(80, store.galleryModel!.imageCountInOnePage)
                   ? I18n.of(context).no_preview
                   : I18n.of(context).show_more_preview,
               style: TextStyle(
