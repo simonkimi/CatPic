@@ -8,11 +8,11 @@ import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 import 'package:get/get.dart';
+import 'package:synchronized/synchronized.dart';
 
 part 'store.g.dart';
 
@@ -57,10 +57,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   bool isDownload = false;
 
   // 阅读的Store
-  late final EhReadStore<GalleryImgModel> readStore;
+  late final EhReadStore readStore;
 
   // 加载页面的加载器
   final List<AsyncLoader<GalleryModel>> pageLoader;
+  final baseLock = Lock();
 
   // 收藏
   @observable
@@ -94,63 +95,65 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   // 加载基础数据
   @action
   Future<GalleryModel> loadBaseModel() async {
-    try {
-      final baseLoader = pageLoader[0];
-      if (baseLoader.hasError()) {
-        baseLoader.reset();
-      }
-      final baseModel = await baseLoader.load();
-      if (galleryModel != null) return baseModel;
-      galleryModel ??= baseModel;
-      final page =
-          (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
-
-      readStore = EhReadStore<GalleryImgModel>(
-        imageCount: baseModel.imageCount,
-        requestLoad: requestLoadReadImage,
-        currentIndex: 0,
-      );
-
-      // 加载下载数据
-      if (await fh.hasDownloadPermission()) {
-        final model = await DB().ehDownloadDao.getByGid(gid, gtoken);
-        if (model != null) {
-          isDownload = true;
-          await loadImageFromDisk();
+    return await baseLock.synchronized(() async {
+      try {
+        final baseLoader = pageLoader[0];
+        if (baseLoader.hasError()) {
+          baseLoader.reset();
         }
+        final baseModel = await baseLoader.load();
+        if (galleryModel != null) return baseModel;
+        galleryModel ??= baseModel;
+        final page =
+            (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
+
+        readStore = EhReadStore(
+          imageCount: baseModel.imageCount,
+          requestLoad: requestLoadReadImage,
+          currentIndex: 0,
+        );
+
+        // 加载下载数据
+        if (await fh.hasDownloadPermission()) {
+          final model = await DB().ehDownloadDao.getByGid(gid, gtoken);
+          if (model != null) {
+            isDownload = true;
+            await loadImageFromDisk();
+          }
+        }
+        pageLoader.addAll(List.generate(
+            page - 1,
+            (index) => AsyncLoader(() => adapter.gallery(
+                  gid: gid,
+                  gtoken: gtoken,
+                  page: index + 1,
+                ))));
+
+        favcat = baseModel.favcat;
+        previewModel ??= PreViewItemModel(
+          gtoken: gtoken,
+          gid: gid,
+          title: baseModel.title,
+          tag: baseModel.tag,
+          keyTags: [],
+          previewImg: baseModel.previewImage,
+          stars: baseModel.star,
+          language: baseModel.language,
+          pages: baseModel.imageCount,
+          uploader: baseModel.uploader,
+          uploadTime: baseModel.uploadTime,
+          previewWidth: baseModel.previewWidth,
+          previewHeight: baseModel.previewHeight,
+        );
+
+        previewAspectRatio ??= baseModel.previewWidth / baseModel.previewHeight;
+
+        return baseModel;
+      } catch (e) {
+        lastException = e.toString();
+        rethrow;
       }
-      pageLoader.addAll(List.generate(
-          page - 1,
-          (index) => AsyncLoader(() => adapter.gallery(
-                gid: gid,
-                gtoken: gtoken,
-                page: index + 1,
-              ))));
-
-      favcat = baseModel.favcat;
-      previewModel ??= PreViewItemModel(
-        gtoken: gtoken,
-        gid: gid,
-        title: baseModel.title,
-        tag: baseModel.tag,
-        keyTags: [],
-        previewImg: baseModel.previewImage,
-        stars: baseModel.star,
-        language: baseModel.language,
-        pages: baseModel.imageCount,
-        uploader: baseModel.uploader,
-        uploadTime: baseModel.uploadTime,
-        previewWidth: baseModel.previewWidth,
-        previewHeight: baseModel.previewHeight,
-      );
-
-      previewAspectRatio ??= baseModel.previewWidth / baseModel.previewHeight;
-
-      return baseModel;
-    } catch (e) {
-      lastException = e.toString();
-      rethrow;
-    }
+    });
   }
 
   // 如果是已经下载了的, 则尝试从下载里拿数据
@@ -174,22 +177,47 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       for (final shaE in catpic.pageInfo.entries) {
         loadReadModel(index: shaE.key, shaToken: shaE.value);
       }
+      // 将已经下载的图片, 直接加入预览库
+      for (final downloaded in downloadedFileName.entries) {
+        final entity = readStore.previewImageList[downloaded.key];
+        entity.imageProvider = DioImageProvider(
+            dio: adapter.dio,
+            builder: () async {
+              final galleryImage = await adapter.galleryImage(
+                gid: gid,
+                shaToken: parsedGallery[downloaded.key]!,
+                page: downloaded.key,
+              );
+              return DioImageParams(
+                url: galleryImage.imgUrl,
+                cacheKey: galleryImage.sha,
+              );
+            },
+            fileParams: FileParams(
+              basePath: basePath,
+              fileName: downloaded.value,
+            ));
+      }
     }
   }
 
   // 阅读里, 需要加载页面
   Future<void> requestLoadReadImage(int index, bool isAuto) async {
-    if (!parsedGallery.containsKey(index)) {
-      // 如果坐标索引没有被解析的话
-      final baseModel = await loadBaseModel();
+    // 解析大图
+    final needParseGallery = !parsedGallery.containsKey(index);
+    final needParsedPreview =
+        readStore.previewImageList[index].state.value == LoadingState.NONE;
 
+    if (needParseGallery || needParsedPreview) {
+      final baseModel = await loadBaseModel();
       final page = (index / baseModel.imageCountInOnePage).floor();
       final loader = pageLoader[page];
-
+      if (loader.locked) return;
       if (loader.hasError() && !isAuto) {
         loader.reset();
       }
 
+      // 大图数据
       final model = await loader.load();
       for (final img in model.previewImages) {
         if (!parsedGallery.containsKey(img.page - 1)) {
@@ -197,13 +225,38 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
           loadReadModel(index: img.page - 1, shaToken: img.shaToken);
         }
       }
-    } else {
-      // 如果此页面已经被解析了的话, 重新加载此页面
-      final imgModel = readStore.readImageList[index];
-      imgModel.imageProvider = null;
-      imgModel.lastException = null;
-      imgModel.state.value = LoadingState.NONE;
-      loadReadModel(index: index, shaToken: parsedGallery[index]!);
+
+      // 预览数据
+      for (final img in model.previewImages) {
+        loadPreviewModel(index: img.page - 1, img: img);
+      }
+    }
+  }
+
+  void loadPreviewModel({
+    required int index,
+    required GalleryPreviewImageModel img,
+  }) {
+    final entity = readStore.previewImageList[img.page - 1];
+    if (entity.state.value == LoadingState.NONE) {
+      if (img.isLarge) {
+        // 如果是大图, 则直接把数据存进去
+        entity.imageProvider = DioImageProvider(
+          url: img.imageUrl,
+          dio: adapter.dio,
+        );
+      } else {
+        // 如果是普通, 则存入全局map
+        if (!normalImageMap.containsKey(img.imageUrl)) {
+          normalImageMap[img.imageUrl] = DioImageProvider(
+            url: img.imageUrl,
+            dio: adapter.dio,
+          );
+        }
+        entity.imageProvider = normalImageMap[img.imageUrl];
+      }
+      entity.state.value = LoadingState.LOADED;
+      entity.extra = img;
     }
   }
 

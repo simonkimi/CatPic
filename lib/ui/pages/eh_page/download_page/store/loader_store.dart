@@ -8,7 +8,6 @@ import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:synchronized/synchronized.dart';
-import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
 
@@ -29,7 +28,7 @@ abstract class DownloadLoaderStoreBase with Store {
                   gtoken: gtoken,
                   page: index,
                 ))) {
-    readStore = EhReadStore<GalleryImgModel>(
+    readStore = EhReadStore(
       imageCount: imageCount,
       requestLoad: requestLoad,
       currentIndex: 0,
@@ -41,7 +40,7 @@ abstract class DownloadLoaderStoreBase with Store {
   final EHAdapter adapter;
   final String gid;
   final String gtoken;
-  late final EhReadStore<GalleryImgModel> readStore;
+  late final EhReadStore readStore;
 
   // 下载里已经缓存的galleryID
   final Map<int, String> parsedGallery = {};

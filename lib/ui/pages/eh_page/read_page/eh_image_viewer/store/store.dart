@@ -3,6 +3,8 @@ import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 
 part 'store.g.dart';
 
@@ -11,14 +13,22 @@ enum LoadingState { NONE, LOADED, ERROR }
 typedef RequestLoadFunc = Future<void> Function(int index, bool isAuto);
 typedef LoadFuture<T> = Future<void> Function(T isAuto);
 
-class EhReadStore<T> = EhReadStoreBase<T> with _$EhReadStore;
+class EhReadStore = EhReadStoreBase with _$EhReadStore;
 
-abstract class EhReadStoreBase<T> with Store {
+abstract class EhReadStoreBase with Store {
   EhReadStoreBase({
     required this.imageCount,
     required this.requestLoad,
     required this.currentIndex,
-  }) : readImageList = List.generate(
+  })  : readImageList = List.generate(
+            imageCount,
+            (index) => ReadImgModel(
+                  index: index,
+                  loadFunc: (bool isAuto) async {
+                    requestLoad(index, isAuto);
+                  },
+                )),
+        previewImageList = List.generate(
             imageCount,
             (index) => ReadImgModel(
                   index: index,
@@ -28,7 +38,8 @@ abstract class EhReadStoreBase<T> with Store {
                 ));
 
   final int imageCount;
-  final List<ReadImgModel<T>> readImageList;
+  final List<ReadImgModel<GalleryImgModel>> readImageList;
+  final List<ReadImgModel<GalleryPreviewImageModel>> previewImageList;
   final RequestLoadFunc requestLoad;
 
   @observable
@@ -84,5 +95,12 @@ class ReadImgModel<T> {
 
   void dispose() {
     imageProvider?.dispose();
+  }
+
+  void reset() {
+    imageProvider = null;
+    state.value = LoadingState.NONE;
+    lastException = null;
+    extra = null;
   }
 }
