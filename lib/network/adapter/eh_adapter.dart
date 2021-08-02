@@ -1,6 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/favourite_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
+import 'package:catpic/data/store/memory_cache/memory_cache.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_client.dart';
@@ -25,6 +26,8 @@ class EHAdapter extends Adapter {
 
   @override
   final EhClient client;
+
+  final cache = MemoryCache();
 
   @override
   Dio get dio => client.dio;

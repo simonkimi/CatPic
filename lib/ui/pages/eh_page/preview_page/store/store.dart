@@ -57,7 +57,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   bool isDownload = false;
 
   // 阅读的Store
-  late final EhReadStore readStore;
+  late EhReadStore readStore;
 
   // 加载页面的加载器
   final List<AsyncLoader<GalleryModel>> pageLoader;
@@ -71,10 +71,17 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
 
   @override
   Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
-    if (galleryModel == null) await loadBaseModel();
     final ehPage = page - 1;
-    final loader = pageLoader[ehPage];
-    final model = await loader.load();
+    if (galleryModel == null) await loadBaseModel();
+
+    late final GalleryModel model;
+    if (ehPage == 0) {
+      model = galleryModel!;
+    } else {
+      final loader = pageLoader[ehPage];
+      model = await loader.load();
+    }
+
     for (final img in model.previewImages) {
       // 图片地址解析
       if (!parsedGallery.containsKey(ehPage)) {
@@ -101,7 +108,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
         if (baseLoader.hasError()) {
           baseLoader.reset();
         }
-        final baseModel = await baseLoader.load();
+        var baseModel = adapter.cache.get<GalleryModel>('$gid-$gtoken');
+        if (baseModel == null) {
+          baseModel ??= await baseLoader.load();
+          adapter.cache.set('$gid-$gtoken', baseModel);
+        }
         if (galleryModel != null) return baseModel;
         galleryModel ??= baseModel;
         final page =
@@ -305,11 +316,28 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       if (result) {
         this.favcat = favcat;
         DB().galleryCacheDao.updateFavcat(gid, gtoken, favcat);
+        final model = adapter.cache.get<GalleryModel>('$gid-$gtoken');
+        if (model != null) {
+          model.favcat = favcat;
+          adapter.cache.set('$gid-$gtoken', model);
+        }
       }
       return result;
     } finally {
       isFavLoading = false;
     }
+  }
+
+  void refresh() {
+    normalImageMap.clear();
+    galleryModel = null;
+    previewModel = null;
+    adapter.cache.set('$gid-$gtoken', null);
+    parsedGallery.clear();
+    for (final page in pageLoader) {
+      page.reset();
+    }
+    onRefresh();
   }
 
   EHStorage get storage =>

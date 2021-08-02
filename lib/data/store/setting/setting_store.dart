@@ -74,28 +74,28 @@ abstract class SettingStoreBase with Store {
   var downloadQuality = ImageQuality.raw; // 下载质量
 
   @observable
-  var onlineTag = false;
+  var onlineTag = false; // booru在线
 
   @observable
-  var autoCompleteUseNetwork = true;
+  var autoCompleteUseNetwork = true; // 使用网络自动补全
 
   @observable
-  var saveModel = true;
+  var saveModel = true; // 青少年模式(不要在意错别字)
 
   @observable
-  var preloadingNumber = 3;
+  var preloadingNumber = 3; // 预加载数量
 
   @observable
-  var toolbarOpen = true;
+  var toolbarOpen = true; // 状态栏是否打开
 
   @observable
-  var theme = Themes.BLUE;
+  var theme = Themes.BLUE; // 主题
 
   @observable
-  var dartMode = DarkMode.FOLLOW_SYSTEM;
+  var dartMode = DarkMode.FOLLOW_SYSTEM; // 暗黑模式
 
   @observable
-  var darkMask = true;
+  var darkMask = true; // 黑色蒙版
 
   @observable
   var ehTranslate = false;

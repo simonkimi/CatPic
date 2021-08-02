@@ -84,7 +84,7 @@ class EhPreviewPage extends StatelessWidget {
               switch (value) {
                 case GalleryAction.REFRESH:
                   DB().galleryCacheDao.remove(gid, gtoken).then((value) {
-                    store.onRefresh();
+                    store.refresh();
                   });
               }
             },
