@@ -13,6 +13,7 @@ import 'package:catpic/data/database/dao/host_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
 
 import 'dao/eh_download_dao.dart';
+import 'dao/eh_image_dao.dart';
 import 'dao/eh_read_history_dao.dart';
 import 'dao/gallery_cache_dao.dart';
 import 'dao/gallery_history_dao.dart';
@@ -74,13 +75,24 @@ LazyDatabase _openConnection() {
   GalleryHistoryDao,
   EhReadHistoryDao,
   EhDownloadDao,
+  EhImageDao,
 ])
 class AppDataBase extends _$AppDataBase {
   AppDataBase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (Migrator m, from, to) async {
+      if (from == 1 && to == 2) {
+        await m.addColumn(ehImageCache, ehImageCache.page);
+      }
+    }
+  );
 }
+
 
 class DB {
   factory DB() => _db;
@@ -109,4 +121,6 @@ class DB {
   EhDownloadDao get ehDownloadDao => _database.ehDownloadDao;
 
   EhReadHistoryDao get ehReadHistoryDao => _database.ehReadHistoryDao;
+
+  EhImageDao get ehImageDao => _database.ehImageDao;
 }

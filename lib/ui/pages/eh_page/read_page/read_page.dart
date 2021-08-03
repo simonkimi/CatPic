@@ -43,7 +43,7 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
 }
 
 class EhReadPage extends StatefulWidget {
-  EhReadPage({
+  const EhReadPage({
     Key? key,
     required this.store,
     required this.startIndex,

@@ -41,7 +41,6 @@ class EHAdapter extends Adapter {
   }) async {
     final str = await client.getIndex(filter: filter, page: page);
     final model = await compute(PreviewParser.parse, str);
-    // final model = PreviewParser.parse(str);
     if (model.exception != null) throw model.exception!;
     return previewTranslateHook(model);
   }
@@ -91,10 +90,20 @@ class EHAdapter extends Adapter {
     required String shaToken,
     required int page,
   }) async {
+    final model = await DB().ehImageDao.get(gid, shaToken, page);
+    if (model != null) return GalleryImgModel.fromBuffer(model.pb);
+
     final str =
         await client.galleryImage(gid: gid, shaToken: shaToken, page: page);
     final img = await compute(GalleryImgParser.parse, str);
     img.shaToken = shaToken;
+
+    await DB().ehImageDao.insert(EhImageCacheCompanion.insert(
+          shaToken: shaToken,
+          gid: gid,
+          page: page,
+          pb: img.writeToBuffer(),
+        ));
     return img;
   }
 

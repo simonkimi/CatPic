@@ -6,6 +6,8 @@ class EhImageCache extends Table {
 
   TextColumn get gid => text()();
 
+  IntColumn get page => integer()();
+
   // GalleryImgModel
   BlobColumn get pb => blob()();
 

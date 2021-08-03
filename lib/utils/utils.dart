@@ -192,6 +192,17 @@ extension IntHelper on num {
   bool equalBetween(num min, num max) {
     return min <= this && this <= max;
   }
+
+  num near(num n1, num n2) {
+    return (this - n1).abs() >= (this - n2).abs() ? n2 : n1;
+  }
+}
+
+extension DoubleHelper on double {
+  core.double nearList(List<core.double> nums) {
+    return nums.reduce((value, element) =>
+        (this - value).abs() < (this - element).abs() ? value : element);
+  }
 }
 
 extension IntFormat on int {

@@ -83,9 +83,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     }
 
     for (final img in model.previewImages) {
-      // 图片地址解析
-      if (!parsedGallery.containsKey(ehPage)) {
-        parsedGallery[ehPage] = img.shaToken;
+      if (!parsedGallery.containsKey(img.page - 1)) {
+        parsedGallery[img.page - 1] = img.shaToken;
         loadReadModel(index: img.page - 1, shaToken: img.shaToken);
       }
       // 缩略图解析

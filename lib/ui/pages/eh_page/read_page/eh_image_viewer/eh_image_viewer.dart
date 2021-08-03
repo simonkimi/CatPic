@@ -1,3 +1,4 @@
+import 'package:catpic/ui/components/zoom_widget.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
@@ -40,7 +41,6 @@ class _EhImageViewerState extends State<EhImageViewer>
   @override
   void initState() {
     super.initState();
-    print('startIndex: ${widget.startIndex}');
     pageController =
         widget.pageController ?? PageController(initialPage: widget.startIndex);
     _doubleClickAnimationController = AnimationController(
@@ -68,15 +68,17 @@ class _EhImageViewerState extends State<EhImageViewer>
         imageModel.imageProvider?.resolve(const ImageConfiguration());
       });
     }
-
+    print('onIndexChange run $index');
     if (preloadNum != 0) {
       // 向后预加载${preloadNum}张图片
       store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
         if (e.imageProvider == null) {
+          print('load ${e.index}');
           e.requestLoad(true).then((value) {
             e.imageProvider?.resolve(const ImageConfiguration());
           });
         } else {
+          print('loaded ${e.index}');
           e.imageProvider?.resolve(const ImageConfiguration());
         }
       });
@@ -95,24 +97,24 @@ class _EhImageViewerState extends State<EhImageViewer>
     }
   }
 
+  void _onTapUp(TapUpDetails details) {
+    final totalW = MediaQuery.of(context).size.width;
+    final left = totalW / 3;
+    final right = left * 2;
+    final tap = details.globalPosition.dx;
+    if (left < tap && tap < right) {
+      widget.onCenterTap?.call();
+    } else if (tap < left) {
+      if (store.currentIndex - 1 >= 0)
+        pageController.jumpToPage(store.currentIndex - 1);
+    } else {
+      if (store.currentIndex + 1 < store.imageCount)
+        pageController.jumpToPage(store.currentIndex + 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final onTapUp = (TapUpDetails details) {
-      final totalW = MediaQuery.of(context).size.width;
-      final left = totalW / 3;
-      final right = left * 2;
-      final tap = details.globalPosition.dx;
-      if (left < tap && tap < right) {
-        widget.onCenterTap?.call();
-      } else if (tap < left) {
-        if (store.currentIndex - 1 >= 0)
-          pageController.jumpToPage(store.currentIndex - 1);
-      } else {
-        if (store.currentIndex + 1 < store.imageCount)
-          pageController.jumpToPage(store.currentIndex + 1);
-      }
-    };
-
     return ExtendedImageGesturePageView.builder(
       controller: pageController,
       onPageChanged: onPageIndexChange,
@@ -127,26 +129,13 @@ class _EhImageViewerState extends State<EhImageViewer>
           } else if (galleryImage.state.value == LoadingState.LOADED) {
             return GestureDetector(
               key: UniqueKey(),
-              onTapUp: onTapUp,
+              onTapUp: _onTapUp,
               child: ExtendedImage(
                 key: UniqueKey(),
                 image: galleryImage.imageProvider!,
                 enableLoadState: true,
                 handleLoadingProgress: true,
                 mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: (state) {
-                  return GestureConfig(
-                    minScale: 0.9,
-                    animationMinScale: 0.7,
-                    maxScale: 5.0,
-                    animationMaxScale: 5.0,
-                    speed: 1.0,
-                    inertialSpeed: 100.0,
-                    initialScale: 1.0,
-                    inPageView: true,
-                    initialAlignment: InitialAlignment.center,
-                  );
-                },
                 onDoubleTap: _doubleTap,
                 loadStateChanged: (state) {
                   switch (state.extendedImageLoadState) {
@@ -168,7 +157,10 @@ class _EhImageViewerState extends State<EhImageViewer>
                         ),
                       );
                     case LoadState.completed:
-                      return null;
+                      return ZoomWidget(
+                        child: state.completedWidget,
+                        onTapUp: _onTapUp,
+                      );
                     case LoadState.failed:
                       return buildErrorPage(state.lastException);
                   }

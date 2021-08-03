@@ -7,4 +7,22 @@ part 'eh_image_dao.g.dart';
 @UseDao(tables: [EhImageCache])
 class EhImageDao extends DatabaseAccessor<AppDataBase> with _$EhImageDaoMixin {
   EhImageDao(AppDataBase attachedDatabase) : super(attachedDatabase);
+
+  Future<int> insert(EhImageCacheCompanion entity) =>
+      into(ehImageCache).insert(entity, mode: InsertMode.insertOrReplace);
+
+  Future<void> clearCache() async {
+    final int now = DateTime.now().millisecond - 30 * 24 * 60 * 60 * 1000;
+    await (delete(ehImageCache)
+          ..where((tbl) => tbl.lastViewTime.isSmallerThanValue(now)))
+        .go();
+  }
+
+  Future<EhImageCacheData?> get(String gid, String shaToken, int page) =>
+      (select(ehImageCache)
+            ..where((tbl) =>
+                tbl.gid.equals(gid) &
+                tbl.shaToken.equals(shaToken) &
+                tbl.page.equals(page)))
+          .getSingleOrNull();
 }
