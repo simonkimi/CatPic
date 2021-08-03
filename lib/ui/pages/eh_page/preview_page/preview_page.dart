@@ -593,16 +593,17 @@ class EhPreviewPage extends StatelessWidget {
             },
           ),
           Padding(
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.all(5),
             child: Text(
               store.galleryModel!.imageCount <=
                       min(80, store.galleryModel!.imageCountInOnePage)
                   ? I18n.of(context).no_preview
                   : I18n.of(context).show_more_preview,
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold),
+                color: Theme.of(context).primaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           )
         ],
@@ -625,7 +626,15 @@ class EhPreviewPage extends StatelessWidget {
                   ...store.galleryModel!.comments.take(2).map((e) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: EhComment(model: e),
+                      child: EhComment(
+                        model: e,
+                        maxLine: 10,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => EhCommentPage(store: store),
+                          ));
+                        },
+                      ),
                     );
                   }).toList(),
                   Padding(
@@ -637,8 +646,9 @@ class EhPreviewPage extends StatelessWidget {
                               (store.galleryModel!.comments.length - 2)
                                   .toString()),
                       style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold),
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   )
                 ],

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:catpic/i18n.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EhCommentPage extends StatelessWidget {
   const EhCommentPage({
@@ -41,6 +42,9 @@ class EhCommentPage extends StatelessWidget {
             child: EhComment(
               model: store.galleryModel!.comments[index],
               displayVote: true,
+              onOpen: (link) async {
+                await launch(link.url);
+              },
             ),
           );
         },

@@ -2,17 +2,22 @@ import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EhComment extends StatelessWidget {
   const EhComment({
     Key? key,
     this.displayVote = false,
     required this.model,
+    this.maxLine,
+    this.onTap,
+    this.onOpen,
   }) : super(key: key);
 
   final bool displayVote;
   final CommentModel model;
+  final int? maxLine;
+  final VoidCallback? onTap;
+  final LinkCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +70,12 @@ class EhComment extends StatelessWidget {
               children: [
                 SelectableLinkify(
                   text: model.comment,
+                  scrollPhysics: const NeverScrollableScrollPhysics(),
                   options: const LinkifyOptions(humanize: false),
-                  onOpen: (link) async {
-                    // TODO 打开同站
-                    await launch(link.url);
-                  },
+                  maxLines: maxLine,
+                  minLines: 1,
+                  onTap: onTap,
+                  onOpen: onOpen,
                 ),
               ],
             )
