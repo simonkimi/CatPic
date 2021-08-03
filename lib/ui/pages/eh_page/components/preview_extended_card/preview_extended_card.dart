@@ -10,6 +10,10 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
 
+
+typedef FunctionCallback = void Function(Function);
+
+
 class PreviewExtendedCard extends StatelessWidget {
   const PreviewExtendedCard({
     Key? key,
@@ -20,6 +24,8 @@ class PreviewExtendedCard extends StatelessWidget {
     this.progress,
     this.lastWidget,
     this.controllerWidget,
+    this.onLoadError,
+    this.onRetryTap,
   }) : super(key: key);
 
   final PreViewItemModel previewModel;
@@ -29,6 +35,9 @@ class PreviewExtendedCard extends StatelessWidget {
   final Rx<double>? progress;
   final Widget? lastWidget;
   final Widget? controllerWidget;
+
+  final FunctionCallback? onLoadError;
+  final VoidCallback? onRetryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -262,6 +271,17 @@ class PreviewExtendedCard extends StatelessWidget {
                     height: 135,
                     fit: BoxFit.fitHeight,
                   ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, reload) {
+              onLoadError?.call(reload);
+              return InkWell(
+                onTap: () {
+                  onRetryTap?.call();
+                },
+                child: const Center(
+                  child: Icon(Icons.info),
                 ),
               );
             },

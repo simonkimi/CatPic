@@ -34,6 +34,8 @@ class EhIndexResult extends StatelessWidget {
   final EHAdapter adapter;
   final EhIndexStore store;
 
+  final retryList = <Function>[];
+
   @override
   Widget build(BuildContext context) {
     return EhCompleteBar(
@@ -134,6 +136,13 @@ class EhIndexResult extends StatelessWidget {
                   },
                 ),
               );
+            },
+            onLoadError: (retry) {
+              retryList.add(retry);
+            },
+            onRetryTap: () {
+              for (final func in retryList) func();
+              retryList.clear();
             },
           );
         },
