@@ -97,6 +97,10 @@ abstract class DownloadLoaderStoreBase with Store {
               basePath: basePath,
               fileName: downloaded.value,
             ));
+        entity.state.value = LoadingState.LOADED;
+        entity.extra = GalleryPreviewImageModel(
+          isLarge: true
+        );
       }
     } else {
       // 没有这个文件夹, 可能被删了

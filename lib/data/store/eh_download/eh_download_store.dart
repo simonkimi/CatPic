@@ -59,11 +59,12 @@ abstract class EhDownloadStoreBase with Store {
           .where((e) => e.startsWith('${database.gid}-'))
           .toList();
       if (existPath.isNotEmpty) {
-        basePath = existPath[0];
+        basePath = 'Gallery/${existPath[0]}';
       } else {
         basePath =
             'Gallery/${database.gid}-${databaseGallery.title.safFileName}';
       }
+      print(basePath);
       // 创建下载文件夹
       await fh.createDir(basePath);
       // 读取/创建 下载配置文件

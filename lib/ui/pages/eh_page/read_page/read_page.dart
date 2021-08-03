@@ -201,6 +201,7 @@ class _ImageSliderState extends State<ImageSlider> {
       key: listGlobalKey,
       controller: scrollController,
       scrollDirection: Axis.horizontal,
+      cacheExtent: 1000,
       children: List.generate(widget.count, (index) {
         return InkWell(
           onTap: () {
@@ -276,7 +277,10 @@ class _ImageSliderState extends State<ImageSlider> {
                           },
                         )
                       : ExtendedImage(
-                          image: model.imageProvider!,
+                          image: ExtendedResizeImage(
+                            model.imageProvider!,
+                            maxBytes: 50
+                          ),
                           enableLoadState: true,
                           loadStateChanged: (state) {
                             if (state.extendedImageLoadState ==

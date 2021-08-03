@@ -57,7 +57,10 @@ class EhDownloadPage extends StatelessWidget {
         initialData: const [],
         builder: (context, snapshot) {
           return Observer(
-            builder: (context) => buildCardBody(snapshot, context),
+            builder: (context) {
+              ehDownloadStore.downloadingList; // 消除警告
+              return buildCardBody(snapshot, context);
+            },
           );
         },
       ),
