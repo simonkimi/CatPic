@@ -64,7 +64,6 @@ abstract class EhDownloadStoreBase with Store {
         basePath =
             'Gallery/${database.gid}-${databaseGallery.title.safFileName}';
       }
-      print(basePath);
       // 创建下载文件夹
       await fh.createDir(basePath);
       // 读取/创建 下载配置文件

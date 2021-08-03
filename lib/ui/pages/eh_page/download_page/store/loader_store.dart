@@ -98,14 +98,11 @@ abstract class DownloadLoaderStoreBase with Store {
               fileName: downloaded.value,
             ));
         entity.state.value = LoadingState.LOADED;
-        entity.extra = GalleryPreviewImageModel(
-          isLarge: true
-        );
+        entity.extra = GalleryPreviewImageModel(isLarge: true);
       }
     } else {
       // 没有这个文件夹, 可能被删了
-      basePath =
-          'Gallery/$gid-${model.title.safFileName}';
+      basePath = 'Gallery/$gid-${model.title.safFileName}';
       await fh.createDir(basePath);
     }
   }

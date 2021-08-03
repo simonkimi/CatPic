@@ -277,10 +277,8 @@ class _ImageSliderState extends State<ImageSlider> {
                           },
                         )
                       : ExtendedImage(
-                          image: ExtendedResizeImage(
-                            model.imageProvider!,
-                            maxBytes: 50
-                          ),
+                          image: ExtendedResizeImage(model.imageProvider!,
+                              maxBytes: 50),
                           enableLoadState: true,
                           loadStateChanged: (state) {
                             if (state.extendedImageLoadState ==

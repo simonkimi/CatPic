@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -13,6 +14,8 @@ import 'package:catpic/utils/utils.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 import 'package:get/get.dart';
 import 'package:synchronized/synchronized.dart';
+
+import '../../../../../main.dart';
 
 part 'store.g.dart';
 
@@ -68,6 +71,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   int favcat = -1;
   @observable
   bool isFavLoading = false;
+  @observable
+  bool isDownloadLoading = false;
 
   @override
   Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
@@ -326,6 +331,26 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
       return result;
     } finally {
       isFavLoading = false;
+    }
+  }
+
+  @action
+  Future<bool> onDownloadClick() async {
+    isDownloadLoading = true;
+    try {
+      if (await fh.hasDownloadPermission()) {
+        final result = await ehDownloadStore.createDownloadTask(
+          gid,
+          gtoken,
+          adapter.website.id,
+        );
+        return result;
+      } else {
+        fh.requestDownloadPath(I18n.context);
+        return false;
+      }
+    } finally {
+      isDownloadLoading = false;
     }
   }
 

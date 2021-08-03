@@ -91,7 +91,8 @@ extension StringHelper on String {
     return split('.').reversed.take(2).toList().reversed.join('.');
   }
 
-  String get safFileName => replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_');
+  String get safFileName =>
+      replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_');
 }
 
 extension MapHelper<K, V> on Map<K, V> {

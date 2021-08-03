@@ -28,7 +28,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
-import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:uuid/uuid.dart';
 import 'gallery_preview.dart';
 
@@ -242,7 +241,7 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  TextButton buildUpdatesButton(BuildContext context) {
+  Widget buildUpdatesButton(BuildContext context) {
     return TextButton(
       onPressed: () async {
         final gallery = await showUpdateMenu(context);
@@ -267,38 +266,47 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  StatefulBuilder buildDownloadButton() {
+  Widget buildDownloadButton() {
     return StatefulBuilder(builder: (context, setState) {
       return FutureBuilder<EhDownloadTableData?>(
         future: DB().ehDownloadDao.getByGid(store.gid, store.gtoken),
         builder: (context, snapshot) {
-          return TextButton(
-            onPressed: () async {
-              if (snapshot.data == null) {
-                if (await fh.hasDownloadPermission()) {
-                  final value = await ehDownloadStore.createDownloadTask(
-                    store.gid,
-                    store.gtoken,
-                    adapter.website.id,
-                  );
-                  if (value)
-                    BotToast.showText(text: I18n.of(context).download_start);
-                  setState(() {});
-                } else {
-                  fh.requestDownloadPath(context);
-                }
-              }
+          return Observer(
+            builder: (context) {
+              return TextButton(
+                onPressed: () async {
+                  if (snapshot.data == null) {
+                    final value = await store.onDownloadClick();
+                    if (value)
+                      BotToast.showText(text: I18n.of(context).download_start);
+                    setState(() {});
+                  }
+                },
+                child: store.isDownloadLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      )
+                    : Icon(snapshot.data == null
+                        ? Icons.cloud_download_outlined
+                        : Icons.cloud_download),
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(Platform.isWindows
+                      ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
+                      : const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 2)),
+                  minimumSize: MaterialStateProperty.all(const Size(0, 0)),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              );
             },
-            child: Icon(snapshot.data == null
-                ? Icons.cloud_download_outlined
-                : Icons.cloud_download),
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(Platform.isWindows
-                  ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-                  : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
-              minimumSize: MaterialStateProperty.all(const Size(0, 0)),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
           );
         },
       );
