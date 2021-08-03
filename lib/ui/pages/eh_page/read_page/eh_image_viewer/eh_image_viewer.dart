@@ -68,17 +68,14 @@ class _EhImageViewerState extends State<EhImageViewer>
         imageModel.imageProvider?.resolve(const ImageConfiguration());
       });
     }
-    print('onIndexChange run $index');
     if (preloadNum != 0) {
       // 向后预加载${preloadNum}张图片
       store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
         if (e.imageProvider == null) {
-          print('load ${e.index}');
           e.requestLoad(true).then((value) {
             e.imageProvider?.resolve(const ImageConfiguration());
           });
         } else {
-          print('loaded ${e.index}');
           e.imageProvider?.resolve(const ImageConfiguration());
         }
       });

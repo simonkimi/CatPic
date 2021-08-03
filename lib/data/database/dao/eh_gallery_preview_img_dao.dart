@@ -9,7 +9,4 @@ class EhGalleryPreviewImageDao extends DatabaseAccessor<AppDataBase>
     with _$EhGalleryPreviewImageDaoMixin {
   EhGalleryPreviewImageDao(AppDataBase attachedDatabase)
       : super(attachedDatabase);
-
-
-
 }

@@ -18,11 +18,16 @@ class EhImageDao extends DatabaseAccessor<AppDataBase> with _$EhImageDaoMixin {
         .go();
   }
 
-  Future<EhImageCacheData?> get(String gid, String shaToken, int page) =>
-      (select(ehImageCache)
-            ..where((tbl) =>
-                tbl.gid.equals(gid) &
-                tbl.shaToken.equals(shaToken) &
-                tbl.page.equals(page)))
-          .getSingleOrNull();
+  Future<EhImageCacheData?> get(String gid, String shaToken, int page) async {
+    final model = await (select(ehImageCache)
+          ..where((tbl) =>
+              tbl.gid.equals(gid) &
+              tbl.shaToken.equals(shaToken) &
+              tbl.page.equals(page)))
+        .getSingleOrNull();
+    if (model != null &&
+        model.lastViewTime <
+            DateTime.now().millisecond - 30 * 24 * 60 * 60 * 1000) return null;
+    return model;
+  }
 }

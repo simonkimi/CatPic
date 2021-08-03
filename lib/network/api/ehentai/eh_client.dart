@@ -1,10 +1,6 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:uuid/uuid.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/utils/utils.dart';
-import 'package:catpic/utils/debug.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {
@@ -62,16 +58,7 @@ class EhClient extends BaseClient {
     required String gid,
     required int page,
   }) async {
-    return (await dio.get<String>('s/$shaToken/$gid-$page',
-            options: settingStore.dioCacheOptions
-                .copyWith(
-                  policy: CachePolicy.request,
-                  keyBuilder: (req) => const Uuid().v5(Uuid.NAMESPACE_URL,
-                      '${dio.options.baseUrl}s/$shaToken/$gid-$page')
-                    ..print('galleryImage'),
-                )
-                .toOptions()))
-        .data!;
+    return (await dio.get<String>('s/$shaToken/$gid-$page')).data!;
   }
 
   // 获取收藏列表

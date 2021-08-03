@@ -30,6 +30,8 @@ abstract class DownloadLoaderStoreBase with Store {
                   page: index,
                 ))) {
     readStore = EhReadStore(
+      gid: gid,
+      gtoken: gtoken,
       imageCount: imageCount,
       requestLoad: requestLoad,
       currentIndex: 0,

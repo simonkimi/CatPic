@@ -118,6 +118,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
             (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
 
         readStore = EhReadStore(
+          gid: gid,
+          gtoken: gtoken,
           imageCount: baseModel.imageCount,
           requestLoad: requestLoadReadImage,
           currentIndex: 0,

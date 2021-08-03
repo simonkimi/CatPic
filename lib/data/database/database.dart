@@ -84,15 +84,13 @@ class AppDataBase extends _$AppDataBase {
   int get schemaVersion => 2;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(
-    onUpgrade: (Migrator m, from, to) async {
-      if (from == 1 && to == 2) {
-        await m.addColumn(ehImageCache, ehImageCache.page);
-      }
-    }
-  );
+  MigrationStrategy get migration =>
+      MigrationStrategy(onUpgrade: (Migrator m, from, to) async {
+        if (from == 1 && to == 2) {
+          await m.addColumn(ehImageCache, ehImageCache.page);
+        }
+      });
 }
-
 
 class DB {
   factory DB() => _db;

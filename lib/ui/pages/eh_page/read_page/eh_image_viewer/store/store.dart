@@ -20,6 +20,8 @@ abstract class EhReadStoreBase with Store {
     required this.imageCount,
     required this.requestLoad,
     required this.currentIndex,
+    required this.gid,
+    required this.gtoken,
   })  : readImageList = List.generate(
             imageCount,
             (index) => ReadImgModel(
@@ -37,6 +39,8 @@ abstract class EhReadStoreBase with Store {
                   },
                 ));
 
+  final String gid;
+  final String gtoken;
   final int imageCount;
   final List<ReadImgModel<GalleryImgModel>> readImageList;
   final List<ReadImgModel<GalleryPreviewImageModel>> previewImageList;
@@ -63,8 +67,6 @@ abstract class EhReadStoreBase with Store {
   Future<void> setIndex(int value) async {
     pageSliderController.setValue(value);
     currentIndex = value;
-    // TODO: 更换历史记录位置
-    // await DB().ehReadHistoryDao.setPage(gid, gtoken, value);
   }
 }
 

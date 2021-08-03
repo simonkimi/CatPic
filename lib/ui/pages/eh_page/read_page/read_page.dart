@@ -1,3 +1,4 @@
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/eh_image_viewer.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
@@ -97,6 +98,9 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
         },
         onIndexChange: (value) {
           widget.store.setIndex(value);
+          DB()
+              .ehReadHistoryDao
+              .setPage(widget.store.gid, widget.store.gtoken, value);
         },
       ),
     );

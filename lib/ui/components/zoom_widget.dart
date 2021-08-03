@@ -52,14 +52,12 @@ class _ZoomWidgetState extends State<ZoomWidget> with TickerProviderStateMixin {
             doubleTapScales.indexOf(currentScale.nearList(doubleTapScales)) + 1;
         if (index >= doubleTapScales.length) index = 0;
         final scale = doubleTapScales[index];
-        print('$currentScale $scale');
         _animation.animationScale(currentScale, scale);
         _animation.animationOffset(
           Offset(currentX, currentY),
           Offset(-position.dx * (scale - 1), -position.dy * (scale - 1)),
         );
-        _animation.forward((event) {
-          print(event.scale);
+        _animation.listen((event) {
           controller.value = Matrix4.identity()
             ..translate(event.offset.dx, event.offset.dy)
             ..scale(event.scale);
@@ -136,7 +134,7 @@ class GestureAnimation {
     _scaleController.forward();
   }
 
-  void forward(void Function(GestureAnimationData) listener) {
+  void listen(void Function(GestureAnimationData) listener) {
     final sub = _stream.stream.listen(listener);
     subList.add(sub);
   }
