@@ -168,14 +168,72 @@ class EhPreviewPage extends StatelessWidget {
               children: [
                 buildInfoBarRow(context),
                 const Divider(),
+                buildTagTitle(context),
                 buildTagList(context),
                 const Divider(),
+                buildCommentTitle(context),
                 buildCommentList(context),
                 const Divider(),
                 buildPreviewList(context),
               ],
             )
           : const SizedBox(),
+    );
+  }
+
+  Padding buildCommentTitle(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        children: [
+          Text(
+            I18n.of(context).star_and_comment,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+          const Expanded(child: SizedBox()),
+          Row(
+            children: [
+              RatingBar.builder(
+                itemSize: 14,
+                ignoreGestures: true,
+                initialRating:
+                    store.galleryModel?.star ?? store.previewModel?.stars ?? 0,
+                onRatingUpdate: (value) {},
+                itemBuilder: (BuildContext context, int index) {
+                  return const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  );
+                },
+              ),
+              const SizedBox(width: 5),
+              Text(
+                (store.galleryModel?.star ?? store.previewModel?.stars ?? 0)
+                        .toString() +
+                    ' (${store.galleryModel?.starMember.toString() ?? '0'})',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.subtitle2!.color,
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding buildTagTitle(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Text(
+            I18n.of(context).tag,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 
@@ -213,7 +271,7 @@ class EhPreviewPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildTitle(),
+              buildTitle(context),
               const SizedBox(height: 5),
               buildUploader(context),
               const SizedBox(height: 5),
@@ -464,8 +522,8 @@ class EhPreviewPage extends StatelessWidget {
         children: [
           GridView.builder(
             padding: const EdgeInsets.only(
-              right: 10,
-              left: 10,
+              right: 15,
+              left: 15,
               top: 10,
               bottom: 5,
             ),
@@ -535,7 +593,7 @@ class EhPreviewPage extends StatelessWidget {
             },
           ),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(2),
             child: Text(
               store.galleryModel!.imageCount <=
                       min(80, store.galleryModel!.imageCountInOnePage)
@@ -543,6 +601,7 @@ class EhPreviewPage extends StatelessWidget {
                   : I18n.of(context).show_more_preview,
               style: TextStyle(
                   color: Theme.of(context).primaryColor,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold),
             ),
           )
@@ -559,7 +618,7 @@ class EhPreviewPage extends StatelessWidget {
         ));
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: store.galleryModel!.comments.isNotEmpty
             ? Column(
                 children: [
@@ -601,11 +660,11 @@ class EhPreviewPage extends StatelessWidget {
 
   Widget buildTagList(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
       child: Column(
         children: store.galleryModel!.tags.map((e) {
           return Container(
-            margin: const EdgeInsets.only(bottom: 10),
+            margin: const EdgeInsets.only(bottom: 5),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -618,7 +677,7 @@ class EhPreviewPage extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(7),
+                        padding: const EdgeInsets.all(6),
                         child: Text(
                           settingStore.ehTranslate
                               ? e.keyTranslate.isNotEmpty
@@ -627,7 +686,7 @@ class EhPreviewPage extends StatelessWidget {
                               : e.key,
                           style: const TextStyle(
                             height: 1,
-                            fontSize: 15,
+                            fontSize: 13,
                             color: Colors.white,
                           ),
                         ),
@@ -663,7 +722,7 @@ class EhPreviewPage extends StatelessWidget {
                             }));
                           },
                           child: Padding(
-                            padding: const EdgeInsets.all(7),
+                            padding: const EdgeInsets.all(6),
                             child: Text(
                               settingStore.ehTranslate
                                   ? e.translate.isNotEmpty
@@ -671,7 +730,7 @@ class EhPreviewPage extends StatelessWidget {
                                       : e.value
                                   : e.value,
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 13,
                                 height: 1,
                               ),
                             ),
@@ -710,6 +769,7 @@ class EhPreviewPage extends StatelessWidget {
                                   .toLowerCase()] ??
                               store.galleryModel!.language
                           : store.galleryModel!.language,
+                      style: const TextStyle(fontSize: 14),
                     )
                   ],
                 ),
@@ -722,6 +782,7 @@ class EhPreviewPage extends StatelessWidget {
                     IconText(
                       text: store.galleryModel!.imageCount.toString(),
                       icon: Icons.image_outlined,
+                      style: const TextStyle(fontSize: 14),
                     )
                   ],
                 ),
@@ -734,6 +795,7 @@ class EhPreviewPage extends StatelessWidget {
                     IconText(
                       text: store.galleryModel!.fileSize,
                       icon: Icons.file_copy_outlined,
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
@@ -747,6 +809,7 @@ class EhPreviewPage extends StatelessWidget {
               IconText(
                 icon: Icons.favorite,
                 iconColor: Colors.red,
+                style: const TextStyle(fontSize: 14),
                 text: store.galleryModel!.favorited.toString() +
                     ' ' +
                     (store.storage.favouriteList
@@ -754,7 +817,10 @@ class EhPreviewPage extends StatelessWidget {
                             ?.tag ??
                         ''),
               ),
-              Text(store.previewModel!.uploadTime),
+              Text(
+                store.previewModel!.uploadTime,
+                style: const TextStyle(fontSize: 14),
+              ),
             ],
           ),
         ],
@@ -816,10 +882,43 @@ class EhPreviewPage extends StatelessWidget {
     );
   }
 
-  Text buildTitle() {
-    return Text(
-      store.previewModel!.title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+  Widget buildTitle(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        final title =
+            (store.galleryModel?.title ?? store.previewModel?.title ?? '')
+                .replaceAll(RegExp(r'(\[.*?\]|\(.*?\))|{.*?}'), '')
+                .trim()
+                .split('|')
+                .first;
+        if (title.isNotEmpty) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return EhPage(
+              searchText: title,
+              searchType: EHSearchType.INDEX,
+            );
+          }));
+        }
+      },
+      child: RichText(
+        text: TextSpan(
+            text: store.previewModel!.title,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Theme.of(context).textTheme.subtitle1!.color),
+            children: const [
+              WidgetSpan(
+                child: SizedBox(width: 5),
+              ),
+              WidgetSpan(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 1.5),
+                  child: Icon(Icons.search, size: 17),
+                ),
+              )
+            ]),
+      ),
     );
   }
 
@@ -864,7 +963,7 @@ class EhPreviewPage extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 50),
       child: Container(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
         decoration: BoxDecoration(
           color: store.previewModel!.tag.color,
           borderRadius: BorderRadius.circular(3),

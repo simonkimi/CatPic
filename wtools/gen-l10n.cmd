@@ -1,1 +1,1 @@
-flutter gen-l10n
+cd .. && flutter gen-l10n && cd wtools
