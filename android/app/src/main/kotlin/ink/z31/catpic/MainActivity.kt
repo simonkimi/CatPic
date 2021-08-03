@@ -189,8 +189,7 @@ class MainActivity : FlutterActivity() {
 
     private fun safWalk(safUrl: String, path: String): List<String> {
         val documentFile = safCreateDirectory(safUrl, path)
-        val files = documentFile?.listFiles()?.map { it.name!! }
-        return files ?: throw Exception("目录不存在")
+        return documentFile.listFiles().map { it.name!! }
     }
 
 

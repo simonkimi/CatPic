@@ -101,7 +101,7 @@ abstract class DownloadLoaderStoreBase with Store {
     } else {
       // 没有这个文件夹, 可能被删了
       basePath =
-          'Gallery/$gid-${model.title.replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_')}';
+          'Gallery/$gid-${model.title.safFileName}';
       await fh.createDir(basePath);
     }
   }

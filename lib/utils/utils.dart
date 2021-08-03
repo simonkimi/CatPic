@@ -90,6 +90,8 @@ extension StringHelper on String {
   String get baseHost {
     return split('.').reversed.take(2).toList().reversed.join('.');
   }
+
+  String get safFileName => replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_');
 }
 
 extension MapHelper<K, V> on Map<K, V> {

@@ -62,7 +62,7 @@ abstract class EhDownloadStoreBase with Store {
         basePath = existPath[0];
       } else {
         basePath =
-            'Gallery/${database.gid}-${databaseGallery.title.replaceAll('/', '_').replaceAll('|', '_').replaceAll('?', '_')}';
+            'Gallery/${database.gid}-${databaseGallery.title.safFileName}';
       }
       // 创建下载文件夹
       await fh.createDir(basePath);
