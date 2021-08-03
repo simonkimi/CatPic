@@ -614,7 +614,7 @@ class EhPreviewPage extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).primaryColor,
                       ),
                       child: Padding(
@@ -643,7 +643,7 @@ class EhPreviewPage extends StatelessWidget {
                     children: e.value.map((e) {
                       return Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(8),
                           color: isDarkMode(context)
                               ? const Color(0xFF494949)
                               : const Color(0xFFEFEEF1),

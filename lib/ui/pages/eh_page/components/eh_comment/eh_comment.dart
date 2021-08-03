@@ -68,11 +68,7 @@ class EhComment extends StatelessWidget {
                   options: const LinkifyOptions(humanize: false),
                   onOpen: (link) async {
                     // TODO 打开同站
-                    if (await canLaunch(link.url)) {
-                      await launch(link.url);
-                    } else {
-                      throw 'Could not launch $link';
-                    }
+                    await launch(link.url);
                   },
                 ),
               ],
