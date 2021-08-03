@@ -320,8 +320,9 @@ class PreviewParser {
 
   /// 解析预览图长宽
   static List<int> parseImg(Element e) {
-    final imgElement =
-        e.querySelector('.glthumb img') ?? e.querySelector('.gl3t img');
+    final imgElement = e.querySelector('.glthumb img') ??
+        e.querySelector('.gl3t img') ??
+        e.querySelector('.gl1e img');
     if (imgElement != null) {
       final styleText = imgElement.attributes['style'];
       final re = RegExp(r'height:(\d+?)px;width:(\d+?)px');
