@@ -89,12 +89,13 @@ class EHAdapter extends Adapter {
     required String gid,
     required String shaToken,
     required int page,
+    CancelToken? cancelToken,
   }) async {
     final model = await DB().ehImageDao.get(gid, shaToken, page);
     if (model != null) return GalleryImgModel.fromBuffer(model.pb);
 
-    final str =
-        await client.galleryImage(gid: gid, shaToken: shaToken, page: page);
+    final str = await client.galleryImage(
+        gid: gid, shaToken: shaToken, page: page, cancelToken: cancelToken);
     final img = await compute(GalleryImgParser.parse, str);
     img.shaToken = shaToken;
 

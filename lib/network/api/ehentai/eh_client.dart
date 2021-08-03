@@ -57,8 +57,11 @@ class EhClient extends BaseClient {
     required String shaToken,
     required String gid,
     required int page,
+    CancelToken? cancelToken,
   }) async {
-    return (await dio.get<String>('s/$shaToken/$gid-$page')).data!;
+    return (await dio.get<String>('s/$shaToken/$gid-$page',
+            cancelToken: cancelToken))
+        .data!;
   }
 
   // 获取收藏列表

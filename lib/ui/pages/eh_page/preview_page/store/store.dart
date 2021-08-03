@@ -6,6 +6,7 @@ import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/utils/async.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
+import 'package:dio/dio.dart' hide Lock;
 import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
@@ -24,17 +25,21 @@ class EhGalleryStore = EhGalleryStoreBase with _$EhGalleryStore;
 // 主要存放数据是Gallery下面小图片的数据
 abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     with Store {
+
   EhGalleryStoreBase({
     required this.gid,
     required this.gtoken,
     required this.adapter,
     this.previewModel,
     this.previewAspectRatio,
-  })  : pageLoader = [
+    required this.disposeToken,
+  })  :
+        pageLoader = [
           AsyncLoader(() => adapter.gallery(
                 gid: gid,
                 gtoken: gtoken,
                 page: 0,
+                cancelToken: disposeToken,
               ))
         ],
         super('');
@@ -63,7 +68,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   late EhReadStore readStore;
 
   // 加载页面的加载器
-  final List<AsyncLoader<GalleryModel>> pageLoader;
+  late final List<AsyncLoader<GalleryModel>> pageLoader;
   final baseLock = Lock();
 
   // 收藏
@@ -73,6 +78,8 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   bool isFavLoading = false;
   @observable
   bool isDownloadLoading = false;
+
+  final CancelToken disposeToken;
 
   @override
   Future<List<GalleryPreviewImageModel>> loadPage(int page) async {
@@ -141,10 +148,10 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
         pageLoader.addAll(List.generate(
             page - 1,
             (index) => AsyncLoader(() => adapter.gallery(
-                  gid: gid,
-                  gtoken: gtoken,
-                  page: index + 1,
-                ))));
+                gid: gid,
+                gtoken: gtoken,
+                page: index + 1,
+                cancelToken: disposeToken))));
 
         favcat = baseModel.favcat;
         previewModel ??= PreViewItemModel(
@@ -204,6 +211,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
                 gid: gid,
                 shaToken: parsedGallery[downloaded.key]!,
                 page: downloaded.key,
+                cancelToken: disposeToken,
               );
               return DioImageParams(
                 url: galleryImage.imgUrl,
@@ -308,7 +316,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
   }
 
   void dispose() {
+    disposeToken.cancel();
     for (final e in readStore.readImageList) {
+      e.dispose();
+    }
+    for (final e in readStore.previewImageList) {
       e.dispose();
     }
   }

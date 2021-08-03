@@ -23,6 +23,7 @@ import 'package:catpic/ui/pages/eh_page/preview_page/comment_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -49,6 +50,7 @@ class EhPreviewPage extends StatelessWidget {
           adapter: adapter,
           previewModel: previewModel,
           previewAspectRatio: previewAspectRatio,
+          disposeToken: CancelToken(),
         ),
         assert(galleryBase != null || previewModel != null),
         gid = previewModel?.gid ?? galleryBase!.gid,
@@ -68,42 +70,12 @@ class EhPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: appBarBackButton(),
-        actions: [
-          PopupMenuButton<GalleryAction>(
-            icon: const Icon(
-              Icons.more_vert_outlined,
-              color: Colors.white,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            onSelected: (value) async {
-              switch (value) {
-                case GalleryAction.REFRESH:
-                  DB().galleryCacheDao.remove(gid, gtoken).then((value) {
-                    store.refresh();
-                  });
-              }
-            },
-            itemBuilder: (context) {
-              return [
-                buildPopupMenuItem(
-                  context: context,
-                  icon: Icons.refresh,
-                  value: GalleryAction.REFRESH,
-                  text: I18n.of(context).refresh,
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
+      appBar: buildAppBar(),
       body: Observer(
         builder: (context) {
           return WillPopScope(
             onWillPop: () async {
+              Navigator.of(context).pop();
               store.dispose();
               return true;
             },
@@ -133,6 +105,41 @@ class EhPreviewPage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      leading: appBarBackButton(),
+      actions: [
+        PopupMenuButton<GalleryAction>(
+          icon: const Icon(
+            Icons.more_vert_outlined,
+            color: Colors.white,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          onSelected: (value) async {
+            switch (value) {
+              case GalleryAction.REFRESH:
+                DB().galleryCacheDao.remove(gid, gtoken).then((value) {
+                  store.refresh();
+                });
+            }
+          },
+          itemBuilder: (context) {
+            return [
+              buildPopupMenuItem(
+                context: context,
+                icon: Icons.refresh,
+                value: GalleryAction.REFRESH,
+                text: I18n.of(context).refresh,
+              ),
+            ];
+          },
+        ),
+      ],
     );
   }
 
