@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
@@ -322,9 +321,8 @@ class EhPreviewPage extends StatelessWidget {
       },
       child: const Icon(Icons.update),
       style: ButtonStyle(
-          padding: MaterialStateProperty.all(Platform.isWindows
-              ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-              : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+          padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
           minimumSize: MaterialStateProperty.all(const Size(0, 0)),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           foregroundColor: MaterialStateProperty.all(Colors.orange)),
@@ -363,10 +361,8 @@ class EhPreviewPage extends StatelessWidget {
                         ? Icons.cloud_download_outlined
                         : Icons.cloud_download),
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(Platform.isWindows
-                      ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-                      : const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 2)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
                   minimumSize: MaterialStateProperty.all(const Size(0, 0)),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -415,9 +411,8 @@ class EhPreviewPage extends StatelessWidget {
             )
           : Icon(store.favcat == -1 ? Icons.favorite_outline : Icons.favorite),
       style: ButtonStyle(
-          padding: MaterialStateProperty.all(Platform.isWindows
-              ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-              : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+          padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
           minimumSize: MaterialStateProperty.all(const Size(0, 0)),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           foregroundColor: MaterialStateProperty.all(store.favcat.favcatColor)),
@@ -890,9 +885,8 @@ class EhPreviewPage extends StatelessWidget {
                   ? const Color(0xFF929196)
                   : const Color(0xFF8C8B8E);
         }),
-        padding: MaterialStateProperty.all(Platform.isWindows
-            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15)
-            : const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+        padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
         minimumSize: MaterialStateProperty.all(const Size(0, 0)),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),

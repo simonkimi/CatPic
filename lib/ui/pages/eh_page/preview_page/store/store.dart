@@ -25,7 +25,6 @@ class EhGalleryStore = EhGalleryStoreBase with _$EhGalleryStore;
 // 主要存放数据是Gallery下面小图片的数据
 abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     with Store {
-
   EhGalleryStoreBase({
     required this.gid,
     required this.gtoken,
@@ -33,8 +32,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     this.previewModel,
     this.previewAspectRatio,
     required this.disposeToken,
-  })  :
-        pageLoader = [
+  })  : pageLoader = [
           AsyncLoader(() => adapter.gallery(
                 gid: gid,
                 gtoken: gtoken,

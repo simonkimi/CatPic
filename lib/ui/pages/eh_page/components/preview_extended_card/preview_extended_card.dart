@@ -10,9 +10,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
 
-
 typedef FunctionCallback = void Function(Function);
-
 
 class PreviewExtendedCard extends StatelessWidget {
   const PreviewExtendedCard({

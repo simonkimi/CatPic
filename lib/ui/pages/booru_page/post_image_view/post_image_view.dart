@@ -110,7 +110,7 @@ class PostImageViewPage extends HookWidget {
   Widget buildPopupTag(BooruPost booruPost, BuildContext context) {
     return Wrap(
       spacing: 3,
-      runSpacing: Platform.isWindows ? 3 : 0,
+      runSpacing: 0,
       children: booruPost.tags['_']!.where((e) => e.isNotEmpty).map((e) {
         return CustomPopupMenu(
           arrowColor: Colors.black87,
