@@ -290,7 +290,10 @@ class PreviewParser {
   }
 
   static List<PreviewTag> parseTag(Element element) {
-    final tagElements = element.querySelectorAll('.gt');
+    final tagElements = [
+      ...element.querySelectorAll('.gt'),
+      ...element.querySelectorAll('.gtl')
+    ];
     return tagElements.map((e) {
       final tag = e.text;
       var color = 0;
