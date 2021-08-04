@@ -189,7 +189,7 @@ abstract class WebsiteAddStoreBase with Store {
       final id = await websiteDao.insert(entity);
       final table = await websiteDao.getById(id);
       if (favicon == null)
-        getFavicon(DioBuilder.build(WebsiteEntity.silent(table!)))
+        getFavicon(DioBuilder.build(IWebsiteEntity.silent(table!)))
             .then((favicon) {
           mainStore.setWebsiteFavicon(id, favicon);
         });

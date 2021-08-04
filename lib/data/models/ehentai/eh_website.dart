@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 import 'package:flutter/material.dart';
 import 'package:catpic/data/database/database.dart';
@@ -9,15 +11,45 @@ part 'eh_website.g.dart';
 
 class EhWebsiteEntity = EhWebsiteEntityBase with _$EhWebsiteEntity;
 
-abstract class EhWebsiteEntityBase extends WebsiteEntity with Store {
-  EhWebsiteEntityBase.build(WebsiteTableData database) : super.build(database) {
+abstract class EhWebsiteEntityBase with Store implements IWebsiteEntity {
+  EhWebsiteEntityBase.build(this.database)
+      : id = database.id,
+        name = database.name,
+        host = database.host,
+        scheme = database.scheme,
+        type = database.type,
+        useDoH = database.useDoH,
+        onlyHost = database.onlyHost,
+        directLink = database.directLink,
+        cookies = database.cookies,
+        favicon = database.favicon,
+        username = database.username,
+        password = database.password,
+        storage = database.storage ?? Uint8List.fromList([]) {
+    DB()
+        .websiteDao
+        .replace(database.copyWith(lastOpen: DateTime.now().millisecond));
     initStorage();
   }
 
-  EhWebsiteEntityBase.silent(WebsiteTableData database)
-      : super.silent(database) {
+  EhWebsiteEntityBase.silent(this.database)
+      : id = database.id,
+        name = database.name,
+        host = database.host,
+        scheme = database.scheme,
+        type = database.type,
+        useDoH = database.useDoH,
+        onlyHost = database.onlyHost,
+        directLink = database.directLink,
+        cookies = database.cookies,
+        favicon = database.favicon,
+        username = database.username,
+        password = database.password,
+        storage = database.storage ?? Uint8List.fromList([]) {
     initStorage();
   }
+
+  WebsiteTableData database;
 
   late EHStorage eHStorage;
 
@@ -35,6 +67,45 @@ abstract class EhWebsiteEntityBase extends WebsiteEntity with Store {
 
   @observable
   ScreenAxis _screenAxis = ScreenAxis.vertical;
+
+  @override
+  int id;
+  @override
+  @observable
+  String name;
+  @override
+  @observable
+  String host;
+  @override
+  @observable
+  int scheme;
+  @override
+  @observable
+  int type;
+  @observable
+  @override
+  bool useDoH;
+  @observable
+  @override
+  bool onlyHost;
+  @observable
+  @override
+  bool directLink;
+  @observable
+  @override
+  String cookies;
+  @observable
+  @override
+  Uint8List favicon;
+  @observable
+  @override
+  String? username;
+  @observable
+  @override
+  String? password;
+  @observable
+  @override
+  Uint8List storage;
 
   set screenAxis(ScreenAxis value) {
     _screenAxis = value;
@@ -61,6 +132,22 @@ abstract class EhWebsiteEntityBase extends WebsiteEntity with Store {
     _readAxis = eHStorage.readAxis;
     _screenAxis = eHStorage.screenAxis;
   }
+
+  @override
+  Future<void> save() => DB().websiteDao.replace(database.copyWith(
+        name: name,
+        cookies: cookies,
+        directLink: directLink,
+        favicon: favicon,
+        host: host,
+        onlyHost: onlyHost,
+        password: password,
+        scheme: scheme,
+        storage: storage,
+        type: type,
+        useDoH: useDoH,
+        username: username,
+      ));
 }
 
 extension EhFavouriteColor on int {

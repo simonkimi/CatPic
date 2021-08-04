@@ -1,9 +1,9 @@
-import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:catpic/network/parser/gelbooru/comment_parser.dart';
 import 'package:catpic/network/parser/gelbooru/post_parser.dart';
 import 'package:catpic/network/parser/gelbooru/tag_parser.dart';
@@ -16,7 +16,7 @@ import 'booru_adapter.dart';
 class GelbooruAdapter implements BooruAdapter {
   GelbooruAdapter(this.websiteEntity) : client = GelbooruClient(websiteEntity);
 
-  final WebsiteEntity websiteEntity;
+  final BooruWebsiteEntity websiteEntity;
 
   @override
   final GelbooruClient client;
@@ -27,7 +27,7 @@ class GelbooruAdapter implements BooruAdapter {
   }
 
   @override
-  WebsiteEntity get website => websiteEntity;
+  BooruWebsiteEntity get website => websiteEntity;
 
   @override
   Future<List<BooruPost>> postList({

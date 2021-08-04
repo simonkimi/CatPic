@@ -1,9 +1,9 @@
-import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:catpic/network/parser/danbooru/artist_parser.dart';
 import 'package:catpic/network/parser/danbooru/comment_parser.dart';
 import 'package:catpic/network/parser/danbooru/pool_parser.dart';
@@ -18,10 +18,10 @@ import 'booru_adapter.dart';
 class DanbooruAdapter implements BooruAdapter {
   DanbooruAdapter(this.websiteEntity) : client = DanbooruClient(websiteEntity);
 
-  final WebsiteEntity websiteEntity;
+  final BooruWebsiteEntity websiteEntity;
 
   @override
-  WebsiteEntity get website => websiteEntity;
+  BooruWebsiteEntity get website => websiteEntity;
 
   @override
   final DanbooruClient client;

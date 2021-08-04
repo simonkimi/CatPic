@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/data/models/basic.dart';
+import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
@@ -19,7 +20,7 @@ class MainStore = MainStoreBase with _$MainStore;
 
 abstract class MainStoreBase with Store {
   @observable
-  WebsiteEntity? websiteEntity;
+  IWebsiteEntity? websiteEntity;
 
   Adapter? adapter;
 
@@ -48,7 +49,7 @@ abstract class MainStoreBase with Store {
     }
     // 尝试获取图标
     websiteList.where((e) => e.favicon.isEmpty).forEach((element) {
-      getFavicon(DioBuilder.build(WebsiteEntity.silent(element)))
+      getFavicon(DioBuilder.build(IWebsiteEntity.silent(element)))
           .then((favicon) {
         setWebsiteFavicon(element.id, favicon);
       });
@@ -79,8 +80,8 @@ abstract class MainStoreBase with Store {
           websiteEntity = EhWebsiteEntity.build(entity);
           adapter = EHAdapter(websiteEntity! as EhWebsiteEntity);
         } else {
-          websiteEntity = WebsiteEntity.build(entity);
-          adapter = BooruAdapter.build(websiteEntity!);
+          websiteEntity = BooruWebsiteEntity.build(entity);
+          adapter = BooruAdapter.build(websiteEntity! as BooruWebsiteEntity);
         }
       }
       EventBusUtil().bus.fire(EventSiteChange());

@@ -3,7 +3,7 @@ import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
 abstract class Adapter {
-  WebsiteEntity get website;
+  IWebsiteEntity get website;
 
   Dio get dio;
 

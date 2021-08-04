@@ -52,6 +52,7 @@ analyzer:
     # Ignore generated files
     - '**/*.g.dart'
     - '**/*.pb.dart'
+    - '**/*.pbenum.dart'
     - 'lib/src/generated/*.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
 

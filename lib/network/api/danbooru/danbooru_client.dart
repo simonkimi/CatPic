@@ -1,4 +1,4 @@
-import 'package:catpic/data/models/basic.dart';
+import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
@@ -6,7 +6,7 @@ import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class DanbooruClient extends BaseClient {
-  DanbooruClient(WebsiteEntity websiteEntity) : super(websiteEntity);
+  DanbooruClient(BooruWebsiteEntity websiteEntity) : super(websiteEntity);
 
   DanbooruClient.fromDio(Dio dio) : super.fromDio(dio);
 

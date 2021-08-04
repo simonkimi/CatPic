@@ -117,9 +117,7 @@ abstract class DownloadStoreBase with Store {
             null);
     for (final database in pendingList) {
       final websiteEntity = await DB().websiteDao.getById(database.websiteId);
-      final dio = websiteEntity != null
-          ? DioBuilder.build(WebsiteEntity.silent(websiteEntity))
-          : DioBuilder.build(null);
+      final dio = DioBuilder.build(IWebsiteEntity.silent(websiteEntity));
       String downloadUrl = '';
       switch (settingStore.downloadQuality) {
         case ImageQuality.sample:

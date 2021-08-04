@@ -42,3 +42,4 @@ app.*.map.json
 *.g.dart
 *.pb.dart
 *.lock
+*.pbenum.dart

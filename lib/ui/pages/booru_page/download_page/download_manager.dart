@@ -98,9 +98,7 @@ class DownloadManagerPage extends StatelessWidget {
           return _buildDownloadCard(
             context: context,
             task: element,
-            dio: db != null
-                ? DioBuilder.build(WebsiteEntity.silent(db))
-                : DioBuilder.build(null),
+            dio: DioBuilder.build(IWebsiteEntity.silent(db)),
             downloadTable: element.database,
           );
         }).toList(),
@@ -124,9 +122,7 @@ class DownloadManagerPage extends StatelessWidget {
           .map((e) {
         final db = websiteList.get((website) => e.websiteId == website.id);
         return _buildDownloadCard(
-          dio: db != null
-              ? DioBuilder.build(WebsiteEntity.silent(db))
-              : DioBuilder.build(null),
+          dio: DioBuilder.build(IWebsiteEntity.silent(db)),
           context: context,
           downloadTable: e,
           task: null,

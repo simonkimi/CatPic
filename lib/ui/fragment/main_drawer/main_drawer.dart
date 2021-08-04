@@ -432,6 +432,7 @@ class MainDrawer extends HookWidget {
       subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
     }
     return Observer(builder: (_) {
+      mainStore.websiteEntity!.favicon.wrap; // 消除Observer警告
       return Theme(
         data: Theme.of(context).copyWith(
           primaryColor:

@@ -10,7 +10,7 @@ import 'package:dio/adapter.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class DioBuilder {
-  static Dio build(WebsiteEntity? websiteEntity) {
+  static Dio build(IWebsiteEntity? websiteEntity) {
     final dio = buildDio();
     dio.interceptors
         .add(DioCacheInterceptor(options: settingStore.dioCacheOptions));
@@ -92,7 +92,7 @@ class DioBuilder {
 }
 
 abstract class BaseClient {
-  BaseClient(WebsiteEntity websiteEntity) {
+  BaseClient(IWebsiteEntity websiteEntity) {
     dio = DioBuilder.build(websiteEntity);
   }
 

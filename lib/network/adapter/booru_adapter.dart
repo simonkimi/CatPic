@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:dio/dio.dart';
 
 import 'base_adapter.dart';
@@ -34,7 +34,7 @@ enum SupportPage {
 }
 
 abstract class BooruAdapter extends Adapter {
-  factory BooruAdapter.build(WebsiteEntity table) {
+  factory BooruAdapter.build(BooruWebsiteEntity table) {
     switch (table.type) {
       case WebsiteType.GELBOORU:
         return GelbooruAdapter(table);
