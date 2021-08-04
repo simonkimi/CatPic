@@ -74,7 +74,7 @@ class EhDownloadPage extends StatelessWidget {
     return ListView(
       children: snapshot.data!.map((database) {
         final item = GalleryModel.fromBuffer(database.galleryPb);
-        final adapter = EHAdapter(mainStore.websiteEntity!);
+        final adapter = mainStore.adapter! as EHAdapter;
         final heroTag = 'download${item.gid}${item.token}';
         final model = PreViewItemModel(
           previewHeight: item.previewHeight,

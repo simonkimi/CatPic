@@ -23,7 +23,7 @@ class EhFavouritePage extends StatefulWidget {
 }
 
 class _EhFavouritePageState extends State<EhFavouritePage> {
-  final adapter = EHAdapter(mainStore.websiteEntity!);
+  final adapter = mainStore.adapter! as EHAdapter;
   late final store = EhFavouriteStore(
     adapter: adapter,
     searchText: '',
@@ -100,11 +100,12 @@ class _EhFavouritePageState extends State<EhFavouritePage> {
                         EhFavourite(
                             tag: I18n.of(context).favourite_all,
                             favcat: -1,
-                            count: store.ehFavourite.fold<int>(
-                                0,
-                                (previousValue, element) =>
-                                    previousValue + element.count)),
-                        ...store.ehFavourite
+                            count: adapter.websiteEntity.favouriteList
+                                .fold<int>(
+                                    0,
+                                    (previousValue, element) =>
+                                        previousValue + element.count)),
+                        ...adapter.websiteEntity.favouriteList
                       ]
                           .map((e) => InkWell(
                                 onTap: () {

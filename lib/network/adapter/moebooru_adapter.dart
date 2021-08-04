@@ -1,4 +1,4 @@
-import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_artist.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
 import 'package:catpic/data/models/booru/booru_pool.dart';
@@ -18,13 +18,13 @@ import 'booru_adapter.dart';
 class MoebooruAdapter implements BooruAdapter {
   MoebooruAdapter(this.websiteEntity) : client = MoebooruClient(websiteEntity);
 
-  final WebsiteTableData websiteEntity;
+  final WebsiteEntity websiteEntity;
 
   @override
   final MoebooruClient client;
 
   @override
-  WebsiteTableData get website => websiteEntity;
+  WebsiteEntity get website => websiteEntity;
 
   @override
   Dio get dio => client.dio;

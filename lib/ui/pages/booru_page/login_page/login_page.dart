@@ -1,4 +1,3 @@
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
@@ -62,15 +61,15 @@ class BooruLoginPage extends StatelessWidget {
                             child: Text(I18n.of(context).save),
                             onPressed: () async {
                               final site = mainStore.websiteEntity!;
-                              final newSite = site.copyWith(
-                                username: _usernameController.text.isNotEmpty
-                                    ? _usernameController.text
-                                    : null,
-                                password: _passwordController.text.isNotEmpty
-                                    ? _passwordController.text
-                                    : null,
-                              );
-                              await DB().websiteDao.updateSite(newSite);
+                              site.username =
+                                  _usernameController.text.isNotEmpty
+                                      ? _usernameController.text
+                                      : null;
+                              site.password =
+                                  _passwordController.text.isNotEmpty
+                                      ? _passwordController.text
+                                      : null;
+                              await site.save();
                               Navigator.of(context).pop();
                             },
                           ),

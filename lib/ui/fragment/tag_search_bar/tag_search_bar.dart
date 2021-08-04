@@ -227,7 +227,7 @@ class _TagSearchBarState extends State<TagSearchBar>
         setState(() {
           if (mounted) loadingProgress = true;
         });
-        final adapter = BooruAdapter.fromWebsite(mainStore.websiteEntity!);
+        final adapter = mainStore.adapter! as BooruAdapter;
         final onlineTag = await adapter.tagList(
           name: tag,
           page: 1,

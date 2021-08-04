@@ -90,7 +90,7 @@ class _BooruPageState extends State<BooruPage> {
   Widget buildSearchBody(String tag, SearchType type) {
     if (mainStore.websiteEntity != null) {
       final key = UniqueKey();
-      final adapter = BooruAdapter.fromWebsite(mainStore.websiteEntity!);
+      final adapter = mainStore.adapter! as BooruAdapter;
       switch (searchType) {
         case SearchType.FAVOURITE:
         case SearchType.POST:

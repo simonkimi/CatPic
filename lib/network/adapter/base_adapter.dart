@@ -1,9 +1,9 @@
-import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 
 abstract class Adapter {
-  WebsiteTableData get website;
+  WebsiteEntity get website;
 
   Dio get dio;
 

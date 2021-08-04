@@ -1,11 +1,11 @@
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
-import 'package:catpic/data/database/database.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class GelbooruClient extends BaseClient {
-  GelbooruClient(WebsiteTableData websiteEntity) : super(websiteEntity);
+  GelbooruClient(WebsiteEntity websiteEntity) : super(websiteEntity);
 
   GelbooruClient.fromDio(Dio dio) : super.fromDio(dio);
 

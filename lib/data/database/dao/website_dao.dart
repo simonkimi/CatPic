@@ -26,6 +26,6 @@ class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
   Future<void> remove(WebsiteTableData data) =>
       delete(websiteTable).delete(data);
 
-  Future<void> updateSite(WebsiteTableData data) =>
+  Future<void> replace(WebsiteTableData data) =>
       update(websiteTable).replace(data);
 }

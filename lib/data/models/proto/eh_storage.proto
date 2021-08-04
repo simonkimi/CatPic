@@ -10,4 +10,19 @@ message EhFavourite {
 
 message EHStorage {
   repeated EhFavourite favourite = 1;
+  ReadAxis readAxis = 2;
+  ScreenAxis screenAxis = 3;
+}
+
+
+enum ReadAxis {
+  leftToRight = 0;
+  rightToLeft = 1;
+  topToButton = 2;
+}
+
+enum ScreenAxis {
+  horizontalLeft = 0;
+  horizontalRight = 1;
+  vertical = 3;
 }

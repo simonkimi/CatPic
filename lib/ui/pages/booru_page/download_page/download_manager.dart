@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/store/download/download_store.dart';
 import 'package:catpic/i18n.dart';
@@ -93,11 +94,13 @@ class DownloadManagerPage extends StatelessWidget {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: downloadStore.downloadingList.map((element) {
+          final db = websiteList.get((e) => e.id == element.database.id);
           return _buildDownloadCard(
             context: context,
             task: element,
-            dio: DioBuilder.build(
-                websiteList.get((e) => e.id == element.database.id)),
+            dio: db != null
+                ? DioBuilder.build(WebsiteEntity.silent(db))
+                : DioBuilder.build(null),
             downloadTable: element.database,
           );
         }).toList(),
@@ -119,9 +122,11 @@ class DownloadManagerPage extends StatelessWidget {
           .toList()
           .reversed
           .map((e) {
+        final db = websiteList.get((website) => e.websiteId == website.id);
         return _buildDownloadCard(
-          dio: DioBuilder.build(
-              websiteList.get((website) => e.websiteId == website.id)),
+          dio: db != null
+              ? DioBuilder.build(WebsiteEntity.silent(db))
+              : DioBuilder.build(null),
           context: context,
           downloadTable: e,
           task: null,

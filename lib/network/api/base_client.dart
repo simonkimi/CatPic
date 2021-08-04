@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:catpic/network/interceptor/cookie_interceptor.dart';
@@ -11,7 +10,7 @@ import 'package:dio/adapter.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class DioBuilder {
-  static Dio build(WebsiteTableData? websiteEntity) {
+  static Dio build(WebsiteEntity? websiteEntity) {
     final dio = buildDio();
     dio.interceptors
         .add(DioCacheInterceptor(options: settingStore.dioCacheOptions));
@@ -93,15 +92,11 @@ class DioBuilder {
 }
 
 abstract class BaseClient {
-  BaseClient(WebsiteTableData websiteEntity) {
+  BaseClient(WebsiteEntity websiteEntity) {
     dio = DioBuilder.build(websiteEntity);
   }
 
   BaseClient.fromDio(this.dio);
-
-  void updateWebsite(WebsiteTableData websiteEntity) {
-    dio = DioBuilder.build(websiteEntity);
-  }
 
   late Dio dio;
 }

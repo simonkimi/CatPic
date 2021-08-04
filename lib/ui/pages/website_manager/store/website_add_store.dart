@@ -1,3 +1,4 @@
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -159,7 +160,7 @@ abstract class WebsiteAddStoreBase with Store {
     // 保存网站
     final websiteDao = DB().websiteDao;
     if (website != null) {
-      await websiteDao.updateSite(website!.copyWith(
+      await websiteDao.replace(website!.copyWith(
           name: websiteName,
           host: websiteHost,
           scheme: scheme,
@@ -188,7 +189,8 @@ abstract class WebsiteAddStoreBase with Store {
       final id = await websiteDao.insert(entity);
       final table = await websiteDao.getById(id);
       if (favicon == null)
-        getFavicon(DioBuilder.build(table)).then((favicon) {
+        getFavicon(DioBuilder.build(WebsiteEntity.silent(table!)))
+            .then((favicon) {
           mainStore.setWebsiteFavicon(id, favicon);
         });
     }

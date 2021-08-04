@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
+import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
@@ -33,7 +34,7 @@ abstract class EhDownloadStoreBase with Store {
 
   Future<void> startDownload(
     EhDownloadTableData database,
-    WebsiteTableData entity,
+    EhWebsiteEntity entity,
   ) async {
     await DB()
         .ehDownloadDao
@@ -193,7 +194,7 @@ abstract class EhDownloadStoreBase with Store {
       return false;
     }
 
-    final adapter = EHAdapter(websiteEntity);
+    final adapter = EHAdapter(EhWebsiteEntity.silent(websiteEntity));
     final model = await adapter.gallery(gid: gid, gtoken: token, page: 0);
 
     final id = await dao.insert(EhDownloadTableCompanion.insert(

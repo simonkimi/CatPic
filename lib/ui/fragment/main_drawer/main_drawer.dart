@@ -135,8 +135,7 @@ class MainDrawer extends HookWidget {
     Widget buildBooruList() {
       List<SupportPage>? support;
       if (mainStore.websiteEntity != null) {
-        support =
-            BooruAdapter.fromWebsite(mainStore.websiteEntity!).getSupportPage();
+        support = (mainStore.adapter! as BooruAdapter).getSupportPage();
       }
       return Expanded(
         child: ListView(
@@ -314,13 +313,12 @@ class MainDrawer extends HookWidget {
       leading: const Icon(Icons.favorite),
       title: Text(I18n.of(context).favourite),
       onTap: () async {
-        final website =
-            (await DB().websiteDao.getById(mainStore.websiteEntity!.id))!;
+        final website = mainStore.websiteEntity!;
         if (website.username != null) {
           Navigator.of(context).pop();
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return BooruPage(
-              searchText: BooruAdapter.fromWebsite(website)
+              searchText: (mainStore.adapter! as BooruAdapter)
                   .favouriteList(website.username!),
               searchType: SearchType.FAVOURITE,
             );
@@ -435,39 +433,46 @@ class MainDrawer extends HookWidget {
     }
     return Observer(builder: (_) {
       return Theme(
-          data: Theme.of(context).copyWith(
-            primaryColor:
-                isDarkMode(context) ? darkBlueTheme.primaryColorDark : null,
-          ),
-          child: UserAccountsDrawerHeader(
-            accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
-            accountEmail: Text(subTitle),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: mainStore.websiteIcon != null &&
-                      mainStore.websiteIcon!.isNotEmpty
-                  ? MemoryImage(mainStore.websiteIcon!)
-                  : null,
-              backgroundColor: Colors.white,
-            ),
-            onDetailsPressed: () {
-              showWebsiteList.value = !showWebsiteList.value;
-            },
-            otherAccountsPictures: mainStore.websiteList
-                .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
-                .map((element) {
-              return Builder(
-                  builder: (ctx) => InkWell(
-                      onTap: () {
-                        pushNewWebsite(ctx, element);
-                      },
-                      child: CircleAvatar(
-                        backgroundImage: element.favicon.isNotEmpty
-                            ? MemoryImage(element.favicon)
-                            : null,
-                        backgroundColor: Colors.white,
-                      )));
-            }).toList(),
-          ));
+        data: Theme.of(context).copyWith(
+          primaryColor:
+              isDarkMode(context) ? darkBlueTheme.primaryColorDark : null,
+        ),
+        child: StreamBuilder<List<WebsiteTableData>>(
+          stream: DB().websiteDao.getAllStream(),
+          initialData: const [],
+          builder: (context, snapshot) {
+            return UserAccountsDrawerHeader(
+              accountName: Text(mainStore.websiteEntity?.name ?? 'CatPic'),
+              accountEmail: Text(subTitle),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: mainStore.websiteEntity?.favicon != null &&
+                        mainStore.websiteEntity!.favicon.isNotEmpty
+                    ? MemoryImage(mainStore.websiteEntity!.favicon)
+                    : null,
+                backgroundColor: Colors.white,
+              ),
+              onDetailsPressed: () {
+                showWebsiteList.value = !showWebsiteList.value;
+              },
+              otherAccountsPictures: snapshot.data!
+                  .where((e) => e.id != (mainStore.websiteEntity?.id ?? -1))
+                  .map((element) {
+                return Builder(
+                    builder: (ctx) => InkWell(
+                        onTap: () {
+                          pushNewWebsite(ctx, element);
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: element.favicon.isNotEmpty
+                              ? MemoryImage(element.favicon)
+                              : null,
+                          backgroundColor: Colors.white,
+                        )));
+              }).toList(),
+            );
+          },
+        ),
+      );
     });
   }
 

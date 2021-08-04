@@ -12,7 +12,6 @@ import 'package:catpic/data/models/booru/load_more.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/utils/utils.dart';
-import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 import 'package:get/get.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -375,9 +374,6 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
     }
     onRefresh();
   }
-
-  EHStorage get storage =>
-      EHStorage.fromBuffer(adapter.websiteEntity.storage ?? []);
 
   @override
   @observable

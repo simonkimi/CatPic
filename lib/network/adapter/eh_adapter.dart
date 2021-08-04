@@ -1,4 +1,5 @@
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/data/models/ehentai/favourite_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/data/store/memory_cache/memory_cache.dart';
@@ -17,12 +18,7 @@ import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);
 
-  WebsiteTableData websiteEntity;
-
-  void updateWebsite(WebsiteTableData websiteTableData) {
-    websiteEntity = websiteEntity;
-    client.updateWebsite(websiteEntity);
-  }
+  EhWebsiteEntity websiteEntity;
 
   @override
   final EhClient client;
@@ -33,7 +29,7 @@ class EHAdapter extends Adapter {
   Dio get dio => client.dio;
 
   @override
-  WebsiteTableData get website => websiteEntity;
+  EhWebsiteEntity get website => websiteEntity;
 
   Future<PreviewModel> index({
     required Map<String, dynamic> filter,

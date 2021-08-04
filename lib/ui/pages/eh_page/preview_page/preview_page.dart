@@ -1,7 +1,8 @@
 import 'dart:math';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
-import 'package:catpic/data/models/ehentai/eh_storage.dart';
+import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/data/models/ehentai/preview_model.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
@@ -22,13 +23,14 @@ import 'package:catpic/ui/pages/eh_page/preview_page/comment_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:catpic/utils/utils.dart';
 import 'package:uuid/uuid.dart';
+
 import 'gallery_preview.dart';
 
 enum GalleryAction {
@@ -388,11 +390,11 @@ class EhPreviewPage extends StatelessWidget {
             final rsp = await store.onFavouriteClick(result);
             if (rsp) {
               BotToast.showText(
-                  text: I18n.of(context).favourite_to(store
-                          .storage.favouriteList
-                          .get((e) => e.favcat == store.favcat)
-                          ?.tag ??
-                      ''));
+                  text: I18n.of(context).favourite_to(
+                      (adapter.websiteEntity.favouriteList)
+                              .get((e) => e.favcat == store.favcat)
+                              ?.tag ??
+                          ''));
             }
           }
         }
@@ -436,7 +438,7 @@ class EhPreviewPage extends StatelessWidget {
                 ),
               ),
               const Divider(height: 0),
-              ...store.storage.favouriteList.map((e) {
+              ...adapter.websiteEntity.favouriteList.map((e) {
                 return InkWell(
                   onTap: () {
                     Navigator.of(context).pop(e.favcat);
@@ -824,7 +826,7 @@ class EhPreviewPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 14),
                 text: store.galleryModel!.favorited.toString() +
                     ' ' +
-                    (store.storage.favouriteList
+                    (adapter.websiteEntity.favouriteList
                             .get((e) => e.favcat == store.favcat)
                             ?.tag ??
                         ''),

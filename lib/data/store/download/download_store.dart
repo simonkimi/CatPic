@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
@@ -116,7 +117,9 @@ abstract class DownloadStoreBase with Store {
             null);
     for (final database in pendingList) {
       final websiteEntity = await DB().websiteDao.getById(database.websiteId);
-      final dio = DioBuilder.build(websiteEntity);
+      final dio = websiteEntity != null
+          ? DioBuilder.build(WebsiteEntity.silent(websiteEntity))
+          : DioBuilder.build(null);
       String downloadUrl = '';
       switch (settingStore.downloadQuality) {
         case ImageQuality.sample:

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
@@ -89,7 +88,7 @@ class _EhPageState extends State<EhPage> {
   Widget buildSearchBody(String tag, EHSearchType type) {
     if (mainStore.websiteEntity != null) {
       final key = UniqueKey();
-      final adapter = EHAdapter(mainStore.websiteEntity!);
+      final adapter = mainStore.adapter! as EHAdapter;
       switch (type) {
         case EHSearchType.INDEX:
           return EhIndexResult(

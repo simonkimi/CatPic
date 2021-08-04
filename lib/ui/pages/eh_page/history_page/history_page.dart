@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/i18n.dart';
@@ -41,7 +40,7 @@ class EhHistoryPage extends StatelessWidget {
           return ListView(
             children: snapshot.data!.map((e) {
               final item = PreViewItemModel.fromBuffer(e.pb);
-              final adapter = EHAdapter(mainStore.websiteEntity!);
+              final adapter = mainStore.adapter! as EHAdapter;
               final heroTag = 'history${item.gid}${item.gtoken}';
               return PreviewExtendedCard(
                 heroTag: heroTag,

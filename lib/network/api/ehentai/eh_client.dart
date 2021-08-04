@@ -1,10 +1,10 @@
-import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
 import '../base_client.dart';
 
 class EhClient extends BaseClient {
-  EhClient(WebsiteTableData websiteEntity) : super(websiteEntity);
+  EhClient(EhWebsiteEntity websiteEntity) : super(websiteEntity);
 
   EhClient.fromDio(Dio dio) : super.fromDio(dio);
 
