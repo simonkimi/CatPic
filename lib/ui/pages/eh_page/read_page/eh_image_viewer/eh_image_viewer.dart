@@ -3,9 +3,11 @@ import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.da
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:get/get.dart';
-
+import 'package:catpic/utils/utils.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class EhImageViewer extends StatefulWidget {
   const EhImageViewer({
@@ -29,25 +31,15 @@ class EhImageViewer extends StatefulWidget {
 
 class _EhImageViewerState extends State<EhImageViewer>
     with TickerProviderStateMixin {
-  Animation<double>? _doubleClickAnimation;
-  late final AnimationController _doubleClickAnimationController;
-  late VoidCallback _doubleClickAnimationListener;
-  List<double> doubleTapScales = <double>[1.0, 2.0, 3.0];
-
   late final PageController pageController;
-
   late final EhReadStore store = widget.store;
+  final doubleTapScales = <double>[1.0, 2.0, 3.0];
 
   @override
   void initState() {
     super.initState();
     pageController =
         widget.pageController ?? PageController(initialPage: widget.startIndex);
-    _doubleClickAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       pageController.jumpToPage(widget.startIndex);
       onPageIndexChange(widget.startIndex);
@@ -112,62 +104,103 @@ class _EhImageViewerState extends State<EhImageViewer>
 
   @override
   Widget build(BuildContext context) {
-    return ExtendedImageGesturePageView.builder(
-      controller: pageController,
+    return PhotoViewGallery.builder(
+      pageController: pageController,
       onPageChanged: onPageIndexChange,
       itemCount: store.readImageList.length,
-      itemBuilder: (context, index) {
-        final galleryImage = store.readImageList[index];
-        return Obx(() {
-          if (galleryImage.state.value == LoadingState.NONE) {
-            return buildLoadingPage(index, 0);
-          } else if (galleryImage.state.value == LoadingState.ERROR) {
-            return buildErrorPage(galleryImage.lastException);
-          } else if (galleryImage.state.value == LoadingState.LOADED) {
-            return GestureDetector(
-              key: UniqueKey(),
-              onTapUp: _onTapUp,
-              child: ExtendedImage(
-                key: UniqueKey(),
-                image: galleryImage.imageProvider!,
-                enableLoadState: true,
-                handleLoadingProgress: true,
-                mode: ExtendedImageMode.gesture,
-                onDoubleTap: _doubleTap,
-                loadStateChanged: (state) {
-                  switch (state.extendedImageLoadState) {
-                    case LoadState.loading:
-                      return Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: Colors.transparent,
-                        child: Builder(
-                          builder: (context) {
-                            final progress = state
-                                        .loadingProgress?.expectedTotalBytes !=
-                                    null
-                                ? state.loadingProgress!.cumulativeBytesLoaded /
-                                    state.loadingProgress!.expectedTotalBytes!
-                                : 0.0;
-                            return buildLoadingPage(index, progress);
-                          },
-                        ),
-                      );
-                    case LoadState.completed:
-                      return ZoomWidget(
-                        child: state.completedWidget,
-                        onTapUp: _onTapUp,
-                      );
-                    case LoadState.failed:
-                      return buildErrorPage(state.lastException);
-                  }
-                },
-              ),
-            );
-          }
-          return buildErrorPage('奇怪的错误');
-        });
+      builder: (context, index) {
+        return buildPage(context, index);
       },
+    );
+  }
+
+  PhotoViewGalleryPageOptions buildPage(BuildContext context, int index) {
+    final galleryImage = store.readImageList[index];
+    final controller = PhotoViewController();
+
+    final animation = ZoomAnimation(
+      this,
+      duration: const Duration(milliseconds: 200),
+    );
+
+    return PhotoViewGalleryPageOptions.customChild(
+      minScale: 1.0,
+      maxScale: 5.0,
+      controller: controller,
+      child: Obx(() {
+        if (galleryImage.state.value == LoadingState.NONE) {
+          return buildLoadingPage(index, 0);
+        } else if (galleryImage.state.value == LoadingState.ERROR) {
+          return buildErrorPage(galleryImage.lastException);
+        } else if (galleryImage.state.value == LoadingState.LOADED) {
+          return GestureDetector(
+            key: UniqueKey(),
+            onTapUp: _onTapUp,
+            onDoubleTap: () {},
+            onDoubleTapDown: (detail) {
+              final mediaSize = MediaQuery.of(context).size;
+              final position = detail.globalPosition;
+              final currentScale = controller.scale ?? 1.0;
+
+              final currentX = controller.position.dx;
+              final currentY = controller.position.dy;
+
+              var index = doubleTapScales
+                      .indexOf(currentScale.nearList(doubleTapScales)) +
+                  1;
+              if (index >= doubleTapScales.length) index = 0;
+              final scale = doubleTapScales[index];
+
+              final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
+              final targetY = (mediaSize.height / 2 - position.dy) * (scale - 1);
+
+
+              animation.animationScale(currentScale, scale);
+              animation.animationOffset(
+                Offset(currentX, currentY),
+                Offset(targetX, targetY),
+              );
+              animation.listen((model) {
+                controller.scale = model.scale;
+                controller.position = model.offset;
+              });
+            },
+            child: ExtendedImage(
+              key: UniqueKey(),
+              image: galleryImage.imageProvider!,
+              enableLoadState: true,
+              handleLoadingProgress: true,
+              mode: ExtendedImageMode.gesture,
+              loadStateChanged: (state) {
+                switch (state.extendedImageLoadState) {
+                  case LoadState.loading:
+                    return Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.transparent,
+                      child: Builder(
+                        builder: (context) {
+                          final progress =
+                              state.loadingProgress?.expectedTotalBytes != null
+                                  ? state.loadingProgress!
+                                          .cumulativeBytesLoaded /
+                                      state.loadingProgress!.expectedTotalBytes!
+                                  : 0.0;
+                          return buildLoadingPage(index, progress);
+                        },
+                      ),
+                    );
+                  case LoadState.completed:
+                    return state.completedWidget;
+                  case LoadState.failed:
+                    return buildErrorPage(state.lastException);
+                }
+              },
+            ),
+          );
+        }
+        return buildErrorPage('奇怪的错误');
+      }),
     );
   }
 
@@ -250,30 +283,5 @@ class _EhImageViewerState extends State<EhImageViewer>
         },
       ),
     );
-  }
-
-  void _doubleTap(ExtendedImageGestureState state) {
-    final Offset pointerDownPosition = state.pointerDownPosition!;
-
-    _doubleClickAnimation?.removeListener(_doubleClickAnimationListener);
-    _doubleClickAnimationController.stop();
-    _doubleClickAnimationController.reset();
-
-    final begin = state.gestureDetails?.totalScale ?? 0;
-    var endIndex = doubleTapScales.indexOf(begin) + 1;
-    if (endIndex >= doubleTapScales.length) {
-      endIndex -= doubleTapScales.length;
-    }
-    final end = doubleTapScales[endIndex];
-
-    _doubleClickAnimationListener = () {
-      state.handleDoubleTap(
-          scale: _doubleClickAnimation!.value,
-          doubleTapPosition: pointerDownPosition);
-    };
-    _doubleClickAnimation = _doubleClickAnimationController
-        .drive(Tween<double>(begin: begin, end: end));
-    _doubleClickAnimation!.addListener(_doubleClickAnimationListener);
-    _doubleClickAnimationController.forward();
   }
 }

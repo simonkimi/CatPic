@@ -47,6 +47,9 @@ abstract class EhReadStoreBase with Store {
   final RequestLoadFunc requestLoad;
 
   @observable
+  bool canMovePage = true;
+
+  @observable
   int currentIndex;
 
   @observable

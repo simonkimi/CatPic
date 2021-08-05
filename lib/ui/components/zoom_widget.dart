@@ -1,71 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:catpic/utils/utils.dart';
-
-class ZoomWidget extends StatefulWidget {
-  const ZoomWidget({
-    Key? key,
-    required this.child,
-    this.onTapUp,
-  }) : super(key: key);
-
-  final Widget child;
-
-  final GestureTapUpCallback? onTapUp;
-
-  @override
-  _ZoomWidgetState createState() => _ZoomWidgetState();
-}
-
-class _ZoomWidgetState extends State<ZoomWidget> with TickerProviderStateMixin {
-  List<double> doubleTapScales = <double>[1.0, 1.2, 1.5];
-  final controller = TransformationController();
-  late final GestureAnimation _animation;
-
-  @override
-  void initState() {
-    _animation = GestureAnimation(
-      this,
-      duration: const Duration(milliseconds: 200),
-    );
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: InteractiveViewer(
-        child: widget.child,
-        maxScale: 5.0,
-        transformationController: controller,
-      ),
-      onTapUp: widget.onTapUp,
-      onDoubleTap: () {},
-      onDoubleTapDown: (detail) {
-        final mx = controller.value.clone();
-        final position = detail.globalPosition;
-        final currentScale = mx.getMaxScaleOnAxis();
-        final currentX = mx.getTranslation().x;
-        final currentY = mx.getTranslation().y;
-        var index =
-            doubleTapScales.indexOf(currentScale.nearList(doubleTapScales)) + 1;
-        if (index >= doubleTapScales.length) index = 0;
-        final scale = doubleTapScales[index];
-        _animation.animationScale(currentScale, scale);
-        _animation.animationOffset(
-          Offset(currentX, currentY),
-          Offset(-position.dx * (scale - 1), -position.dy * (scale - 1)),
-        );
-        _animation.listen((event) {
-          controller.value = Matrix4.identity()
-            ..translate(event.offset.dx, event.offset.dy)
-            ..scale(event.scale);
-        });
-      },
-    );
-  }
-}
 
 class GestureAnimationData {
   GestureAnimationData({required this.scale, required this.offset});
@@ -74,8 +9,8 @@ class GestureAnimationData {
   final double scale;
 }
 
-class GestureAnimation {
-  GestureAnimation(TickerProvider vsync, {required this.duration}) {
+class ZoomAnimation {
+  ZoomAnimation(TickerProvider vsync, {required this.duration}) {
     _offsetController = AnimationController(vsync: vsync, duration: duration)
       ..addListener(() {
         if (_offsetAnimation != null) {
