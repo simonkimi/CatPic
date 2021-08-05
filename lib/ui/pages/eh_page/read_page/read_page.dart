@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/eh_image_viewer.dart';
@@ -9,13 +11,21 @@ import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get/get.dart';
 
+enum PageViewerState {
+  Single,
+  DoubleNormal,
+  DoubleCover,
+}
+
 class BackAppBar extends HookWidget implements PreferredSizeWidget {
   const BackAppBar({
     Key? key,
     required this.store,
+    required this.onPageViewerStateChange,
   }) : super(key: key);
 
   final EhReadStore store;
+  final ValueChanged<PageViewerState> onPageViewerStateChange;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +36,8 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
         Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, -1))
             .animate(appBarController);
 
+    final pageState = useState(PageViewerState.Single);
+
     return Observer(builder: (context) {
       appBarController.byValue(store.displayPageSlider);
       return SlideTransition(
@@ -34,6 +46,28 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
           backgroundColor: Colors.transparent,
           leading: appBarBackButton(),
           elevation: 0,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  switch (pageState.value) {
+                    case PageViewerState.Single:
+                      pageState.value = PageViewerState.DoubleNormal;
+                      break;
+                    case PageViewerState.DoubleNormal:
+                      pageState.value = PageViewerState.DoubleCover;
+                      break;
+                    case PageViewerState.DoubleCover:
+                      pageState.value = PageViewerState.Single;
+                      break;
+                  }
+                  onPageViewerStateChange(pageState.value);
+                },
+                icon: pageState.value == PageViewerState.Single
+                    ? const Icon(Icons.library_books_sharp)
+                    : pageState.value == PageViewerState.DoubleNormal
+                        ? const Icon(Icons.chrome_reader_mode_outlined)
+                        : const Icon(Icons.chrome_reader_mode)),
+          ],
         ),
       );
     });
@@ -62,6 +96,8 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
   late final Animation<Offset> pageSliderHideAni;
   final pageController = PageController();
 
+  var pageViewerState = PageViewerState.Single;
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +111,33 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackAppBar(store: widget.store),
+      appBar: BackAppBar(
+        store: widget.store,
+        onPageViewerStateChange: (value) {
+          setState(() {
+            pageViewerState = value;
+          });
+          switch (value) {
+            case PageViewerState.Single: // 从DoubleCover而来
+              Future.delayed(10.milliseconds, () {
+                pageController
+                    .jumpToPage((pageController.page?.toInt() ?? 0) * 2 - 1);
+              });
+              break;
+            case PageViewerState.DoubleNormal: // 从Single而来
+              Future.delayed(10.milliseconds, () {
+                pageController
+                    .jumpToPage(((pageController.page ?? 0) / 2).floor());
+              });
+              break;
+            case PageViewerState.DoubleCover: // 从DoubleNormal而来
+              Future.delayed(10.milliseconds, () {
+                pageController
+                    .jumpToPage((pageController.page?.toInt() ?? 0) + 1);
+              });
+          }
+        },
+      ),
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: buildImg(),
@@ -93,6 +155,7 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
         store: widget.store,
         startIndex: widget.startIndex,
         pageController: pageController,
+        pageViewerState: pageViewerState,
         onCenterTap: () {
           widget.store.setPageSliderDisplay(!widget.store.displayPageSlider);
         },
@@ -122,6 +185,7 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
                   count: widget.store.imageCount,
                   controller: pageController,
                   store: widget.store,
+                  pageViewerState: pageViewerState,
                 ),
               ),
               SizedBox(
@@ -131,6 +195,7 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
                   child: PageSlider(
                     count: widget.store.imageCount,
                     controller: pageController,
+                    pageViewerState: pageViewerState,
                   ),
                 ),
               ),
@@ -148,11 +213,13 @@ class ImageSlider extends StatefulWidget {
     required this.count,
     required this.controller,
     required this.store,
+    required this.pageViewerState,
   }) : super(key: key);
 
   final int count;
   final PageController controller;
   final EhReadStore store;
+  final PageViewerState pageViewerState;
 
   @override
   _ImageSliderState createState() => _ImageSliderState();
@@ -164,18 +231,38 @@ class _ImageSliderState extends State<ImageSlider> {
 
   var _currentValue = 0;
 
+  void _listener() {
+    final controllerPage = widget.controller.page?.round() ?? 0;
+    late final int page;
+    switch (widget.pageViewerState) {
+      case PageViewerState.Single:
+        page = controllerPage;
+        break;
+      case PageViewerState.DoubleNormal:
+        page = controllerPage * 2;
+        break;
+      case PageViewerState.DoubleCover:
+        page = (controllerPage - 1) * 2 + 1;
+        break;
+    }
+    if (page != _currentValue) {
+      jumpToOffset(page);
+      setState(() {
+        _currentValue = page;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(() {
-      final page = widget.controller.page?.round() ?? 0;
-      if (page != _currentValue) {
-        jumpToOffset(page);
-        setState(() {
-          _currentValue = page;
-        });
-      }
-    });
+    widget.controller.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_listener);
+    super.dispose();
   }
 
   void jumpToOffset(int index) {
@@ -205,7 +292,19 @@ class _ImageSliderState extends State<ImageSlider> {
       children: List.generate(widget.count, (index) {
         return InkWell(
           onTap: () {
-            widget.controller.jumpToPage(index);
+            late final int page;
+            switch (widget.pageViewerState) {
+              case PageViewerState.Single:
+                page = index;
+                break;
+              case PageViewerState.DoubleNormal:
+                page = (index / 2).ceil();
+                break;
+              case PageViewerState.DoubleCover:
+                page = ((index + 1) / 2).floor();
+                break;
+            }
+            widget.controller.jumpToPage(page);
           },
           child: Obx(() {
             final model = widget.store.previewImageList[index];
@@ -329,10 +428,12 @@ class PageSlider extends StatefulWidget {
     Key? key,
     required this.count,
     required this.controller,
+    required this.pageViewerState,
   }) : super(key: key);
 
   final int count;
   final PageController controller;
+  final PageViewerState pageViewerState;
 
   @override
   _PageSliderState createState() => _PageSliderState();
@@ -341,17 +442,38 @@ class PageSlider extends StatefulWidget {
 class _PageSliderState extends State<PageSlider> {
   var _currentValue = 0;
 
+  void listener() {
+    final controllerPage = widget.controller.page?.round() ?? 0;
+    late final int page;
+    switch (widget.pageViewerState) {
+      case PageViewerState.Single:
+        page = controllerPage;
+        break;
+      case PageViewerState.DoubleNormal:
+        page = controllerPage * 2;
+        break;
+      case PageViewerState.DoubleCover:
+        page = max((controllerPage - 1) * 2 + 1, 0);
+        break;
+    }
+    print('$controllerPage ${widget.pageViewerState} $page');
+    if (page != _currentValue) {
+      setState(() {
+        _currentValue = page;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(() {
-      final page = widget.controller.page?.round() ?? 0;
-      if (page != _currentValue) {
-        setState(() {
-          _currentValue = page;
-        });
-      }
-    });
+    widget.controller.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(listener);
+    super.dispose();
   }
 
   @override
@@ -367,10 +489,22 @@ class _PageSliderState extends State<PageSlider> {
           Expanded(
             child: Slider(
               onChangeEnd: (value) {
-                widget.controller.jumpToPage(value.floor());
+                late final int page;
+                switch (widget.pageViewerState) {
+                  case PageViewerState.Single:
+                    page = value.floor();
+                    break;
+                  case PageViewerState.DoubleNormal:
+                    page = (value.floor() / 2).ceil();
+                    break;
+                  case PageViewerState.DoubleCover:
+                    page = ((value.floor() + 1) / 2).floor();
+                    break;
+                }
                 setState(() {
                   _currentValue = value.floor();
                 });
+                widget.controller.jumpToPage(page);
               },
               label: (_currentValue + 1).toString(),
               value: _currentValue.toDouble(),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:catpic/ui/components/zoom_widget.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,9 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
+
+import '../read_page.dart';
 
 class EhImageViewer extends StatefulWidget {
   const EhImageViewer({
@@ -17,6 +22,7 @@ class EhImageViewer extends StatefulWidget {
     required this.startIndex,
     this.onCenterTap,
     this.onIndexChange,
+    required this.pageViewerState,
   }) : super(key: key);
 
   final EhReadStore store;
@@ -24,6 +30,7 @@ class EhImageViewer extends StatefulWidget {
   final int startIndex;
   final VoidCallback? onCenterTap;
   final ValueChanged<int>? onIndexChange;
+  final PageViewerState pageViewerState;
 
   @override
   _EhImageViewerState createState() => _EhImageViewerState();
@@ -34,6 +41,15 @@ class _EhImageViewerState extends State<EhImageViewer>
   late final PageController pageController;
   late final EhReadStore store = widget.store;
   final doubleTapScales = <double>[0.99, 2.0, 3.0];
+
+  int get pageCount {
+    if (widget.pageViewerState == PageViewerState.Single)
+      return store.readImageList.length;
+    else if (widget.pageViewerState == PageViewerState.DoubleCover)
+      return 1 + ((store.readImageList.length - 1) / 2).ceil();
+    else
+      return (store.readImageList.length / 2).ceil();
+  }
 
   @override
   void initState() {
@@ -107,7 +123,7 @@ class _EhImageViewerState extends State<EhImageViewer>
     return PhotoViewGallery.builder(
       pageController: pageController,
       onPageChanged: onPageIndexChange,
-      itemCount: store.readImageList.length,
+      itemCount: pageCount,
       builder: (context, index) {
         return buildPage(context, index);
       },
@@ -115,92 +131,207 @@ class _EhImageViewerState extends State<EhImageViewer>
   }
 
   PhotoViewGalleryPageOptions buildPage(BuildContext context, int index) {
-    final galleryImage = store.readImageList[index];
     final controller = PhotoViewController();
-
     final animation = ZoomAnimation(
       this,
       duration: const Duration(milliseconds: 200),
     );
+    if (widget.pageViewerState == PageViewerState.Single || // 单面情况
+        (widget.pageViewerState == PageViewerState.DoubleCover && // 双面, 封面单独占一面
+            index == 0) || // 双面封面单独站一面下, 有独立页面
+        (widget.pageViewerState == PageViewerState.DoubleCover &&
+            store.imageCount.isEven &&
+            index == pageCount - 1) || // 普通双面多一面
+        (widget.pageViewerState == PageViewerState.DoubleNormal &&
+            store.imageCount.isOdd &&
+            index == pageCount - 1)) {
+      late final int index1;
 
-    return PhotoViewGalleryPageOptions.customChild(
-      minScale: 1.0,
-      maxScale: 5.0,
-      controller: controller,
-      child: Obx(() {
-        if (galleryImage.state.value == LoadingState.NONE) {
-          return buildLoadingPage(index, 0);
-        } else if (galleryImage.state.value == LoadingState.ERROR) {
-          return buildErrorPage(galleryImage.lastException);
-        } else if (galleryImage.state.value == LoadingState.LOADED) {
-          return GestureDetector(
-            key: UniqueKey(),
-            onTapUp: _onTapUp,
-            onDoubleTap: () {},
-            onDoubleTapDown: (detail) {
+      switch (widget.pageViewerState) {
+        case PageViewerState.Single:
+          index1 = index;
+          break;
+        case PageViewerState.DoubleNormal:
+          index1 = index * 2;
+          break;
+        case PageViewerState.DoubleCover:
+          index1 = max((index - 1) * 2 + 1, 0);
+          break;
+      }
 
-              // 缩放
-              final position = detail.globalPosition;
-              final currentScale = controller.scale ?? 1.0;
-              var index = doubleTapScales
-                      .indexOf(currentScale.nearList(doubleTapScales)) +
-                  1;
-              if (index >= doubleTapScales.length) index = 0;
-              final scale = doubleTapScales[index];
-              animation.animationScale(currentScale, scale);
+      final galleryImage = store.readImageList[index];
 
-              // 位移
-              final mediaSize = MediaQuery.of(context).size;
-              final currentX = controller.position.dx;
-              final currentY = controller.position.dy;
-              final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
-              final targetY = (mediaSize.height / 2 - position.dy) * (scale - 1);
-              animation.animationOffset(
-                Offset(currentX, currentY),
-                Offset(targetX, targetY),
-              );
+      return PhotoViewGalleryPageOptions.customChild(
+        minScale: 1.0,
+        maxScale: 5.0,
+        controller: controller,
+        child: buildPageOuter(
+            child: buildImageLoading(
+                context: context,
+                index: index1,
+                galleryImage: galleryImage,
+                child: buildZoomWidget(
+                  context: context,
+                  controller: controller,
+                  animation: animation,
+                  child: buildImagePage(
+                    context: context,
+                    index: index1,
+                    galleryImage: galleryImage,
+                  ),
+                ))),
+      );
+    } else {
+      late final int index1;
+      if (widget.pageViewerState == PageViewerState.DoubleCover) {
+        index1 = (index - 1) * 2 + 1;
+      } else {
+        index1 = index * 2;
+      }
 
-              animation.listen((model) {
-                controller.scale = model.scale;
-                controller.position = model.offset;
-              });
-            },
-            child: ExtendedImage(
-              key: UniqueKey(),
-              image: galleryImage.imageProvider!,
-              enableLoadState: true,
-              handleLoadingProgress: true,
-              mode: ExtendedImageMode.gesture,
-              loadStateChanged: (state) {
-                switch (state.extendedImageLoadState) {
-                  case LoadState.loading:
-                    return Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.transparent,
-                      child: Builder(
-                        builder: (context) {
-                          final progress =
-                              state.loadingProgress?.expectedTotalBytes != null
-                                  ? state.loadingProgress!
-                                          .cumulativeBytesLoaded /
-                                      state.loadingProgress!.expectedTotalBytes!
-                                  : 0.0;
-                          return buildLoadingPage(index, progress);
-                        },
-                      ),
-                    );
-                  case LoadState.completed:
-                    return state.completedWidget;
-                  case LoadState.failed:
-                    return buildErrorPage(state.lastException);
-                }
-              },
-            ),
-          );
+      final gallery1 = store.readImageList[index1];
+      final gallery2 = store.readImageList[index1 + 1];
+      return PhotoViewGalleryPageOptions.customChild(
+        minScale: 1.0,
+        maxScale: 5.0,
+        controller: controller,
+        child: buildPageOuter(
+            child: buildZoomWidget(
+          context: context,
+          controller: controller,
+          animation: animation,
+          child: Row(
+            children: [
+              Expanded(
+                child: buildImageLoading(
+                  context: context,
+                  index: index1,
+                  galleryImage: gallery1,
+                  child: buildImagePage(
+                    context: context,
+                    index: index1,
+                    galleryImage: gallery1,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: buildImageLoading(
+                  context: context,
+                  index: index1 + 1,
+                  galleryImage: gallery2,
+                  child: buildImagePage(
+                    context: context,
+                    index: index1 + 1,
+                    galleryImage: gallery2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )),
+      );
+    }
+  }
+
+  Widget buildImageLoading({
+    required BuildContext context,
+    required int index,
+    required ReadImgModel<GalleryImgModel> galleryImage,
+    required Widget child,
+  }) {
+    return Obx(() {
+      if (galleryImage.state.value == LoadingState.NONE) {
+        return buildLoadingPage(index, 0);
+      } else if (galleryImage.state.value == LoadingState.ERROR) {
+        return buildErrorPage(galleryImage.lastException);
+      } else if (galleryImage.state.value == LoadingState.LOADED) {
+        return child;
+      }
+      return buildErrorPage('奇怪的错误');
+    });
+  }
+
+  Widget buildPageOuter({required Widget child}) {
+    return GestureDetector(
+      onTapUp: _onTapUp,
+      child: child,
+    );
+  }
+
+  Widget buildZoomWidget({
+    required BuildContext context,
+    required Widget child,
+    required PhotoViewController controller,
+    required ZoomAnimation animation,
+  }) {
+    return GestureDetector(
+      key: UniqueKey(),
+      onTapUp: _onTapUp,
+      onDoubleTap: () {},
+      onDoubleTapDown: (detail) {
+        // 缩放
+        final position = detail.globalPosition;
+        final currentScale = controller.scale ?? 1.0;
+        var index =
+            doubleTapScales.indexOf(currentScale.nearList(doubleTapScales)) + 1;
+        if (index >= doubleTapScales.length) index = 0;
+        final scale = doubleTapScales[index];
+        animation.animationScale(currentScale, scale);
+
+        // 位移
+        final mediaSize = MediaQuery.of(context).size;
+        final currentX = controller.position.dx;
+        final currentY = controller.position.dy;
+        final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
+        final targetY = (mediaSize.height / 2 - position.dy) * (scale - 1);
+        animation.animationOffset(
+          Offset(currentX, currentY),
+          Offset(targetX, targetY),
+        );
+
+        animation.listen((model) {
+          controller.scale = model.scale;
+          controller.position = model.offset;
+        });
+      },
+      child: child,
+    );
+  }
+
+  Widget buildImagePage(
+      {required BuildContext context,
+      required int index,
+      required ReadImgModel<GalleryImgModel> galleryImage}) {
+    return ExtendedImage(
+      key: UniqueKey(),
+      image: galleryImage.imageProvider!,
+      enableLoadState: true,
+      handleLoadingProgress: true,
+      mode: ExtendedImageMode.gesture,
+      loadStateChanged: (state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.transparent,
+              child: Builder(
+                builder: (context) {
+                  final progress =
+                      state.loadingProgress?.expectedTotalBytes != null
+                          ? state.loadingProgress!.cumulativeBytesLoaded /
+                              state.loadingProgress!.expectedTotalBytes!
+                          : 0.0;
+                  return buildLoadingPage(index, progress);
+                },
+              ),
+            );
+          case LoadState.completed:
+            return state.completedWidget;
+          case LoadState.failed:
+            return buildErrorPage(state.lastException);
         }
-        return buildErrorPage('奇怪的错误');
-      }),
+      },
     );
   }
 
