@@ -70,8 +70,7 @@ class ZoomAnimation {
   }
 
   void listen(void Function(GestureAnimationData) listener) {
-    final sub = _stream.stream.listen(listener);
-    subList.add(sub);
+    subList.add(_stream.stream.listen(listener));
   }
 
   void dispose() {

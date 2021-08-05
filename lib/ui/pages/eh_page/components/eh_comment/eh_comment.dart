@@ -76,6 +76,9 @@ class EhComment extends StatelessWidget {
                   minLines: 1,
                   onTap: onTap,
                   onOpen: onOpen,
+                  linkStyle: TextStyle(
+                    color: Theme.of(context).primaryColor
+                  ),
                 ),
               ],
             )

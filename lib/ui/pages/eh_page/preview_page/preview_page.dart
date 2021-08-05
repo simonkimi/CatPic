@@ -157,9 +157,7 @@ class EhPreviewPage extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isDarkMode(context)
-                ? const Color(0xFF616161)
-                : const Color(0xFF898989),
+            color: Theme.of(context).textTheme.subtitle1!.color,
           ),
           const SizedBox(width: 20),
           Text(text),
@@ -700,7 +698,7 @@ class EhPreviewPage extends StatelessWidget {
                               : e.key,
                           style: const TextStyle(
                             height: 1,
-                            fontSize: 13,
+                            fontSize: 14,
                             color: Colors.white,
                           ),
                         ),
@@ -744,7 +742,7 @@ class EhPreviewPage extends StatelessWidget {
                                       : e.value
                                   : e.value,
                               style: const TextStyle(
-                                fontSize: 13,
+                                fontSize: 14,
                                 height: 1,
                               ),
                             ),
@@ -779,11 +777,12 @@ class EhPreviewPage extends StatelessWidget {
                       text: settingStore.ehTranslate
                           ? settingStore.translateMap[store
                                   .galleryModel!.language
+                                  .replaceAll('TR', '')
                                   .trim()
                                   .toLowerCase()] ??
                               store.galleryModel!.language
                           : store.galleryModel!.language,
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 15),
                     )
                   ],
                 ),
@@ -796,7 +795,7 @@ class EhPreviewPage extends StatelessWidget {
                     IconText(
                       text: store.galleryModel!.imageCount.toString(),
                       icon: Icons.image_outlined,
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 15),
                     )
                   ],
                 ),
@@ -809,7 +808,7 @@ class EhPreviewPage extends StatelessWidget {
                     IconText(
                       text: store.galleryModel!.fileSize,
                       icon: Icons.file_copy_outlined,
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -823,7 +822,7 @@ class EhPreviewPage extends StatelessWidget {
               IconText(
                 icon: Icons.favorite,
                 iconColor: Colors.red,
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 15),
                 text: store.galleryModel!.favorited.toString() +
                     ' ' +
                     (adapter.websiteEntity.favouriteList
@@ -833,7 +832,7 @@ class EhPreviewPage extends StatelessWidget {
               ),
               Text(
                 store.previewModel!.uploadTime,
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 15),
               ),
             ],
           ),
@@ -869,7 +868,16 @@ class EhPreviewPage extends StatelessWidget {
               }));
             }
           : null,
-      child: Text(I18n.of(context).read),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.menu_book_outlined,
+            size: 14,
+          ),
+          const SizedBox(width: 6),
+          Text(I18n.of(context).read)
+        ],
+      ),
       style: ButtonStyle(
         backgroundColor:
             MaterialStateProperty.resolveWith((Set<MaterialState> states) {
@@ -888,7 +896,7 @@ class EhPreviewPage extends StatelessWidget {
                   : const Color(0xFF8C8B8E);
         }),
         padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 2)),
+            const EdgeInsets.symmetric(horizontal: 15, vertical: 4)),
         minimumSize: MaterialStateProperty.all(const Size(0, 0)),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),

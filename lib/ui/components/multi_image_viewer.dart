@@ -119,7 +119,13 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     widget.onIndexChange?.call(index);
     final int preloadNum = settingStore.preloadingNumber;
     contentProvider.sublist(index + 1).take(preloadNum).forEach((e) {
-      if (e is DioImageProvider) e.resolve(const ImageConfiguration());
+      try {
+        if (e is DioImageProvider) e.resolve(const ImageConfiguration());
+      } on DioError catch(e) {
+        if (!CancelToken.isCancel(e)) {
+          rethrow;
+        }
+      }
     });
     videoPlayerControllerMap.forEach((key, value) {
       value.pause();

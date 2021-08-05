@@ -33,7 +33,7 @@ class _EhImageViewerState extends State<EhImageViewer>
     with TickerProviderStateMixin {
   late final PageController pageController;
   late final EhReadStore store = widget.store;
-  final doubleTapScales = <double>[1.0, 2.0, 3.0];
+  final doubleTapScales = <double>[0.99, 2.0, 3.0];
 
   @override
   void initState() {
@@ -138,28 +138,28 @@ class _EhImageViewerState extends State<EhImageViewer>
             onTapUp: _onTapUp,
             onDoubleTap: () {},
             onDoubleTapDown: (detail) {
-              final mediaSize = MediaQuery.of(context).size;
+
+              // 缩放
               final position = detail.globalPosition;
               final currentScale = controller.scale ?? 1.0;
-
-              final currentX = controller.position.dx;
-              final currentY = controller.position.dy;
-
               var index = doubleTapScales
                       .indexOf(currentScale.nearList(doubleTapScales)) +
                   1;
               if (index >= doubleTapScales.length) index = 0;
               final scale = doubleTapScales[index];
+              animation.animationScale(currentScale, scale);
 
+              // 位移
+              final mediaSize = MediaQuery.of(context).size;
+              final currentX = controller.position.dx;
+              final currentY = controller.position.dy;
               final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
               final targetY = (mediaSize.height / 2 - position.dy) * (scale - 1);
-
-
-              animation.animationScale(currentScale, scale);
               animation.animationOffset(
                 Offset(currentX, currentY),
                 Offset(targetX, targetY),
               );
+
               animation.listen((model) {
                 controller.scale = model.scale;
                 controller.position = model.offset;
