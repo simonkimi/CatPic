@@ -1,15 +1,17 @@
 import 'dart:math';
-
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/eh_image_viewer.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
+import 'package:catpic/ui/pages/setting_page/eh_setting.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get/get.dart';
+import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 
 enum PageViewerState {
   Single,
@@ -79,19 +81,33 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
         position: appBarHideAni,
         child: AppBar(
           backgroundColor: Colors.transparent,
-          leading: appBarBackButton(),
+          leading: appBarBackButton(
+            onPress: () {
+              SystemChrome.setPreferredOrientations([]);
+              Navigator.of(context).pop();
+            }
+          ),
           elevation: 0,
           actions: [
             IconButton(
+              onPressed: () {
+                pageState.value = pageState.value.next();
+                onPageViewerStateChange(pageState.value);
+              },
+              icon: pageState.value == PageViewerState.Single
+                  ? const Icon(Icons.library_books_sharp)
+                  : pageState.value == PageViewerState.DoubleNormal
+                      ? const Icon(Icons.chrome_reader_mode_outlined)
+                      : const Icon(Icons.chrome_reader_mode),
+            ),
+            IconButton(
                 onPressed: () {
-                  pageState.value = pageState.value.next();
-                  onPageViewerStateChange(pageState.value);
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return const EHSettingPage();
+                  }));
                 },
-                icon: pageState.value == PageViewerState.Single
-                    ? const Icon(Icons.library_books_sharp)
-                    : pageState.value == PageViewerState.DoubleNormal
-                        ? const Icon(Icons.chrome_reader_mode_outlined)
-                        : const Icon(Icons.chrome_reader_mode)),
+                icon: const Icon(Icons.settings)),
           ],
         ),
       );
@@ -135,39 +151,64 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: BackAppBar(
-        store: widget.store,
-        onPageViewerStateChange: (value) {
-          setState(() {
-            pageViewerState = value;
-          });
-          switch (value) {
-            case PageViewerState.Single: // 从DoubleCover而来
-              Future.delayed(10.milliseconds, () {
-                pageController
-                    .jumpToPage((pageController.page?.toInt() ?? 0) * 2 - 1);
-              });
-              break;
-            case PageViewerState.DoubleNormal: // 从Single而来
-              Future.delayed(10.milliseconds, () {
-                pageController
-                    .jumpToPage(((pageController.page ?? 0) / 2).floor());
-              });
-              break;
-            case PageViewerState.DoubleCover: // 从DoubleNormal而来
-              Future.delayed(10.milliseconds, () {
-                pageController
-                    .jumpToPage((pageController.page?.toInt() ?? 0) + 1);
-              });
-          }
-        },
-      ),
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      body: buildImg(),
-      bottomNavigationBar: buildBottomBar(),
-      extendBody: true,
+    return Observer(builder: (context) {
+      switch (widget.store.adapter.websiteEntity.screenAxis) {
+        case ScreenAxis.vertical:
+          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+          break;
+        case ScreenAxis.horizontalLeft:
+          SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+          break;
+        case ScreenAxis.horizontalRight:
+          SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
+          break;
+        case ScreenAxis.system:
+          break;
+      }
+      return Scaffold(
+        appBar: buildBackAppBar(),
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
+        body: WillPopScope(
+          onWillPop: () async {
+            SystemChrome.setPreferredOrientations([]);
+            return true;
+          },
+          child: buildImg(),
+        ),
+        bottomNavigationBar: buildBottomBar(),
+        extendBody: true,
+      );
+    });
+  }
+
+  BackAppBar buildBackAppBar() {
+    return BackAppBar(
+      store: widget.store,
+      onPageViewerStateChange: (value) {
+        setState(() {
+          pageViewerState = value;
+        });
+        switch (value) {
+          case PageViewerState.Single: // 从DoubleCover而来
+            Future.delayed(10.milliseconds, () {
+              pageController
+                  .jumpToPage((pageController.page?.toInt() ?? 0) * 2 - 1);
+            });
+            break;
+          case PageViewerState.DoubleNormal: // 从Single而来
+            Future.delayed(10.milliseconds, () {
+              pageController
+                  .jumpToPage(((pageController.page ?? 0) / 2).floor());
+            });
+            break;
+          case PageViewerState.DoubleCover: // 从DoubleNormal而来
+            Future.delayed(10.milliseconds, () {
+              pageController
+                  .jumpToPage((pageController.page?.toInt() ?? 0) + 1);
+            });
+        }
+      },
     );
   }
 
@@ -257,8 +298,7 @@ class _ImageSliderState extends State<ImageSlider> {
 
   void _listener() {
     final controllerPage = widget.controller.page?.round() ?? 0;
-    final  page = widget.pageViewerState.toRealIndex(controllerPage);
-    print(page);
+    final page = widget.pageViewerState.toRealIndex(controllerPage);
     if (page != _currentValue) {
       jumpToOffset(page);
       setState(() {
@@ -303,6 +343,8 @@ class _ImageSliderState extends State<ImageSlider> {
       controller: scrollController,
       scrollDirection: Axis.horizontal,
       cacheExtent: 1000,
+      reverse:
+          widget.store.adapter.websiteEntity.readAxis == ReadAxis.rightToLeft,
       children: List.generate(widget.count, (index) {
         return InkWell(
           onTap: () {

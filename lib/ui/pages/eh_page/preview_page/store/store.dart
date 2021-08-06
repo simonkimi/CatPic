@@ -131,6 +131,7 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
           gtoken: gtoken,
           imageCount: baseModel.imageCount,
           requestLoad: requestLoadReadImage,
+          adapter: adapter
         );
 
         // 加载下载数据

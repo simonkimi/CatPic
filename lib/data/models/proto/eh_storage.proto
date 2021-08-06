@@ -25,4 +25,5 @@ enum ScreenAxis {
   horizontalLeft = 0;
   horizontalRight = 1;
   vertical = 3;
+  system = 4;
 }

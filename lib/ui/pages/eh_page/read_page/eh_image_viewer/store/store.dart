@@ -1,3 +1,4 @@
+import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
@@ -20,6 +21,7 @@ abstract class EhReadStoreBase with Store {
     required this.requestLoad,
     required this.gid,
     required this.gtoken,
+    required this.adapter,
   })  : readImageList = List.generate(
             imageCount,
             (index) => ReadImgModel(
@@ -43,6 +45,7 @@ abstract class EhReadStoreBase with Store {
   final List<ReadImgModel<GalleryImgModel>> readImageList;
   final List<ReadImgModel<GalleryPreviewImageModel>> previewImageList;
   final RequestLoadFunc requestLoad;
+  final EHAdapter adapter;
 
   @observable
   bool canMovePage = true;

@@ -170,6 +170,14 @@
   "confirm_clean_cache": "Are you sure you want to clear the cache?",
   "clean_success": "Clean up successful",
   "database": "Database",
+  "read_axis": "Reading Direction",
+  "screen_axis": "Screen Direction",
+  "left_to_right": "Left To Right",
+  "right_to_left": "Right To Left",
+  "top_to_bottom": "Top To Bottom",
+  "vertical": "Vertical",
+  "horizontal_left": "Horizontal (Left)",
+  "horizontal_right": "Horizontal (Right)",
 
   "chinese_translate": "中文翻译",
   "eh_complete": "自动补全",
@@ -191,6 +199,7 @@
   "latest_version": "已是最新版本",
   "update_success": "更新成功!",
   "update_fail": "更新失败: {err}",
+  "database_info": "数据库信息",
   "@update_fail": {
     "placeholders": {
       "err": {

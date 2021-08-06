@@ -34,6 +34,7 @@ abstract class DownloadLoaderStoreBase with Store {
       gtoken: gtoken,
       imageCount: imageCount,
       requestLoad: requestLoad,
+      adapter: adapter,
     );
     loadImageFromDisk();
   }

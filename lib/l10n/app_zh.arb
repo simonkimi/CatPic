@@ -191,6 +191,15 @@
   "latest_version": "已是最新版本",
   "update_success": "更新成功!",
   "update_fail": "更新失败: {err}",
+  "database_info": "数据库信息",
+  "read_axis": "阅读方向",
+  "screen_axis": "阅读屏幕方向",
+  "left_to_right": "从左到右",
+  "right_to_left": "从右到左",
+  "top_to_bottom": "从上到下",
+  "vertical": "垂直",
+  "horizontal_left": "水平 (左)",
+  "horizontal_right": "水平 (右)",
   "@update_fail": {
     "placeholders": {
       "err": {

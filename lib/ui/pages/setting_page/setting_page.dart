@@ -1,4 +1,7 @@
+import 'package:catpic/data/models/booru/booru_website.dart';
+import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/setting_page/booru_setting.dart';
@@ -28,6 +31,36 @@ class SettingPage extends StatelessWidget {
     return ListView(
       cacheExtent: 9999,
       children: [
+        if (mainStore.websiteEntity is BooruWebsiteEntity)
+          ListTile(
+            leading: SvgPicture.asset(
+              'assets/svg/box.svg',
+              color:
+                  isDarkMode(context) ? Colors.white : const Color(0xFF898989),
+              height: 24,
+              width: 24,
+            ),
+            title: const Text('Booru'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const BooruSettingPage()));
+            },
+          ),
+        if (mainStore.websiteEntity is EhWebsiteEntity)
+          ListTile(
+            leading: SvgPicture.asset(
+              'assets/svg/hentai.svg',
+              color:
+                  isDarkMode(context) ? Colors.white : const Color(0xFF898989),
+              height: 24,
+              width: 24,
+            ),
+            title: const Text('EH'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const EHSettingPage()));
+            },
+          ),
         SummaryTile(I18n.of(context).basic_settings),
         ListTile(
           leading: const Icon(Icons.laptop_chromebook_outlined),
@@ -51,33 +84,6 @@ class SettingPage extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const DownloadSettingPage()));
-          },
-        ),
-        SummaryTile(I18n.of(context).website_settings),
-        ListTile(
-          leading: SvgPicture.asset(
-            'assets/svg/box.svg',
-            color: isDarkMode(context) ? Colors.white : const Color(0xFF898989),
-            height: 24,
-            width: 24,
-          ),
-          title: const Text('Booru'),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const BooruSettingPage()));
-          },
-        ),
-        ListTile(
-          leading: SvgPicture.asset(
-            'assets/svg/hentai.svg',
-            color: isDarkMode(context) ? Colors.white : const Color(0xFF898989),
-            height: 24,
-            width: 24,
-          ),
-          title: const Text('EH'),
-          onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const EHSettingPage()));
           },
         ),
       ],

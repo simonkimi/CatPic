@@ -1,9 +1,10 @@
 import 'dart:math';
-
+import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 import 'package:catpic/ui/components/zoom_widget.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get/get.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:catpic/i18n.dart';
@@ -111,31 +112,47 @@ class _EhImageViewerState extends State<EhImageViewer>
     final left = totalW / 3;
     final right = left * 2;
     final tap = details.globalPosition.dx;
-
     final index = pageController.page?.toInt() ?? 0;
+
+    final nextPage = () {
+      if (index - 1 >= 0) pageController.jumpToPage(index - 1);
+    };
+    final previousPage = () {
+      if (index + 1 < store.imageCount) pageController.jumpToPage(index + 1);
+    };
 
     if (left < tap && tap < right) {
       widget.onCenterTap?.call();
     } else if (tap < left) {
-      if (index - 1 >= 0) pageController.jumpToPage(index - 1);
+      if (store.adapter.websiteEntity.readAxis == ReadAxis.leftToRight)
+        previousPage();
+      else
+        nextPage();
     } else {
-      if (index + 1 < store.imageCount) pageController.jumpToPage(index + 1);
+      if (store.adapter.websiteEntity.readAxis == ReadAxis.leftToRight)
+        nextPage();
+      else
+        previousPage();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return PhotoViewGallery.builder(
-      pageController: pageController,
-      onPageChanged: onPageIndexChange,
-      itemCount: pageCount,
-      builder: (context, index) {
-        return buildPage(context, index);
-      },
-    );
+    return Observer(builder: (context) {
+      return PhotoViewGallery.builder(
+        pageController: pageController,
+        onPageChanged: onPageIndexChange,
+        itemCount: pageCount,
+        reverse: store.adapter.websiteEntity.readAxis == ReadAxis.rightToLeft,
+        builder: (context, index) {
+          return buildPage(context, index);
+        },
+      );
+    });
   }
 
-  PhotoViewGalleryPageOptions buildPage(BuildContext context, int index) {
+  PhotoViewGalleryPageOptions buildPage(BuildContext context, int index,
+      {bool isHorizontal = true}) {
     final controller = PhotoViewController();
     final animation = ZoomAnimation(
       this,
@@ -176,6 +193,7 @@ class _EhImageViewerState extends State<EhImageViewer>
                 index: index1,
                 galleryImage: galleryImage,
                 child: buildZoomWidget(
+                  isHorizontal: isHorizontal,
                   context: context,
                   controller: controller,
                   animation: animation,
@@ -205,6 +223,7 @@ class _EhImageViewerState extends State<EhImageViewer>
           context: context,
           controller: controller,
           animation: animation,
+          isHorizontal: isHorizontal,
           child: Row(
             children: [
               Expanded(
@@ -268,39 +287,44 @@ class _EhImageViewerState extends State<EhImageViewer>
     required Widget child,
     required PhotoViewController controller,
     required ZoomAnimation animation,
+    required bool isHorizontal,
   }) {
-    return GestureDetector(
-      key: UniqueKey(),
-      onTapUp: _onTapUp,
-      onDoubleTap: () {},
-      onDoubleTapDown: (detail) {
-        // 缩放
-        final position = detail.globalPosition;
-        final currentScale = controller.scale ?? 1.0;
-        var index =
-            doubleTapScales.indexOf(currentScale.nearList(doubleTapScales)) + 1;
-        if (index >= doubleTapScales.length) index = 0;
-        final scale = doubleTapScales[index];
-        animation.animationScale(currentScale, scale);
+    return isHorizontal
+        ? GestureDetector(
+            key: UniqueKey(),
+            onTapUp: _onTapUp,
+            onDoubleTap: () {},
+            onDoubleTapDown: (detail) {
+              // 缩放
+              final position = detail.globalPosition;
+              final currentScale = controller.scale ?? 1.0;
+              var index = doubleTapScales
+                      .indexOf(currentScale.nearList(doubleTapScales)) +
+                  1;
+              if (index >= doubleTapScales.length) index = 0;
+              final scale = doubleTapScales[index];
+              animation.animationScale(currentScale, scale);
 
-        // 位移
-        final mediaSize = MediaQuery.of(context).size;
-        final currentX = controller.position.dx;
-        final currentY = controller.position.dy;
-        final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
-        final targetY = (mediaSize.height / 2 - position.dy) * (scale - 1);
-        animation.animationOffset(
-          Offset(currentX, currentY),
-          Offset(targetX, targetY),
-        );
+              // 位移
+              final mediaSize = MediaQuery.of(context).size;
+              final currentX = controller.position.dx;
+              final currentY = controller.position.dy;
+              final targetX = (mediaSize.width / 2 - position.dx) * (scale - 1);
+              final targetY =
+                  (mediaSize.height / 2 - position.dy) * (scale - 1);
+              animation.animationOffset(
+                Offset(currentX, currentY),
+                Offset(targetX, targetY),
+              );
 
-        animation.listen((model) {
-          controller.scale = model.scale;
-          controller.position = model.offset;
-        });
-      },
-      child: child,
-    );
+              animation.listen((model) {
+                controller.scale = model.scale;
+                controller.position = model.offset;
+              });
+            },
+            child: child,
+          )
+        : child;
   }
 
   Widget buildImagePage(
