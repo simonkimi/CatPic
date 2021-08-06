@@ -63,13 +63,17 @@ class _EhImageViewerState extends State<EhImageViewer>
   }
 
   Future<void> onPageIndexChange(int index) async {
-    widget.onIndexChange?.call(index);
+    final state = widget.pageViewerState;
+
+    final realIndex = state.toRealIndex(index);
+
+    widget.onIndexChange?.call(realIndex);
     final int preloadNum = settingStore.preloadingNumber;
-    if (store.readImageList.length <= index) {
+    if (store.readImageList.length <= realIndex) {
       return;
     }
 
-    final imageModel = store.readImageList[index];
+    final imageModel = store.readImageList[realIndex];
 
     if (imageModel.imageProvider == null) {
       imageModel.requestLoad(true).then((value) {
@@ -78,7 +82,7 @@ class _EhImageViewerState extends State<EhImageViewer>
     }
     if (preloadNum != 0) {
       // 向后预加载${preloadNum}张图片
-      store.readImageList.sublist(index + 1).take(preloadNum).forEach((e) {
+      store.readImageList.sublist(realIndex + 1).take(preloadNum).forEach((e) {
         if (e.imageProvider == null) {
           e.requestLoad(true).then((value) {
             e.imageProvider?.resolve(const ImageConfiguration());
@@ -89,8 +93,8 @@ class _EhImageViewerState extends State<EhImageViewer>
       });
 
       // 向前预加载一张图片
-      if (index > 1) {
-        final e = store.readImageList[index - 1];
+      if (realIndex > 1) {
+        final e = store.readImageList[realIndex - 1];
         if (e.imageProvider == null) {
           e.requestLoad(true).then((value) {
             e.imageProvider?.resolve(const ImageConfiguration());
@@ -107,14 +111,15 @@ class _EhImageViewerState extends State<EhImageViewer>
     final left = totalW / 3;
     final right = left * 2;
     final tap = details.globalPosition.dx;
+
+    final index = pageController.page?.toInt() ?? 0;
+
     if (left < tap && tap < right) {
       widget.onCenterTap?.call();
     } else if (tap < left) {
-      if (store.currentIndex - 1 >= 0)
-        pageController.jumpToPage(store.currentIndex - 1);
+      if (index - 1 >= 0) pageController.jumpToPage(index - 1);
     } else {
-      if (store.currentIndex + 1 < store.imageCount)
-        pageController.jumpToPage(store.currentIndex + 1);
+      if (index + 1 < store.imageCount) pageController.jumpToPage(index + 1);
     }
   }
 

@@ -17,6 +17,41 @@ enum PageViewerState {
   DoubleCover,
 }
 
+extension PageViewerStatePage on PageViewerState {
+  int toRealIndex(int real) {
+    switch (this) {
+      case PageViewerState.Single:
+        return real;
+      case PageViewerState.DoubleNormal:
+        return real * 2;
+      case PageViewerState.DoubleCover:
+        return max((real - 1) * 2 + 1, 0);
+    }
+  }
+
+  int toDisplayIndex(int display) {
+    switch (this) {
+      case PageViewerState.Single:
+        return display;
+      case PageViewerState.DoubleNormal:
+        return (display / 2).ceil();
+      case PageViewerState.DoubleCover:
+        return ((display + 1) / 2).floor();
+    }
+  }
+
+  PageViewerState next() {
+    switch (this) {
+      case PageViewerState.Single:
+        return PageViewerState.DoubleNormal;
+      case PageViewerState.DoubleNormal:
+        return PageViewerState.DoubleCover;
+      case PageViewerState.DoubleCover:
+        return PageViewerState.Single;
+    }
+  }
+}
+
 class BackAppBar extends HookWidget implements PreferredSizeWidget {
   const BackAppBar({
     Key? key,
@@ -49,17 +84,7 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
           actions: [
             IconButton(
                 onPressed: () {
-                  switch (pageState.value) {
-                    case PageViewerState.Single:
-                      pageState.value = PageViewerState.DoubleNormal;
-                      break;
-                    case PageViewerState.DoubleNormal:
-                      pageState.value = PageViewerState.DoubleCover;
-                      break;
-                    case PageViewerState.DoubleCover:
-                      pageState.value = PageViewerState.Single;
-                      break;
-                  }
+                  pageState.value = pageState.value.next();
                   onPageViewerStateChange(pageState.value);
                 },
                 icon: pageState.value == PageViewerState.Single
@@ -160,7 +185,6 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
           widget.store.setPageSliderDisplay(!widget.store.displayPageSlider);
         },
         onIndexChange: (value) {
-          widget.store.setIndex(value);
           DB()
               .ehReadHistoryDao
               .setPage(widget.store.gid, widget.store.gtoken, value);
@@ -233,18 +257,8 @@ class _ImageSliderState extends State<ImageSlider> {
 
   void _listener() {
     final controllerPage = widget.controller.page?.round() ?? 0;
-    late final int page;
-    switch (widget.pageViewerState) {
-      case PageViewerState.Single:
-        page = controllerPage;
-        break;
-      case PageViewerState.DoubleNormal:
-        page = controllerPage * 2;
-        break;
-      case PageViewerState.DoubleCover:
-        page = (controllerPage - 1) * 2 + 1;
-        break;
-    }
+    final  page = widget.pageViewerState.toRealIndex(controllerPage);
+    print(page);
     if (page != _currentValue) {
       jumpToOffset(page);
       setState(() {
@@ -292,18 +306,7 @@ class _ImageSliderState extends State<ImageSlider> {
       children: List.generate(widget.count, (index) {
         return InkWell(
           onTap: () {
-            late final int page;
-            switch (widget.pageViewerState) {
-              case PageViewerState.Single:
-                page = index;
-                break;
-              case PageViewerState.DoubleNormal:
-                page = (index / 2).ceil();
-                break;
-              case PageViewerState.DoubleCover:
-                page = ((index + 1) / 2).floor();
-                break;
-            }
+            final page = widget.pageViewerState.toDisplayIndex(index);
             widget.controller.jumpToPage(page);
           },
           child: Obx(() {
@@ -444,19 +447,7 @@ class _PageSliderState extends State<PageSlider> {
 
   void listener() {
     final controllerPage = widget.controller.page?.round() ?? 0;
-    late final int page;
-    switch (widget.pageViewerState) {
-      case PageViewerState.Single:
-        page = controllerPage;
-        break;
-      case PageViewerState.DoubleNormal:
-        page = controllerPage * 2;
-        break;
-      case PageViewerState.DoubleCover:
-        page = max((controllerPage - 1) * 2 + 1, 0);
-        break;
-    }
-    print('$controllerPage ${widget.pageViewerState} $page');
+    final page = widget.pageViewerState.toRealIndex(controllerPage);
     if (page != _currentValue) {
       setState(() {
         _currentValue = page;
@@ -489,20 +480,10 @@ class _PageSliderState extends State<PageSlider> {
           Expanded(
             child: Slider(
               onChangeEnd: (value) {
-                late final int page;
-                switch (widget.pageViewerState) {
-                  case PageViewerState.Single:
-                    page = value.floor();
-                    break;
-                  case PageViewerState.DoubleNormal:
-                    page = (value.floor() / 2).ceil();
-                    break;
-                  case PageViewerState.DoubleCover:
-                    page = ((value.floor() + 1) / 2).floor();
-                    break;
-                }
+                final page =
+                    widget.pageViewerState.toDisplayIndex(value.floor());
                 setState(() {
-                  _currentValue = value.floor();
+                  _currentValue = page;
                 });
                 widget.controller.jumpToPage(page);
               },

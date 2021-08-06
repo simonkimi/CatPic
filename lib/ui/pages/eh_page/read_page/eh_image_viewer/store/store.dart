@@ -1,4 +1,3 @@
-import 'package:catpic/ui/components/page_slider.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
@@ -19,7 +18,6 @@ abstract class EhReadStoreBase with Store {
   EhReadStoreBase({
     required this.imageCount,
     required this.requestLoad,
-    required this.currentIndex,
     required this.gid,
     required this.gtoken,
   })  : readImageList = List.generate(
@@ -49,13 +47,9 @@ abstract class EhReadStoreBase with Store {
   @observable
   bool canMovePage = true;
 
-  @observable
-  int currentIndex;
 
   @observable
   var displayPageSlider = false;
-
-  final pageSliderController = PageSliderController();
 
   var lastIdleTime = DateTime.now();
 
@@ -64,12 +58,6 @@ abstract class EhReadStoreBase with Store {
   @action
   void setPageSliderDisplay(bool value) {
     displayPageSlider = value;
-  }
-
-  @action
-  Future<void> setIndex(int value) async {
-    pageSliderController.setValue(value);
-    currentIndex = value;
   }
 }
 
