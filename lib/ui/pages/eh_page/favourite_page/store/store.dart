@@ -41,7 +41,6 @@ abstract class EhFavouriteStoreBase extends ILoadMore<PreViewItemModel>
     return model.previewModel.items;
   }
 
-
   Future<void> changeSearchCat(int favcat) async {
     currentFavcat = favcat;
     await onNewSearch(searchText);

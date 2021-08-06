@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 import 'package:catpic/ui/components/zoom_widget.dart';
@@ -12,21 +13,22 @@ import 'package:catpic/main.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
-
-import '../read_page.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:catpic/data/models/ehentai/eh_storage.dart';
+import '../page_controller.dart';
 
 class EhImageViewer extends StatefulWidget {
   const EhImageViewer({
     Key? key,
     required this.store,
-    this.pageController,
     required this.startIndex,
+    required this.readController,
     this.onCenterTap,
     this.onIndexChange,
   }) : super(key: key);
 
   final EhReadStore store;
-  final PageController? pageController;
+  final EhPageController readController;
   final int startIndex;
   final VoidCallback? onCenterTap;
   final ValueChanged<int>? onIndexChange;
@@ -37,14 +39,16 @@ class EhImageViewer extends StatefulWidget {
 
 class _EhImageViewerState extends State<EhImageViewer>
     with TickerProviderStateMixin {
-  late final PageController pageController;
   late final EhReadStore store = widget.store;
   final doubleTapScales = <double>[0.99, 2.0, 3.0];
+  final indexStream = StreamController<int>.broadcast();
+  late final EhPageController readController = widget.readController;
 
   int get pageCount {
     if (widget.store.adapter.websiteEntity.displayType == DisplayType.Single)
       return store.readImageList.length;
-    else if (widget.store.adapter.websiteEntity.displayType == DisplayType.DoubleCover)
+    else if (widget.store.adapter.websiteEntity.displayType ==
+        DisplayType.DoubleCover)
       return 1 + ((store.readImageList.length - 1) / 2).ceil();
     else
       return (store.readImageList.length / 2).ceil();
@@ -53,10 +57,7 @@ class _EhImageViewerState extends State<EhImageViewer>
   @override
   void initState() {
     super.initState();
-    pageController =
-        widget.pageController ?? PageController(initialPage: widget.startIndex);
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      pageController.jumpToPage(widget.startIndex);
       onPageIndexChange(widget.startIndex);
     });
   }
@@ -110,13 +111,13 @@ class _EhImageViewerState extends State<EhImageViewer>
     final left = totalW / 3;
     final right = left * 2;
     final tap = details.globalPosition.dx;
-    final index = pageController.page?.toInt() ?? 0;
+    final index = readController.index;
 
     final nextPage = () {
-      if (index - 1 >= 0) pageController.jumpToPage(index - 1);
+      if (index - 1 >= 0) readController.jumpTo(index - 1);
     };
     final previousPage = () {
-      if (index + 1 < store.imageCount) pageController.jumpToPage(index + 1);
+      if (index + 1 < store.imageCount) readController.jumpTo(index + 1);
     };
 
     if (left < tap && tap < right) {
@@ -137,21 +138,59 @@ class _EhImageViewerState extends State<EhImageViewer>
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
+      return buildMain();
+    });
+  }
+
+  Widget buildMain() {
+    if (store.adapter.websiteEntity.readAxis == ReadAxis.topToButton) {
+      final controller = PhotoViewController();
+      final animation = ZoomAnimation(
+        this,
+        duration: const Duration(milliseconds: 200),
+      );
+      return PhotoView.customChild(
+        controller: controller,
+        child: buildZoomWidget(
+          context: context,
+          child: ScrollablePositionedList.builder(
+            itemScrollController: readController.listController,
+            itemPositionsListener: readController.listPositionsListener,
+            itemCount: pageCount,
+            itemBuilder: (context, index) {
+              return buildPage(context, index, isHorizontal: false);
+            },
+          ),
+          controller: controller,
+          animation: animation,
+          canZoom: true,
+        ),
+      );
+    } else {
       return PhotoViewGallery.builder(
-        pageController: pageController,
+        pageController: readController.pageController,
         onPageChanged: onPageIndexChange,
         itemCount: pageCount,
         reverse: store.adapter.websiteEntity.readAxis == ReadAxis.rightToLeft,
         builder: (context, index) {
-          return buildPage(context, index);
+          final controller = PhotoViewController();
+          return PhotoViewGalleryPageOptions.customChild(
+            minScale: 1.0,
+            maxScale: 5.0,
+            controller: controller,
+            child: buildPage(context, index, controller: controller),
+          );
         },
       );
-    });
+    }
   }
 
-  PhotoViewGalleryPageOptions buildPage(BuildContext context, int index,
-      {bool isHorizontal = true}) {
-    final controller = PhotoViewController();
+  Widget buildPage(
+    BuildContext context,
+    int index, {
+    bool isHorizontal = true,
+    PhotoViewController? controller,
+  }) {
     final animation = ZoomAnimation(
       this,
       duration: const Duration(milliseconds: 200),
@@ -182,30 +221,26 @@ class _EhImageViewerState extends State<EhImageViewer>
 
       final galleryImage = store.readImageList[index];
 
-      return PhotoViewGalleryPageOptions.customChild(
-        minScale: 1.0,
-        maxScale: 5.0,
-        controller: controller,
-        child: buildPageOuter(
-            child: buildImageLoading(
+      return buildPageOuter(
+          child: buildImageLoading(
+              context: context,
+              index: index1,
+              galleryImage: galleryImage,
+              child: buildZoomWidget(
+                canZoom: isHorizontal,
                 context: context,
-                index: index1,
-                galleryImage: galleryImage,
-                child: buildZoomWidget(
-                  isHorizontal: isHorizontal,
+                controller: controller,
+                animation: animation,
+                child: buildImagePage(
                   context: context,
-                  controller: controller,
-                  animation: animation,
-                  child: buildImagePage(
-                    context: context,
-                    index: index1,
-                    galleryImage: galleryImage,
-                  ),
-                ))),
-      );
+                  index: index1,
+                  galleryImage: galleryImage,
+                ),
+              )));
     } else {
       late final int index1;
-      if (widget.store.adapter.websiteEntity.displayType == DisplayType.DoubleCover) {
+      if (widget.store.adapter.websiteEntity.displayType ==
+          DisplayType.DoubleCover) {
         index1 = (index - 1) * 2 + 1;
       } else {
         index1 = index * 2;
@@ -213,16 +248,12 @@ class _EhImageViewerState extends State<EhImageViewer>
 
       final gallery1 = store.readImageList[index1];
       final gallery2 = store.readImageList[index1 + 1];
-      return PhotoViewGalleryPageOptions.customChild(
-        minScale: 1.0,
-        maxScale: 5.0,
-        controller: controller,
-        child: buildPageOuter(
-            child: buildZoomWidget(
+      return buildPageOuter(
+        child: buildZoomWidget(
           context: context,
           controller: controller,
           animation: animation,
-          isHorizontal: isHorizontal,
+          canZoom: isHorizontal,
           child: Row(
             children: [
               Expanded(
@@ -251,7 +282,7 @@ class _EhImageViewerState extends State<EhImageViewer>
               ),
             ],
           ),
-        )),
+        ),
       );
     }
   }
@@ -284,11 +315,11 @@ class _EhImageViewerState extends State<EhImageViewer>
   Widget buildZoomWidget({
     required BuildContext context,
     required Widget child,
-    required PhotoViewController controller,
+    required PhotoViewController? controller,
     required ZoomAnimation animation,
-    required bool isHorizontal,
+    required bool canZoom,
   }) {
-    return isHorizontal
+    return canZoom
         ? GestureDetector(
             key: UniqueKey(),
             onTapUp: _onTapUp,
@@ -296,7 +327,7 @@ class _EhImageViewerState extends State<EhImageViewer>
             onDoubleTapDown: (detail) {
               // 缩放
               final position = detail.globalPosition;
-              final currentScale = controller.scale ?? 1.0;
+              final currentScale = controller!.scale ?? 1.0;
               var index = doubleTapScales
                       .indexOf(currentScale.nearList(doubleTapScales)) +
                   1;
@@ -340,8 +371,6 @@ class _EhImageViewerState extends State<EhImageViewer>
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
             return Container(
-              width: double.infinity,
-              height: double.infinity,
               color: Colors.transparent,
               child: Builder(
                 builder: (context) {
@@ -364,31 +393,34 @@ class _EhImageViewerState extends State<EhImageViewer>
   }
 
   Widget buildErrorPage(Object? e) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.transparent,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                e?.toString() ?? I18n.of(context).network_error,
-                style: const TextStyle(
+    return AspectRatio(
+      aspectRatio: 0.8,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.transparent,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error,
                   color: Colors.white,
-                  fontSize: 16,
-                  decoration: TextDecoration.none,
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Text(
+                  e?.toString() ?? I18n.of(context).network_error,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -396,50 +428,54 @@ class _EhImageViewerState extends State<EhImageViewer>
   }
 
   Widget buildLoadingPage(int index, double progress) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.transparent,
-      child: Builder(
-        builder: (context) {
-          progress = progress.isFinite ? progress : 0;
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                (index + 1).toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.none,
+    return AspectRatio(
+      aspectRatio: 0.8,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.transparent,
+        child: Builder(
+          builder: (context) {
+            progress = progress.isFinite ? progress : 0;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  (index + 1).toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 60,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.none,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 60),
-              CircularProgressIndicator(value: progress == 0 ? null : progress),
-              const SizedBox(height: 20),
-              if (progress == 0)
-                Text(
-                  I18n.of(context).connecting,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    decoration: TextDecoration.none,
-                  ),
-                )
-              else
-                Text(
-                  '${(progress * 100).toStringAsFixed(2)}%',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    decoration: TextDecoration.none,
-                  ),
-                )
-            ],
-          );
-        },
+                const SizedBox(height: 60),
+                CircularProgressIndicator(
+                    value: progress == 0 ? null : progress),
+                const SizedBox(height: 20),
+                if (progress == 0)
+                  Text(
+                    I18n.of(context).connecting,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      decoration: TextDecoration.none,
+                    ),
+                  )
+                else
+                  Text(
+                    '${(progress * 100).toStringAsFixed(2)}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      decoration: TextDecoration.none,
+                    ),
+                  )
+              ],
+            );
+          },
+        ),
       ),
     );
   }

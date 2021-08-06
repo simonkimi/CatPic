@@ -121,7 +121,7 @@ class _MultiImageViewerState extends State<MultiImageViewer>
     contentProvider.sublist(index + 1).take(preloadNum).forEach((e) {
       try {
         if (e is DioImageProvider) e.resolve(const ImageConfiguration());
-      } on DioError catch(e) {
+      } on DioError catch (e) {
         if (!CancelToken.isCancel(e)) {
           rethrow;
         }

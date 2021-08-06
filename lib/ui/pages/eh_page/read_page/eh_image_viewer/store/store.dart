@@ -50,7 +50,6 @@ abstract class EhReadStoreBase with Store {
   @observable
   bool canMovePage = true;
 
-
   @observable
   var displayPageSlider = false;
 

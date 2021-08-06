@@ -127,12 +127,11 @@ abstract class EhGalleryStoreBase extends ILoadMore<GalleryPreviewImageModel>
             (baseModel.imageCount / baseModel.imageCountInOnePage).ceil();
 
         readStore = EhReadStore(
-          gid: gid,
-          gtoken: gtoken,
-          imageCount: baseModel.imageCount,
-          requestLoad: requestLoadReadImage,
-          adapter: adapter
-        );
+            gid: gid,
+            gtoken: gtoken,
+            imageCount: baseModel.imageCount,
+            requestLoad: requestLoadReadImage,
+            adapter: adapter);
 
         // 加载下载数据
         if (await fh.hasDownloadPermission()) {
