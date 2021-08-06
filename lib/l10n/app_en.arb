@@ -178,6 +178,10 @@
   "vertical": "Vertical",
   "horizontal_left": "Horizontal (Left)",
   "horizontal_right": "Horizontal (Right)",
+  "display_model": "Reading mode",
+  "single_page": "Single page",
+  "double_page": "Double page",
+  "double_page_without_cover": "Double page (cover independent)",
 
   "chinese_translate": "中文翻译",
   "eh_complete": "自动补全",

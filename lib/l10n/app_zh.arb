@@ -200,6 +200,10 @@
   "vertical": "垂直",
   "horizontal_left": "水平 (左)",
   "horizontal_right": "水平 (右)",
+  "display_model": "阅读模式",
+  "single_page": "单页",
+  "double_page": "双页",
+  "double_page_without_cover": "双页 (封面独立)",
   "@update_fail": {
     "placeholders": {
       "err": {

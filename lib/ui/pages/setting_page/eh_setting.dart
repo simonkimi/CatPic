@@ -40,19 +40,44 @@ class EHSettingPage extends StatelessWidget {
     final entity = mainStore.websiteEntity! as EhWebsiteEntity;
     return [
       SummaryTile(I18n.of(context).read),
-      SelectTile<ReadAxis>(
-        title: I18n.of(context).read_axis,
+      SelectTile<DisplayType>(
+        title: I18n.of(context).display_model,
         leading: const Icon(Icons.chrome_reader_mode_outlined),
         items: [
           SelectTileItem(
-              title: I18n.of(context).left_to_right,
-              value: ReadAxis.leftToRight),
+            title: I18n.of(context).single_page,
+            value: DisplayType.Single,
+          ),
           SelectTileItem(
-              title: I18n.of(context).right_to_left,
-              value: ReadAxis.rightToLeft),
+            title: I18n.of(context).double_page,
+            value: DisplayType.DoubleNormal,
+          ),
           SelectTileItem(
-              title: I18n.of(context).top_to_bottom,
-              value: ReadAxis.topToButton),
+            title: I18n.of(context).double_page_without_cover,
+            value: DisplayType.DoubleCover,
+          ),
+        ],
+        selectedValue: entity.displayType,
+        onChange: (value) {
+          entity.displayType = value;
+        },
+      ),
+      SelectTile<ReadAxis>(
+        title: I18n.of(context).read_axis,
+        leading: const Icon(Icons.directions_outlined),
+        items: [
+          SelectTileItem(
+            title: I18n.of(context).left_to_right,
+            value: ReadAxis.leftToRight,
+          ),
+          SelectTileItem(
+            title: I18n.of(context).right_to_left,
+            value: ReadAxis.rightToLeft,
+          ),
+          SelectTileItem(
+            title: I18n.of(context).top_to_bottom,
+            value: ReadAxis.topToButton,
+          ),
         ],
         selectedValue: entity.readAxis,
         onChange: (value) {

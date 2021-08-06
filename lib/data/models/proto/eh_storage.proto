@@ -12,6 +12,7 @@ message EHStorage {
   repeated EhFavourite favourite = 1;
   ReadAxis readAxis = 2;
   ScreenAxis screenAxis = 3;
+  DisplayType displayType = 4;
 }
 
 
@@ -26,4 +27,10 @@ enum ScreenAxis {
   horizontalRight = 1;
   vertical = 3;
   system = 4;
+}
+
+enum DisplayType {
+  Single = 0;
+  DoubleNormal = 1;
+  DoubleCover = 2;
 }

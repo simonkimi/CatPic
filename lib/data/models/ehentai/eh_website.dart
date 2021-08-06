@@ -68,6 +68,17 @@ abstract class EhWebsiteEntityBase with Store implements IWebsiteEntity {
   @observable
   ScreenAxis _screenAxis = ScreenAxis.vertical;
 
+  @observable
+  DisplayType _displayType = DisplayType.Single;
+  set displayType(DisplayType value) {
+    _displayType = value;
+    eHStorage.displayType = value;
+    storage = eHStorage.writeToBuffer();
+    save();
+  }
+
+  DisplayType get displayType => _displayType;
+
   @override
   int id;
   @override
@@ -119,6 +130,8 @@ abstract class EhWebsiteEntityBase with Store implements IWebsiteEntity {
 
   @computed
   ReadAxis get readAxis => _readAxis;
+
+
 
   void initStorage() {
     eHStorage = EHStorage.fromBuffer(storage);

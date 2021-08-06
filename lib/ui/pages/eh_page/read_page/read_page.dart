@@ -13,43 +13,40 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get/get.dart';
 import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 
-enum PageViewerState {
-  Single,
-  DoubleNormal,
-  DoubleCover,
-}
-
-extension PageViewerStatePage on PageViewerState {
+extension DisplayTypePage on DisplayType {
   int toRealIndex(int real) {
     switch (this) {
-      case PageViewerState.Single:
+      case DisplayType.Single:
         return real;
-      case PageViewerState.DoubleNormal:
+      case DisplayType.DoubleNormal:
         return real * 2;
-      case PageViewerState.DoubleCover:
+      case DisplayType.DoubleCover:
+      default:
         return max((real - 1) * 2 + 1, 0);
     }
   }
 
   int toDisplayIndex(int display) {
     switch (this) {
-      case PageViewerState.Single:
+      case DisplayType.Single:
         return display;
-      case PageViewerState.DoubleNormal:
+      case DisplayType.DoubleNormal:
         return (display / 2).ceil();
-      case PageViewerState.DoubleCover:
+      case DisplayType.DoubleCover:
+      default:
         return ((display + 1) / 2).floor();
     }
   }
 
-  PageViewerState next() {
+  DisplayType next() {
     switch (this) {
-      case PageViewerState.Single:
-        return PageViewerState.DoubleNormal;
-      case PageViewerState.DoubleNormal:
-        return PageViewerState.DoubleCover;
-      case PageViewerState.DoubleCover:
-        return PageViewerState.Single;
+      case DisplayType.Single:
+        return DisplayType.DoubleNormal;
+      case DisplayType.DoubleNormal:
+        return DisplayType.DoubleCover;
+      case DisplayType.DoubleCover:
+      default:
+        return DisplayType.Single;
     }
   }
 }
@@ -58,11 +55,11 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
   const BackAppBar({
     Key? key,
     required this.store,
-    required this.onPageViewerStateChange,
+    required this.onDisplayTypeChange,
   }) : super(key: key);
 
   final EhReadStore store;
-  final ValueChanged<PageViewerState> onPageViewerStateChange;
+  final ValueChanged<DisplayType> onDisplayTypeChange;
 
   @override
   Widget build(BuildContext context) {
@@ -73,32 +70,31 @@ class BackAppBar extends HookWidget implements PreferredSizeWidget {
         Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, -1))
             .animate(appBarController);
 
-    final pageState = useState(PageViewerState.Single);
-
     return Observer(builder: (context) {
       appBarController.byValue(store.displayPageSlider);
       return SlideTransition(
         position: appBarHideAni,
         child: AppBar(
           backgroundColor: Colors.transparent,
-          leading: appBarBackButton(
-            onPress: () {
-              SystemChrome.setPreferredOrientations([]);
-              Navigator.of(context).pop();
-            }
-          ),
+          leading: appBarBackButton(onPress: () {
+            SystemChrome.setPreferredOrientations([]);
+            Navigator.of(context).pop();
+          }),
           elevation: 0,
           actions: [
             IconButton(
               onPressed: () {
-                pageState.value = pageState.value.next();
-                onPageViewerStateChange(pageState.value);
+                final state = store.adapter.websiteEntity.displayType;
+                store.adapter.websiteEntity.displayType = state.next();
+                onDisplayTypeChange(state);
               },
-              icon: pageState.value == PageViewerState.Single
-                  ? const Icon(Icons.library_books_sharp)
-                  : pageState.value == PageViewerState.DoubleNormal
-                      ? const Icon(Icons.chrome_reader_mode_outlined)
-                      : const Icon(Icons.chrome_reader_mode),
+              icon:
+                  store.adapter.websiteEntity.displayType == DisplayType.Single
+                      ? const Icon(Icons.library_books_sharp)
+                      : store.adapter.websiteEntity.displayType ==
+                              DisplayType.DoubleNormal
+                          ? const Icon(Icons.chrome_reader_mode_outlined)
+                          : const Icon(Icons.chrome_reader_mode),
             ),
             IconButton(
                 onPressed: () {
@@ -137,8 +133,6 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
   late final Animation<Offset> pageSliderHideAni;
   final pageController = PageController();
 
-  var pageViewerState = PageViewerState.Single;
-
   @override
   void initState() {
     super.initState();
@@ -157,10 +151,12 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
           break;
         case ScreenAxis.horizontalLeft:
-          SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+          SystemChrome.setPreferredOrientations(
+              [DeviceOrientation.landscapeLeft]);
           break;
         case ScreenAxis.horizontalRight:
-          SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
+          SystemChrome.setPreferredOrientations(
+              [DeviceOrientation.landscapeRight]);
           break;
         case ScreenAxis.system:
           break;
@@ -185,24 +181,22 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
   BackAppBar buildBackAppBar() {
     return BackAppBar(
       store: widget.store,
-      onPageViewerStateChange: (value) {
-        setState(() {
-          pageViewerState = value;
-        });
+      onDisplayTypeChange: (value) {
+        widget.store.adapter.websiteEntity.displayType = value;
         switch (value) {
-          case PageViewerState.Single: // 从DoubleCover而来
+          case DisplayType.Single: // 从DoubleCover而来
             Future.delayed(10.milliseconds, () {
               pageController
                   .jumpToPage((pageController.page?.toInt() ?? 0) * 2 - 1);
             });
             break;
-          case PageViewerState.DoubleNormal: // 从Single而来
+          case DisplayType.DoubleNormal: // 从Single而来
             Future.delayed(10.milliseconds, () {
               pageController
                   .jumpToPage(((pageController.page ?? 0) / 2).floor());
             });
             break;
-          case PageViewerState.DoubleCover: // 从DoubleNormal而来
+          case DisplayType.DoubleCover: // 从DoubleNormal而来
             Future.delayed(10.milliseconds, () {
               pageController
                   .jumpToPage((pageController.page?.toInt() ?? 0) + 1);
@@ -221,7 +215,6 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
         store: widget.store,
         startIndex: widget.startIndex,
         pageController: pageController,
-        pageViewerState: pageViewerState,
         onCenterTap: () {
           widget.store.setPageSliderDisplay(!widget.store.displayPageSlider);
         },
@@ -250,7 +243,6 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
                   count: widget.store.imageCount,
                   controller: pageController,
                   store: widget.store,
-                  pageViewerState: pageViewerState,
                 ),
               ),
               SizedBox(
@@ -260,7 +252,7 @@ class _EhReadPageState extends State<EhReadPage> with TickerProviderStateMixin {
                   child: PageSlider(
                     count: widget.store.imageCount,
                     controller: pageController,
-                    pageViewerState: pageViewerState,
+                    store: widget.store,
                   ),
                 ),
               ),
@@ -278,13 +270,11 @@ class ImageSlider extends StatefulWidget {
     required this.count,
     required this.controller,
     required this.store,
-    required this.pageViewerState,
   }) : super(key: key);
 
   final int count;
   final PageController controller;
   final EhReadStore store;
-  final PageViewerState pageViewerState;
 
   @override
   _ImageSliderState createState() => _ImageSliderState();
@@ -298,7 +288,8 @@ class _ImageSliderState extends State<ImageSlider> {
 
   void _listener() {
     final controllerPage = widget.controller.page?.round() ?? 0;
-    final page = widget.pageViewerState.toRealIndex(controllerPage);
+    final page = widget.store.adapter.websiteEntity.displayType
+        .toRealIndex(controllerPage);
     if (page != _currentValue) {
       jumpToOffset(page);
       setState(() {
@@ -348,7 +339,8 @@ class _ImageSliderState extends State<ImageSlider> {
       children: List.generate(widget.count, (index) {
         return InkWell(
           onTap: () {
-            final page = widget.pageViewerState.toDisplayIndex(index);
+            final page = widget.store.adapter.websiteEntity.displayType
+                .toDisplayIndex(index);
             widget.controller.jumpToPage(page);
           },
           child: Obx(() {
@@ -473,12 +465,12 @@ class PageSlider extends StatefulWidget {
     Key? key,
     required this.count,
     required this.controller,
-    required this.pageViewerState,
+    required this.store,
   }) : super(key: key);
 
   final int count;
   final PageController controller;
-  final PageViewerState pageViewerState;
+  final EhReadStore store;
 
   @override
   _PageSliderState createState() => _PageSliderState();
@@ -489,7 +481,8 @@ class _PageSliderState extends State<PageSlider> {
 
   void listener() {
     final controllerPage = widget.controller.page?.round() ?? 0;
-    final page = widget.pageViewerState.toRealIndex(controllerPage);
+    final page = widget.store.adapter.websiteEntity.displayType
+        .toRealIndex(controllerPage);
     if (page != _currentValue) {
       setState(() {
         _currentValue = page;
@@ -522,8 +515,8 @@ class _PageSliderState extends State<PageSlider> {
           Expanded(
             child: Slider(
               onChangeEnd: (value) {
-                final page =
-                    widget.pageViewerState.toDisplayIndex(value.floor());
+                final page = widget.store.adapter.websiteEntity.displayType
+                    .toDisplayIndex(value.floor());
                 setState(() {
                   _currentValue = page;
                 });

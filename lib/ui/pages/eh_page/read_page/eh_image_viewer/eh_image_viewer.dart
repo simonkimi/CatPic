@@ -23,7 +23,6 @@ class EhImageViewer extends StatefulWidget {
     required this.startIndex,
     this.onCenterTap,
     this.onIndexChange,
-    required this.pageViewerState,
   }) : super(key: key);
 
   final EhReadStore store;
@@ -31,7 +30,6 @@ class EhImageViewer extends StatefulWidget {
   final int startIndex;
   final VoidCallback? onCenterTap;
   final ValueChanged<int>? onIndexChange;
-  final PageViewerState pageViewerState;
 
   @override
   _EhImageViewerState createState() => _EhImageViewerState();
@@ -44,9 +42,9 @@ class _EhImageViewerState extends State<EhImageViewer>
   final doubleTapScales = <double>[0.99, 2.0, 3.0];
 
   int get pageCount {
-    if (widget.pageViewerState == PageViewerState.Single)
+    if (widget.store.adapter.websiteEntity.displayType == DisplayType.Single)
       return store.readImageList.length;
-    else if (widget.pageViewerState == PageViewerState.DoubleCover)
+    else if (widget.store.adapter.websiteEntity.displayType == DisplayType.DoubleCover)
       return 1 + ((store.readImageList.length - 1) / 2).ceil();
     else
       return (store.readImageList.length / 2).ceil();
@@ -64,7 +62,7 @@ class _EhImageViewerState extends State<EhImageViewer>
   }
 
   Future<void> onPageIndexChange(int index) async {
-    final state = widget.pageViewerState;
+    final state = widget.store.adapter.websiteEntity.displayType;
 
     final realIndex = state.toRealIndex(index);
 
@@ -158,25 +156,26 @@ class _EhImageViewerState extends State<EhImageViewer>
       this,
       duration: const Duration(milliseconds: 200),
     );
-    if (widget.pageViewerState == PageViewerState.Single || // 单面情况
-        (widget.pageViewerState == PageViewerState.DoubleCover && // 双面, 封面单独占一面
+    final display = widget.store.adapter.websiteEntity.displayType;
+    if (display == DisplayType.Single || // 单面情况
+        (display == DisplayType.DoubleCover && // 双面, 封面单独占一面
             index == 0) || // 双面封面单独站一面下, 有独立页面
-        (widget.pageViewerState == PageViewerState.DoubleCover &&
+        (display == DisplayType.DoubleCover &&
             store.imageCount.isEven &&
             index == pageCount - 1) || // 普通双面多一面
-        (widget.pageViewerState == PageViewerState.DoubleNormal &&
+        (display == DisplayType.DoubleNormal &&
             store.imageCount.isOdd &&
             index == pageCount - 1)) {
       late final int index1;
 
-      switch (widget.pageViewerState) {
-        case PageViewerState.Single:
+      switch (display) {
+        case DisplayType.Single:
           index1 = index;
           break;
-        case PageViewerState.DoubleNormal:
+        case DisplayType.DoubleNormal:
           index1 = index * 2;
           break;
-        case PageViewerState.DoubleCover:
+        case DisplayType.DoubleCover:
           index1 = max((index - 1) * 2 + 1, 0);
           break;
       }
@@ -206,7 +205,7 @@ class _EhImageViewerState extends State<EhImageViewer>
       );
     } else {
       late final int index1;
-      if (widget.pageViewerState == PageViewerState.DoubleCover) {
+      if (widget.store.adapter.websiteEntity.displayType == DisplayType.DoubleCover) {
         index1 = (index - 1) * 2 + 1;
       } else {
         index1 = index * 2;
