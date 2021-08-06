@@ -133,6 +133,9 @@ abstract class EhDownloadStoreBase with Store {
                       shaToken: configModel.pageInfo[e]!,
                       page: e + 1,
                     );
+                    if (imageModel.imgUrl.endsWith('509.gif') ||
+                        imageModel.imgUrl.endsWith('509s.gif'))
+                      throw StateError('Image 509');
                     final data = await _download(
                       imageUrl: imageModel.imgUrl,
                       dio: adapter.dio,

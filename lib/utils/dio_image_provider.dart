@@ -112,7 +112,6 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
           fileName,
         );
         print('加载图片: ${fileParams!.basePath} $fileName ${fileData?.length}');
-        // TODO: 检测是否为509图片
         if (fileData != null && fileData.isNotEmpty) {
           try {
             return await decode(fileData);
@@ -132,6 +131,9 @@ class DioImageProvider extends ImageProvider<DioImageProvider> {
       }
       imgUrl ??= url;
       if (imgUrl == null) throw StateError('imgUrl is null');
+
+      if (imgUrl.endsWith('509.gif') || imgUrl.endsWith('509s.gif'))
+        throw StateError('Image 509');
 
       final key = cacheKey ?? const Uuid().v5(Uuid.NAMESPACE_URL, imgUrl);
       final rsp = await (dio ?? Dio()).get<List<int>>(imgUrl,
