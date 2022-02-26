@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EH历史记录数据库
 class EhGalleryHistoryTable extends Table {

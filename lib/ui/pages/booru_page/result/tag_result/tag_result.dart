@@ -1,15 +1,16 @@
 import 'dart:ui' as ui;
-import 'package:catpic/network/adapter/booru_adapter.dart';
+
 import 'package:catpic/data/database/entity/history.dart';
+import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/basic_search_bar.dart';
+import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
-import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/tag_result/store/tag_result_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:catpic/data/models/booru/booru_tag.dart';
 
 import '../booru_result_page.dart';
 

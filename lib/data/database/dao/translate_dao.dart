@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/entity/eh_translate.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import '../database.dart';
 
 part 'translate_dao.g.dart';
 
-@UseDao(tables: [EhTranslateTable])
+@DriftAccessor(tables: [EhTranslateTable])
 class TranslateDao extends DatabaseAccessor<AppDataBase>
     with _$TranslateDaoMixin {
   TranslateDao(AppDataBase attachedDatabase) : super(attachedDatabase);

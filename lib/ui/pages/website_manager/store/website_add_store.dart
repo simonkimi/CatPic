@@ -1,17 +1,16 @@
-import 'package:catpic/data/models/basic.dart';
-import 'package:catpic/network/api/base_client.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:catpic/network/api/misc_network.dart';
-import 'package:mobx/mobx.dart';
-
+import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
-import 'package:moor/moor.dart';
+import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/network/api/misc_network.dart';
+import 'package:dio/dio.dart';
+import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Value;
+import 'package:mobx/mobx.dart';
 
 part 'website_add_store.g.dart';
 

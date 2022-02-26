@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
-
-import 'package:catpic/main.dart';
 import 'package:uuid/uuid.dart';
 
 typedef ImageWidgetBuilder = Widget Function(

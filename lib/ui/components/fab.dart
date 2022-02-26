@@ -1,11 +1,11 @@
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:catpic/i18n.dart';
-import 'package:catpic/main.dart';
 
 class FloatActionBubble extends StatelessWidget {
   const FloatActionBubble({

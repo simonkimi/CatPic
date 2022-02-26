@@ -4,16 +4,16 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:catpic/main.dart';
 import 'package:catpic/data/bridge/file_helper.dart' as fh;
+import 'package:catpic/main.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
+
 import 'utils.dart';
 
 typedef AsyncBuilder = Future<DioImageParams> Function();

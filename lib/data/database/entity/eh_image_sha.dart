@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EH下载图片的sha的记录
 class EhDownloadShaTable extends Table {

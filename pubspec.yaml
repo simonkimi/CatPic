@@ -19,11 +19,11 @@ dependencies:
   xml: ^5.1.2
   brotli: ^0.5.0
   dio: ^4.0.0
-  dio_cache_interceptor: ^3.0.1
-  dio_cache_interceptor_db_store: ^3.0.2
+  dio_cache_interceptor: ^3.2.6
+  dio_cache_interceptor_db_store: ^4.1.1
 
   # ui
-  flutter_svg: ^0.22.0
+  flutter_svg: ^1.0.3
   extended_image: ^4.1.0
   sliding_sheet: ^0.5.0
   waterfall_flow: ^3.0.1
@@ -43,8 +43,8 @@ dependencies:
   # database
   sp_util: ^2.0.3
   shared_preferences: ^2.0.6
-  moor: ^4.4.1
-  sqlite3_flutter_libs: ^0.5.0
+  drift: ^1.3.0
+  sqlite3_flutter_libs: ^0.5.3
   path_provider: ^2.0.2
   path: ^1.8.0
   protobuf: ^2.0.0
@@ -69,7 +69,7 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.1.0
   mobx_codegen: ^2.0.2
-  moor_generator: ^4.4.1
+  drift_dev: ^1.1.0
 
 
 flutter:

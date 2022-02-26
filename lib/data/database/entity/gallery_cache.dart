@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EHGallery的缓存记录
 class GalleryCacheTable extends Table {

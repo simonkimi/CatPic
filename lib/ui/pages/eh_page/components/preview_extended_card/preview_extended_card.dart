@@ -5,9 +5,9 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
 
 typedef FunctionCallback = void Function(Function);

@@ -2,9 +2,9 @@ import 'package:catpic/data/models/ehentai/load_more_with_filter.dart';
 import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
-import 'package:catpic/utils/utils.dart';
 
 part 'store.g.dart';
 

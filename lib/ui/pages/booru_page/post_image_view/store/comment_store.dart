@@ -1,10 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
-
-import 'package:catpic/i18n.dart';
 
 part 'comment_store.g.dart';
 

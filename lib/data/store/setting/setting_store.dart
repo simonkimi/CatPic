@@ -4,14 +4,13 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/network/api/misc_network.dart';
+import 'package:catpic/themes.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_db_store/dio_cache_interceptor_db_store.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sp_util/sp_util.dart';
 import 'package:mobx/mobx.dart';
 import 'package:path/path.dart' as p;
-
-import 'package:catpic/themes.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:synchronized/synchronized.dart';
 
 part 'setting_store.g.dart';

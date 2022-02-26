@@ -1,23 +1,23 @@
 import 'dart:ui' as ui;
+
 import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
+import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
+import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/components/load_more_list.dart';
 import 'package:catpic/ui/components/load_more_manager.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/pages/booru_page/post_image_view/post_image_view.dart';
-import 'package:catpic/ui/components/fab.dart';
 import 'package:catpic/ui/pages/booru_page/result/popular_result/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-
-import 'package:catpic/i18n.dart';
-import 'package:catpic/main.dart';
-import 'package:catpic/themes.dart';
 
 class PopularResultFragment extends StatelessWidget {
   PopularResultFragment({

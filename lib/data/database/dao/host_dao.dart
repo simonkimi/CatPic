@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/entity/host.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import '../database.dart';
 
 part 'host_dao.g.dart';
 
-@UseDao(tables: [HostTable])
+@DriftAccessor(tables: [HostTable])
 class HostDao extends DatabaseAccessor<AppDataBase> with _$HostDaoMixin {
   HostDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 

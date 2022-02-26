@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EHGallery下面小图片的记录
 class EhGalleryPreviewImgCache extends Table {

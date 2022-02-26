@@ -1,23 +1,23 @@
 import 'dart:async';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/bridge/file_helper.dart' as fh;
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/ehentai/eh_website.dart';
+import 'package:catpic/data/models/gen/eh_download.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:mobx/mobx.dart';
-import 'package:catpic/data/models/gen/eh_download.pb.dart';
-import 'package:catpic/data/bridge/file_helper.dart' as fh;
+import 'package:drift/drift.dart';
 import 'package:executor/executor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:catpic/utils/utils.dart';
-import 'package:moor/moor.dart';
+import 'package:mobx/mobx.dart';
 import 'package:uuid/uuid.dart';
 
 part 'eh_download_store.g.dart';

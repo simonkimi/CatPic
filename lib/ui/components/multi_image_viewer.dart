@@ -1,11 +1,11 @@
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-
-import 'package:catpic/i18n.dart';
 import 'package:video_player/video_player.dart';
+
 import 'nullable_hero.dart';
 
 typedef FutureItemBuilder = Future<String> Function(int index);

@@ -1,6 +1,6 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
-import 'package:get/get.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:get/get.dart';
 
 class EhFilter {
   static int tagFilter({

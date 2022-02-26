@@ -1,8 +1,7 @@
+import 'package:catpic/main.dart';
 import 'package:catpic/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
-import 'package:catpic/main.dart';
 
 class DarkImage extends StatelessWidget {
   const DarkImage({

@@ -1,16 +1,16 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'package:catpic/data/database/entity/eh_read_history.dart';
-import 'package:catpic/main.dart';
-import 'package:path/path.dart' as p;
-import 'package:moor/ffi.dart';
-import 'package:moor/moor.dart';
 
 import 'package:catpic/data/database/dao/download_dao.dart';
 import 'package:catpic/data/database/dao/history_dao.dart';
-import 'package:catpic/data/database/dao/tag_dao.dart';
 import 'package:catpic/data/database/dao/host_dao.dart';
+import 'package:catpic/data/database/dao/tag_dao.dart';
 import 'package:catpic/data/database/dao/website_dao.dart';
+import 'package:catpic/data/database/entity/eh_read_history.dart';
+import 'package:catpic/main.dart';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:path/path.dart' as p;
 
 import 'dao/eh_download_dao.dart';
 import 'dao/eh_image_dao.dart';
@@ -46,11 +46,11 @@ DynamicLibrary openOnWindows() {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final file = File(p.join(settingStore.documentDir, 'db.sqlite'));
-    return VmDatabase(file);
+    return NativeDatabase(file);
   });
 }
 
-@UseMoor(tables: [
+@DriftDatabase(tables: [
   DownloadTable,
   HistoryTable,
   HostTable,

@@ -1,17 +1,17 @@
-import 'package:catpic/data/database/entity/website.dart';
-import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/pages/booru_page/download_page/download_manager.dart';
 import 'package:catpic/ui/pages/booru_page/login_page/login_page.dart';
+import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:catpic/ui/pages/eh_page/download_page/download_page.dart';
 import 'package:catpic/ui/pages/eh_page/eh_page.dart';
-import 'package:catpic/ui/pages/booru_page/result/booru_result_page.dart';
 import 'package:catpic/ui/pages/eh_page/favourite_page/favourite_page.dart';
 import 'package:catpic/ui/pages/eh_page/history_page/history_page.dart';
 import 'package:catpic/ui/pages/setting_page/setting_page.dart';
-import 'package:catpic/main.dart';
 import 'package:catpic/ui/pages/website_manager/website_manager.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -432,7 +432,7 @@ class MainDrawer extends HookWidget {
       subTitle = '$scheme://${mainStore.websiteEntity!.host}/';
     }
     return Observer(builder: (_) {
-      mainStore.websiteEntity!.favicon.wrap; // 消除Observer警告
+      mainStore.websiteEntity?.favicon.wrap; // 消除Observer警告
       return Theme(
         data: Theme.of(context).copyWith(
           primaryColor:

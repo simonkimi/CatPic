@@ -4,10 +4,10 @@ import 'package:catpic/data/models/booru/booru_pool.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:catpic/data/models/booru/booru_website.dart';
+import 'package:catpic/network/api/gelbooru/gelbooru_client.dart';
 import 'package:catpic/network/parser/gelbooru/comment_parser.dart';
 import 'package:catpic/network/parser/gelbooru/post_parser.dart';
 import 'package:catpic/network/parser/gelbooru/tag_parser.dart';
-import 'package:catpic/network/api/gelbooru/gelbooru_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 

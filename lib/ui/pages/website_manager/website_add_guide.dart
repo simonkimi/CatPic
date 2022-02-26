@@ -1,12 +1,12 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
-import 'package:flutter/material.dart';
-import 'package:catpic/data/database/database.dart';
 import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 

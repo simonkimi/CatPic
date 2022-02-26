@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import '../database.dart';
 
 part 'website_dao.g.dart';
 
-@UseDao(tables: [WebsiteTable])
+@DriftAccessor(tables: [WebsiteTable])
 class WebsiteDao extends DatabaseAccessor<AppDataBase> with _$WebsiteDaoMixin {
   WebsiteDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 

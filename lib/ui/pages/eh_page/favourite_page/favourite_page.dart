@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
+
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
@@ -13,7 +15,6 @@ import 'package:catpic/ui/pages/eh_page/favourite_page/store/store.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/preview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:catpic/data/models/gen/eh_storage.pb.dart';
 
 class EhFavouritePage extends StatefulWidget {
   const EhFavouritePage({Key? key}) : super(key: key);

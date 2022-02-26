@@ -1,15 +1,16 @@
 import 'dart:async';
+
+import 'package:catpic/data/bridge/file_helper.dart' as fh;
+import 'package:catpic/data/models/gen/eh_download.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/utils/async.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
-import 'package:mobx/mobx.dart';
-import 'package:catpic/data/models/gen/eh_download.pb.dart';
-import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/bridge/file_helper.dart' as fh;
-import 'package:synchronized/synchronized.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:mobx/mobx.dart';
+import 'package:synchronized/synchronized.dart';
 
 part 'loader_store.g.dart';
 

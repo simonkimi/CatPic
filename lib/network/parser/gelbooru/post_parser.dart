@@ -1,5 +1,5 @@
-import 'package:catpic/utils/utils.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:xml/xml.dart';
 
 class GelbooruPostParser {

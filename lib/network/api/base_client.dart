@@ -1,12 +1,13 @@
 import 'dart:io';
+
 import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/main.dart';
-import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:catpic/network/interceptor/cookie_interceptor.dart';
-import 'package:dio/dio.dart';
+import 'package:catpic/network/interceptor/encode_transform.dart';
 import 'package:catpic/network/interceptor/host_interceptor.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:dio/adapter.dart';
+import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class DioBuilder {

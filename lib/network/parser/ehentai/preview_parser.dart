@@ -1,8 +1,8 @@
 import 'package:catpic/data/models/ehentai/preview_model.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/utils/utils.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' as parser;
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 
 class RequireLoginException implements Exception {
   @override

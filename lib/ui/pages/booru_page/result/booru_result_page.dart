@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/fragment/main_drawer/main_drawer.dart';
 import 'package:catpic/ui/pages/booru_page/result/artist_result/artist_result.dart';
@@ -8,7 +10,6 @@ import 'package:catpic/ui/pages/booru_page/result/tag_result/tag_result.dart';
 import 'package:catpic/utils/event_util.dart';
 import 'package:flutter/material.dart';
 
-import 'package:catpic/main.dart';
 import 'empty_website/empty_website.dart';
 import 'pool_result/pool_result.dart';
 import 'post_result/post_result.dart';

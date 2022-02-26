@@ -1,11 +1,10 @@
+import 'package:catpic/i18n.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/booru_page/post_image_view/store/comment_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
-
-import 'package:catpic/i18n.dart';
 
 class BooruCommentsPage extends StatelessWidget {
   BooruCommentsPage({

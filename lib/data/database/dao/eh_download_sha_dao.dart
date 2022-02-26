@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/eh_image_sha.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'eh_download_sha_dao.g.dart';
 
-@UseDao(tables: [EhDownloadShaTable])
+@DriftAccessor(tables: [EhDownloadShaTable])
 class EhDownloadShaDao extends DatabaseAccessor<AppDataBase>
     with _$EhDownloadShaDaoMixin {
   EhDownloadShaDao(AppDataBase attachedDatabase) : super(attachedDatabase);

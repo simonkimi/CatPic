@@ -1,4 +1,8 @@
 import 'dart:ui' as ui;
+
+import 'package:catpic/data/store/setting/setting_store.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/themes.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
@@ -11,9 +15,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-import 'package:catpic/main.dart';
-import 'package:catpic/i18n.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 
 class PostWaterFlow extends StatelessWidget {
   PostWaterFlow({

@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/eh_gallery_historary.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'gallery_history_dao.g.dart';
 
-@UseDao(tables: [EhGalleryHistoryTable])
+@DriftAccessor(tables: [EhGalleryHistoryTable])
 class GalleryHistoryDao extends DatabaseAccessor<AppDataBase>
     with _$GalleryHistoryDaoMixin {
   GalleryHistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);

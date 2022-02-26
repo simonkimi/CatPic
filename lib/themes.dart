@@ -1,6 +1,6 @@
 import 'package:catpic/i18n.dart';
-import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class Themes {
   static const BLUE = 1;
@@ -36,7 +36,6 @@ final darkBlueTheme = ThemeData(
   iconTheme: const IconThemeData(color: Colors.white),
   brightness: Brightness.dark,
   primaryColor: const Color(0xFF61AAE1),
-  accentColor: const Color(0xFF61AAE1),
   primaryColorDark: const Color(0xFF223040),
   switchTheme: SwitchThemeData(
     thumbColor: MaterialStateProperty.resolveWith((states) {
@@ -56,7 +55,7 @@ final darkBlueTheme = ThemeData(
           ? const Color(0xFF61AAE1)
           : const Color(0xFFB9B9B9);
     }),
-  ),
+  ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xFF61AAE1)),
 );
 
 final blueTheme = ThemeData(
@@ -71,9 +70,7 @@ final blueTheme = ThemeData(
   appBarTheme: const AppBarTheme(color: Colors.blue),
   brightness: Brightness.light,
   primaryColor: Colors.blue,
-  accentColor: Colors.blue[800],
-  primaryColorDark: Colors.blue[800],
-  primarySwatch: Colors.blue,
+  primaryColorDark: Colors.blue[800], colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.blue[800]),
 );
 
 const _purplePrimary = Color(0xFF686BDD);
@@ -90,9 +87,7 @@ final purpleTheme = ThemeData(
   appBarTheme: const AppBarTheme(color: Color(0xFF686BDD)),
   brightness: Brightness.light,
   primaryColor: _purplePrimary,
-  accentColor: const Color(0xFF46489f),
-  primaryColorDark: const Color(0xFF46489f),
-  primarySwatch: _purplePrimary.swatch,
+  primaryColorDark: const Color(0xFF46489f), colorScheme: ColorScheme.fromSwatch(primarySwatch: _purplePrimary.swatch).copyWith(secondary: const Color(0xFF46489f)),
 );
 
 bool isDarkMode([BuildContext? context]) =>

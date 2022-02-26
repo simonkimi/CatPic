@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EH每张图片的Cache
 class EhImageCache extends Table {

@@ -28,7 +28,7 @@ class LoadMoreList extends StatelessWidget {
         child: SmartRefresher(
           enablePullUp: enablePullUp,
           enablePullDown: enablePullDown,
-          footer: CustomFooter(
+          footer: const CustomFooter(
             builder: buildFooter,
           ),
           controller: store.refreshController,

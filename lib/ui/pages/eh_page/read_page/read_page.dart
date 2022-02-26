@@ -1,16 +1,17 @@
 import 'dart:async';
+
 import 'package:catpic/data/database/database.dart';
+import 'package:catpic/data/models/ehentai/eh_storage.dart';
+import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/eh_image_viewer.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
 import 'package:catpic/ui/pages/eh_page/read_page/page_controller.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:catpic/utils/utils.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get/get.dart';
-import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
-import 'package:catpic/data/models/ehentai/eh_storage.dart';
 
 import 'back_appbar.dart';
 
@@ -313,6 +314,7 @@ class _ImageSliderState extends State<ImageSlider> {
                                 ),
                               );
                             }
+                            return null;
                           },
                         )
                       : ExtendedImage(
@@ -351,6 +353,7 @@ class _ImageSliderState extends State<ImageSlider> {
                                 ),
                               );
                             }
+                            return null;
                           },
                         ),
                 ),

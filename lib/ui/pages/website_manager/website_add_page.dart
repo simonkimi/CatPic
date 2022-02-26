@@ -7,8 +7,8 @@ import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/components/text_input_tile.dart';
 import 'package:catpic/ui/pages/website_manager/cookie_manager.dart';
 import 'package:catpic/ui/pages/website_manager/store/website_add_store.dart';
-import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

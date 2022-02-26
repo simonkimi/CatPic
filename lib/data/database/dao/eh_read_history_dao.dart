@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/eh_read_history.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'eh_read_history_dao.g.dart';
 
-@UseDao(tables: [EhReadHistoryTable])
+@DriftAccessor(tables: [EhReadHistoryTable])
 class EhReadHistoryDao extends DatabaseAccessor<AppDataBase>
     with _$EhReadHistoryDaoMixin {
   EhReadHistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);

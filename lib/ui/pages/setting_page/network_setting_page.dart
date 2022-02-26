@@ -1,16 +1,16 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/default_button.dart';
 import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:catpic/i18n.dart';
-import 'package:catpic/main.dart';
 import 'host_manager_page.dart';
 
 class NetworkSettingPage extends StatelessWidget {

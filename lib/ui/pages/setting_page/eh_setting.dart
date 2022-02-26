@@ -1,4 +1,6 @@
 import 'package:catpic/data/models/ehentai/eh_website.dart';
+import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/ui/components/app_bar.dart';
@@ -6,9 +8,6 @@ import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
-
-import 'package:catpic/i18n.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 

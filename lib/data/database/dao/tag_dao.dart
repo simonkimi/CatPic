@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/entity/tag.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 import '../database.dart';
 
 part 'tag_dao.g.dart';
 
-@UseDao(tables: [TagTable])
+@DriftAccessor(tables: [TagTable])
 class TagDao extends DatabaseAccessor<AppDataBase> with _$TagDaoMixin {
   TagDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 

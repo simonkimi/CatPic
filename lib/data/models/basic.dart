@@ -2,7 +2,7 @@ import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/data/models/booru/booru_website.dart';
 import 'package:catpic/data/models/ehentai/eh_website.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 abstract class IWebsiteEntity {
   static IWebsiteEntity? build(WebsiteTableData? db) {

@@ -1,5 +1,4 @@
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 

@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:catpic/network/parser/ehentai/preview_parser.dart';
-import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/i18n.dart';
+import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart' hide Lock;
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:catpic/i18n.dart';
 import 'package:synchronized/synchronized.dart';
 
 abstract class ILoadMore<T> {

@@ -1,5 +1,5 @@
-import 'package:xml/xml.dart';
 import 'package:catpic/data/models/booru/booru_comment.dart';
+import 'package:xml/xml.dart';
 
 class GelbooruCommentParser {
   static List<BooruComments> parse(String str) {

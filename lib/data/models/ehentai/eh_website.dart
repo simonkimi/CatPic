@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
-import 'package:flutter/material.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/basic.dart';
-import 'package:mobx/mobx.dart';
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
+import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 
 part 'eh_website.g.dart';
 

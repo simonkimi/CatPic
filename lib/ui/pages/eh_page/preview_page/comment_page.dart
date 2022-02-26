@@ -1,10 +1,9 @@
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/pages/eh_page/components/eh_comment/eh_comment.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
-import 'package:catpic/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EhCommentPage extends StatelessWidget {

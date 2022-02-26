@@ -1,7 +1,9 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/ehentai/eh_website.dart';
 import 'package:catpic/data/models/ehentai/favourite_model.dart';
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
 import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/data/store/memory_cache/memory_cache.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/base_adapter.dart';
@@ -12,8 +14,6 @@ import 'package:catpic/network/parser/ehentai/gallery_parser.dart';
 import 'package:catpic/network/parser/ehentai/preview_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 
 class EHAdapter extends Adapter {
   EHAdapter(this.websiteEntity) : client = EhClient(websiteEntity);

@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/eh_image_cache.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'eh_image_dao.g.dart';
 
-@UseDao(tables: [EhImageCache])
+@DriftAccessor(tables: [EhImageCache])
 class EhImageDao extends DatabaseAccessor<AppDataBase> with _$EhImageDaoMixin {
   EhImageDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 

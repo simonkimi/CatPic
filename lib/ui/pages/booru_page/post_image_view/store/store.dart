@@ -2,11 +2,11 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/page_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
-import 'package:catpic/main.dart';
 
 part 'store.g.dart';
 

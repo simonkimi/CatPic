@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // Eh翻译记录
 class EhTranslateTable extends Table {

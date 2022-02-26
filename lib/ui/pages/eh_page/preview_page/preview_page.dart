@@ -583,6 +583,7 @@ class EhPreviewPage extends StatelessWidget {
                                         scale: 0.5,
                                       );
                                     }
+                                    return null;
                                   },
                                 ),
                         ),

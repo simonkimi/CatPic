@@ -1,19 +1,18 @@
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
+import 'package:catpic/main.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/post_preview_card.dart';
 import 'package:catpic/ui/components/pull_to_refresh_footer.dart';
-import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/ui/pages/eh_page/preview_page/store/store.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/read_page.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'package:catpic/main.dart';
 
 class GalleryPreview extends StatelessWidget {
   const GalleryPreview({
@@ -40,7 +39,7 @@ class GalleryPreview extends StatelessWidget {
         child: SmartRefresher(
           enablePullUp: true,
           enablePullDown: true,
-          footer: CustomFooter(
+          footer: const CustomFooter(
             builder: buildFooter,
           ),
           controller: store.refreshController,
@@ -111,6 +110,7 @@ class GalleryPreview extends StatelessWidget {
                         ),
                       );
                     }
+                    return null;
                   },
                 ),
         ),

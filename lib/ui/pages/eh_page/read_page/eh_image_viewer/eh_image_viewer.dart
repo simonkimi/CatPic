@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'dart:math';
+
+import 'package:catpic/data/models/ehentai/eh_storage.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/data/models/gen/eh_storage.pbenum.dart';
-import 'package:catpic/ui/components/zoom_widget.dart';
-import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
-import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:get/get.dart';
-import 'package:catpic/utils/utils.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/ui/components/zoom_widget.dart';
+import 'package:catpic/ui/pages/eh_page/read_page/eh_image_viewer/store/store.dart';
+import 'package:catpic/utils/utils.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:catpic/data/models/ehentai/eh_storage.dart';
+
 import '../page_controller.dart';
 
 class EhImageViewer extends StatefulWidget {

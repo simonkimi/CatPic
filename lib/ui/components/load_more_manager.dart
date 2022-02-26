@@ -1,8 +1,8 @@
 import 'package:catpic/data/models/booru/load_more.dart';
+import 'package:catpic/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:catpic/i18n.dart';
 
 class LoadMoreManager extends StatelessWidget {
   const LoadMoreManager({

@@ -1,10 +1,10 @@
+import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
+import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/utils/dio_image_provider.dart';
 import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 import 'package:synchronized/synchronized.dart';
-import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:catpic/data/models/gen/eh_gallery_img.pb.dart';
 
 part 'store.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:catpic/data/database/entity/website.dart';
-import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:dio/dio.dart';
 
 class CookieInterceptor extends Interceptor {
   CookieInterceptor({

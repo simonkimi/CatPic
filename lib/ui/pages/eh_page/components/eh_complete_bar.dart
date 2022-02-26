@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
@@ -8,14 +9,14 @@ import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
 import 'package:catpic/network/api/ehentai/eh_filter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
-import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/select_button.dart';
+import 'package:catpic/ui/components/select_tile.dart';
 import 'package:catpic/ui/components/tiny_switch_tile.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:get/get.dart';
-import 'package:catpic/utils/utils.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 typedef SearchSubmitted = void Function(
     String text, bool useFilter, EhAdvanceFilter filter);

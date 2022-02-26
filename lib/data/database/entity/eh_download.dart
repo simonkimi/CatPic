@@ -1,4 +1,4 @@
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 // EH下载记录数据库
 class EhDownloadTable extends Table {

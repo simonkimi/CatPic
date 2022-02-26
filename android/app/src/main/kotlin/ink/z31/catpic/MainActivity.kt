@@ -10,6 +10,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.lang.Exception
 
+
 class MainActivity : FlutterActivity() {
     companion object {
         private const val CHANNEL = "ink.z31.catpic"

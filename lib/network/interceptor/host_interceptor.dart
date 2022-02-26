@@ -1,7 +1,7 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/network/api/misc_network.dart';
-import 'package:dio/dio.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:dio/dio.dart';
 
 const commonHost = <String, String>{
   'yande.re': '198.98.54.92',

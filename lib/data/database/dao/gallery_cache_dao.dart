@@ -1,12 +1,12 @@
 import 'package:catpic/data/database/entity/gallery_cache.dart';
 import 'package:catpic/data/models/gen/eh_gallery.pb.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 import '../database.dart';
 
 part 'gallery_cache_dao.g.dart';
 
-@UseDao(tables: [GalleryCacheTable])
+@DriftAccessor(tables: [GalleryCacheTable])
 class GalleryCacheDao extends DatabaseAccessor<AppDataBase>
     with _$GalleryCacheDaoMixin {
   GalleryCacheDao(AppDataBase attachedDatabase) : super(attachedDatabase);

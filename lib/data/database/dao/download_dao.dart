@@ -1,10 +1,10 @@
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 part 'download_dao.g.dart';
 
-@UseDao(tables: [DownloadTable])
+@DriftAccessor(tables: [DownloadTable])
 class DownloadDao extends DatabaseAccessor<AppDataBase>
     with _$DownloadDaoMixin {
   DownloadDao(AppDataBase attachedDatabase) : super(attachedDatabase);

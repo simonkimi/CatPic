@@ -1,6 +1,7 @@
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
+
 import 'package:brotli/brotli.dart';
+import 'package:dio/dio.dart';
 
 class EncodeTransformer extends DefaultTransformer {
   @override

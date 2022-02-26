@@ -1,11 +1,10 @@
 import 'package:catpic/data/bridge/android_bridge.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/ui/components/app_bar.dart';
 import 'package:catpic/ui/components/summary_tile.dart';
 import 'package:catpic/ui/pages/booru_page/download_page/android_download.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
-import 'package:catpic/i18n.dart';
 
 class DownloadSettingPage extends StatelessWidget {
   const DownloadSettingPage({Key? key}) : super(key: key);

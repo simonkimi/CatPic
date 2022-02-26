@@ -1,6 +1,6 @@
 import 'package:catpic/data/models/gen/eh_storage.pb.dart';
-import 'package:html/parser.dart' as parser;
 import 'package:catpic/utils/utils.dart';
+import 'package:html/parser.dart' as parser;
 
 class EhFavouriteParser {
   static List<EhFavourite> parse(String html) {

@@ -1,18 +1,17 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/history.dart';
+import 'package:catpic/data/models/booru/booru_tag.dart';
+import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
+import 'package:catpic/network/adapter/booru_adapter.dart';
 import 'package:catpic/ui/components/search_bar.dart';
 import 'package:catpic/ui/fragment/tag_search_bar/post_filter.dart';
 import 'package:catpic/ui/fragment/tag_search_bar/store/filter_store.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:catpic/data/models/booru/booru_tag.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:catpic/utils/utils.dart';
-
-import 'package:catpic/i18n.dart';
 
 class TagSearchBar extends StatefulWidget {
   const TagSearchBar({

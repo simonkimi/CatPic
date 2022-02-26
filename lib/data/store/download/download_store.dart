@@ -4,21 +4,21 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
+import 'package:catpic/data/bridge/file_helper.dart';
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/download.dart';
 import 'package:catpic/data/models/basic.dart';
 import 'package:catpic/data/models/booru/booru_post.dart';
+import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
 import 'package:catpic/main.dart';
-import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/network/api/base_client.dart';
+import 'package:catpic/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:mobx/mobx.dart';
-import 'package:catpic/data/bridge/android_bridge.dart' as bridge;
-import 'package:catpic/utils/utils.dart';
 import 'package:get/get.dart';
-import 'package:catpic/data/bridge/file_helper.dart';
+import 'package:mobx/mobx.dart';
 
 part 'download_store.g.dart';
 

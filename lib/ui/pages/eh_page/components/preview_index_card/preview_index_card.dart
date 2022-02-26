@@ -1,9 +1,9 @@
+import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/ui/components/dark_image.dart';
 import 'package:catpic/ui/components/dio_image.dart';
-import 'package:flutter/material.dart';
-import 'package:catpic/data/models/gen/eh_preview.pb.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../i18n.dart';
 import '../../../../../main.dart';

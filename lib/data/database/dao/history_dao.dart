@@ -1,11 +1,11 @@
 import 'package:catpic/data/database/entity/history.dart';
-import 'package:moor/moor.dart';
+import 'package:drift/drift.dart';
 
 import '../database.dart';
 
 part 'history_dao.g.dart';
 
-@UseDao(tables: [HistoryTable])
+@DriftAccessor(tables: [HistoryTable])
 class HistoryDao extends DatabaseAccessor<AppDataBase> with _$HistoryDaoMixin {
   HistoryDao(AppDataBase attachedDatabase) : super(attachedDatabase);
 

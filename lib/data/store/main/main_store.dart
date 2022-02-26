@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:catpic/data/database/database.dart';
 import 'package:catpic/data/database/entity/website.dart';
 import 'package:catpic/data/models/basic.dart';
@@ -10,9 +11,9 @@ import 'package:catpic/network/adapter/eh_adapter.dart';
 import 'package:catpic/network/api/base_client.dart';
 import 'package:catpic/network/api/misc_network.dart';
 import 'package:catpic/utils/event_util.dart';
-import 'package:sp_util/sp_util.dart';
-import 'package:mobx/mobx.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:mobx/mobx.dart';
+import 'package:sp_util/sp_util.dart';
 
 part 'main_store.g.dart';
 

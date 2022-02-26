@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:catpic/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class SelectTileItem<T> {
   const SelectTileItem({required this.title, required this.value});

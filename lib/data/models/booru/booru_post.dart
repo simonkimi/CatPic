@@ -1,8 +1,7 @@
 import 'package:catpic/data/store/setting/setting_store.dart';
 import 'package:catpic/i18n.dart';
-import 'package:flutter/material.dart';
-
 import 'package:catpic/main.dart';
+import 'package:flutter/material.dart';
 
 class PostRating {
   static const SAFE = 0;
